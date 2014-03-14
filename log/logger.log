@@ -1,0 +1,599 @@
+[2014/03/11 19:55:25] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/11 19:55:25] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer.jpg from 192.168.2.117
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/11 19:56:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/11 23:54:04] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/11 23:54:04] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 404
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/11 23:55:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/11 23:55:23] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/11 23:55:23] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/11 23:55:33] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/11 23:55:33] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in substitution (s///) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 255, <DATA> line 16.
+[2014/03/11 23:55:33] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /profile/badkarma from 127.0.0.1
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /profile/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /profile/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /profile/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /profile/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 404
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/12 11:22:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 11:22:56] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 127.0.0.1
+[2014/03/12 11:22:56] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 11:22:56] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 11:22:56] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 11:22:56] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 11:22:57] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 11:22:57] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in substitution (s///) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 255.
+[2014/03/12 11:22:57] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 11:22:57] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/12 11:22:57] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:17:16] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:17:16] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:17:25] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 20:17:25] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in substitution (s///) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 255, <DATA> line 16.
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/12 20:17:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:18:47] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:18:47] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:18:52] [WARN] Side7::User::get_user_hash_for_template 253 - key: birthday
+[2014/03/12 20:18:52] [WARN] Side7::User::get_user_hash_for_template 253 - key: subscription_expires_on
+[2014/03/12 20:18:52] [WARN] Side7::User::get_user_hash_for_template 253 - key: delete_on
+[2014/03/12 20:18:52] [WARN] Side7::User::get_user_hash_for_template 253 - key: created_at
+[2014/03/12 20:18:52] [WARN] Side7::User::get_user_hash_for_template 253 - key: updated_at
+[2014/03/12 20:18:52] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 20:18:52] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in substitution (s///) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 256, <DATA> line 16.
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/12 20:18:52] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:21:17] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:21:17] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 257 - date: >January 15, 1973<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 16, 1998 12:00:00 AM<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:21:24] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Feb 13, 2002 11:21:18 PM<
+[2014/03/12 20:21:24] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 20:21:24] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in concatenation (.) or string at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 257, <DATA> line 16.
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/12 20:21:24] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:23:07] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:23:07] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 257 - date: >January 15, 1973<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 16, 1998 12:00:00 AM<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:23:15] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Feb 13, 2002 11:21:18 PM<
+[2014/03/12 20:23:15] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 20:23:15] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user/badkarma crashed: Warning caught during route execution: Use of uninitialized value $date in concatenation (.) or string at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 257, <DATA> line 16.
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/12 20:23:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:23:45] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:23:45] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 257 - date: >January 15, 1973<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 16, 1998 12:00:00 AM<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:23:49] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Feb 13, 2002 11:21:18 PM<
+[2014/03/12 20:23:49] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (show_user_profile) not found -  does not exist
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/12 20:23:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:56:18] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 20:56:18] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 257 - date: >January 15, 1973<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 16, 1998 12:00:00 AM<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:57:23] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Feb 13, 2002 11:21:18 PM<
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 20:57:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:57:46] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 192.168.2.117
+[2014/03/12 20:57:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/12 20:57:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:57:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:57:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 257 - date: >December 28, 1975<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Feb 14, 2000 12:00:00 AM<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:57:47] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Saturday, Dec 1, 2001 10:33:38 PM<
+[2014/03/12 20:57:47] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/jinx from 192.168.2.117
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/jinx' against /^\/$/ (generated from '/')
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/jinx' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 257 - date: >November 17, 1981<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Oct 20, 1999 12:00:00 AM<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:57:56] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Sep 23, 2002 9:12:56 PM<
+[2014/03/12 20:57:56] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:58:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/digoraccoon from 192.168.2.117
+[2014/03/12 20:58:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoraccoon' against /^\/$/ (generated from '/')
+[2014/03/12 20:58:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoraccoon' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:58:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:58:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 257 - date: >May 15<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Oct 21, 1999 12:00:00 AM<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:58:16] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Sunday, Jul 8, 2001 1:20:37 PM<
+[2014/03/12 20:58:16] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/cael from 192.168.2.117
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/cael' against /^\/$/ (generated from '/')
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/cael' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:58:25] [WARN] Side7::User::show_profile 98 - Could not find user >cael< in database.
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer.jpg from 192.168.2.117
+[2014/03/12 20:58:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 20:58:31] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/esquire from 192.168.2.117
+[2014/03/12 20:58:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/esquire' against /^\/$/ (generated from '/')
+[2014/03/12 20:58:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/esquire' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:58:31] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:58:31] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 257 - date: >August 28, 1973<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 16, 1998 12:00:00 AM<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:58:32] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Wednesday, Aug 21, 2002 12:53:30 PM<
+[2014/03/12 20:58:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:58:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 20:58:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 20:58:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:58:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:58:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:58:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 20:58:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/bunnywunny from 192.168.2.117
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/bunnywunny' against /^\/$/ (generated from '/')
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/bunnywunny' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Monday, Nov 27, 2000 12:00:00 AM<
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 20:59:14] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Tuesday, Jul 16, 2002 1:42:20 AM<
+[2014/03/12 20:59:14] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /signup from 192.168.2.117
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/$/ (generated from '/')
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/$/ (generated from '/')
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 21:00:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 404
+[2014/03/12 21:00:50] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/12 21:00:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/12 21:00:50] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 21:00:50] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 21:03:02] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/WillowWhiskers from 192.168.2.117
+[2014/03/12 21:03:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/WillowWhiskers' against /^\/$/ (generated from '/')
+[2014/03/12 21:03:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/WillowWhiskers' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 21:03:02] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 21:03:02] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 257 - date: >May 27, 1990<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Tuesday, Feb 10, 2004 12:00:00 AM<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 21:03:03] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Tuesday, Feb 10, 2004 9:41:11 PM<
+[2014/03/12 21:03:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:15:24] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/WillowWhiskers from 192.168.2.117
+[2014/03/12 22:15:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/WillowWhiskers' against /^\/$/ (generated from '/')
+[2014/03/12 22:15:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/WillowWhiskers' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:15:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:15:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 257 - date: >May 27, 1990<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Tuesday, Feb 10, 2004 12:00:00 AM<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:15:25] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Tuesday, Feb 10, 2004 9:41:11 PM<
+[2014/03/12 22:15:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:15:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:15:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:15:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:15:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:16:08] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:16:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:16:09] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:16:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:17:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:17:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:18:05] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:18:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:19:44] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:19:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:19:45] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:19:45] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:22:58] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:22:58] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:23:28] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 22:23:28] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 22:24:24] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 22:24:24] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >birthday<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >February 05, 1981<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >subscription_expires_on<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >delete_on<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: ><
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >created_at<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Thursday, Jul 5, 2001 12:00:00 AM<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 253 - key: >updated_at<
+[2014/03/12 22:24:29] [WARN] Side7::User::get_user_hash_for_template 257 - date: >Friday, Mar 25, 2011 12:00:00 AM<
+[2014/03/12 22:24:29] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:24:37] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/12 22:24:37] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/snowhawk from 192.168.2.117
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/$/ (generated from '/')
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/snowhawk' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/12 22:24:53] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:26:54] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 192.168.2.117
+[2014/03/12 22:26:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/12 22:26:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:26:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:26:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:26:55] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:27:22] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/digoraccoon from 192.168.2.117
+[2014/03/12 22:27:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoraccoon' against /^\/$/ (generated from '/')
+[2014/03/12 22:27:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoraccoon' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:27:22] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:27:22] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:27:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/gab from 192.168.2.117
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/gab' against /^\/$/ (generated from '/')
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/gab' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:29:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/gear from 192.168.2.117
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/gear' against /^\/$/ (generated from '/')
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/gear' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 22:30:46] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 192.168.2.117
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/12 23:46:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 00:23:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 127.0.0.1
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/13 11:33:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 127.0.0.1
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 11:36:31] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:36:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/13 11:36:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 127.0.0.1
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/13 11:36:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 127.0.0.1
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 11:37:21] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:59:49] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/13 11:59:49] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 127.0.0.1
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/13 11:59:59] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/digoroacco from 127.0.0.1
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoroacco' against /^\/$/ (generated from '/')
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/digoroacco' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 12:00:20] [WARN] Side7::User::show_profile 98 - Could not find user >digoroacco< in database.
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 127.0.0.1
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 12:00:20] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/jinx from 127.0.0.1
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/jinx' against /^\/$/ (generated from '/')
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/jinx' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 12:00:54] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/mad_cat from 127.0.0.1
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/mad_cat' against /^\/$/ (generated from '/')
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/mad_cat' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 16:16:54] [WARN] Side7::User::show_profile 98 - Could not find user >mad_cat< in database.
+[2014/03/13 16:16:54] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/13 16:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/bigpappasmurf from 127.0.0.1
+[2014/03/13 16:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/bigpappasmurf' against /^\/$/ (generated from '/')
+[2014/03/13 16:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/bigpappasmurf' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 16:43:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 16:43:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 16:43:04] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furrball from 192.168.2.117
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/$/ (generated from '/')
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/13 20:08:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/badkarma from 192.168.2.117
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/$/ (generated from '/')
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/badkarma' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/13 20:08:58] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
