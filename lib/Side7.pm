@@ -20,7 +20,7 @@ get '/login' => sub
 };
 
 # Login user action
-put '/login' => sub
+post '/login' => sub
 {
 };
 
