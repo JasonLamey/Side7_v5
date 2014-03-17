@@ -19,7 +19,8 @@ use Rose::DB::Object::QueryBuilder qw( build_select );
 
 use Data::Dumper;
 use Carp qw( confess );
-#use Side7::Globals;
+
+use Side7::Globals;
 
 # Use a private registry for this class
 Side7::DB->use_private_registry;
@@ -63,7 +64,7 @@ Side7::DB->default_type( 'main' );
 
 #our $DB = Side7::DB->new();
 
-=head1 METHODS
+=head1 FUNCTIONS
 
 =head2 get_db()
 
@@ -130,8 +131,13 @@ sub build_select
         return undef;
     }
 
+    $DB //= $Side7::Globals::DB;
+
+    my $dbh = $DB->dbh;
+
     my $sql = Rose::DB::Object::QueryBuilder::build_select (
         db              => $DB,
+        dbh             => $dbh,
         query_is_sql    => 1,
         select          => $select,
         tables          => $tables,
@@ -141,9 +147,7 @@ sub build_select
         limit           => $limit,
     );
 
-    # warn('SQL: '.$sql);
-
-    my $dbh = $DB->dbh;
+    #warn('SQL: '.$sql);
 
     my $sth = $dbh->prepare($sql);
     $sth->execute(@$bind);

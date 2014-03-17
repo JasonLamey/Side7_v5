@@ -33,6 +33,9 @@ sub new
     # General Globals
     $CONFIG->{'general'}->{'version'}           = '5.0';
 
+    # Page-related variables
+    $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} = 50;
+
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';
     $CONFIG->{'log4perl'}->{'LOGFILE'}          = 'Log::Log4perl::Appender::File';

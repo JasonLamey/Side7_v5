@@ -1,0 +1,13 @@
+<h1>Login</h1>
+<form action="[% login_url %]" method="post">
+    [% IF rd_url == '' %]
+    <input type="hidden" name="rd_url" value="/" />
+    [% ELSE %]
+    <input type="hidden" name="rd_url" value="[% rd_url %]" />
+    [% END %]
+    <label for="username">Username:</label>
+    <input type="text" size="30" maxlength="45" name="username" value="[% username %]" /><br />
+    <label for="password">Password:</label>
+    <input type="password" size="30" maxlength="45" name="password" /><br />
+    <input type="submit" value="Log In" />
+</form>

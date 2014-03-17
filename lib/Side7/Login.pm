@@ -3,17 +3,14 @@ package Side7::Login;
 use strict;
 use warnings;
 
-use Mojo::Base 'Mojolicious::Controller';
-
+use Dancer qw( :syntax );
 use Digest::SHA1 qw(sha1);
 use Digest::MD5;
-use Side7::User;
-use Side7::Globals;
-
-#our $LOGGER = $Side7::Logger::LOGGER;
-our $db = Side7::DB->new();
-
 use Data::Dumper;
+
+use Side7::Globals;
+use Side7::User;
+
 
 =pod
 
@@ -53,11 +50,15 @@ fails. Returns a Boolean.
 
 sub user_login
 {
-    my $self = shift;
+    my ( $args ) = @_;
 
-    my $username = $self->param('username') // '';
-    my $password = $self->param('password') // '';
-    my $rd_url   = $self->param('rd_url') // 'index';
+    my $username = delete $args->{'username'};
+    my $password = delete $args->{'password'};
+    my $rd_url   = delete $args->{'rd_url'};
+
+    $rd_url ||= '/'; # Set default redirect path to root, so we don't return to the login screen.
+
+    $LOGGER->warn( 'rd_url: >' . $rd_url . '<' );
 
     if 
     (
@@ -66,8 +67,8 @@ sub user_login
         $password eq ''
     )
     {
-        $self->flash( message => 'Either your username or password is incorrect. Please try again.' );
-        return $self->redirect_to( 'login_form' );
+        $LOGGER->warn('No username or password given from login_form.');
+        return undef;
     }
 
     my $sha1 = Digest::SHA1->new;
@@ -88,9 +89,8 @@ sub user_login
     {
         if ( $digest eq $user->{'password'} )
         {
-            $self->session( user => $user->id );
-            $self->flash( message => "Welcome back, $username!" );
-            return $self->redirect_to( $rd_url );
+            $LOGGER->debug( 'SHA1 matched.' );
+            return ( $rd_url, $user );
         }
 
         my $md5 = Digest::MD5->new;
@@ -103,9 +103,7 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            $self->session( user => $user->id );
-            $self->flash( message => "Welcome back, $username!" );
-            return $self->redirect_to( $rd_url );
+            return ( $rd_url, $user );
         }
 
         $crypt = crypt($password, 'S7');
@@ -116,9 +114,7 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            $self->session( user => $user->id );
-            $self->flash( message => "Welcome back, $username!" );
-            return $self->redirect_to( $rd_url );
+            return ( $rd_url, $user );
         }
 
         my $result = Side7::DB::build_select(
@@ -137,18 +133,15 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            $self->session( user => $user->id, username => $user->username );
-            $self->flash( message => "Welcome back, $username!" );
-            return $self->redirect_to( $rd_url );
+            return ( $rd_url, $user );
         }
 
-        $LOGGER->debug("Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<");
+        #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
     }
 
     # Failure
     $LOGGER->info("Login check failed: un - >$username<; pw - >$password<");
-    $self->flash( message => 'Either your username or password is incorrect. Please try again.' );
-    return $self->redirect_to( 'login_form' );
+    return undef;
 }
 
 =head2 is_logged_in
@@ -195,7 +188,48 @@ sub login_form
     $self->render;
 }
 
-=pod
+
+=head2 sanitize_redirect_url
+
+    my $rd_url = Side7::Login::sanitize_redirect_url(
+        { rd_url => params->{'rd_url'}, referer => request->referer, base_uri => request->base_uri }
+    );
+
+Cleans up any redirect URL intended to be passed to the login_form, and ensures that (a) it's not from outside
+the site, and (b) it's cleaned up and has the domain removed.
+
+=cut
+
+sub sanitize_redirect_url
+{
+
+    my ( $args ) = @_;
+
+    my $rd_url   = delete $args->{'rd_url'};
+    my $referer  = delete $args->{'referer'};
+    my $uri_base = delete $args->{'uri_base'};
+
+    my $redirect_url = '/';
+
+    if ( defined $rd_url )
+    {
+        # If we were passed an rd_url, let's strip off the domain name, regardless of what it is.
+        $rd_url =~ s/^https?:\/\/.*\/??/\//;
+        $redirect_url = $rd_url;
+    }
+    elsif ( defined $referer )
+    {
+        # Let's ensure that the referer is from within our domain. If it isn't we're not going to use it.
+        if ( $referer =~ m/$uri_base/ )
+        {
+            $referer =~ s/$uri_base//;
+            $redirect_url = $referer;
+        }
+    }
+
+    return $redirect_url;
+}
+
 
 =head1 COPYRIGHT
 

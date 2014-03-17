@@ -1,8 +1,9 @@
-<h1>User Profile for <% user.username %></h1>
+<h1>User Profile for [% user.username %]</h1>
 <ol>
-    <li>Full Name: <% user.account.full_name %></li>
-    <li>Created At: <% user.created_at %></li>
-    <li>Updated At: <% user.updated_at %></li>
-    <li>Birthday: <% user.account.birthday %></li>
+    <li>Full Name: [% user.account.full_name %]</li>
+    <li>Created At: [% user.created_at %]</li>
+    <li>Updated At: [% user.updated_at %]</li>
+    <li>Birthday: [% user.account.birthday %]</li>
+    <li>Sex: [% user.account.sex %]</li>
 </ol>
-<div><% user.account.biography %></div>
+<div>[% user.account.biography %]</div>

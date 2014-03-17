@@ -8,6 +8,7 @@ use Data::Dumper;
 
 use Side7::Globals;
 use Side7::DataValidation;
+use Side7::User::Manager;
 
 =pod
 
@@ -33,7 +34,7 @@ the user class is only used for login, log out, sign up, subscription and termin
 
 =head1 RELATIONSHIPS
 
-=over
+=over 4
 
 =item Side7::Account
 
@@ -70,123 +71,12 @@ __PACKAGE__->meta->setup
 
 =head1 METHODS
 
-=head2 show_profile()
-
-    $user->show_profile()
-
-=over
-
-=item Displays the public profile page for the given user
-
-=back
-
-=cut
-
-sub show_profile
-{
-    my ( %args ) = @_;
-
-    my $username = delete $args{'username'};
-
-    return undef if ( ! defined $username );
-
-    my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
-
-    if ( $loaded == 0 )
-    {
-        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
-    }
-
-    # User Found
-    if ( defined $user )
-    {
-        my $user_hash = $user->get_user_hash_for_template();
-        return $user_hash;
-    }
-
-    # User Not Found
-    # TODO: Redirect to a user_not_found template instead of 404?
-    return undef;
-}
-
-=pod
-
-=head2 get_user()
-
-    $user = Side7::User::get_user( $user_id )
-
-=over
-
-=item Returns the User object for the given user_id
-
-=back
-
-=cut
-
-sub get_user
-{
-    my ( $user_id ) = @_;
-
-    return undef if ( ! defined $user_id || $user_id !~ /^\d+$/ );
-
-    my $user = Side7::User->new( id => $user_id );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
-
-    if ( defined $user && $loaded != 0 )
-    {
-        return $user;
-    }
-
-    return undef;
-}
-
-
-=head2 check_user_existence()
-
-    $user = Side7::User::check_user_existence( $user_id )
-
-=over
-
-=item Checks to see if the user exists, and pushes the user to the stash and returns true if found. If not found, returns undef.
-
-=back
-
-=cut
-
-sub check_user_existence
-{
-    my $self = shift;
-
-    # Fetch the username out of the path
-    my $username = $self->req->url->path;
-    $username =~ s/^\/user\///i;
-    $username =~ s/\/.*$//i;
-    $LOGGER->debug( 'Username: ' . $username );
-
-    return undef if ! defined $username || $username eq '';
-
-    my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
-
-    if ( defined $user && $loaded != 0 )
-    {
-        $self->stash( user => $user );
-        $LOGGER->debug( 'Pre-stash: ' . Dumper( $self->stash( 'user' ) ) );
-        return 1;
-    }
-
-    # TODO: Redirect to index? Or User Not Found page?
-    return undef;
-}
-
 
 =head2 get_user_hash_for_template()
 
     $user_hash = $user->get_user_hash_for_template();
 
-=over
+=over 4
 
 =item Takes User object and converts it and its associated Account object (if embedded) into an easily accessible hash to pass to the templates.  Additionally, it formats the associated dates properly for output.
 
@@ -243,74 +133,14 @@ sub get_user_hash_for_template
 }
 
 
-=head2 signup_form()
-
-    Side7::User::signup_form();
-
-=over
-
-=item Displays the user signup form, as well as any form validation errors.
-
-=back
-
-=cut
-
-sub signup_form
-{
-
-    my $self = shift;
-
-    my $validation_rules = [
-        # Required fields
-        [ qw/username email_address password password_confirmation/ ] => is_required(),
-
-        # Password_confirmation should be teh same as password
-        password_confirmation => is_equal( 'password' ),
-
-        # Password should meet security standards
-        password => sub
-            {
-                my ( $value, $params ) = @_;
-                Side7::DataValidation::is_password_valid( $value ) ? undef : 'Invalid password';
-            },
-
-        # Fields should be of required lengths
-        username => sub
-            {
-                my ( $value, $params ) = @_;
-                Side7::DataValidation::has_valid_length( $value, 3, 45 ) ? undef : 'Invalid username length';
-            },
-
-        email_address => sub
-            {
-                my ( $value, $params ) = @_;
-                Side7::DataValidation::has_valid_length( $value, 8, 45 ) ? undef : 'Invalid email_address length';
-            },
-
-        password => sub
-            {
-                my ( $value, $params ) = @_;
-                Side7::DataValidation::has_valid_length( $value, 8, 45 ) ? undef : 'Invalid password length';
-            },
-    ];
-
-    if ( ! $self->do_validation( $validation_rules ) )
-    {
-        $self->render( 'signup_form' );
-        return 1;
-    } 
-    else
-    {
-        $self->redirect_to( 'do_signup' );
-    }
-}
+=head1 FUNCTIONS
 
 
 =head2 process_signup()
 
-    $user_hash = $user->process_signup();
+    $user_hash = Side7::User::process_signup();
 
-=over
+=over 4
 
 =item Takes user sign-up information and performs some safety checks with it.  Then it creates a User object, and saves it to the database.
 
@@ -378,8 +208,178 @@ sub confirm_new_user
 }
 
 
-=head1 FUNCTIONS
+=head2 check_user_existence()
 
+    $user = Side7::User::check_user_existence( $user_id )
+
+=over 4
+
+=item Checks to see if the user exists, and pushes the user to the stash and returns true if found. If not found, returns undef.
+
+=back
+
+=cut
+
+sub check_user_existence
+{
+    my $self = shift;
+
+    # Fetch the username out of the path
+    my $username = $self->req->url->path;
+    $username =~ s/^\/user\///i;
+    $username =~ s/\/.*$//i;
+    $LOGGER->debug( 'Username: ' . $username );
+
+    return undef if ! defined $username || $username eq '';
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( defined $user && $loaded != 0 )
+    {
+        $self->stash( user => $user );
+        $LOGGER->debug( 'Pre-stash: ' . Dumper( $self->stash( 'user' ) ) );
+        return 1;
+    }
+
+    # TODO: Redirect to index? Or User Not Found page?
+    return undef;
+}
+
+
+=head2 show_profile()
+
+    Side7::User::show_profile()
+
+=over 4
+
+=item Displays the public profile page for the given user
+
+=back
+
+=cut
+
+sub show_profile
+{
+    my ( %args ) = @_;
+
+    my $username = delete $args{'username'};
+
+    return undef if ( ! defined $username );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
+        return undef;
+    }
+
+    # User Found
+    if ( defined $user )
+    {
+        my $user_hash = $user->get_user_hash_for_template();
+        return $user_hash;
+    }
+
+    # User Not Found
+    # TODO: Redirect to a user_not_found template instead of 404?
+    return undef;
+}
+
+
+=head2 get_user()
+
+    $user = Side7::User::get_user( $user_id )
+
+=over 4
+
+=item Returns the User object for the given user_id
+
+=back
+
+=cut
+
+sub get_user
+{
+    my ( $user_id ) = @_;
+
+    return undef if ( ! defined $user_id || $user_id !~ /^\d+$/ );
+
+    my $user = Side7::User->new( id => $user_id );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( defined $user && $loaded != 0 )
+    {
+        return $user;
+    }
+
+    return undef;
+}
+
+=head2 get_users_for_directory()
+
+    my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
+
+=over 4
+
+=item Returns an array of User objects, based on the initial passed in and the page provided.
+
+=back
+
+Takes two optional variables:
+initial (the first symbol to match a name on), and page (the pagination segment to view).
+Initial defaults to 'a', page defaults to '1'.
+
+=cut
+
+sub get_users_for_directory
+{
+    my ( $args ) = @_;
+
+    my $initial = delete $args->{'initial'};
+    my $page    = delete $args->{'page'};
+
+    $initial //= 'a';
+    $page    //= 1;
+
+    my $initial_string = "$initial%";
+    my $op = 'like';
+    if ( $initial eq '_' )
+    {
+        $op = 'regexp';
+        $initial_string = '^[^A-Z0-9]';
+    }
+
+    my $offset = ( ( $page - 1 ) * $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} );
+
+    my $iterator = Side7::User::Manager->get_users_iterator(
+        query => 
+            [ 
+                username => { $op => "$initial_string" },
+            ],
+        sort_by => 'username ASC',
+        limit   => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
+        offset  => $offset,
+        require_objects => [ 'account' ],
+    );
+
+    my $users;
+    while (my $user = $iterator->next)
+    {
+        push @$users, 
+            {
+                id            => $user->id,
+                username      => $user->username,
+                full_name     => $user->account->full_name(),
+                join_date     => $user->account->get_formatted_created_at(),
+            };
+    }
+    $iterator->finish();
+
+    return $users;
+}
 
 
 =head1 COPYRIGHT

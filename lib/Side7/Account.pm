@@ -328,7 +328,7 @@ sub get_formatted_created_at
 {
     my ( $self, %args ) = @_;
 
-    my $date_format = delete $args{'date_format'} // '%A, %c';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 
     my $date = $self->created_at( format => $date_format ) // undef;
 

@@ -1,0 +1,33 @@
+<h1>User Directory</h1>
+
+[% FOREACH letter IN [ 'A'..'Z' ] %]
+<a href="/user_directory/[% letter %]">[% letter %]</a> &middot; 
+[% END %]
+[% FOREACH number IN [ 0..9 ] %]
+<a href="/user_directory/[% number %]">[% number %]</a> &middot; 
+[% END %]
+<a href="/user_directory/_">_</a> 
+
+<p>
+[% IF page < 2 %]
+&lt; Previous Page
+[% ELSE %]
+<a href="/user_directory/[% initial %]/[% page - 1 %]">&lt; Previous Page</a>
+[% END %]
+ | 
+[% IF page == 50 %]
+Next Page &gt; 
+[% ELSE %]
+<a href="/user_directory/[% initial %]/[% page + 1 %]">Next Page &gt;</a>
+[% END %]
+</p>
+
+[% IF users %]
+<ol>
+    [% FOREACH user IN users %]
+    <li><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]</li>
+    [% END %]
+</ol>
+[% ELSE %]
+<p>No users to display. How sad.</p>
+[% END %]
