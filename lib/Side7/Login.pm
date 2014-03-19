@@ -58,7 +58,7 @@ sub user_login
 
     $rd_url ||= '/'; # Set default redirect path to root, so we don't return to the login screen.
 
-    $LOGGER->warn( 'rd_url: >' . $rd_url . '<' );
+    $LOGGER->debug( 'rd_url: >' . $rd_url . '<' );
 
     if 
     (
@@ -71,12 +71,7 @@ sub user_login
         return undef;
     }
 
-    my $sha1 = Digest::SHA1->new;
-    $sha1->add( $password );
-    my $digest = $sha1->hexdigest // '';
-
-    my $md5_hex;
-    my $crypt;
+    my $digest = Side7::Utils::Crypt::sha1_hex_encode( $password );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1 );
@@ -93,9 +88,7 @@ sub user_login
             return ( $rd_url, $user );
         }
 
-        my $md5 = Digest::MD5->new;
-        $md5->add( $password );
-        $md5_hex = $md5->hexdigest;
+        my $md5_hex = Side7::Utils::Crypt::md5_hex_encode( $password );
 
         if ( $md5_hex eq $user->{'password'} )
         {
@@ -106,7 +99,7 @@ sub user_login
             return ( $rd_url, $user );
         }
 
-        $crypt = crypt($password, 'S7');
+        my $crypt = Side7::Utils::Crypt::old_side7_crypt( $password );
 
         if ( $crypt eq $user->{'password'} )
         {
@@ -117,15 +110,7 @@ sub user_login
             return ( $rd_url, $user );
         }
 
-        my $result = Side7::DB::build_select(
-            select  => 'OLD_PASSWORD(?) as db_pass',
-            tables  => [ 'users' ],
-            columns => { users => [ 'db_pass' ] },
-            query   => [],
-            bind    => [ $password ],
-            limit   => 1,
-        );
-        my $db_pass = $result->[0]->{'db_pass'} // 'undefined';
+        my $db_pass = Side7::Utils::Crypt::old_mysql_password( $password );
 
         if ( $db_pass eq $user->{'password'} )
         {
@@ -136,7 +121,7 @@ sub user_login
             return ( $rd_url, $user );
         }
 
-        #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
+        $LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
     }
 
     # Failure

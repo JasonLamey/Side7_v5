@@ -2,4 +2,5 @@
 *.log 
 nytprof.out
 log/**
+log/logger.log
 sessions/**

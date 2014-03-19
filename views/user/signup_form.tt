@@ -6,6 +6,9 @@
     <label for="email_address">E-mail Address (required): </label>
     <input type="text" name="email_address" size="30" maxlength="45" value="[% email_address %]" />
     <br />
+    <label for="birthday">Birthday (required): </label>
+    <input type="text" name="birthday" size="30" maxlength="10" value="[% birthday %]" /> <i>( MM/DD/YYYY )</i>
+    <br />
     <label for="password">Password (required): </label>
     <input type="password" name="password" size="30" maxlength="45" />
     <br />

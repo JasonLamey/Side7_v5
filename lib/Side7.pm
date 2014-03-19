@@ -110,18 +110,53 @@ post '/signup' => sub
         }
         $err_message =~ s/<br \/>$//;
         flash error => $err_message;
-        return template 'user/signup_form', { username => params->{'username'}, email_address => params->{'email_address'} };
+        return template 'user/signup_form', { 
+            username      => params->{'username'}, 
+            email_address => params->{'email_address'},
+            birthday      => params->{'birthday'},
+        };
     }
 
     # Attempt Save of new account.
+    my ( $created, $errors, $user ) = Side7::User::process_signup(
+        {
+            username      => params->{'username'},
+            email_address => params->{'email_address'},
+            password      => params->{'password'},
+            birthday      => params->{'birthday'},
+        }
+    );
 
-    # If all worked, log in the user.
+    # If all worked, log in the user. Otherwise, error out.
+    if ( $created < 1 )
+    {
+        my $err_message = 'You have errors that need to be corrected:<br />';
+        foreach my $msg ( @{$errors} )
+        {
+            $err_message .= $msg . '<br />';
+        }
+
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+        return template 'user/signup_form', { 
+            username      => params->{'username'}, 
+            email_address => params->{'email_address'},
+            birthday      => params->{'birthday'},
+        };
+    }
+
+    session logged_in => true;
+    session username  => $user->username;
+    session user_id   => $user->id;
+    flash message => 'Welcome to Side 7, ' . $user->username . '!';
+    return redirect '/'; # TODO: This should redirect the user to a welcome/what-to-do-next page.
+    
 };
 
 # Public-facing pages
 
 # User directory.
-get qr{/user_directory/?([A-Z0-9_]?)/?(\d*)/?} => sub
+get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 {
     my ( $initial, $page ) = splat;
 

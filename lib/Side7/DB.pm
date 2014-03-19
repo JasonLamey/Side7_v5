@@ -174,7 +174,7 @@ sub build_select
 
 =head1 COPYRIGHT
 
-Copyright (C) Side 7 1992 - 2013
+Copyright (C) Side 7 1992 - 2014
 
 =cut
 

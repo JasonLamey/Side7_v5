@@ -9,6 +9,7 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::DataValidation;
 use Side7::User::Manager;
+use Side7::Utils::Crypt;
 
 =pod
 
@@ -150,18 +151,24 @@ sub get_user_hash_for_template
 
 sub process_signup
 {
-    my $self = shift;
+    my ( $args ) = @_;
 
-    my @form_errors = [];
+    my $username      = delete $args->{'username'};
+    my $password      = delete $args->{'password'};
+    my $email_address = delete $args->{'email_address'};
+    my $birthday      = delete $args->{'birthday'};
+
+    my $saved = 0;
+    my @form_errors;
 
     # Error out if username or e-mail address already exists.
-    if ( defined $self->param( 'username' ) && $self->param( 'username' ) ne '' )
+    if ( defined $username && $username ne '' )
 	{
-	    my $user_check = Side7::User->new( username => $self->param( 'username' ) );
+	    my $user_check = Side7::User->new( username => $username );
 	    my $loaded = $user_check->load( speculative => 1 );
 	    if ( $loaded != 0 )
 	    {
-	        push @form_errors, 'A user with the Username >' . $self->param( 'username' ) . '< already exists.';
+	        push @form_errors, 'A user with the Username >' . $username . '< already exists.';
 	    }
         $LOGGER->debug( 'In Username exists check, found user: ' . (($loaded) ? 'yes' : 'no') );
     }
@@ -170,13 +177,13 @@ sub process_signup
         push @form_errors, 'A Username is required to create an account.';
     }
 
-    if ( defined $self->param( 'email_address' ) && $self->param( 'email_address' ) ne '' )
+    if ( defined $email_address && $email_address ne '' )
 	{
-        my $email_check = Side7::User->new( email_address => $self->param( 'email_address' ) );
+        my $email_check = Side7::User->new( email_address => $email_address );
         my $loaded = $email_check->load( speculative => 1 );
         if ( $loaded != 0 )
         {
-            push @form_errors, 'A user with the E-mail Address >' . $self->param( 'email_address' ) . '< already exists.';
+            push @form_errors, 'A user with the E-mail Address >' . $email_address . '< already exists.';
         }
         $LOGGER->debug( 'In Email_address exists check, found user: ' . (($loaded) ? 'yes' : 'no') );
     }
@@ -187,17 +194,39 @@ sub process_signup
 
     if ( scalar( @form_errors ) > 0 )
     {
-        $self->redirect_to( 'signup_form', form_errors => @form_errors );
+        return ( $saved, \@form_errors, undef );
     }
 
     # Save new account to database.
+    
+    my $user = Side7::User->new(
+        username      => $username,
+        password      => Side7::Utils::Crypt::sha1_hex_encode( $password ),
+        email_address => $email_address,
+        created_at    => 'now',
+        updated_at    => 'now',
+    );
+    $user->save;
 
-    # Log in the user.
+    my $account = Side7::Account->new(
+        user_id             => $user->id,
+        user_type_id        => 1, # Basic
+        user_status_id      => 1, # Pending
+        birthday            => $birthday,
+        birthday_visibility => 1, # Visible
+        country_id          => 288, # USA
+        is_public           => 0, # Nothing is public by default
+        created_at          => 'now',
+        updated_at          => 'now',
+    );
 
-    # Render account created page.
-    $self->render();
+    $user->account( $account );
 
-    return 1;
+    $user->save;
+
+    $saved = 1;
+
+    return ( $saved, \@form_errors, $user );
 }
 
 sub confirm_new_user
@@ -359,21 +388,27 @@ sub get_users_for_directory
             [ 
                 username => { $op => "$initial_string" },
             ],
+        with_objects => [ 'account' ],
         sort_by => 'username ASC',
         limit   => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
         offset  => $offset,
-        require_objects => [ 'account' ],
     );
 
     my $users;
     while (my $user = $iterator->next)
     {
+        my ( $full_name, $created_at ) = ( 'Undefined', 'Undefined' );
+        if ( defined $user->account )
+        {
+            $full_name  = $user->account->full_name();
+            $created_at = $user->account->get_formatted_created_at();
+        }
         push @$users, 
             {
                 id            => $user->id,
                 username      => $user->username,
-                full_name     => $user->account->full_name(),
-                join_date     => $user->account->get_formatted_created_at(),
+                full_name     => $full_name,
+                join_date     => $created_at,
             };
     }
     $iterator->finish();

@@ -30,7 +30,7 @@ information, and is the model to which all other models are related.
 	reinstate_on            :date
 	other_aliases           :string(255)
 	biography               :text
-        sex                     :enum             not null
+    sex                     :enum             not null
 	birthday                :date             not null
 	birthday_visibility     :integer          default(1), not null
 	webpage_name            :string(255)
