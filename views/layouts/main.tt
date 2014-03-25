@@ -3,7 +3,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>Side7</title>
+<title>Side7
+[% IF title %]
+ - [% title %]
+[% END %]
+</title>
 <link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
 
 <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
@@ -14,6 +18,9 @@
 
 </head>
 <body>
+    <div>
+        <a href="/user_directory">User Directory</a>
+    </div>
     <div class=metanav>
         [% IF not session.logged_in %]
         <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>

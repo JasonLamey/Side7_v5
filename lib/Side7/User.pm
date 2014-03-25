@@ -9,6 +9,7 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::DataValidation;
 use Side7::User::Manager;
+use Side7::UserContent::Image;
 use Side7::Utils::Crypt;
 
 =pod
@@ -64,6 +65,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to one',
             class      => 'Side7::Account',
+            column_map => { id => 'user_id' },
+        },
+        images =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Image',
             column_map => { id => 'user_id' },
         },
     ],
@@ -134,6 +141,26 @@ sub get_user_hash_for_template
 }
 
 
+=head2 get_image_count()
+
+    my $image_count = $user->get_image_count();
+
+Returns the total number of images for a given user.
+
+=cut
+
+sub get_image_count
+{
+    my ( $self ) = @_;
+
+    return Side7::UserContent::Image::Manager->get_images_count(
+        query => [
+            user_id => [ $self->id ],
+        ],
+    );
+}
+
+
 =head1 FUNCTIONS
 
 
@@ -153,10 +180,11 @@ sub process_signup
 {
     my ( $args ) = @_;
 
-    my $username      = delete $args->{'username'};
-    my $password      = delete $args->{'password'};
-    my $email_address = delete $args->{'email_address'};
-    my $birthday      = delete $args->{'birthday'};
+    my $username          = delete $args->{'username'};
+    my $password          = delete $args->{'password'};
+    my $email_address     = delete $args->{'email_address'};
+    my $birthday          = delete $args->{'birthday'};
+    my $confirmation_code = delete $args->{'confirmation_code'};
 
     my $saved = 0;
     my @form_errors;
@@ -214,8 +242,9 @@ sub process_signup
         user_status_id      => 1, # Pending
         birthday            => $birthday,
         birthday_visibility => 1, # Visible
-        country_id          => 288, # USA
+        country_id          => 228, # USA
         is_public           => 0, # Nothing is public by default
+        confirmation_code   => $confirmation_code, # Used for e-mail confirmation.
         created_at          => 'now',
         updated_at          => 'now',
     );
@@ -229,11 +258,48 @@ sub process_signup
     return ( $saved, \@form_errors, $user );
 }
 
+
+=head2 confirm_new_user()
+
+    my ( $confirmed, $error ) = Side7::User::confirm_new_user( $confirmation_code );
+
+=over 4
+
+=item Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's status from 'Pending' to 'Active'.
+
+=back
+
+=cut
+
 sub confirm_new_user
 {
-    my $self = shift;
+    my ( $confirmation_code ) = @_;
 
-    return 1;
+    my $confirmed = 0;
+
+    if ( ! defined $confirmation_code || length( $confirmation_code ) < 40 )
+    {
+        $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
+        return ( $confirmed, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
+    }
+
+    my $account = Side7::Account->new( confirmation_code => $confirmation_code );
+    my $loaded = $account->load( speculative => 1 );
+
+    if ( $loaded != 1 )
+    {
+        $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
+        return ( $confirmed, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
+    }
+
+    $account->user_status_id( 2 );
+    $account->confirmation_code( 'null' );
+    $account->updated_at( 'now' );
+    $account->save;
+
+    $confirmed = 1;
+
+    return ( $confirmed, undef );
 }
 
 
@@ -381,6 +447,13 @@ sub get_users_for_directory
         $initial_string = '^[^A-Z0-9]';
     }
 
+    my $user_count = Side7::User::Manager->get_users_count(
+        query =>
+            [
+                username => { $op => "$initial_string" },
+            ],
+    ); 
+
     my $offset = ( ( $page - 1 ) * $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} );
 
     my $iterator = Side7::User::Manager->get_users_iterator(
@@ -409,11 +482,12 @@ sub get_users_for_directory
                 username      => $user->username,
                 full_name     => $full_name,
                 join_date     => $created_at,
+                image_count   => $user->get_image_count(),
             };
     }
     $iterator->finish();
 
-    return $users;
+    return ( $users, $user_count );
 }
 
 

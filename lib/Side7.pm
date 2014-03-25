@@ -2,12 +2,16 @@ package Side7;
 use Dancer ':syntax';
 use Dancer::Plugin::FlashMessage;
 use Dancer::Plugin::ValidateTiny;
+use Dancer::Plugin::Email;
 use Data::Dumper;
 
 use Side7::Globals;
+use Side7::Login;
 use Side7::User;
 use Side7::Account;
-use Side7::Login;
+use Side7::UserContent::Image;
+use Side7::Utils::Crypt;
+use Side7::Utils::Pagination;
 
 our $VERSION = '0.1';
 
@@ -25,7 +29,9 @@ get '/' => sub
     template 'index';
 };
 
-# Login-related routes
+###################################
+### Login/Signup-related routes ###
+###################################
 
 # Login form page
 get '/login' => sub
@@ -117,17 +123,21 @@ post '/signup' => sub
         };
     }
 
+    my $confirmation_code = Side7::Utils::Crypt::sha1_hex_encode( params->{'username'} . time() );
+    my $confirmation_link = uri_for( "/confirm_user/$confirmation_code" );
+
     # Attempt Save of new account.
     my ( $created, $errors, $user ) = Side7::User::process_signup(
         {
-            username      => params->{'username'},
-            email_address => params->{'email_address'},
-            password      => params->{'password'},
-            birthday      => params->{'birthday'},
+            username          => params->{'username'},
+            email_address     => params->{'email_address'},
+            password          => params->{'password'},
+            birthday          => params->{'birthday'},
+            confirmation_code => $confirmation_code,
         }
     );
 
-    # If all worked, log in the user. Otherwise, error out.
+    # If all worked, e-mail the confirmation code, and log in the user. Otherwise, error out.
     if ( $created < 1 )
     {
         my $err_message = 'You have errors that need to be corrected:<br />';
@@ -145,6 +155,18 @@ post '/signup' => sub
         };
     }
 
+    my $email_body = template 'email/new_user_welcome', { 
+        user              => $user, 
+        confirmation_link => $confirmation_link 
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $user->email_address,
+        subject => "Welcome to Side 7, $user->username!",
+        body    => $email_body,
+    };
+
     session logged_in => true;
     session username  => $user->username;
     session user_id   => $user->id;
@@ -153,7 +175,36 @@ post '/signup' => sub
     
 };
 
-# Public-facing pages
+# New User Confirmation
+
+get '/confirm_user/?:confirmation_code?' => sub
+{
+    if ( ! defined params->{'confirmation_code'} )
+    {
+        return template 'user/confirmation_form';
+    }
+
+    my ( $confirmed, $error ) = Side7::User::confirm_new_user( params->{'confirmation_code'} );
+
+    if ( $confirmed == 0 )
+    {
+        flash error => $error;
+        return template 'user/confirmation_form', { confirmation_code => params->{'confirmation_code'} };
+    }
+
+    template 'user/confirmed_user';
+};
+
+# New User Post-redirect to Get
+
+post '/confirm_user' => sub
+{
+    return redirect '/confirm_user/' . params->{'confirmation_code'};
+};
+
+###########################
+### Public-facing pages ###
+###########################
 
 # User directory.
 get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
@@ -163,8 +214,16 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
     $initial ||= 'a';
     $page    ||= 1;
 
-    my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
-    template 'user/user_directory', { users => $users, initial => $initial, page => $page };
+    my ( $users, $user_count ) = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $user_count, page => $page } );
+
+    template 'user/user_directory', {
+                                        users      => $users, 
+                                        initial    => $initial, 
+                                        page       => $page, 
+                                        pagination => $pagination,
+                                    };
 };
 
 # User profile page.
@@ -182,8 +241,18 @@ get '/user/:username' => sub
     }
 };
 
-# Pages requiring logins
+# Image display page.
+get '/image/:image_id' => sub
+{
+    my $image_hash = Side7::UserContent::Image::show_image( image_id => params->{'image_id'} );
+};
 
-# Moderator/Admin pages
+##############################
+### Pages requiring logins ###
+##############################
+
+#############################
+### Moderator/Admin pages ###
+#############################
 
 true;

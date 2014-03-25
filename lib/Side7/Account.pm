@@ -47,6 +47,7 @@ information, and is the model to which all other models are related.
 	referred_by             :integer
 	subscription_expires_on :date
 	delete_on               :date
+	delete_on               :string(100)      default(NULL)
 	created_at              :datetime         not null
 	updated_at              :datetime         not null
 
@@ -117,10 +118,12 @@ __PACKAGE__->meta->setup
         referred_by    => { type => 'integer' },
         subscription_expires_on => { type => 'date' },
         delete_on      => { type => 'date' },
+        confirmation_code => { type => 'varchar', length => 100 },
         created_at     => { type => 'datetime', not_null => 1 },
         updated_at     => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
+    unique_key => 'confirmation_code',
     allow_inline_column_values => 1,
     foreign_keys =>
     [

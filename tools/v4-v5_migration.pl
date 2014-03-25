@@ -11,6 +11,7 @@ use Side7::DB;
 use Side7::User;
 use Side7::User::Country;
 use Side7::Account;
+use Side7::UserContent::Image;
 
 use Getopt::Std;
 use Carp;
@@ -77,6 +78,7 @@ sub migrate
 
     db_connect();
     migrate_users();
+    migrate_images();
     db_disconnect();
 }
 
@@ -172,7 +174,7 @@ sub migrate_users
         $user->save if ! defined $opt{D};
 
         # Various cleanup tasks
-        my $country_id = 288;
+        my $country_id = 228;
         my $country = ( defined $row->{country} ) ?
             Side7::User::Country->new( name => substr($row->{country},0,45) )->load(speculative => 1) :
             0;
@@ -221,12 +223,76 @@ sub migrate_users
     say "=> Migrated users & accounts: $user_count";
 }
 
+sub migrate_images
+{
+    if (defined $opt{V}) { say "=> Migrating Images."; }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if (defined $opt{V}) { say "\t=> Truncating v5 Image tables."; }
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+        foreach my $table ( qw/ images / )
+        {
+            $dbh5->do("TRUNCATE TABLE $table");
+        }
+    }
+
+    # Pull data from the v4 user_accounts table;
+    if (defined $opt{V}) { say "\t=> Pulling image records from v4 DB."; }
+    my $sth = $DB4->prepare(
+        'SELECT *, id as image_id
+         FROM images
+         ORDER BY images.id 
+        '
+    );
+    $sth->execute();
+
+    my $image_count = 0;
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+        my $privacy = 'Public';
+        if ( uc($row->{friends_only}) eq 'TRUE' )
+        {
+            $privacy = 'Friends Only';
+        }
+
+        my $archived = ( uc($row->{is_archived}) eq 'TRUE' ) ? 1 : 0;
+
+        # Create image and save it.
+        my $image = Side7::UserContent::Image->new(
+            id             => $row->{image_id},
+            user_id        => $row->{user_account_id},
+            filename       => $row->{filename},
+            title          => $row->{title},
+            filesize       => $row->{filesize},
+            dimensions     => $row->{dimensions},
+            category_id    => $row->{image_category_id},
+            rating_id      => $row->{image_rating_id},
+            stage_id       => $row->{image_class_id},
+            description    => $row->{description},
+            privacy        => $privacy,
+            is_archived    => $archived,
+            copyright_year => $row->{copyright_year},
+            created_at     => $row->{uploaded_date},
+            updated_at     => $row->{last_modified_date},
+        );
+        $image->save if ! defined $opt{D};
+
+        $image_count++;
+    }
+
+    $sth->finish();
+    say "=> migrated images: $image_count";
+}
+
 sub time_elapsed
 {
     my $elapsed = shift;
-    my $time = strftime("%H:%M:%S", gmtime($elapsed));
+    my $time = strftime("%h:%m:%s", gmtime($elapsed));
 
-    return "Elapsed migration time: $time";
+    return "elapsed migration time: $time";
 }
 
 sub HELP_MESSAGE

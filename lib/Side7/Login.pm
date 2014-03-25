@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use Dancer qw( :syntax );
-use Digest::SHA1 qw(sha1);
-use Digest::MD5;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -20,31 +18,20 @@ Side7::Login
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
-
-=head1 RELATIONSHIPS
-
-=over
-
-=item Class::Name
-
 This class manages the login/logout status of a user.
 
-=back
-
-=cut
-
-=head1 METHODS
+=head1 FUNCTIONS
 
 =head2 user_login
 
-    $is_logged_in = Side7::Login->user_login(
+    my ( $redirect_url, $user_object ) = Side7::Login::user_login(
                         username => $username,
                         password => $password,
+                        rd_url   => $rd_url,
                     );
 
 Logs a user in.  If the username and password are valid, the user is logged in. If not, the login
-fails. Returns a Boolean.
+fails. Returns a redirect path, and the user object if the user is logged in.
 
 =cut
 

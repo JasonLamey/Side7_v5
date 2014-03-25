@@ -5666,3 +5666,1352 @@ syntax error at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/bin/../vali
 [2014/03/19 13:20:25] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
 [2014/03/19 13:20:25] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
 [2014/03/19 13:20:25] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/19 16:47:53] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/19 16:47:53] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/19 16:47:53] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /signup from 127.0.0.1
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/$/ (generated from '/')
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/login$/ (generated from '/login')
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/19 16:48:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: POST /signup from 127.0.0.1
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/login$/ (generated from '/login')
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 16:49:03] [DEBUG] Side7::User::process_signup 173 - In Username exists check, found user: no
+[2014/03/19 16:49:03] [DEBUG] Side7::User::process_signup 188 - In Email_address exists check, found user: no
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:49:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 127.0.0.1
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 16:49:06] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 21:46:29] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/19 21:46:29] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/19 21:46:29] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /logout from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/$/ (generated from '/')
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/login$/ (generated from '/login')
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer.jpg from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/19 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /signup from 192.168.2.117
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/$/ (generated from '/')
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/login$/ (generated from '/login')
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:46:45] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 - request: POST /signup from 192.168.2.117
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/login$/ (generated from '/login')
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 21:47:11] [DEBUG] Side7::User::process_signup 174 - In Username exists check, found user: no
+[2014/03/19 21:47:11] [DEBUG] Side7::User::process_signup 189 - In Email_address exists check, found user: no
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:47:11] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 21:47:18] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:51:04] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/19 22:51:04] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer.jpg from 192.168.2.117
+[2014/03/19 22:51:12] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:29] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:33] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T from 192.168.2.117
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:40] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:41] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/2 from 192.168.2.117
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:45] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/3 from 192.168.2.117
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:46] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/4 from 192.168.2.117
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/$/ (generated from '/')
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/login$/ (generated from '/login')
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/19 22:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:48:10] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 10:48:10] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/20 10:48:10] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 127.0.0.1
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/20 10:48:26] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /signup from 127.0.0.1
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/$/ (generated from '/')
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:48:29] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 - request: POST /signup from 127.0.0.1
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /signup' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:49:22] [DEBUG] Side7::User::process_signup 174 - In Username exists check, found user: no
+[2014/03/20 10:49:22] [DEBUG] Side7::User::process_signup 189 - In Email_address exists check, found user: no
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:49:22] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:49:24] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user from 127.0.0.1
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/$/ (generated from '/')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/$/ (generated from '/')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 404
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/20 10:50:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/ from 127.0.0.1
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/$/ (generated from '/')
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 10:50:57] [ERROR] Dancer::Logger::Log4perl::error 49 - Supplied view (user/confirmation_form) not found -  does not exist
+[2014/03/20 10:50:57] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/20 10:54:48] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 10:54:48] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/20 10:54:48] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/ from 127.0.0.1
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/$/ (generated from '/')
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/20 10:54:50] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - request: POST /confirm_user from 127.0.0.1
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /confirm_user' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /confirm_user' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'POST /confirm_user' against /^\/confirm_user$/ (generated from '/confirm_user')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 10:56:13] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 crashed: Cannot load Side7::Account without a primary key (id) with a non-null value or another unique key with at least one non-null value.
+[2014/03/20 10:56:13] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/20 10:57:11] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 10:57:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/20 10:57:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/20 10:57:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:11:55] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 11:11:55] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/20 11:11:55] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/20 11:12:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 11:14:36] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 crashed: Can't locate object method "user_status_id" via package "0" (perhaps you forgot to load "0"?) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 267.
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/20 11:14:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/([^\/]+)?$/ (generated from '/confirm_user/:confirmation_code?')
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 11:16:32] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 crashed: Can't locate object method "user_status_id" via package "0" (perhaps you forgot to load "0"?) at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/User.pm line 267.
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/20 11:16:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:16:40] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 11:16:40] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/20 11:16:40] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93 from 127.0.0.1
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/$/ (generated from '/')
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/login$/ (generated from '/login')
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /confirm_user/46c9dc348ce505f999d7f91acd34551a83bd1c93' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: confirmation_code
+[2014/03/20 11:16:43] [ERROR] Side7::User::confirm_new_user 264 - No matching User account for confirmation code >46c9dc348ce505f999d7f91acd34551a83bd1c93< was found.
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 127.0.0.1
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 127.0.0.1
+[2014/03/20 11:16:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/20 20:37:59] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/20 20:38:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /logout from 192.168.2.117
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/$/ (generated from '/')
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/login$/ (generated from '/login')
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /logout' against /^\/logout$/ (generated from '/logout')
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 302
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer.jpg from 192.168.2.117
+[2014/03/20 21:15:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET / from 192.168.2.117
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /' against /^\/$/ (generated from '/')
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/20 21:19:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:14:11] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 20:14:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 20:14:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 20:48:03] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 20:48:03] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 20:48:03] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:48:14] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /favicon.ico from 192.168.2.117
+[2014/03/24 20:48:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:57:59] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 20:57:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 20:57:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 20:58:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 20:58:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:24:55] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 21:24:55] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 21:24:55] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:25:03] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user_directory crashed: Can't use string ("total_count") as a HASH ref while "strict refs" in use at /usr/home/badkarma/src/dancer_projects/side7v5/Side7/lib/Side7/Utils/Pagination.pm line 38, <DATA> line 16.
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/24 21:25:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:12] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 21:26:12] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 21:26:12] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory from 192.168.2.117
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 21:26:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/2 from 192.168.2.117
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/2' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/3 from 192.168.2.117
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:27] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/4 from 192.168.2.117
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:28] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/5 from 192.168.2.117
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:29] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/6 from 192.168.2.117
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/7 from 192.168.2.117
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:31] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/8 from 192.168.2.117
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/9 from 192.168.2.117
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/10 from 192.168.2.117
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/11 from 192.168.2.117
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:35] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/12 from 192.168.2.117
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/13 from 192.168.2.117
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/14 from 192.168.2.117
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:37] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/15 from 192.168.2.117
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:38] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/16 from 192.168.2.117
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /^\/$/ (generated from '/')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/16' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:26:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/15 from 192.168.2.117
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/15' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/14 from 192.168.2.117
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/14' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/13 from 192.168.2.117
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/13' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:01] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/12 from 192.168.2.117
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/12' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:02] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/11 from 192.168.2.117
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/11' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/10 from 192.168.2.117
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/10' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/9 from 192.168.2.117
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/9' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/8 from 192.168.2.117
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/8' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/7 from 192.168.2.117
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/7' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:04] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/6 from 192.168.2.117
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/6' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:05] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/5 from 192.168.2.117
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/5' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/4 from 192.168.2.117
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/a/3 from 192.168.2.117
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/a/3' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:07] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/Q from 192.168.2.117
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:08] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/P from 192.168.2.117
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:20] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/R from 192.168.2.117
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/_ from 192.168.2.117
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:28] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/9 from 192.168.2.117
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/8 from 192.168.2.117
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:39] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/A from 192.168.2.117
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/A' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:42] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/B from 192.168.2.117
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/C from 192.168.2.117
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/C' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:46] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/D from 192.168.2.117
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/D' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:49] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/E from 192.168.2.117
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/E' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:50] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/F from 192.168.2.117
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:52] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/G from 192.168.2.117
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/G' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:54] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/H from 192.168.2.117
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/H' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:55] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:56] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:56] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:56] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/I from 192.168.2.117
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/I' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:57] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/J from 192.168.2.117
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /^\/$/ (generated from '/')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/J' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:27:58] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:28:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:36:59] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 21:36:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 21:36:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 21:37:08] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 21:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 21:37:59] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:38:03] [ERROR] Dancer::Logger::Log4perl::error 49 - request to GET /user_directory/K crashed: Not an ARRAY reference at /usr/local/lib/perl5/site_perl/5.18/Rose/DB/Object/QueryBuilder.pm line 164, <DATA> line 16.
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 500
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/error.css from 192.168.2.117
+[2014/03/24 21:38:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:39:11] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/03/24 21:39:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/03/24 21:39:11] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 21:39:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/K from 192.168.2.117
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/$/ (generated from '/')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/K' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:39:59] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/03/24 21:40:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/F from 192.168.2.117
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/$/ (generated from '/')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:19] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/F/2 from 192.168.2.117
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /^\/$/ (generated from '/')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/2' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/F/3 from 192.168.2.117
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /^\/$/ (generated from '/')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/3' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:24] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/F/4 from 192.168.2.117
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /^\/$/ (generated from '/')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/F/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:26] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/Furrball from 192.168.2.117
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/$/ (generated from '/')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/Furrball' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:41:36] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/furloph from 192.168.2.117
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/$/ (generated from '/')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/furloph' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:42:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/freesilv from 192.168.2.117
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/$/ (generated from '/')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/freesilv' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:42:51] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/_ from 192.168.2.117
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/_' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/9 from 192.168.2.117
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/9' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:06] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/8 from 192.168.2.117
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/8' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:09] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/7 from 192.168.2.117
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/7' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:11] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/6 from 192.168.2.117
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/6' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:13] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/5 from 192.168.2.117
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/5' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:15] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/4 from 192.168.2.117
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:18] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/1 from 192.168.2.117
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/1' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:22] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/0 from 192.168.2.117
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/0' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:26] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:27] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:27] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:27] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/Y from 192.168.2.117
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Y' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:32] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user/yamaneko from 192.168.2.117
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/$/ (generated from '/')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user/yamaneko' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: username
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:43:47] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/W from 192.168.2.117
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /^\/$/ (generated from '/')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/W' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:44:02] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:44:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:03] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:03] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:44:12] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/R from 192.168.2.117
+[2014/03/24 21:44:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/$/ (generated from '/')
+[2014/03/24 21:44:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:44:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:44:12] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/R' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:13] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/Q from 192.168.2.117
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/$/ (generated from '/')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/Q' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:19] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/P from 192.168.2.117
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/$/ (generated from '/')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/P' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:44:26] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/M from 192.168.2.117
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /^\/$/ (generated from '/')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/M' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:45:24] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:45:25] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:45:25] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:45:25] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/L from 192.168.2.117
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/$/ (generated from '/')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:45:41] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:45:42] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:45:42] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:45:42] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/B from 192.168.2.117
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/$/ (generated from '/')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/B' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:23] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/L from 192.168.2.117
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/$/ (generated from '/')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/L' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:43] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T from 192.168.2.117
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/$/ (generated from '/')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:46:51] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:46:52] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:52] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:46:52] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/2 from 192.168.2.117
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/$/ (generated from '/')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/2' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:00] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/3 from 192.168.2.117
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/$/ (generated from '/')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/3' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:04] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /user_directory/T/4 from 192.168.2.117
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/$/ (generated from '/')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/login$/ (generated from '/login')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/logout$/ (generated from '/logout')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/signup$/ (generated from '/signup')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /user_directory/T/4' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/03/24 21:47:09] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 2
+[2014/03/24 21:47:10] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:10] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/03/24 21:47:10] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200

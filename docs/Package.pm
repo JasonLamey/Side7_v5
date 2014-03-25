@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
-use Mojo::Base 'Mojolicious::Controller';
 
 =pod
 

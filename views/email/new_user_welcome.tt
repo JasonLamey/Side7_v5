@@ -1,0 +1,17 @@
+<p>Welcome to Side 7, [% user.username %]!</p>
+
+<p>So, you've created your account on Side 7, <i>so now what?</i></p>
+
+<p><b>Step 1:</b> Go to <a href="[% confirmation_link %]">this page</a> to confirm your e-mail address. If your e-mail client doesn't support links in the e-mail, you can copy and paste the following URL into your browser:</p>
+
+<p><pre>[% confirmation_link %]</pre></p>
+
+<p>Confirming your account will activate your account so you can get down to having fun and sharing your creativity with the world!</p>
+
+<p><b>Step 2:</b> Head to your Account Management page, and fill in your details!</p>
+
+<p><b>Step 3:</b> Start uploading your works to share them!</p>
+
+<p>Again, welcome to the site! We're happy you're here!</p>
+
+<p>-- The Side 7 Staff</p>
