@@ -260,23 +260,43 @@ sub migrate_images
 
         my $archived = ( uc($row->{is_archived}) eq 'TRUE' ) ? 1 : 0;
 
+        my %rating_qualifiers = (
+            1 => 'D',
+            2 => 'L',
+            3 => 'N',
+            4 => 'S',
+            5 => 'V',
+            6 => 'O',
+        );
+
+        my $qualifiers;
+        if ( defined $row->{image_rating_qualifiers} && $row->{image_rating_qualifiers} !~ m/^\s*$/ )
+        {
+            $row->{image_rating_qualifiers} =~ s/\s+//g;
+            foreach my $key ( split(/,|/, $row->{image_rating_qualifiers}) )
+            {
+                $qualifiers .= $rating_qualifiers{$key};
+            }
+        }
+
         # Create image and save it.
         my $image = Side7::UserContent::Image->new(
-            id             => $row->{image_id},
-            user_id        => $row->{user_account_id},
-            filename       => $row->{filename},
-            title          => $row->{title},
-            filesize       => $row->{filesize},
-            dimensions     => $row->{dimensions},
-            category_id    => $row->{image_category_id},
-            rating_id      => $row->{image_rating_id},
-            stage_id       => $row->{image_class_id},
-            description    => $row->{description},
-            privacy        => $privacy,
-            is_archived    => $archived,
-            copyright_year => $row->{copyright_year},
-            created_at     => $row->{uploaded_date},
-            updated_at     => $row->{last_modified_date},
+            id                => $row->{image_id},
+            user_id           => $row->{user_account_id},
+            filename          => $row->{filename},
+            title             => $row->{title},
+            filesize          => $row->{filesize},
+            dimensions        => $row->{dimensions},
+            category_id       => $row->{image_category_id},
+            rating_id         => $row->{image_rating_id},
+            rating_qualifiers => ( $qualifiers // undef ),
+            stage_id          => $row->{image_class_id},
+            description       => $row->{description},
+            privacy           => $privacy,
+            is_archived       => $archived,
+            copyright_year    => $row->{copyright_year},
+            created_at        => $row->{uploaded_date},
+            updated_at        => $row->{last_modified_date},
         );
         $image->save if ! defined $opt{D};
 
@@ -290,7 +310,7 @@ sub migrate_images
 sub time_elapsed
 {
     my $elapsed = shift;
-    my $time = strftime("%h:%m:%s", gmtime($elapsed));
+    my $time = sprintf("%02d:%02d:%02d", (gmtime($elapsed))[2,1,0]);
 
     return "elapsed migration time: $time";
 }

@@ -11,6 +11,7 @@ use Side7::DataValidation;
 use Side7::User::Manager;
 use Side7::UserContent::Image;
 use Side7::Utils::Crypt;
+use Side7::Utils::File;
 
 =pod
 
@@ -161,6 +162,43 @@ sub get_image_count
 }
 
 
+=head2 get_content_directory()
+    my $user_content_directory = $user->get_content_directory();
+
+Returns a string for the User's content directory on the filesystem.
+
+=cut
+
+sub get_content_directory
+{
+    my ( $self ) = @_;
+
+    my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} . 
+            substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+
+    return $content_directory;
+}
+
+
+=head2 get_content_uri()
+    my $user_content_uri = $user->get_content_uri();
+
+Returns a string for the User's content URI. This is different from get_content_directory as it's relative
+to the domain, not to the filesystem.
+
+=cut
+
+sub get_content_uri
+{
+    my ( $self ) = @_;
+
+    my $content_uri = $CONFIG->{'general'}->{'base_gallery_uri'} .
+        substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+
+    return $content_uri;
+}
+
+
 =head1 FUNCTIONS
 
 
@@ -265,7 +303,7 @@ sub process_signup
 
 =over 4
 
-=item Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's status from 'Pending' to 'Active'.
+=item Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's status from 'Pending' to 'Active'. Creates the User's directory structure.
 
 =back
 
@@ -275,21 +313,19 @@ sub confirm_new_user
 {
     my ( $confirmation_code ) = @_;
 
-    my $confirmed = 0;
-
     if ( ! defined $confirmation_code || length( $confirmation_code ) < 40 )
     {
         $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
-        return ( $confirmed, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
+        return ( 0, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
     }
 
     my $account = Side7::Account->new( confirmation_code => $confirmation_code );
     my $loaded = $account->load( speculative => 1 );
 
-    if ( $loaded != 1 )
+    if ( ! defined $account || $loaded == 0 )
     {
         $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
-        return ( $confirmed, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
+        return ( 0, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
     }
 
     $account->user_status_id( 2 );
@@ -297,9 +333,14 @@ sub confirm_new_user
     $account->updated_at( 'now' );
     $account->save;
 
-    $confirmed = 1;
+    my ( $success, $error ) = Side7::Utils::File::create_user_directory( $account->user_id );
 
-    return ( $confirmed, undef );
+    if ( ! $success )
+    {
+        $LOGGER->error( "Could not create User directory for ID >$account->user_id<: $error" );
+    }
+
+    return ( 1, undef );
 }
 
 

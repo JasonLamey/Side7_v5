@@ -242,9 +242,18 @@ get '/user/:username' => sub
 };
 
 # Image display page.
-get '/image/:image_id' => sub
+get '/image/:image_id/?' => sub
 {
     my $image_hash = Side7::UserContent::Image::show_image( image_id => params->{'image_id'} );
+
+    if ( defined $image_hash )
+    {
+        template 'user_content/image_details', { image => $image_hash };
+    }
+    else
+    {
+        redirect '/';
+    }
 };
 
 ##############################

@@ -1,0 +1,25 @@
+<h1>Image Details for &gt;[% image.title %]&lt;</h1>
+
+<div>
+    <div>
+        <h2>Image Here</h2>
+        URI: [% image.user.user_uri %][% image.filename %]
+    </div>
+    <div style="width: 200px; float: left;">
+        Dimensions: [% image.dimensions %]<br />
+        Uploaded on: [% image.created_at %]<br />
+        Filesize: [% image.filesize %]<br />
+        Filepath: [% image.user.user_directory %]<br />
+        Owner: 
+        [% IF image.user.username %]
+        <a href="/user/[% image.user.username %]">[% image.user.username %]</a>
+        [% ELSE %]
+        Unknown
+        [% END %]<br />
+        Category: [% image.category_text %]<br />
+        Rating: [% image.rating_text %]<br />
+        Stage: [% image.stage_text %]
+    </div>
+
+    <div>[% image.description %]</div>
+</div>

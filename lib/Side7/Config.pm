@@ -31,7 +31,9 @@ sub new
     my $CONFIG = {};
 
     # General Globals
-    $CONFIG->{'general'}->{'version'}           = '5.0';
+    $CONFIG->{'general'}->{'version'}                = '5.0';
+    $CONFIG->{'general'}->{'base_gallery_directory'} = '/usr/galleries/';
+    $CONFIG->{'general'}->{'base_gallery_uri'}       = '/galleries/';
 
     # Page-related variables
     $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} = 50;
