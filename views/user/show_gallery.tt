@@ -1,0 +1,17 @@
+<h1>[% username %]'s Gallery</h1>
+[% IF NOT gallery %]
+<div>Nothing to show. Poke this user to get them to upload!</div>
+[% ELSE %]
+<p><a href="/user/[% username %]">[% username %]'s Profile</a></p>
+<ol type="1">
+    [% FOREACH content IN gallery %]
+    <li><a href="/[% content.content_type %]/[% content.id %]">
+    [% IF content.title %]
+    [% content.title %]
+    [% ELSE %]
+    Untitled
+    [% END %]
+    </a> - [% content.rating_text %] / [% content.category_text %] / [% content.stage_text %] - Uploaded [% content.created_at %]</li>
+    [% END %]
+</ol>
+[% END %]

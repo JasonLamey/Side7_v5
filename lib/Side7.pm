@@ -241,6 +241,18 @@ get '/user/:username' => sub
     }
 };
 
+# User Gallery page.
+get '/user/:username/gallery/?' => sub
+{
+    my $gallery = Side7::User::show_user_gallery( 
+        { 
+            username => params->{'username'},
+        }
+    );
+
+    template 'user/show_gallery', { username => params->{'username'}, gallery => $gallery };
+};
+
 # Image display page.
 get '/image/:image_id/?' => sub
 {

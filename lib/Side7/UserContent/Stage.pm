@@ -1,4 +1,4 @@
-package My::Package;
+package Side7::UserContent::Stage;
 
 use strict;
 use warnings;
@@ -9,23 +9,29 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 =head1 NAME
 
-My::Package
+Side7::UserContent::Stage
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
+This package represents a content's current stage of progress.
 
 =head1 SCHEMA INFORMATION
 
-    TODO: Define a table schema for this package.
+    Table name: stages
+
+    | id         | int(1) unsigned | NO   | PRI | NULL    | auto_increment |
+    | stage      | varchar(45)     | NO   |     | NULL    |                |
+    | priority   | int(1)          | NO   | MUL | NULL    |                |
+    | created_at | datetime        | NO   |     | NULL    |                |
+    | updated_at | datetime        | NO   |     | NULL    |                |
 
 =head1 RELATIONSHIPS
 
 =over
 
-=item Class::Name
+=item Side7::UserContent::Image
 
-TODO: Define the relationship type, and list the foreign key (FK).
+Stage is a lookup object referenced by Image using C<stage_id> to reference C<id>.
 
 =back
 
@@ -35,24 +41,23 @@ TODO: Define the relationship type, and list the foreign key (FK).
 
 __PACKAGE__->meta->setup
 (
-    table   => 'users',
+    table   => 'stages',
     columns => [ 
-        id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1 }, 
+        id            => { type => 'integer', length => 1,   not_null => 1 },
+        stage         => { type => 'varchar', length => 45,  not_null => 1 }, 
+        priority      => { type => 'integer', length => 1,   not_null => 1 }, 
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ 'username', 'email_address' ],
+    unique_key => [ 'stage', 'priority' ],
     relationships =>
     [
-        account =>
+        image =>
         {
-            type       => 'one to one',
-            class      => 'Side7::Account',
-            column_map => { id => 'user_id' },
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Image',
+            column_map => { id => 'stage_id' },
         },
     ],
 );

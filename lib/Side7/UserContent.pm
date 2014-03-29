@@ -3,61 +3,38 @@ package Side7::UserContent;
 use strict;
 use warnings;
 
-use base 'Side7::DB::Object'; # Only needed if this is a database object.
+use Data::Dumper;
+
+use Side7::Globals;
+use Side7::UserContent::Image;
+use Side7::UserContent::Image::Manager;
 
 =pod
 
 =head1 NAME
 
-My::Package
+Side7::UserContent
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
-
-=head1 SCHEMA INFORMATION
-
-    TODO: Define a table schema for this package.
+This package represents a User's uplaoded Content. It provides the methods
+and functions for manipulating the content of the displayed gallery, such as sort order, category views, etc.
 
 =head1 RELATIONSHIPS
 
 =over
 
-=item Class::Name
+=item Side7::UserContent::Image::Manager
 
-TODO: Define the relationship type, and list the foreign key (FK).
+Side7::Gallery will call Image objects for display.
 
 =back
 
 =cut
 
-# TODO: Define the appropriate package meta config for the DB Object.
-
-__PACKAGE__->meta->setup
-(
-    table   => 'users',
-    columns => [ 
-        id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1 }, 
-        updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
-    ],
-    pk_columns => 'id',
-    unique_key => [ 'username', 'email_address' ],
-    relationships =>
-    [
-        account =>
-        {
-            type       => 'one to one',
-            class      => 'Side7::Account',
-            column_map => { id => 'user_id' },
-        },
-    ],
-);
 
 =head1 METHODS
+
 
 =head2 method_name
 
@@ -67,11 +44,66 @@ TODO: Define what this method does, describing both input and output values and 
 
 =cut
 
-=pod
+
+=head1 FUNCTIONS
+
+
+=head2 get_gallery()
+
+    my $gallery = Side7::Gallery::get_gallery( 
+        $user_id, 
+        { 
+            TODO: DEFINE ADDITIONAL OPTIONAL ARGUMENTS
+        }
+    );
+
+Fetches the User Content associated to a User, sorted and arranged in a way that matches any passed in parameters.
+
+=cut
+
+sub get_gallery
+{
+    my ( $user_id, $args ) = @_;
+
+    if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
+    {
+        $LOGGER->warn( 'Invalid User ID >' . $user_id . '< when attempting to fetch gallery contents.' );
+        return \[];
+    }
+
+    my @results;
+
+    # Images
+    my $images = Side7::UserContent::Image::Manager->get_images
+    (
+        query =>
+        [
+            user_id => [ $user_id ],
+        ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+    );
+
+    foreach my $image ( @$images )
+    {
+        my $image_hash = $image->get_image_hash_for_template();
+        $image_hash->{'content_type'} = 'image';
+    
+        push @results, $image_hash;
+    }
+
+    # TODO: Literature
+
+    # TODO: Music
+
+    # TODO: Videos
+
+    return \@results;
+}
+
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2014
 
 =cut
 

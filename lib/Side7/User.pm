@@ -9,6 +9,7 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::DataValidation;
 use Side7::User::Manager;
+use Side7::UserContent;
 use Side7::UserContent::Image;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
@@ -163,6 +164,7 @@ sub get_image_count
 
 
 =head2 get_content_directory()
+
     my $user_content_directory = $user->get_content_directory();
 
 Returns a string for the User's content directory on the filesystem.
@@ -181,6 +183,7 @@ sub get_content_directory
 
 
 =head2 get_content_uri()
+
     my $user_content_uri = $user->get_content_uri();
 
 Returns a string for the User's content URI. This is different from get_content_directory as it's relative
@@ -196,6 +199,25 @@ sub get_content_uri
         substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
 
     return $content_uri;
+}
+
+
+=head2 get_gallery()
+
+    my $gallery = $user->get_gallery( { args } );
+
+Returns an arrayref of User Content belonging to the specified User.
+
+=cut
+
+sub get_gallery
+{
+    my ( $self, $args ) = @_;
+
+    # TODO: BUILD OUT ADDITIONAL, OPTIONAL ARGUMENTS TO CONTROL CONTENT.
+    my $gallery = Side7::UserContent::get_gallery( $self->id , {} );
+
+    return $gallery;
 }
 
 
@@ -425,9 +447,9 @@ sub show_profile
 }
 
 
-=head2 get_user()
+=head2 get_user_by_id()
 
-    $user = Side7::User::get_user( $user_id )
+    my $user = Side7::User::get_user_by_id( $user_id );
 
 =over 4
 
@@ -437,7 +459,7 @@ sub show_profile
 
 =cut
 
-sub get_user
+sub get_user_by_id
 {
     my ( $user_id ) = @_;
 
@@ -454,6 +476,37 @@ sub get_user
     return undef;
 }
 
+
+=head2 get_user_by_username()
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+=over 4
+
+=item Returns the User object for the given username
+
+=back
+
+=cut
+
+sub get_user_by_username
+{
+    my ( $username ) = @_;
+
+    return undef if ( ! defined $username );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( defined $user && $loaded != 0 )
+    {
+        return $user;
+    }
+
+    return undef;
+}
+
+
 =head2 get_users_for_directory()
 
     my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
@@ -465,8 +518,7 @@ sub get_user
 =back
 
 Takes two optional variables:
-initial (the first symbol to match a name on), and page (the pagination segment to view).
-Initial defaults to 'a', page defaults to '1'.
+C<initial> (the first symbol to match a name on), and C<page> (the pagination segment to view).  C<Initial> defaults to 'a', C<page> defaults to '1'.
 
 =cut
 
@@ -529,6 +581,45 @@ sub get_users_for_directory
     $iterator->finish();
 
     return ( $users, $user_count );
+}
+
+
+=head2 show_user_gallery()
+
+    my $gallery = Side7::User::show_user_gallery (
+        {
+            username = $username,
+            TODO: DEFINE ADDITIONAL OPTIONAL ARGS
+        }
+    );
+
+Returns an arrayref of Gallery content for a particular User.  Requires C<username> to be passed in.  Additional parameters control
+the Content that is returned.
+
+=cut
+
+sub show_user_gallery
+{
+    my ( $args ) = @_;
+
+    my $username = delete $args->{'username'};
+
+    if ( ! defined $username )
+    {
+        $LOGGER->warn( 'No username passed into show_user_gallery.' );
+        return \[];
+    }
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+    if ( ! defined $user )
+    {
+        return undef; # TODO: Need to redirect to invalid user error page.
+    }
+
+    my $gallery = $user->get_gallery();
+
+    return $gallery;
 }
 
 

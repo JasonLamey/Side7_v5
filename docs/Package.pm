@@ -17,7 +17,13 @@ TODO: Define a package description.
 
 =head1 SCHEMA INFORMATION
 
-    TODO: Define a table schema for this package.
+    Table name: stages
+     
+    | id         | int(1) unsigned | NO   | PRI | NULL    | auto_increment |
+    | stage      | varchar(45)     | NO   |     | NULL    |                |
+    | priority   | int(1)          | NO   | MUL | NULL    |                |
+    | created_at | datetime        | NO   |     | NULL    |                |
+    | updated_at | datetime        | NO   |     | NULL    |                |
 
 =head1 RELATIONSHIPS
 
@@ -41,7 +47,7 @@ __PACKAGE__->meta->setup
         username      => { type => 'varchar', length => 45,  not_null => 1 }, 
         email_address => { type => 'varchar', length => 255, not_null => 1 }, 
         password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1 }, 
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -59,19 +65,39 @@ __PACKAGE__->meta->setup
 
 =head1 METHODS
 
-=head2 method_name
 
-    $result = My::Package->method_name();
+=head2 method_name()
+
+    my $result = My::Package->method_name();
 
 TODO: Define what this method does, describing both input and output values and types.
 
 =cut
 
-=pod
+sub method_name
+{
+}
+
+
+=head1 FUNCTIONS
+
+
+=head2 function_name()
+
+    my $result = My::Package::function_name();
+
+TODO: Define what this method does, describing both input and output values and types.
+
+=cut
+
+sub function_name
+{
+}
+
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2014
 
 =cut
 

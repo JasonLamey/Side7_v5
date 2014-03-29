@@ -95,6 +95,16 @@ __PACKAGE__->meta->setup
             class       => 'Side7::UserContent::Rating',
             key_columns => { rating_id => 'id' },
         },
+        category =>
+        {
+            class       => 'Side7::UserContent::Category',
+            key_columns => { category_id => 'id' },
+        },
+        stage =>
+        {
+            class       => 'Side7::UserContent::Stage',
+            key_columns => { stage_id => 'id' },
+        },
     ],
 );
 
@@ -128,7 +138,11 @@ sub get_image_hash_for_template
     my $image_hash;
 
     # Image values
-    foreach my $key ( qw( title filename dimensions ) )
+    foreach my $key ( 
+        qw( id user_id filename title dimensions category_id rating_id 
+            rating_qualifiers stage_id privacy is_archived 
+            copyright_year )
+    )
     {
         $image_hash->{$key} = $self->$key;
     }
@@ -149,12 +163,15 @@ sub get_image_hash_for_template
 
     # User values:
     my $user = $self->{'user'};
-    foreach my $key ( qw( username ) )
+    if ( defined $user )
     {
-        $image_hash->{'user'}->{$key} = $user->$key;
+        foreach my $key ( qw( username ) )
+        {
+            $image_hash->{'user'}->{$key} = $user->$key;
+        }
+        $image_hash->{'user'}->{'user_directory'} = $user->get_content_directory();
+        $image_hash->{'user'}->{'user_uri'}       = $user->get_content_uri();
     }
-    $image_hash->{'user'}->{'user_directory'} = $user->get_content_directory();
-    $image_hash->{'user'}->{'user_uri'}       = $user->get_content_uri();
 
     # Rating values:
     my $rating = $self->{'rating'};
@@ -163,6 +180,14 @@ sub get_image_hash_for_template
     {
         $image_hash->{'rating_text'} .= ' (' . $self->rating_qualifiers . ')';
     }
+
+    # Category values:
+    my $category = $self->{'category'};
+    $image_hash->{'category_text'} = $category->category;
+
+    # Stage values:
+    my $stage = $self->{'stage'};
+    $image_hash->{'stage_text'} = $stage->stage;
 
     return $image_hash;
 }
@@ -192,7 +217,7 @@ sub show_image
     return undef if ( ! defined $image_id );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
-    my $loaded = $image->load( speculative => 1, with => [ 'user', 'rating' ] );
+    my $loaded = $image->load( speculative => 1, with => [ 'user', 'rating', 'category', 'stage' ] );
 
     if ( $loaded == 0 )
     {

@@ -1,4 +1,4 @@
-package My::Package;
+package Side7::UserContent::Category;
 
 use strict;
 use warnings;
@@ -9,23 +9,30 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 =head1 NAME
 
-My::Package
+Side7::UserContent::Category
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
+This package represents User Content categories for content to be tagged with.
 
 =head1 SCHEMA INFORMATION
 
-    TODO: Define a table schema for this package.
+    Table name: categories
+
+    | id           | int(5) unsigned | NO   | PRI | NULL    | auto_increment |
+    | category     | varchar(255)    | NO   |     | NULL    |                |
+    | priority     | int(5) unsigned | NO   | MUL | NULL    |                |
+    | content_type | varchar(255)    | NO   |     | NULL    |                |
+    | created_at   | datetime        | NO   |     | NULL    |                |
+    | updated_at   | datetime        | NO   |     | NULL    |                |
 
 =head1 RELATIONSHIPS
 
 =over
 
-=item Class::Name
+=item Side7::UserContent::Image
 
-TODO: Define the relationship type, and list the foreign key (FK).
+Called by Image, using C<category_id> as the FK in Image linking to the C<id> field.
 
 =back
 
@@ -35,24 +42,24 @@ TODO: Define the relationship type, and list the foreign key (FK).
 
 __PACKAGE__->meta->setup
 (
-    table   => 'users',
+    table   => 'categories',
     columns => [ 
-        id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1 }, 
+        id            => { type => 'integer', length => 5,   not_null => 1 },
+        category      => { type => 'varchar', length => 255, not_null => 1 }, 
+        priority      => { type => 'integer', length => 5,   not_null => 1 }, 
+        content_type  => { type => 'varchar', length => 255, not_null => 1 }, 
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ 'username', 'email_address' ],
+    unique_key => [ 'category', 'content_type' ],
     relationships =>
     [
-        account =>
+        image =>
         {
-            type       => 'one to one',
-            class      => 'Side7::Account',
-            column_map => { id => 'user_id' },
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Image',
+            column_map => { id => 'category_id' },
         },
     ],
 );
@@ -71,7 +78,7 @@ TODO: Define what this method does, describing both input and output values and 
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2014
 
 =cut
 

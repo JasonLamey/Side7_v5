@@ -5,7 +5,7 @@
         <h2>Image Here</h2>
         URI: [% image.user.user_uri %][% image.filename %]
     </div>
-    <div style="width: 200px; float: left;">
+    <div style="width: 300px; float: left; padding 5px; margin: 10px; border: 1px solid #000;">
         Dimensions: [% image.dimensions %]<br />
         Uploaded on: [% image.created_at %]<br />
         Filesize: [% image.filesize %]<br />
