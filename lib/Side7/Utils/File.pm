@@ -10,12 +10,14 @@ use Side7::Globals;
 
 Side7::Utils::File
 
+
 =head1 DESCRIPTION
 
 Provides file and file attribute-related tools
 
 
 =head1 FUNCTIONS
+
 
 =head2 get_formatted_filesize_from_bytes()
 
@@ -39,7 +41,7 @@ sub get_formatted_filesize_from_bytes
         $exp++;
     }
 
-    return wantarray ? ($size_in_bytes, $units->[$exp]) : sprintf("%d %s", $size_in_bytes, $units->[$exp]);
+    return wantarray ? ( $size_in_bytes, $units->[$exp] ) : sprintf( "%d %s", $size_in_bytes, $units->[$exp] );
 }
 
 

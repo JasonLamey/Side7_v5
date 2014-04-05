@@ -1,64 +1,21 @@
-package My::Package;
+package Side7::Utils;
 
 use strict;
 use warnings;
 
-use base 'Side7::DB::Object'; # Only needed if this is a database object.
-use Mojo::Base 'Mojolicious::Controller';
-
-=pod
 
 =head1 NAME
 
-My::Package
+Side7::Utils;
+
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
+General Utilities Library
 
-=head1 SCHEMA INFORMATION
-
-    TODO: Define a table schema for this package.
-
-=head1 RELATIONSHIPS
-
-=over
-
-=item Class::Name
-
-TODO: Define the relationship type, and list the foreign key (FK).
-
-=back
-
-=cut
-
-# TODO: Define the appropriate package meta config for the DB Object.
-
-__PACKAGE__->meta->setup
-(
-    table   => 'users',
-    columns => [ 
-        id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1 }, 
-        updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
-    ],
-    pk_columns => 'id',
-    unique_key => [ 'username', 'email_address' ],
-    relationships =>
-    [
-        account =>
-        {
-            type       => 'one to one',
-            class      => 'Side7::Account',
-            column_map => { id => 'user_id' },
-        },
-    ],
-);
 
 =head1 METHODS
+
 
 =head2 method_name
 
@@ -68,11 +25,22 @@ TODO: Define what this method does, describing both input and output values and 
 
 =cut
 
-=pod
+
+=head1 FUNCTIONS
+
+
+=head2 function_name
+
+    my $result = My::Package::function_name();
+
+TODO: Define what this function does, describing both input and output values and types.
+
+=cut
+
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2014
 
 =cut
 

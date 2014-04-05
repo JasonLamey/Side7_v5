@@ -6,6 +6,8 @@ use warnings;
 #use Side7::User;
 use base 'Side7::DB::Object';
 
+use Side7::Globals;
+
 =pod
 
 =head1 NAME
@@ -123,7 +125,7 @@ __PACKAGE__->meta->setup
         updated_at              => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => 'confirmation_code',
+    unique_key => [ 'user_id', 'confirmation_code' ],
     allow_inline_column_values => 1,
     foreign_keys =>
     [
@@ -273,7 +275,7 @@ sub get_formatted_subscription_expires_on
 {
     my ( $self, %args ) = @_;
 
-    my $date_format = delete $args{'date_format'} // '%A, %c';
+    my $date_format = delete $args{'date_format'} // '%B %d, %Y';
 
     my $date = $self->subscription_expires_on( format => $date_format ) // undef;
 
@@ -360,7 +362,7 @@ sub get_formatted_updated_at
 {
     my ( $self, %args ) = @_;
 
-    my $date_format = delete $args{'date_format'} // '%A, %c';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 
     my $date = $self->updated_at( format => $date_format ) // undef;
 

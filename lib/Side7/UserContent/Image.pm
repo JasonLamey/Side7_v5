@@ -198,11 +198,13 @@ sub get_image_hash_for_template
 
 =head2 show_image()
 
-    Side7::UserContent::Image::show_image()
+    my $image = Side7::UserContent::Image::show_image( image_id => $image_id );
 
 =over 4
 
-=item Displays the public display page for the given image
+=item Returns an image hash for the requested image, for the display page.
+
+=item Returns nothing if image_id doesn't exist.
 
 =back
 
@@ -214,28 +216,27 @@ sub show_image
 
     my $image_id = delete $args{'image_id'};
 
-    return undef if ( ! defined $image_id );
+    return if ( ! defined $image_id );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
     my $loaded = $image->load( speculative => 1, with => [ 'user', 'rating', 'category', 'stage' ] );
 
-    if ( $loaded == 0 )
+    # Image Not Found
+    if (
+        $loaded == 0
+        ||
+        ! defined $image
+    )
     {
         $LOGGER->warn( 'Could not find image with ID >' . $image_id . '< in database.' );
-        return undef;
+        return;
     }
 
     # Image Found
-    if ( defined $image )
-    {
-        my $image_hash = $image->get_image_hash_for_template();
-        return $image_hash;
-    }
-
-    # Image Not Found
-    # TODO: Redirect to a image_not_found template instead of 404?
-    return undef;
+    my $image_hash = $image->get_image_hash_for_template();
+    return $image_hash;
 }
+
 
 =head1 COPYRIGHT
 

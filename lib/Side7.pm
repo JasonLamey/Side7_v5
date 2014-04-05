@@ -242,6 +242,11 @@ get '/user/:username' => sub
 };
 
 # User Gallery page.
+get '/gallery/:username/?' => sub
+{
+    redirect '/user/' . params->{'username'} . '/gallery';
+};
+
 get '/user/:username/gallery/?' => sub
 {
     my $gallery = Side7::User::show_user_gallery( 
@@ -264,7 +269,7 @@ get '/image/:image_id/?' => sub
     }
     else
     {
-        redirect '/';
+        redirect '/'; # Redirect to Image Doesn't Exist Page?
     }
 };
 

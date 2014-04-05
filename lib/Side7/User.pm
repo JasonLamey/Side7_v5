@@ -221,6 +221,64 @@ sub get_gallery
 }
 
 
+=head2 get_formatted_created_at()
+
+    my $created_at = $user->get_formatted_created_at();
+
+=over
+
+=item Returns a string containing the C<created_at> field formatted appropriately for display.
+
+=back
+
+=cut
+
+sub get_formatted_created_at
+{
+    my ( $self, %args ) = @_;
+
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
+
+    my $date = $self->created_at( format => $date_format ) // undef;
+
+    if ( defined $date )
+    {
+        $date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
+    }
+
+    return $date;
+}
+
+
+=head2 get_formatted_updated_at()
+
+    my $updated_at = $user->get_formatted_updated_at();
+
+=over
+
+=item Returns a string containing the C<updated_at> field formatted appropriately for display.
+
+=back
+
+=cut
+
+sub get_formatted_updated_at
+{
+    my ( $self, %args ) = @_;
+
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
+
+    my $date = $self->updated_at( format => $date_format ) // undef;
+
+    if ( defined $date )
+    {
+        $date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
+    }
+
+    return $date;
+}
+
+
 =head1 FUNCTIONS
 
 

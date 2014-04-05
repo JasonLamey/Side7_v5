@@ -131,12 +131,14 @@ sub migrate_users
     # Pull data from the v4 user_accounts table;
     if (defined $opt{V}) { say "\t=> Pulling user accounts from v4 DB."; }
     my $sth = $DB4->prepare(
-        'SELECT ua.*, ua.id as user_id, uap.*
+       'SELECT ua.*, ua.id as user_id, uap.*, uas.*
         FROM user_accounts ua 
         INNER JOIN user_account_personal_info uap
             ON uap.user_account_id = ua.id
+        INNER JOIN user_account_system_info uas
+            ON uas.user_account_id = ua.id
         ORDER BY ua.id 
-        '
+       '
     );
     $sth->execute();
 
@@ -176,43 +178,76 @@ sub migrate_users
         # Various cleanup tasks
         my $country_id = 228;
         my $country = ( defined $row->{country} ) ?
-            Side7::User::Country->new( name => substr($row->{country},0,45) )->load(speculative => 1) :
+            Side7::User::Country->new( name => substr($row->{country},0,45) )->load( speculative => 1 ) :
             0;
         if ( ref $country eq 'Side7::User::Country' )
         {
             $country_id = $country->{id};
         }
+
         my $birthday = '0000-00-00';
         if (
-            defined $row->{birthdate} && 
-            $row->{birthdate} ne '0000-00-00' &&
+            defined $row->{birthdate}
+            && 
+            $row->{birthdate} ne '0000-00-00'
+            &&
             $row->{birthdate} !~ m/0{2,4}/)
         {
             $birthday = $row->{birthdate};
         }
 
+        my $expire_on;
+        if ( defined $row->{tier_3_expiration_date} )
+        {
+            $expire_on = $row->{tier_3_expiration_date};
+        }
+        elsif ( defined $row->{tier_2_expiration_date} )
+        {
+            $expire_on = $row->{tier_2_expiration_date};
+        }
+
+        my $is_public_hash = _get_is_public_hash( number => $row->{is_public} );
+        my $is_public;
+
+        # IS_PUBLIC IS A PACKED FIELD:
+        # Old values:
+        # @titles = ( 'email', 'icq', 'aim', 'msn', 'yahoo', 'googletalk', 'state', 'country' );
+        # New values:
+        my @titles = ( 'email', 'aim', 'yahoo', 'gtalk', 'skype', 'state', 'country' );
+        if ( defined $is_public_hash && ref( $is_public_hash ) eq 'HASH' )
+        {
+            foreach my $key ( @titles )
+            {
+                my $value = ( $key eq 'gtalk' ) ? $is_public_hash->{'googletalk'} : $is_public_hash->{$key};
+                $is_public .= "$key:". ( $value // 0 ) . ';';
+            }
+        }
+
         my $account = Side7::Account->new(
-            user_id        => $row->{user_id},
-            first_name     => $row->{first_name},
-            last_name      => $row->{last_name},
-            user_type_id   => $types{$row->{access_control_list_id}},
-            user_status_id => $statuses{$row->{status}},
-            other_aliases  => $row->{alias},
-            biography      => $row->{biography},
-            sex            => $row->{sex},
-            birthday       => $birthday,
-            birthday_visibility => $datevis{$row->{birthdate_mode}},
-            webpage_name   => $row->{webpage_name},
-            webpage_url    => $row->{webpage_url},
-            blog_name      => $row->{journal_name},
-            blog_url       => $row->{journal_url},
-            aim            => $row->{aim},
-            yahoo          => $row->{yahoo},
-            state          => $row->{state},
-            country_id     => $country_id,
-            is_public      => $row->{is_public},
-            created_at     => $row->{join_date},
-            updated_at     => $row->{modified_date},
+            user_id                 => $row->{user_id},
+            first_name              => $row->{first_name},
+            last_name               => $row->{last_name},
+            user_type_id            => $types{$row->{access_control_list_id}},
+            user_status_id          => $statuses{$row->{status}},
+            other_aliases           => $row->{alias},
+            biography               => $row->{biography},
+            sex                     => $row->{sex},
+            birthday                => $birthday,
+            birthday_visibility     => $datevis{$row->{birthdate_mode}},
+            webpage_name            => $row->{webpage_name},
+            webpage_url             => $row->{webpage_url},
+            blog_name               => $row->{journal_name},
+            blog_url                => $row->{journal_url},
+            aim                     => $row->{aim},
+            yahoo                   => $row->{yahoo},
+            gtalk                   => $row->{googletalk},
+            state                   => $row->{state},
+            country_id              => $country_id,
+            is_public               => $is_public,
+            referred_by             => $row->{referred_by},
+            subscription_expires_on => $expire_on,
+            created_at              => $row->{join_date},
+            updated_at              => $row->{modified_date},
         );
         $account->save if ! defined $opt{D};
 
@@ -328,4 +363,71 @@ sub VERSION_MESSAGE
     say "$0 version $VERSION";
     say '';
     exit;
+}
+
+# PRIVATE FUNCTIONS
+
+# This function comes from the v4 Library_side7.pm
+sub _get_is_public_hash
+{
+    my ( %params ) = @_;
+    my ( %is_public, $binary, @values, $value, @titles, $i );
+
+    $params{'number'}    ||= 0;
+    $params{'truefalse'} ||= 0;
+
+    # SET UP THE VARIABLE TITLES
+    @titles = ( 'email', 'icq', 'aim', 'msn', 'yahoo', 'googletalk', 'state', 'country' );
+
+    # IS_PUBLIC CONTAINS:  email, icq, aim, msn, yahoo, googletalk, state, country
+    $binary = _decimal_to_binary( number => $params{'number'} );
+
+    return undef if ! defined $binary;
+
+    # SPLIT THE BINARY NUMBER INTO DIGITS, AND PUT INTO AN ARRAY FOR SORTING
+    @values = split( //, $binary );
+
+    # REVERSE THE VALUES INTO THE PROPER ORDER
+    @values = reverse @values;
+
+    # PUSH THE VALUES INTO A HASH
+    $i = 0;
+    foreach $value ( @values ) {
+        if ( $params{'truefalse'} > 0 ) {
+            $value = _int_to_true_false( text => int( $value ) );
+        }
+
+        # BUILD THE HASH
+        $is_public{$titles[$i]} = $value;
+
+        $i++;
+    }
+
+    return ( \%is_public );
+}
+
+# This function comes from the v4 Library_global.pm
+sub _decimal_to_binary
+{
+    my ( %params ) = @_;
+    my ( $binary );
+
+    $params{'number'} || return undef;
+
+    $binary = sprintf( "%b", $params{'number'} );
+
+    return( $binary );
+}
+
+# This function comes from the v4 Library_global.pm
+sub _int_to_true_false
+{
+    my ( %params ) = @_;
+
+    if ( int( $params{'text'} ) == 1 )
+    {
+        return( 'true' );
+    } else {
+        return( 'false' );
+    }
 }

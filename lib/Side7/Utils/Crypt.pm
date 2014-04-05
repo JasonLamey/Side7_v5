@@ -24,6 +24,7 @@ This package has the appropriate functionality for hashing passwords, codes, and
 
 =head1 FUNCTIONS
 
+
 =head2 sha1_hex_encode
 
     $sha1_encoded_text = Side7::Utils::Crypt::sha1_hex_encode( $text );

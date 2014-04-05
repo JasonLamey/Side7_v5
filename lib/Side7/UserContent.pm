@@ -50,9 +50,10 @@ TODO: Define what this method does, describing both input and output values and 
 
 =head2 get_gallery()
 
-    my $gallery = Side7::Gallery::get_gallery( 
+    my $gallery = Side7::UserContent::get_gallery( 
         $user_id, 
         { 
+            sort_by => 'created_at DESC',
             TODO: DEFINE ADDITIONAL OPTIONAL ARGUMENTS
         }
     );
@@ -65,10 +66,12 @@ sub get_gallery
 {
     my ( $user_id, $args ) = @_;
 
+    my $sort_by = delete $args->{'sort_by'} // 'created_at DESC';
+
     if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
     {
         $LOGGER->warn( 'Invalid User ID >' . $user_id . '< when attempting to fetch gallery contents.' );
-        return \[];
+        return [];
     }
 
     my @results;
@@ -81,6 +84,7 @@ sub get_gallery
             user_id => [ $user_id ],
         ],
         with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => $sort_by,
     );
 
     foreach my $image ( @$images )

@@ -130,41 +130,11 @@ sub is_logged_in
     return $self->session( 'user' ) || ! $self->redirect_to( 'index' );
 }
 
-=head2 logout
-
-    $logout = Side7::Login->logout();
-
-Destroys the user's session cookie, and logs the user out. Redirects to the index page.
-
-=cut
-
-sub logout 
-{
-    my $self = shift;
-    $self->session( expires => 1 );
-    $self->redirect_to( 'index' );
-}
-
-=head2 login_form
-
-    $output = Side7::Login->login_form();
-
-Presents the user with a login form and any error messaging.
-
-=cut
-
-sub login_form
-{
-    my $self = shift;
-
-    $self->render;
-}
-
 
 =head2 sanitize_redirect_url
 
     my $rd_url = Side7::Login::sanitize_redirect_url(
-        { rd_url => params->{'rd_url'}, referer => request->referer, base_uri => request->base_uri }
+        { rd_url => params->{'rd_url'}, referer => request->referer, uri_base => request->uri_base }
     );
 
 Cleans up any redirect URL intended to be passed to the login_form, and ensures that (a) it's not from outside
@@ -186,7 +156,7 @@ sub sanitize_redirect_url
     if ( defined $rd_url )
     {
         # If we were passed an rd_url, let's strip off the domain name, regardless of what it is.
-        $rd_url =~ s/^https?:\/\/.*\/??/\//;
+        $rd_url =~ s|^https?://[^/]+/?\??|/|;
         $redirect_url = $rd_url;
     }
     elsif ( defined $referer )
