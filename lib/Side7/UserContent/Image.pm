@@ -5,8 +5,12 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Data::Dumper;
+
 use Side7::Globals;
-use Side7::UserContent::Image::Manager;
+use Side7::UserContent::Image::DailyView::Manager;
+use Side7::UserContent::Image::DetailedView::Manager;
+use Side7::UserContent::Comment;
 use Side7::Utils::File;
 use Side7::Utils::Text;
 
@@ -60,7 +64,7 @@ __PACKAGE__->meta->setup
 (
     table   => 'images',
     columns => [ 
-        id                => { type => 'integer',                not_null => 1 },
+        id                => { type => 'serial', primary_key => 1, not_null => 1 },
         user_id           => { type => 'integer', length => 8,   not_null => 1 }, 
         filename          => { type => 'varchar', length => 255, not_null => 1 }, 
         title             => { type => 'varchar', length => 255, not_null => 1 }, 
@@ -72,8 +76,8 @@ __PACKAGE__->meta->setup
         stage_id          => { type => 'integer', length => 5,   not_null => 1 }, 
         description       => { type => 'text',                                  default => 'null' }, 
         privacy           => { 
-                               type => 'enum',
-                               values => [ 'Public', 'Friends Only', 'Private' ],
+                               type    => 'enum',
+                               values  => [ 'Public', 'Friends Only', 'Private' ],
                                default => 'Public'
         },
         is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 }, 
@@ -82,7 +86,7 @@ __PACKAGE__->meta->setup
         updated_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ 'filename', 'title' ],
+    unique_key => [ [ 'user_id' ], [ 'filename' ], [ 'title' ] ],
     foreign_keys =>
     [
         user =>
@@ -104,6 +108,33 @@ __PACKAGE__->meta->setup
         {
             class       => 'Side7::UserContent::Stage',
             key_columns => { stage_id => 'id' },
+        },
+    ],
+    relationships =>
+    [
+        daily_views =>
+        {
+            class       => 'Side7::UserContent::Image::DailyView',
+            key_columns => { id => 'image_id' },
+            type        => 'one to many',
+        },
+        detailed_views =>
+        {
+            class       => 'Side7::UserContent::Image::DetailedView',
+            key_columns => { id => 'image_id' },
+            type        => 'one to many',
+        },
+        properties =>
+        {
+            class       => 'Side7::UserContent::Image::Property',
+            key_columns => { id => 'image_id' },
+            type        => 'one to many',
+        },
+        comment_threads =>
+        {
+            class       => 'Side7::UserContent::CommentThread',
+            key_columns => { id => 'content_id' },
+            type        => 'one to many',
         },
     ],
 );
@@ -134,6 +165,8 @@ TODO: Define what this method does, describing both input and output values and 
 sub get_image_hash_for_template
 {
     my $self = shift;
+
+    $LOGGER->debug( 'Img object: ' . Dumper( $self ) );
 
     my $image_hash;
 
@@ -189,6 +222,8 @@ sub get_image_hash_for_template
     my $stage = $self->{'stage'};
     $image_hash->{'stage_text'} = $stage->stage;
 
+    # Comment Threads
+
     return $image_hash;
 }
 
@@ -215,11 +250,23 @@ sub show_image
     my ( %args ) = @_;
 
     my $image_id = delete $args{'image_id'};
+    my $request  = delete $args{'request'};
+    my $session  = delete $args{'session'};
 
     return if ( ! defined $image_id );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
-    my $loaded = $image->load( speculative => 1, with => [ 'user', 'rating', 'category', 'stage' ] );
+    my $loaded = $image->load( 
+                                speculative => 1, 
+                                with => 
+                                [ 
+                                    'user',
+                                    'rating',
+                                    'category',
+                                    'stage',
+                                    'properties',
+                                ]
+    );
 
     # Image Not Found
     if (
@@ -234,6 +281,38 @@ sub show_image
 
     # Image Found
     my $image_hash = $image->get_image_hash_for_template();
+
+    # Fetch Image Comments
+    my $image_comments = Side7::UserContent::CommentThread::get_all_comments_for_content( content_type => 'image', content_id => $image_id );
+    $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
+
+    # Add a new view
+    ### Increase Daily View counter.
+    my $daily_updated = Side7::UserContent::Image::DailyView::update_daily_views( image_id => $image_id );
+
+    if ( ! defined $daily_updated )
+    {
+        $LOGGER->warn( 'Could not update daily view count for Image ID: >' . $image_id . '<.' );
+    }
+
+    ### Insert new Detailed View record, including date, IP info, user agent info, and referrer info.
+    my $detailed_updated = Side7::UserContent::Image::DetailedView::add_detailed_view( 
+                            image_id => $image_id,
+                            request  => $request,
+                            session  => $session,
+    );
+
+    if ( ! defined $detailed_updated )
+    {
+        $LOGGER->warn( 'Could not update detailed view for Image ID: >' . $image_id . '<.' );
+    }
+
+    # Get total views
+    $image_hash->{'total_views'} = 
+        Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id );
+
+    $LOGGER->debug( 'Image Hash: ' . Dumper( $image_hash ) );
+
     return $image_hash;
 }
 

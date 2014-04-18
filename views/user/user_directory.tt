@@ -24,12 +24,11 @@ Next Page &gt;
 
 <p>Viewing [% pagination.first_item %] to [% pagination.last_item %] of [% pagination.total_count %] total.</p>
 
+[% thumbs = 'user/_user_directory_thumbs.tt' %]
 [% IF users %]
-<ol>
     [% FOREACH user IN users %]
-    <li><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]; Num Images: [% user.image_count %]</li>
+    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]; Num Images: [% user.image_count %] | [% PROCESS $thumbs %]</div>
     [% END %]
-</ol>
 [% ELSE %]
 <p>No users to display. How sad.</p>
 [% END %]

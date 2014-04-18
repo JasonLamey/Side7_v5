@@ -28,6 +28,6 @@ my $username = $image->user->username();
 is( $username, 'BadKarma', 'Can get User data from Image object.' );
 
 my $no_image = Side7::UserContent::Image->new( id => $BAD_IMAGE_ID );
-$loaded = $image->load( speculative => 1, with => [ 'user', 'rating', 'category', 'stage' ] );
+$loaded = $no_image->load( speculative => 1, with => [ 'user', 'rating', 'category', 'stage' ] );
 
-isnt( $loaded, 0, 'Did not load invalid Image object from database.' );
+is( $loaded, 0, 'Did not load invalid Image object from database.' );

@@ -44,6 +44,14 @@ the user class is only used for login, log out, sign up, subscription and termin
 
 One-to-one relationship. FK = user_id
 
+=item Side7::UserContent::Image
+
+One-to-many relationship. FK = image_id
+
+=item Side7::UserContent::Image::DetailedView
+
+One-to-many relationship. FK = image_id
+
 =back
 
 =cut
@@ -73,6 +81,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::UserContent::Image',
+            column_map => { id => 'user_id' },
+        },
+        image_detailed_views =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Image::DetailedView',
             column_map => { id => 'user_id' },
         },
     ],
@@ -492,16 +506,57 @@ sub show_profile
         return undef;
     }
 
-    # User Found
-    if ( defined $user )
+    # User Not Found
+    if ( ! defined $user )
     {
-        my $user_hash = $user->get_user_hash_for_template();
-        return $user_hash;
+        return undef;
+    }
+
+    # User Found
+    my $user_hash = $user->get_user_hash_for_template();
+
+    return $user_hash;
+}
+
+
+=head2 show_home
+
+    my ( $user ) = Side7::User::show_home()
+
+=over 4
+
+=item Displays the User's home page.
+
+=back
+
+=cut
+
+sub show_home
+{
+    my ( %args ) = @_;
+
+    my $username = delete $args{'username'};
+
+    return undef if ( ! defined $username );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
+        return undef;
     }
 
     # User Not Found
-    # TODO: Redirect to a user_not_found template instead of 404?
-    return undef;
+    if ( ! defined $user )
+    {
+        return undef;
+    }
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+    return ( $user_hash );
 }
 
 

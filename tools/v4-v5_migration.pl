@@ -12,19 +12,25 @@ use Side7::User;
 use Side7::User::Country;
 use Side7::Account;
 use Side7::UserContent::Image;
+use Side7::UserContent::Image::DailyView;
+use Side7::UserContent::Image::Property;
+use Side7::UserContent::CommentThread;
+use Side7::UserContent::Comment;
 
 use Getopt::Std;
 use Carp;
 use Data::Dumper;
 use DBI();
 use Time::HiRes qw( gettimeofday tv_interval );
-use POSIX qw( strftime );
+use DateTime;
 
 use vars qw(
     $VERSION %opt $has_opts $DB4 $DB5
 );
 
-$VERSION = 1.00;
+$|++; 
+
+$VERSION = 1.30;
 
 init();
 
@@ -43,19 +49,20 @@ if ( $opt{t} )
     say time_elapsed($elapsed);
 }
 
-exit;
+exit 0;
 
 sub init
 {
-    # VALID OPTIONS = 'vhDVet'
-    # [v]ersion, [h]elp, [D]ry-run, [V]erbose, [e]nvironment, [t]ime execution
-    getopts( 'vhtDVe:', \%opt ) or HELP_MESSAGE();
-    HELP_MESSAGE()    if $opt{h};
-    VERSION_MESSAGE() if $opt{v};
+    # VALID OPTIONS = 'vHDVetL'
+    # [v]ersion, [H]elp, [D]ry-run, [V]erbose, [e]nvironment, [t]ime execution, [L]arge tables
+    Getopt::Std::getopts( 'vHtDVe:L', \%opt ) or HELP_MESSAGE();
+
+    HELP_MESSAGE()    if defined $opt{H};
+    VERSION_MESSAGE() if defined $opt{v};
 
     # Are any options set?
     $has_opts = 0;
-    foreach my $key( qw( v h D V t e ) )
+    foreach my $key( qw( v H D V t e L ) )
     {
         if ( defined $opt{$key} )
         {
@@ -79,6 +86,10 @@ sub migrate
     db_connect();
     migrate_users();
     migrate_images();
+    migrate_image_views();
+    migrate_image_properties();
+    migrate_image_comments();
+    migrate_image_comment_threads();
     db_disconnect();
 }
 
@@ -91,7 +102,7 @@ sub db_connect
         $environment = 'production';
     }
 
-    if (defined $opt{V}) { say "I am attempting to connect to v5 >$environment< DB."; }
+    if ( defined $opt{V} ) { say "I am attempting to connect to v5 >$environment< DB."; }
 
     $DB5 = Side7::DB->new( domain => $environment ) || croak 'Could not connect to new DB';
 
@@ -100,36 +111,39 @@ sub db_connect
     my $v4_un   = 's7old';
     my $v4_pw   = 's7CPR';
 
-    $DB4 = DBI->connect("DBI:mysql:database=$v4_db;host=$v4_host", $v4_un, $v4_pw) 
+    $DB4 = DBI->connect( "DBI:mysql:database=$v4_db;host=$v4_host", $v4_un, $v4_pw ) 
         || croak 'Could not connect to old DB';
 
-    if (defined $opt{V}) { say 'Connected to both the v4 and v5 databases.'; }
+    if ( defined $opt{V} ) { say 'Connected to both the v4 and v5 databases.'; }
 }
 
 sub db_disconnect
 {
     $DB4->disconnect() || croak 'Could not disconnect from v4 database.';
 
-    if (defined $opt{V}) { say 'Disconnected to both the v4 and v5 databases.'; }
+    if ( defined $opt{V} ) { say 'Disconnected to both the v4 and v5 databases.'; }
 }
 
 sub migrate_users
 {
-    if (defined $opt{V}) { say "=> Migrating Users."; }
+    if ( defined $opt{V} ) { say "=> Migrating Users."; }
 
     # Cleanup from any previous migrations.
     if ( ! defined $opt{D} )
     {
-        if (defined $opt{V}) { say "\t=> Truncating v5 User and Account tables."; }
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 User and Account tables."; }
+
         my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
         foreach my $table ( qw/ accounts users / )
         {
-            $dbh5->do("TRUNCATE TABLE $table");
+            $dbh5->do( "TRUNCATE TABLE $table" );
         }
     }
 
     # Pull data from the v4 user_accounts table;
-    if (defined $opt{V}) { say "\t=> Pulling user accounts from v4 DB."; }
+    if ( defined $opt{V} ) { say "\t=> Pulling user accounts from v4 DB."; }
+
     my $sth = $DB4->prepare(
        'SELECT ua.*, ua.id as user_id, uap.*, uas.*
         FROM user_accounts ua 
@@ -137,10 +151,14 @@ sub migrate_users
             ON uap.user_account_id = ua.id
         INNER JOIN user_account_system_info uas
             ON uas.user_account_id = ua.id
-        ORDER BY ua.id 
-       '
+        ORDER BY ua.id'
     );
     $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
 
     my %statuses = (
         Pending   => 1,
@@ -163,6 +181,8 @@ sub migrate_users
     );
 
     my $user_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
     while ( my $row = $sth->fetchrow_hashref() )
     {
         my $user = Side7::User->new(
@@ -252,48 +272,60 @@ sub migrate_users
         $account->save if ! defined $opt{D};
 
         $user_count++;
+        print _progress_dot( total => $row_count, count => $user_count, interval => $interval ) if defined $opt{V};
     }
+    print "\n" if defined $opt{V};
 
     $sth->finish();
-    say "=> Migrated users & accounts: $user_count";
+    say "\t=> Migrated users & accounts: " . _commafy( $user_count ) if defined $opt{V};
 }
 
 sub migrate_images
 {
-    if (defined $opt{V}) { say "=> Migrating Images."; }
+    if ( defined $opt{V} ) { say "=> Migrating Images."; }
 
     # Cleanup from any previous migrations.
     if ( ! defined $opt{D} )
     {
-        if (defined $opt{V}) { say "\t=> Truncating v5 Image tables."; }
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Image tables."; }
+
         my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
         foreach my $table ( qw/ images / )
         {
-            $dbh5->do("TRUNCATE TABLE $table");
+            $dbh5->do( "TRUNCATE TABLE $table" );
         }
     }
 
     # Pull data from the v4 user_accounts table;
-    if (defined $opt{V}) { say "\t=> Pulling image records from v4 DB."; }
+    if ( defined $opt{V} ) { say "\t=> Pulling image records from v4 DB."; }
+
     my $sth = $DB4->prepare(
         'SELECT *, id as image_id
          FROM images
-         ORDER BY images.id 
-        '
+         ORDER BY images.id'
     );
     $sth->execute();
 
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
     my $image_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
     while ( my $row = $sth->fetchrow_hashref() )
     {
         # Some conversion and clean up.
         my $privacy = 'Public';
-        if ( uc($row->{friends_only}) eq 'TRUE' )
+
+        if ( uc( $row->{friends_only} ) eq 'TRUE' )
         {
             $privacy = 'Friends Only';
         }
 
-        my $archived = ( uc($row->{is_archived}) eq 'TRUE' ) ? 1 : 0;
+        my $archived = ( uc( $row->{is_archived} ) eq 'TRUE' ) ? 1 : 0;
 
         my %rating_qualifiers = (
             1 => 'D',
@@ -308,7 +340,7 @@ sub migrate_images
         if ( defined $row->{image_rating_qualifiers} && $row->{image_rating_qualifiers} !~ m/^\s*$/ )
         {
             $row->{image_rating_qualifiers} =~ s/\s+//g;
-            foreach my $key ( split(/,|/, $row->{image_rating_qualifiers}) )
+            foreach my $key ( split( /,|/, $row->{image_rating_qualifiers} ) )
             {
                 $qualifiers .= $rating_qualifiers{$key};
             }
@@ -336,10 +368,299 @@ sub migrate_images
         $image->save if ! defined $opt{D};
 
         $image_count++;
+
+        print _progress_dot( total => $row_count, count => $image_count, interval => $interval ) if defined $opt{V};
     }
+    print "\n" if defined $opt{V};
 
     $sth->finish();
-    say "=> migrated images: $image_count";
+    say "\t=> Migrated images: " . _commafy( $image_count ) if defined $opt{V};
+}
+
+sub migrate_image_views
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Views."; }
+
+    if ( ! defined $opt{L} )
+    {
+        say "\t=> Skipping large table migration.";
+        return;
+    }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Image View tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ image_daily_views image_detailed_views / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 user_accounts table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image views records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as image_view_id
+         FROM image_views
+         ORDER BY image_views.id'
+    ) || croak "\t=> Could not prepare DB4 SQL statement.\n";
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $image_view_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create image and save it.
+        my $image_view = Side7::UserContent::Image::DailyView->new(
+            id                => $row->{image_view_id},
+            image_id          => $row->{image_id},
+            views             => $row->{count},
+            date              => $row->{date},
+        );
+        $image_view->save if ! defined $opt{D};
+
+        $image_view_count++;
+        print _progress_dot( total => $row_count, count => $image_view_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated image views: " . _commafy( $image_view_count ) if defined $opt{V};
+}
+
+sub migrate_image_properties
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Properties."; }
+
+    if ( ! defined $opt{L} ) 
+    { 
+        say "\t=> Skipping large table migration.";
+        return;
+    }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Image Properties tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ image_properties / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 image_descriptions table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image description records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as image_description_id
+         FROM image_descriptions
+         ORDER BY image_descriptions.id'
+    ) || croak "\t=> Could not prepare DB4 SQL statement.\n";
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $image_property_count = 0;
+
+    my $datetime = DateTime->today();
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+        my %fields = (
+            additional_credits           => 'Additional Credits',
+            reference_source             => 'Reference Source',
+            for_sale                     => 'For Sale',
+            for_sale_contact_type        => 'Sale Contact Method',
+            for_sale_contact_information => 'Sale Contact Information',
+            allow_favoriting             => 'Allow Favoriting',
+            allow_bookmarking            => 'Allow Sharing',
+            allow_comments               => 'Allow Comments',
+            allow_anonymous_comments     => 'Allow Anonymous Comments',
+            show_comments                => 'Display Comments',
+            comment_type_desired         => 'Perfered Comment Type',
+        );
+
+        foreach my $key ( keys %fields )
+        {
+            next if ! defined $row->{$key} || $row->{$key} eq '';
+
+            # Create image property and save it.
+            my $image_property = Side7::UserContent::Image::Property->new(
+                image_id          => $row->{image_id},
+                name              => $fields{$key},
+                value             => $row->{$key},
+                created_at        => $datetime->ymd(),
+                updated_at        => $datetime->ymd(),
+            );
+            $image_property->save if ! defined $opt{D};
+
+            $image_property_count++;
+            print _progress_dot( total => $row_count, count => $image_property_count, interval => $interval ) if defined $opt{V};
+        }
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated image properties: " . _commafy( $image_property_count ) if defined $opt{V};
+}
+
+sub migrate_image_comments
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Comments."; }
+
+#    if ( ! defined $opt{L} ) 
+#    { 
+#        say "\t=> Skipping large table migration.";
+#        return;
+#    }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Image Comments tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ comments / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 image_descriptions table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image comment records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as image_comment_id
+         FROM image_comments
+         ORDER BY image_comments.id'
+    ) || croak "\t=> Could not prepare DB4 SQL statement.\n";
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $image_comment_count = 0;
+
+    my $datetime = DateTime->today();
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create image property and save it.
+        my $comment = Side7::UserContent::Comment->new(
+            id                => $row->{image_comment_id},
+            comment_thread_id => $row->{image_comment_thread_id},
+            user_id           => $row->{user_account_id},
+            anonymous_name    => $row->{anonymous_name},
+            comment           => $row->{comment},
+            private           => ( $row->{private} eq 'true' ) ? 1 : 0,
+            award             => ( defined $row->{rating} && $row->{rating} ne '' ) ? $row->{rating} : 'none',
+            owner_rating      => '',
+            ip_address        => $row->{ip_address},
+            created_at        => $row->{'timestamp'},
+            updated_at        => $datetime->ymd(),
+        );
+        $comment->save if ! defined $opt{D};
+
+        $image_comment_count++;
+        print _progress_dot( total => $row_count, count => $image_comment_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated image comments: " . _commafy( $image_comment_count ) if defined $opt{V};
+}
+
+sub migrate_image_comment_threads
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Comment Threads."; }
+
+#    if ( ! defined $opt{L} ) 
+#    { 
+#        say "\t=> Skipping large table migration.";
+#        return;
+#    }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Image Comment Threads tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ comment_threads / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 image_descriptions table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image comment thread records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as image_comment_thread_id
+         FROM image_comment_threads
+         ORDER BY image_comment_threads.id'
+    ) || croak "\t=> Could not prepare DB4 SQL statement.\n";
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $image_thread_count = 0;
+
+    my $datetime = DateTime->today();
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create image property and save it.
+        my $comment_thread = Side7::UserContent::CommentThread->new(
+            id            => $row->{'image_comment_thread_id'},
+            content_id    => $row->{image_id},
+            content_type  => 'image',
+            thread_status => 'open',
+            created_at    => $row->{'timestamp'},
+            updated_at    => $datetime->ymd(),
+        );
+        $comment_thread->save if ! defined $opt{D};
+
+        $image_thread_count++;
+        print _progress_dot( total => $row_count, count => $image_thread_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated image comment threads: " . _commafy( $image_thread_count ) if defined $opt{V};
 }
 
 sub time_elapsed
@@ -347,22 +668,26 @@ sub time_elapsed
     my $elapsed = shift;
     my $time = sprintf("%02d:%02d:%02d", (gmtime($elapsed))[2,1,0]);
 
-    return "elapsed migration time: $time";
+    return "Elapsed migration time: $time";
 }
 
 sub HELP_MESSAGE
 {
-    say "usage: perl $0 [-DehVv] [file ...]";
-    say '[v]ersion, [h]elp, [D]ry-run, [V]erbose, [e]nvironment, [t]ime execution';
-    say '';
-    exit;
+    say "usage: $0 [-vHDVtL] [-e <environment>]";
+    say '-v             Reports the script version.';
+    say '-H             Displays this help message.';
+    say '-D             Runs in dry-run mode, saving no data to the database.';
+    say '-V             Runs in verbose mode.';
+    say '-e <environ>   Establishes which environment to run the script; defaults to \'development\'';
+    say '-t             Reports elapsed execution time';
+    say '-L             Includes large tables in the migration (>500k rows).';
+    exit 0;
 }
 
 sub VERSION_MESSAGE
 {
     say "$0 version $VERSION";
-    say '';
-    exit;
+    exit 0;
 }
 
 # PRIVATE FUNCTIONS
@@ -430,4 +755,44 @@ sub _int_to_true_false
     } else {
         return( 'false' );
     }
+}
+
+sub _commafy
+{
+    my ( $text ) = @_;
+
+    my $rev_text = reverse $text;
+
+    $rev_text =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g; # Comma is here. Change to period for Europe.
+
+    return scalar reverse $rev_text;
+}
+
+sub _progress_dot
+{
+    my ( %args ) = @_;
+
+    my $total    = delete $args{'total'};
+    my $count    = delete $args{'count'};
+    my $interval = delete $args{'interval'};
+
+    return if ! defined $total || ! defined $count;
+
+    if (
+        defined $interval
+        &&
+        $count % $interval == 0
+    )
+    {
+        return ( $count > $total ) ? '+ ' : '. ';
+    }
+    elsif (
+        ! defined $interval
+        &&
+        $total % $count == 0 )
+    {
+        return '. ';
+    }
+
+    return;
 }

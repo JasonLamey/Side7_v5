@@ -1,0 +1,5 @@
+[% IF user.image_count == 0 || ! user.image_count %]
+  User has no Content to display.
+[% ELSE %]
+  Thumbs here
+[% END %]

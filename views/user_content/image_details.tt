@@ -18,8 +18,19 @@
         [% END %]<br />
         Category: [% image.category_text %]<br />
         Rating: [% image.rating_text %]<br />
-        Stage: [% image.stage_text %]
+        Stage: [% image.stage_text %]<br />
+        Views: [% image.total_views %]
     </div>
 
     <div>[% image.description %]</div>
+
+    [% FOREACH comment_thread IN image.comment_threads %]
+    <div>
+        [% FOREACH comment IN comment_thread.comments %]
+        <div>
+            [% comment.comment %]
+        </div>
+        [% END %]
+    </div>
+    [% END %]
 </div>

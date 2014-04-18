@@ -12,15 +12,19 @@ use Side7::User;
 
 =pod
 
+
 =head1 NAME
 
 Side7::Login
+
 
 =head1 DESCRIPTION
 
 This class manages the login/logout status of a user.
 
+
 =head1 FUNCTIONS
+
 
 =head2 user_login
 
@@ -116,20 +120,6 @@ sub user_login
     return undef;
 }
 
-=head2 is_logged_in
-
-    $is_logged_in = Side7::Login->is_logged_in();
-
-Returns the user's session cookie if the user is logged in.  Redirects to the index page otherwise.
-
-=cut
-
-sub is_logged_in
-{
-    my $self = shift;
-    return $self->session( 'user' ) || ! $self->redirect_to( 'index' );
-}
-
 
 =head2 sanitize_redirect_url
 
@@ -170,6 +160,31 @@ sub sanitize_redirect_url
     }
 
     return $redirect_url;
+}
+
+
+=head2 user_authorization()
+
+    my $is_authorized = Side7::Login::user_authorization( session_username => session('username'), username = params->{'username'} );
+
+Returns a boolean if the User is both logged in, and attempting to access a page that belongs to the User.
+Attempts to access pages that require being logged in, or accessing a page that doesn't belong to the User,
+will result in the return of a false value.
+
+=cut
+
+sub user_authorization
+{
+    my ( %args ) = @_;
+
+    my $session_username = delete $args{'session_username'};
+    my $username         = delete $args{'username'};
+
+    return 0 if ! defined $session_username;
+    return 0 if ! defined $username;
+    return 0 if ( uc( $session_username ) ne uc( $username ) );
+
+    return 1;
 }
 
 

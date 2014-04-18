@@ -3,6 +3,7 @@ use Dancer ':syntax';
 use Dancer::Plugin::FlashMessage;
 use Dancer::Plugin::ValidateTiny;
 use Dancer::Plugin::Email;
+use Dancer::Plugin::DirectoryView;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -18,15 +19,27 @@ our $VERSION = '0.1';
 hook 'before_template_render' => sub {
    my $tokens = shift;
        
-   $tokens->{'css_url'} = request->base . 'css/style.css';
-   $tokens->{'login_url'} = uri_for('/login');
-   $tokens->{'logout_url'} = uri_for('/logout');
-   $tokens->{'signup_url'} = uri_for('/signup');
+   $tokens->{'css_url'}    = request->base . 'css/style.css';
+   $tokens->{'login_url'}  = uri_for( '/login'  );
+   $tokens->{'logout_url'} = uri_for( '/logout' );
+   $tokens->{'signup_url'} = uri_for( '/signup' );
 };
 
 get '/' => sub 
 {
     template 'index';
+};
+
+# Call directory_view in a route handler
+get qr{/pod_manual/(.*)} => sub {
+    my ( $path ) = splat;
+
+    warn( 'Path: ' . $path );
+        
+    # Check if the user has permissions to access these files
+    return directory_view(root_dir => 'pod_manual',
+                          path     => $path,
+                          system_path => 1);
 };
 
 ###################################
@@ -74,6 +87,10 @@ post '/login' => sub
         session username  => $user->username;
         session user_id   => $user->id;
         flash message => 'Welcome back, ' . $user->username . '!';
+        if ( $logged_in_url eq '/' )
+        {
+            $logged_in_url = '/user/' . $user->username . '/home';
+        }
         return redirect $logged_in_url;
     }
 
@@ -261,7 +278,11 @@ get '/user/:username/gallery/?' => sub
 # Image display page.
 get '/image/:image_id/?' => sub
 {
-    my $image_hash = Side7::UserContent::Image::show_image( image_id => params->{'image_id'} );
+    my $image_hash = Side7::UserContent::Image::show_image( 
+                        image_id => params->{'image_id'}, 
+                        request  => request,
+                        session  => session,
+    );
 
     if ( defined $image_hash )
     {
@@ -276,6 +297,30 @@ get '/image/:image_id/?' => sub
 ##############################
 ### Pages requiring logins ###
 ##############################
+
+get '/user/:username/home/?' => sub
+{
+    my $authorized = Side7::Login::user_authorization( session_username => session('username'), username => params->{'username'} );
+
+    if ( ! session('username') )
+    {
+        return template 'login/login_form', { rd_url => '/user/' . params->{'username'} . '/home' };
+    }
+
+    if ( ! $authorized )
+    {
+        return redirect '/'; # Not an authorized page.
+    }
+
+    my ( $user_hash ) = Side7::User::show_home( username => params->{'username'} );
+
+    if ( ! defined $user_hash )
+    {
+        redirect '/';
+    }
+
+    template 'user/home', { user => $user_hash };
+};
 
 #############################
 ### Moderator/Admin pages ###

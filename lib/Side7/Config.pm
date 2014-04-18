@@ -32,7 +32,7 @@ sub new
 
     # General Globals
     $CONFIG->{'general'}->{'version'}                = '5.0';
-    $CONFIG->{'general'}->{'base_gallery_directory'} = '/usr/galleries/';
+    $CONFIG->{'general'}->{'base_gallery_directory'} = '/data/galleries/';
     $CONFIG->{'general'}->{'base_gallery_uri'}       = '/galleries/';
 
     # Page-related variables
