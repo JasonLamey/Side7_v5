@@ -1,6 +1,6 @@
 *.swp
 *.log 
 nytprof.out
-log/**
+log/
 log/logger.log
 sessions/**

@@ -113,15 +113,15 @@ sub add_detailed_view
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'};
-    my $request  = delete $args{'request'};
-    my $session  = delete $args{'session'};
+    my $image_id = delete $args{'image_id'} // undef;
+    my $request  = delete $args{'request'}  // {};
+    my $session  = delete $args{'session'}  // {};
 
     return if ! defined $image_id;
 
     my $datetime = DateTime->today();
 
-    my $ip_address = ( defined $request->{env}->{REMOTE_HOST} )
+    my $ip_address = ( defined $request->{env}->{REMOTE_HOST} && $request->{env}->{REMOTE_HOST} )
                         ? $request->{env}->{REMOTE_ADDR} . ':' . $request->{env}->{REMOTE_HOST}
                         : $request->{env}->{REMOTE_ADDR};
 

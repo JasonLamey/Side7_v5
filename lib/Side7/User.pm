@@ -98,13 +98,10 @@ __PACKAGE__->meta->setup
 
 =head2 get_user_hash_for_template()
 
-    $user_hash = $user->get_user_hash_for_template();
+Takes User object and converts it and its associated Account object (if embedded) into an easily accessible hash to pass to the 
+templates.  Additionally, it formats the associated dates properly for output.
 
-=over 4
-
-=item Takes User object and converts it and its associated Account object (if embedded) into an easily accessible hash to pass to the templates.  Additionally, it formats the associated dates properly for output.
-
-=back
+    my $user_hash = $user->get_user_hash_for_template();
 
 =cut
 
@@ -112,7 +109,7 @@ sub get_user_hash_for_template
 {
     my $self = shift;
 
-    my $user_hash;
+    my $user_hash // {};
 
     # User values
     foreach my $key ( qw( username email_address ) )
@@ -159,15 +156,21 @@ sub get_user_hash_for_template
 
 =head2 get_image_count()
 
-    my $image_count = $user->get_image_count();
-
 Returns the total number of images for a given user.
+
+    my $image_count = $user->get_image_count();
 
 =cut
 
 sub get_image_count
 {
     my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return 0;
+    }
 
     return Side7::UserContent::Image::Manager->get_images_count(
         query => [
@@ -179,15 +182,21 @@ sub get_image_count
 
 =head2 get_content_directory()
 
-    my $user_content_directory = $user->get_content_directory();
-
 Returns a string for the User's content directory on the filesystem.
+
+    my $user_content_directory = $user->get_content_directory();
 
 =cut
 
 sub get_content_directory
 {
     my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
 
     my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} . 
             substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
@@ -198,16 +207,22 @@ sub get_content_directory
 
 =head2 get_content_uri()
 
-    my $user_content_uri = $user->get_content_uri();
-
 Returns a string for the User's content URI. This is different from get_content_directory as it's relative
 to the domain, not to the filesystem.
+
+    my $user_content_uri = $user->get_content_uri();
 
 =cut
 
 sub get_content_uri
 {
     my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
 
     my $content_uri = $CONFIG->{'general'}->{'base_gallery_uri'} .
         substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
@@ -218,15 +233,29 @@ sub get_content_uri
 
 =head2 get_gallery()
 
-    my $gallery = $user->get_gallery( { args } );
-
 Returns an arrayref of User Content belonging to the specified User.
+
+Parameters:
+
+=over 4
+
+=item TODO: Additional paramters to be defined as functionality is created.
+
+=back
+
+    my $gallery = $user->get_gallery( { args } );
 
 =cut
 
 sub get_gallery
 {
     my ( $self, $args ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
 
     # TODO: BUILD OUT ADDITIONAL, OPTIONAL ARGUMENTS TO CONTROL CONTENT.
     my $gallery = Side7::UserContent::get_gallery( $self->id , {} );
@@ -237,19 +266,29 @@ sub get_gallery
 
 =head2 get_formatted_created_at()
 
-    my $created_at = $user->get_formatted_created_at();
+Returns a string containing the C<created_at> field formatted appropriately for display.
+
+Parameters:
 
 =over
 
-=item Returns a string containing the C<created_at> field formatted appropriately for display.
+=item date_format: A DateTime compatible format for how the date should be displayed. Defaults to '%A, %d %B, %Y'
 
 =back
+
+    my $created_at = $user->get_formatted_created_at( date_format => $date_format );
 
 =cut
 
 sub get_formatted_created_at
 {
     my ( $self, %args ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 
@@ -266,19 +305,29 @@ sub get_formatted_created_at
 
 =head2 get_formatted_updated_at()
 
-    my $updated_at = $user->get_formatted_updated_at();
+Returns a string containing the C<updated_at> field formatted appropriately for display.
+
+Parameters:
 
 =over
 
-=item Returns a string containing the C<updated_at> field formatted appropriately for display.
+=item date_format: A DateTime compatible format for how the date should be displayed. Defaults to '%A, %d %B, %Y'
 
 =back
+
+    my $updated_at = $user->get_formatted_updated_at( date_format => $date_format );
 
 =cut
 
 sub get_formatted_updated_at
 {
     my ( $self, %args ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 
@@ -298,13 +347,31 @@ sub get_formatted_updated_at
 
 =head2 process_signup()
 
-    $user_hash = Side7::User::process_signup();
+Takes user sign-up information and performs some safety checks with it.  Then it creates a User object, and saves it to the database.
+
+Parameters:
 
 =over 4
 
-=item Takes user sign-up information and performs some safety checks with it.  Then it creates a User object, and saves it to the database.
+=item username: The username field from the form.
+
+=item password: The password field from the form.
+
+=item email_address: The email_address field from the form.
+
+=item birthday: The birthday field from the form.
+
+=item confirmation_code: The confirmation_code field from the form.
 
 =back
+
+    my $user_hash = Side7::User::process_signup(
+                                                username          => $username,
+                                                password          => $password,
+                                                email_address     => $email_address,
+                                                birthday          => $birthday,
+                                                confirmation_code => $confirmation_code,
+                                            );
 
 =cut
 
@@ -319,7 +386,7 @@ sub process_signup
     my $confirmation_code = delete $args->{'confirmation_code'};
 
     my $saved = 0;
-    my @form_errors;
+    my @form_errors = ();
 
     # Error out if username or e-mail address already exists.
     if ( defined $username && $username ne '' )
@@ -393,13 +460,17 @@ sub process_signup
 
 =head2 confirm_new_user()
 
-    my ( $confirmed, $error ) = Side7::User::confirm_new_user( $confirmation_code );
+Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's status from 'Pending' to 'Active'. Creates the User's directory structure.
+
+Parameters:
 
 =over 4
 
-=item Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's status from 'Pending' to 'Active'. Creates the User's directory structure.
+=item confirmation_code: Just the value of the confirmation code. No default.
 
 =back
+
+    my ( $confirmed, $error ) = Side7::User::confirm_new_user( $confirmation_code );
 
 =cut
 
@@ -438,54 +509,19 @@ sub confirm_new_user
 }
 
 
-=head2 check_user_existence()
-
-    $user = Side7::User::check_user_existence( $user_id )
-
-=over 4
-
-=item Checks to see if the user exists, and pushes the user to the stash and returns true if found. If not found, returns undef.
-
-=back
-
-=cut
-
-sub check_user_existence
-{
-    my $self = shift;
-
-    # Fetch the username out of the path
-    my $username = $self->req->url->path;
-    $username =~ s/^\/user\///i;
-    $username =~ s/\/.*$//i;
-    $LOGGER->debug( 'Username: ' . $username );
-
-    return undef if ! defined $username || $username eq '';
-
-    my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
-
-    if ( defined $user && $loaded != 0 )
-    {
-        $self->stash( user => $user );
-        $LOGGER->debug( 'Pre-stash: ' . Dumper( $self->stash( 'user' ) ) );
-        return 1;
-    }
-
-    # TODO: Redirect to index? Or User Not Found page?
-    return undef;
-}
-
-
 =head2 show_profile()
 
-    Side7::User::show_profile()
+Displays the public profile page for the given user
+
+Parameters:
 
 =over 4
 
-=item Displays the public profile page for the given user
+=item username: The username for lookup for getting the user_hash for template use.
 
 =back
+
+    my $user_hash = Side7::User::show_profile( username => $username )
 
 =cut
 
@@ -495,7 +531,7 @@ sub show_profile
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username );
+    return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
@@ -521,13 +557,17 @@ sub show_profile
 
 =head2 show_home
 
-    my ( $user ) = Side7::User::show_home()
+Displays the User's home page.
+
+Parameters:
 
 =over 4
 
-=item Displays the User's home page.
+=item username: The username to use for looking up the User object to get the appropriate hash for use with the template.
 
 =back
+
+    my $user_hash = Side7::User::show_home( username => $username )
 
 =cut
 
@@ -537,7 +577,7 @@ sub show_home
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username );
+    return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
@@ -562,13 +602,17 @@ sub show_home
 
 =head2 get_user_by_id()
 
-    my $user = Side7::User::get_user_by_id( $user_id );
+Returns the User object for the given user_id
+
+Parameters:
 
 =over 4
 
-=item Returns the User object for the given user_id
+=item user_id: The User ID to be used for the query.
 
 =back
+
+    my $user = Side7::User::get_user_by_id( $user_id );
 
 =cut
 
@@ -592,13 +636,17 @@ sub get_user_by_id
 
 =head2 get_user_by_username()
 
-    my $user = Side7::User::get_user_by_username( $username );
+Returns the User object for the given username
+
+Parameters:
 
 =over 4
 
-=item Returns the User object for the given username
+=item username: The username to be used for the query.
 
 =back
+
+    my $user = Side7::User::get_user_by_username( $username );
 
 =cut
 
@@ -606,7 +654,7 @@ sub get_user_by_username
 {
     my ( $username ) = @_;
 
-    return undef if ( ! defined $username );
+    return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
@@ -622,16 +670,19 @@ sub get_user_by_username
 
 =head2 get_users_for_directory()
 
-    my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
+Returns an array of User objects, based on the initial passed in and the page provided.
+
+Parameters:
 
 =over 4
 
-=item Returns an array of User objects, based on the initial passed in and the page provided.
+=item C<initial>: the first symbol to match a name on. Defaults to 'a'
+
+=item C<page>: the pagination segment to view. Defaults to '1'
 
 =back
 
-Takes two optional variables:
-C<initial> (the first symbol to match a name on), and C<page> (the pagination segment to view).  C<Initial> defaults to 'a', C<page> defaults to '1'.
+    my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
 
 =cut
 
@@ -639,11 +690,8 @@ sub get_users_for_directory
 {
     my ( $args ) = @_;
 
-    my $initial = delete $args->{'initial'};
-    my $page    = delete $args->{'page'};
-
-    $initial //= 'a';
-    $page    //= 1;
+    my $initial = delete $args->{'initial'} // 'a';
+    my $page    = delete $args->{'page'}    // 1;
 
     my $initial_string = "$initial%";
     my $op = 'like';
@@ -699,15 +747,25 @@ sub get_users_for_directory
 
 =head2 show_user_gallery()
 
+Returns an arrayref of Gallery content for a particular User.  Requires C<username> to be passed in.  Additional parameters control
+the Content that is returned.
+
+Parameters:
+
+=over 4
+
+=item username: The username used to find the User.
+
+=item TODO: DEFINE ADDITIONAL OPTIONAL ARGS
+
+=back
+
     my $gallery = Side7::User::show_user_gallery (
         {
             username = $username,
             TODO: DEFINE ADDITIONAL OPTIONAL ARGS
         }
     );
-
-Returns an arrayref of Gallery content for a particular User.  Requires C<username> to be passed in.  Additional parameters control
-the Content that is returned.
 
 =cut
 
@@ -717,10 +775,10 @@ sub show_user_gallery
 
     my $username = delete $args->{'username'};
 
-    if ( ! defined $username )
+    if ( ! defined $username || $username eq '' )
     {
         $LOGGER->warn( 'No username passed into show_user_gallery.' );
-        return \[];
+        return [];
     }
 
     my $user = Side7::User::get_user_by_username( $username );

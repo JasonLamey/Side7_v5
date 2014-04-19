@@ -195,6 +195,8 @@ sub full_name
 {
     my $self = shift;
 
+    return undef if ! defined $self;
+
     my $separator = (
                         defined $self->{'first_name'} 
                         && 
@@ -226,6 +228,8 @@ sub full_name
 sub get_formatted_birthday
 {
     my ( $self, %args ) = @_;
+
+    return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %c';
 
@@ -275,6 +279,8 @@ sub get_formatted_subscription_expires_on
 {
     my ( $self, %args ) = @_;
 
+    return undef if ! defined $self;
+
     my $date_format = delete $args{'date_format'} // '%B %d, %Y';
 
     my $date = $self->subscription_expires_on( format => $date_format ) // undef;
@@ -303,6 +309,8 @@ sub get_formatted_subscription_expires_on
 sub get_formatted_delete_on
 {
     my ( $self, %args ) = @_;
+
+    return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %c';
 
@@ -333,6 +341,8 @@ sub get_formatted_created_at
 {
     my ( $self, %args ) = @_;
 
+    return undef if ! defined $self;
+
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 
     my $date = $self->created_at( format => $date_format ) // undef;
@@ -361,6 +371,8 @@ sub get_formatted_created_at
 sub get_formatted_updated_at
 {
     my ( $self, %args ) = @_;
+
+    return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
 

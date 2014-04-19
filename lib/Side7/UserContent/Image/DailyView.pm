@@ -97,7 +97,7 @@ sub get_total_views_count
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'};
+    my $image_id = delete $args{'image_id'} // undef;
 
     return if ! defined $image_id;
 
@@ -126,7 +126,7 @@ sub update_daily_views
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'};
+    my $image_id = delete $args{'image_id'} // undef;
 
     return if ! defined $image_id;
 

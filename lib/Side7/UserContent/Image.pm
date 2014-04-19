@@ -166,9 +166,9 @@ sub get_image_hash_for_template
 {
     my $self = shift;
 
-    $LOGGER->debug( 'Img object: ' . Dumper( $self ) );
+    return {} if ! defined $self;
 
-    my $image_hash;
+    my $image_hash = {};
 
     # Image values
     foreach my $key ( 
@@ -221,8 +221,6 @@ sub get_image_hash_for_template
     # Stage values:
     my $stage = $self->{'stage'};
     $image_hash->{'stage_text'} = $stage->stage;
-
-    # Comment Threads
 
     return $image_hash;
 }
@@ -280,10 +278,14 @@ sub show_image
     }
 
     # Image Found
-    my $image_hash = $image->get_image_hash_for_template();
+    my $image_hash = $image->get_image_hash_for_template() // {};
 
     # Fetch Image Comments
-    my $image_comments = Side7::UserContent::CommentThread::get_all_comments_for_content( content_type => 'image', content_id => $image_id );
+    my $image_comments = 
+        Side7::UserContent::CommentThread::get_all_comments_for_content( 
+                                                                        content_type => 'image', 
+                                                                        content_id   => $image_id
+                                                                       ) // [];
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
 
     # Add a new view
@@ -309,9 +311,7 @@ sub show_image
 
     # Get total views
     $image_hash->{'total_views'} = 
-        Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id );
-
-    $LOGGER->debug( 'Image Hash: ' . Dumper( $image_hash ) );
+        Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id ) // 0;
 
     return $image_hash;
 }

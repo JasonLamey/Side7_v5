@@ -17073,3 +17073,1201 @@ Bad Karma belongs to Jason Lamey, Sir Kain belongs to Eric Goodwin. Image is &am
 [2014/04/17 21:04:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
 [2014/04/17 21:04:44] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
 [2014/04/17 21:04:44] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:09] [INFO] Dancer::Logger::Log4perl::core 46 - Dancer::Session::Storable using session_dir : /usr/home/badkarma/src/dancer_projects/side7v5/Side7/sessions
+[2014/04/18 15:08:09] [INFO] Dancer::Logger::Log4perl::core 46 - loading Dancer::Handler::Standalone handler
+[2014/04/18 15:08:09] [INFO] Dancer::Logger::Log4perl::core 46 - loading handler 'Dancer::Handler::Standalone'
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /image/336287 from 192.168.2.117
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:^\/dancer\-directory\-view/.*)$)/ (generated from '(?^:^\/dancer\-directory\-view/.*)')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual)$)/ (generated from '(?^u:\/pod_manual)')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual\/(.*))$)/ (generated from '(?^u:\/pod_manual\/(.*))')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/$/ (generated from '/')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/pod_manual/(.*))$)/ (generated from '(?^:/pod_manual/(.*))')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/login$/ (generated from '/login')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/logout$/ (generated from '/logout')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/signup$/ (generated from '/signup')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/gallery\/([^\/]+)\/?$/ (generated from '/gallery/:username/?')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)\/gallery\/?$/ (generated from '/user/:username/gallery/?')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/image\/([^\/]+)\/?$/ (generated from '/image/:image_id/?')
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: image_id
+[2014/04/18 15:08:17] [DEBUG] Side7::UserContent::Image::get_image_hash_for_template 169 - Img object: $VAR1 = bless( {
+                 'filename' => 'LameyJ_W3A2.gif',
+                 '__xrdbopriv_updated_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'user_id' => '2',
+                 'rating' => bless( {
+                                      'id' => '1',
+                                      'priority' => '1',
+                                      'created_at' => undef,
+                                      'requires_qualifier' => '0',
+                                      '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'rating' => 'E',
+                                      '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'content_type' => 'Image',
+                                      'db' => bless( {
+                                                       'id' => 'development main',
+                                                       'database_version' => '5005033',
+                                                       'database' => 'side7_v5_dev',
+                                                       'type' => 'main',
+                                                       'domain' => 'development',
+                                                       '_origin_class' => 'Side7::DB',
+                                                       'driver' => 'mysql',
+                                                       'error' => undef,
+                                                       'connect_options_for' => {
+                                                                                  'development' => {
+                                                                                                     'main' => 1
+                                                                                                   }
+                                                                                },
+                                                       'dbh' => bless( {}, 'DBI::db' ),
+                                                       'username' => 's7dev',
+                                                       'password_closure' => sub { "DUMMY" },
+                                                       '_dbh_refcount' => 1,
+                                                       'host' => 'localhost',
+                                                       'keyword_function_calls' => 0,
+                                                       'supports_on_duplicate_key_update' => undef,
+                                                       '_dbh_has_foreign_owner' => undef,
+                                                       'connect_options' => {
+                                                                              'AutoCommit' => 1,
+                                                                              'RaiseError' => 1,
+                                                                              'ChopBlanks' => 1,
+                                                                              'private_pid' => 41500,
+                                                                              'Warn' => 0,
+                                                                              'PrintError' => 1
+                                                                            }
+                                                     }, 'Side7::DB::__RoseDBPrivate__::Rose::DB::MySQL' ),
+                                      'updated_at' => undef,
+                                      '__xrdbopriv_in_db' => 1
+                                    }, 'Side7::UserContent::Rating' ),
+                 'stage_id' => '4',
+                 'rating_id' => '1',
+                 'title' => 'Principles of Animation Class: Bouncing Ball',
+                 'db' => $VAR1->{'rating'}{'db'},
+                 '__xrdbopriv_modified_columns' => {},
+                 'stage' => bless( {
+                                     'updated_at' => undef,
+                                     'stage' => 'Finished Piece',
+                                     'db' => $VAR1->{'rating'}{'db'},
+                                     '__xrdbopriv_in_db' => 1,
+                                     'created_at' => undef,
+                                     'id' => '4',
+                                     'priority' => '4',
+                                     '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00'
+                                   }, 'Side7::UserContent::Stage' ),
+                 'copyright_year' => '2012',
+                 'user' => bless( {
+                                    '__xrdbopriv_in_db' => 1,
+                                    'updated_at' => undef,
+                                    'password' => '044ced814b934891',
+                                    'db' => $VAR1->{'rating'}{'db'},
+                                    '__xrdbopriv_updated_at_formattedmysql' => '2008-07-01 10:41:15',
+                                    'username' => 'BadKarma',
+                                    '__xrdbopriv_created_at_formattedmysql' => '1998-11-16 00:00:00',
+                                    'email_address' => 'badkarma@side7.com',
+                                    'created_at' => undef,
+                                    'id' => '2'
+                                  }, 'Side7::User' ),
+                 'dimensions' => '640 x 480',
+                 'created_at' => undef,
+                 'id' => '336287',
+                 'category' => bless( {
+                                        'content_type' => 'Image',
+                                        'db' => $VAR1->{'rating'}{'db'},
+                                        'updated_at' => undef,
+                                        '__xrdbopriv_in_db' => 1,
+                                        'category' => 'Fan Art - Animation/Comic',
+                                        'id' => '5',
+                                        'priority' => '6',
+                                        'created_at' => undef,
+                                        '__xrdbopriv_created_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        '__xrdbopriv_updated_at_formattedmysql' => '0000-00-00 00:00:00'
+                                      }, 'Side7::UserContent::Category' ),
+                 '__xrdbopriv_loaded_from_driver' => 'mysql',
+                 'properties' => [
+                                   bless( {
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386683',
+                                            'created_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'Allow Anonymous Comments',
+                                            'updated_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Comments',
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'created_at' => undef,
+                                            'id' => '1386682',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Favoriting',
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386687'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'Allow Sharing',
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386686',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'Show',
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'Display Comments',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'created_at' => undef,
+                                            'id' => '1386684'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386688',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'False',
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'For Sale'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'id' => '1386685',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'name' => 'Perfered Comment Type',
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'updated_at' => undef,
+                                            'value' => 'Any Kind',
+                                            '__xrdbopriv_in_db' => 1
+                                          }, 'Side7::UserContent::Image::Property' )
+                                 ],
+                 '__xrdbopriv_created_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'updated_at' => undef,
+                 'filesize' => '106469',
+                 'category_id' => '5',
+                 'privacy' => 'Public',
+                 'is_archived' => '0',
+                 'rating_qualifiers' => undef,
+                 '__xrdbopriv_in_db' => 1,
+                 'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.'
+               }, 'Side7::UserContent::Image' );
+[2014/04/18 15:08:17] [DEBUG] Side7::UserContent::Image::show_image 314 - Image Hash: $VAR1 = {
+          'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+          'rating_qualifiers' => undef,
+          'is_archived' => '0',
+          'privacy' => 'Public',
+          'filesize' => '103 KB',
+          'category_id' => '5',
+          'updated_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'id' => '336287',
+          'created_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'dimensions' => '640 x 480',
+          'category_text' => 'Fan Art - Animation/Comic',
+          'total_views' => '405',
+          'user' => {
+                      'user_uri' => '/galleries/2/2/2/',
+                      'user_directory' => '/data/galleries/2/2/2/',
+                      'username' => 'BadKarma'
+                    },
+          'copyright_year' => '2012',
+          'rating_id' => '1',
+          'title' => 'Principles of Animation Class: Bouncing Ball',
+          'stage_id' => '4',
+          'user_id' => '2',
+          'rating_text' => 'E',
+          'stage_text' => 'Finished Piece',
+          'filename' => 'LameyJ_W3A2.gif'
+        };
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/04/18 15:08:17] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /image/336287 from 192.168.2.117
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:^\/dancer\-directory\-view/.*)$)/ (generated from '(?^:^\/dancer\-directory\-view/.*)')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual)$)/ (generated from '(?^u:\/pod_manual)')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual\/(.*))$)/ (generated from '(?^u:\/pod_manual\/(.*))')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/$/ (generated from '/')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/pod_manual/(.*))$)/ (generated from '(?^:/pod_manual/(.*))')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/login$/ (generated from '/login')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/logout$/ (generated from '/logout')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/signup$/ (generated from '/signup')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/gallery\/([^\/]+)\/?$/ (generated from '/gallery/:username/?')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)\/gallery\/?$/ (generated from '/user/:username/gallery/?')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/image\/([^\/]+)\/?$/ (generated from '/image/:image_id/?')
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: image_id
+[2014/04/18 15:08:28] [DEBUG] Side7::UserContent::Image::get_image_hash_for_template 169 - Img object: $VAR1 = bless( {
+                 'created_at' => undef,
+                 'id' => '336287',
+                 'category' => bless( {
+                                        'priority' => '6',
+                                        'category' => 'Fan Art - Animation/Comic',
+                                        'id' => '5',
+                                        'created_at' => undef,
+                                        '__xrdbopriv_updated_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        '__xrdbopriv_created_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        'db' => bless( {
+                                                         '_dbh_has_foreign_owner' => undef,
+                                                         'connect_options' => {
+                                                                                'RaiseError' => 1,
+                                                                                'AutoCommit' => 1,
+                                                                                'ChopBlanks' => 1,
+                                                                                'PrintError' => 1,
+                                                                                'private_pid' => 41500,
+                                                                                'Warn' => 0
+                                                                              },
+                                                         'keyword_function_calls' => 0,
+                                                         'supports_on_duplicate_key_update' => undef,
+                                                         'connect_options_for' => {
+                                                                                    'development' => {
+                                                                                                       'main' => 1
+                                                                                                     }
+                                                                                  },
+                                                         'dbh' => bless( {}, 'DBI::db' ),
+                                                         'username' => 's7dev',
+                                                         '_dbh_refcount' => 1,
+                                                         'password_closure' => sub { "DUMMY" },
+                                                         'host' => 'localhost',
+                                                         'error' => undef,
+                                                         'driver' => 'mysql',
+                                                         'database' => 'side7_v5_dev',
+                                                         'type' => 'main',
+                                                         'domain' => 'development',
+                                                         '_origin_class' => 'Side7::DB',
+                                                         'id' => 'development main',
+                                                         'database_version' => '5005033'
+                                                       }, 'Side7::DB::__RoseDBPrivate__::Rose::DB::MySQL' ),
+                                        'content_type' => 'Image',
+                                        'updated_at' => undef,
+                                        '__xrdbopriv_in_db' => 1
+                                      }, 'Side7::UserContent::Category' ),
+                 '__xrdbopriv_loaded_from_driver' => 'mysql',
+                 'properties' => [
+                                   bless( {
+                                            'created_at' => undef,
+                                            'id' => '1386683',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Allow Anonymous Comments',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'created_at' => undef,
+                                            'id' => '1386682',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Comments',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386687',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Allow Favoriting'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'name' => 'Allow Sharing',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386686',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'id' => '1386684',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'name' => 'Display Comments',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'updated_at' => undef,
+                                            'value' => 'Show',
+                                            '__xrdbopriv_in_db' => 1
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'False',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'For Sale',
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'id' => '1386688',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'Any Kind',
+                                            'updated_at' => undef,
+                                            'name' => 'Perfered Comment Type',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'created_at' => undef,
+                                            'id' => '1386685'
+                                          }, 'Side7::UserContent::Image::Property' )
+                                 ],
+                 '__xrdbopriv_created_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'updated_at' => undef,
+                 'category_id' => '5',
+                 'filesize' => '106469',
+                 'privacy' => 'Public',
+                 'is_archived' => '0',
+                 '__xrdbopriv_in_db' => 1,
+                 'rating_qualifiers' => undef,
+                 'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+                 'filename' => 'LameyJ_W3A2.gif',
+                 'user_id' => '2',
+                 '__xrdbopriv_updated_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'rating' => bless( {
+                                      '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'rating' => 'E',
+                                      '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'priority' => '1',
+                                      'id' => '1',
+                                      'created_at' => undef,
+                                      'requires_qualifier' => '0',
+                                      '__xrdbopriv_in_db' => 1,
+                                      'db' => $VAR1->{'category'}{'db'},
+                                      'content_type' => 'Image',
+                                      'updated_at' => undef
+                                    }, 'Side7::UserContent::Rating' ),
+                 'stage_id' => '4',
+                 'rating_id' => '1',
+                 'title' => 'Principles of Animation Class: Bouncing Ball',
+                 '__xrdbopriv_modified_columns' => {},
+                 'db' => $VAR1->{'category'}{'db'},
+                 'stage' => bless( {
+                                     'id' => '4',
+                                     'priority' => '4',
+                                     'created_at' => undef,
+                                     '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     'stage' => 'Finished Piece',
+                                     'db' => $VAR1->{'category'}{'db'},
+                                     'updated_at' => undef,
+                                     '__xrdbopriv_in_db' => 1
+                                   }, 'Side7::UserContent::Stage' ),
+                 'copyright_year' => '2012',
+                 'user' => bless( {
+                                    'password' => '044ced814b934891',
+                                    'updated_at' => undef,
+                                    'db' => $VAR1->{'category'}{'db'},
+                                    '__xrdbopriv_in_db' => 1,
+                                    'created_at' => undef,
+                                    'id' => '2',
+                                    '__xrdbopriv_updated_at_formattedmysql' => '2008-07-01 10:41:15',
+                                    'username' => 'BadKarma',
+                                    '__xrdbopriv_created_at_formattedmysql' => '1998-11-16 00:00:00',
+                                    'email_address' => 'badkarma@side7.com'
+                                  }, 'Side7::User' ),
+                 'dimensions' => '640 x 480'
+               }, 'Side7::UserContent::Image' );
+[2014/04/18 15:08:28] [DEBUG] Side7::UserContent::Image::show_image 314 - Image Hash: $VAR1 = {
+          'dimensions' => '640 x 480',
+          'total_views' => '406',
+          'user' => {
+                      'user_uri' => '/galleries/2/2/2/',
+                      'username' => 'BadKarma',
+                      'user_directory' => '/data/galleries/2/2/2/'
+                    },
+          'category_text' => 'Fan Art - Animation/Comic',
+          'copyright_year' => '2012',
+          'stage_id' => '4',
+          'rating_id' => '1',
+          'title' => 'Principles of Animation Class: Bouncing Ball',
+          'rating_text' => 'E',
+          'user_id' => '2',
+          'filename' => 'LameyJ_W3A2.gif',
+          'stage_text' => 'Finished Piece',
+          'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+          'rating_qualifiers' => undef,
+          'privacy' => 'Public',
+          'is_archived' => '0',
+          'updated_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'category_id' => '5',
+          'filesize' => '103 KB',
+          'id' => '336287',
+          'created_at' => 'Thursday, May 3, 2012 12:42:39 PM'
+        };
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/04/18 15:08:28] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /image/336287 from 192.168.2.117
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:^\/dancer\-directory\-view/.*)$)/ (generated from '(?^:^\/dancer\-directory\-view/.*)')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual)$)/ (generated from '(?^u:\/pod_manual)')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual\/(.*))$)/ (generated from '(?^u:\/pod_manual\/(.*))')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/$/ (generated from '/')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/pod_manual/(.*))$)/ (generated from '(?^:/pod_manual/(.*))')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/login$/ (generated from '/login')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/logout$/ (generated from '/logout')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/signup$/ (generated from '/signup')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/gallery\/([^\/]+)\/?$/ (generated from '/gallery/:username/?')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)\/gallery\/?$/ (generated from '/user/:username/gallery/?')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/image\/([^\/]+)\/?$/ (generated from '/image/:image_id/?')
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/04/18 15:08:29] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: image_id
+[2014/04/18 15:08:29] [DEBUG] Side7::UserContent::Image::get_image_hash_for_template 169 - Img object: $VAR1 = bless( {
+                 'privacy' => 'Public',
+                 'is_archived' => '0',
+                 'filesize' => '106469',
+                 'category_id' => '5',
+                 'updated_at' => undef,
+                 'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+                 '__xrdbopriv_in_db' => 1,
+                 'rating_qualifiers' => undef,
+                 'id' => '336287',
+                 'category' => bless( {
+                                        'updated_at' => undef,
+                                        'db' => bless( {
+                                                         'driver' => 'mysql',
+                                                         '_origin_class' => 'Side7::DB',
+                                                         'domain' => 'development',
+                                                         'type' => 'main',
+                                                         'database' => 'side7_v5_dev',
+                                                         'database_version' => '5005033',
+                                                         'id' => 'development main',
+                                                         'connect_options' => {
+                                                                                'AutoCommit' => 1,
+                                                                                'RaiseError' => 1,
+                                                                                'ChopBlanks' => 1,
+                                                                                'PrintError' => 1,
+                                                                                'Warn' => 0,
+                                                                                'private_pid' => 41500
+                                                                              },
+                                                         '_dbh_has_foreign_owner' => undef,
+                                                         'supports_on_duplicate_key_update' => undef,
+                                                         'keyword_function_calls' => 0,
+                                                         '_dbh_refcount' => 1,
+                                                         'password_closure' => sub { "DUMMY" },
+                                                         'host' => 'localhost',
+                                                         'username' => 's7dev',
+                                                         'dbh' => bless( {}, 'DBI::db' ),
+                                                         'connect_options_for' => {
+                                                                                    'development' => {
+                                                                                                       'main' => 1
+                                                                                                     }
+                                                                                  },
+                                                         'error' => undef
+                                                       }, 'Side7::DB::__RoseDBPrivate__::Rose::DB::MySQL' ),
+                                        'content_type' => 'Image',
+                                        '__xrdbopriv_in_db' => 1,
+                                        'created_at' => undef,
+                                        'priority' => '6',
+                                        'category' => 'Fan Art - Animation/Comic',
+                                        'id' => '5',
+                                        '__xrdbopriv_updated_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        '__xrdbopriv_created_at_formattedmysql' => '0000-00-00 00:00:00'
+                                      }, 'Side7::UserContent::Category' ),
+                 'created_at' => undef,
+                 '__xrdbopriv_created_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'properties' => [
+                                   bless( {
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Allow Anonymous Comments',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'created_at' => undef,
+                                            'id' => '1386683',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Allow Comments',
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386682',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'name' => 'Allow Favoriting',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'updated_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386687',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Allow Sharing',
+                                            'updated_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386686',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386684',
+                                            'created_at' => undef,
+                                            'value' => 'Show',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'Display Comments',
+                                            'updated_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'False',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'name' => 'For Sale',
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386688',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'id' => '1386685',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'name' => 'Perfered Comment Type',
+                                            'db' => $VAR1->{'category'}{'db'},
+                                            'updated_at' => undef,
+                                            'value' => 'Any Kind',
+                                            '__xrdbopriv_in_db' => 1
+                                          }, 'Side7::UserContent::Image::Property' )
+                                 ],
+                 '__xrdbopriv_loaded_from_driver' => 'mysql',
+                 'stage' => bless( {
+                                     'db' => $VAR1->{'category'}{'db'},
+                                     'stage' => 'Finished Piece',
+                                     'updated_at' => undef,
+                                     '__xrdbopriv_in_db' => 1,
+                                     'priority' => '4',
+                                     'id' => '4',
+                                     'created_at' => undef,
+                                     '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00'
+                                   }, 'Side7::UserContent::Stage' ),
+                 'copyright_year' => '2012',
+                 '__xrdbopriv_modified_columns' => {},
+                 'db' => $VAR1->{'category'}{'db'},
+                 'dimensions' => '640 x 480',
+                 'user' => bless( {
+                                    'db' => $VAR1->{'category'}{'db'},
+                                    'password' => '044ced814b934891',
+                                    'updated_at' => undef,
+                                    '__xrdbopriv_in_db' => 1,
+                                    'id' => '2',
+                                    'created_at' => undef,
+                                    'email_address' => 'badkarma@side7.com',
+                                    '__xrdbopriv_updated_at_formattedmysql' => '2008-07-01 10:41:15',
+                                    'username' => 'BadKarma',
+                                    '__xrdbopriv_created_at_formattedmysql' => '1998-11-16 00:00:00'
+                                  }, 'Side7::User' ),
+                 'filename' => 'LameyJ_W3A2.gif',
+                 'rating_id' => '1',
+                 'title' => 'Principles of Animation Class: Bouncing Ball',
+                 'stage_id' => '4',
+                 'rating' => bless( {
+                                      '__xrdbopriv_in_db' => 1,
+                                      'updated_at' => undef,
+                                      'db' => $VAR1->{'category'}{'db'},
+                                      'content_type' => 'Image',
+                                      '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'rating' => 'E',
+                                      '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'requires_qualifier' => '0',
+                                      'created_at' => undef,
+                                      'priority' => '1',
+                                      'id' => '1'
+                                    }, 'Side7::UserContent::Rating' ),
+                 'user_id' => '2',
+                 '__xrdbopriv_updated_at_formattedmysql' => '2012-05-03 12:42:39'
+               }, 'Side7::UserContent::Image' );
+[2014/04/18 15:08:30] [DEBUG] Side7::UserContent::Image::show_image 314 - Image Hash: $VAR1 = {
+          'copyright_year' => '2012',
+          'dimensions' => '640 x 480',
+          'category_text' => 'Fan Art - Animation/Comic',
+          'total_views' => '407',
+          'user' => {
+                      'user_directory' => '/data/galleries/2/2/2/',
+                      'username' => 'BadKarma',
+                      'user_uri' => '/galleries/2/2/2/'
+                    },
+          'stage_text' => 'Finished Piece',
+          'filename' => 'LameyJ_W3A2.gif',
+          'rating_id' => '1',
+          'title' => 'Principles of Animation Class: Bouncing Ball',
+          'stage_id' => '4',
+          'rating_text' => 'E',
+          'user_id' => '2',
+          'privacy' => 'Public',
+          'is_archived' => '0',
+          'filesize' => '103 KB',
+          'category_id' => '5',
+          'updated_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+          'rating_qualifiers' => undef,
+          'id' => '336287',
+          'created_at' => 'Thursday, May 3, 2012 12:42:39 PM'
+        };
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/04/18 15:08:30] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /image/336287 from 192.168.2.117
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:^\/dancer\-directory\-view/.*)$)/ (generated from '(?^:^\/dancer\-directory\-view/.*)')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual)$)/ (generated from '(?^u:\/pod_manual)')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual\/(.*))$)/ (generated from '(?^u:\/pod_manual\/(.*))')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/$/ (generated from '/')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/pod_manual/(.*))$)/ (generated from '(?^:/pod_manual/(.*))')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/login$/ (generated from '/login')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/logout$/ (generated from '/logout')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/signup$/ (generated from '/signup')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/gallery\/([^\/]+)\/?$/ (generated from '/gallery/:username/?')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)\/gallery\/?$/ (generated from '/user/:username/gallery/?')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/image\/([^\/]+)\/?$/ (generated from '/image/:image_id/?')
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/04/18 15:11:32] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: image_id
+[2014/04/18 15:11:33] [DEBUG] Side7::UserContent::Image::get_image_hash_for_template 169 - Img object: $VAR1 = bless( {
+                 'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+                 '__xrdbopriv_in_db' => 1,
+                 'rating_qualifiers' => undef,
+                 'is_archived' => '0',
+                 'privacy' => 'Public',
+                 'updated_at' => undef,
+                 'filesize' => '106469',
+                 'category_id' => '5',
+                 '__xrdbopriv_loaded_from_driver' => 'mysql',
+                 'properties' => [
+                                   bless( {
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386683',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Anonymous Comments',
+                                            'db' => bless( {
+                                                             'database_version' => '5005033',
+                                                             'id' => 'development main',
+                                                             '_origin_class' => 'Side7::DB',
+                                                             'domain' => 'development',
+                                                             'database' => 'side7_v5_dev',
+                                                             'type' => 'main',
+                                                             'driver' => 'mysql',
+                                                             'error' => undef,
+                                                             '_dbh_refcount' => 1,
+                                                             'password_closure' => sub { "DUMMY" },
+                                                             'host' => 'localhost',
+                                                             'username' => 's7dev',
+                                                             'connect_options_for' => {
+                                                                                        'development' => {
+                                                                                                           'main' => 1
+                                                                                                         }
+                                                                                      },
+                                                             'dbh' => bless( {}, 'DBI::db' ),
+                                                             'supports_on_duplicate_key_update' => undef,
+                                                             'keyword_function_calls' => 0,
+                                                             'connect_options' => {
+                                                                                    'PrintError' => 1,
+                                                                                    'private_pid' => 41500,
+                                                                                    'Warn' => 0,
+                                                                                    'AutoCommit' => 1,
+                                                                                    'RaiseError' => 1,
+                                                                                    'ChopBlanks' => 1
+                                                                                  },
+                                                             '_dbh_has_foreign_owner' => undef
+                                                           }, 'Side7::DB::__RoseDBPrivate__::Rose::DB::MySQL' )
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'name' => 'Allow Comments',
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'updated_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'id' => '1386682',
+                                            'created_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'name' => 'Allow Favoriting',
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'updated_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386687',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'name' => 'Allow Sharing',
+                                            'updated_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386686',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'name' => 'Display Comments',
+                                            'updated_at' => undef,
+                                            'value' => 'Show',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386684',
+                                            'created_at' => undef,
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'name' => 'For Sale',
+                                            'updated_at' => undef,
+                                            'value' => 'False',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'id' => '1386688',
+                                            'created_at' => undef,
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386685',
+                                            'created_at' => undef,
+                                            'value' => 'Any Kind',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'name' => 'Perfered Comment Type',
+                                            'db' => $VAR1->{'properties'}[0]{'db'},
+                                            'updated_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' )
+                                 ],
+                 '__xrdbopriv_created_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'category' => bless( {
+                                        'created_at' => undef,
+                                        'category' => 'Fan Art - Animation/Comic',
+                                        'id' => '5',
+                                        'priority' => '6',
+                                        '__xrdbopriv_created_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        '__xrdbopriv_updated_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        'updated_at' => undef,
+                                        'content_type' => 'Image',
+                                        'db' => $VAR1->{'properties'}[0]{'db'},
+                                        '__xrdbopriv_in_db' => 1
+                                      }, 'Side7::UserContent::Category' ),
+                 'id' => '336287',
+                 'created_at' => undef,
+                 'dimensions' => '640 x 480',
+                 'user' => bless( {
+                                    '__xrdbopriv_in_db' => 1,
+                                    'db' => $VAR1->{'properties'}[0]{'db'},
+                                    'password' => '044ced814b934891',
+                                    'updated_at' => undef,
+                                    'email_address' => 'badkarma@side7.com',
+                                    '__xrdbopriv_created_at_formattedmysql' => '1998-11-16 00:00:00',
+                                    'username' => 'BadKarma',
+                                    '__xrdbopriv_updated_at_formattedmysql' => '2008-07-01 10:41:15',
+                                    'id' => '2',
+                                    'created_at' => undef
+                                  }, 'Side7::User' ),
+                 '__xrdbopriv_modified_columns' => {},
+                 'db' => $VAR1->{'properties'}[0]{'db'},
+                 'copyright_year' => '2012',
+                 'stage' => bless( {
+                                     'priority' => '4',
+                                     'id' => '4',
+                                     'created_at' => undef,
+                                     '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     'db' => $VAR1->{'properties'}[0]{'db'},
+                                     'stage' => 'Finished Piece',
+                                     'updated_at' => undef,
+                                     '__xrdbopriv_in_db' => 1
+                                   }, 'Side7::UserContent::Stage' ),
+                 'stage_id' => '4',
+                 'rating_id' => '1',
+                 'title' => 'Principles of Animation Class: Bouncing Ball',
+                 'user_id' => '2',
+                 '__xrdbopriv_updated_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'rating' => bless( {
+                                      'content_type' => 'Image',
+                                      'db' => $VAR1->{'properties'}[0]{'db'},
+                                      'updated_at' => undef,
+                                      '__xrdbopriv_in_db' => 1,
+                                      'id' => '1',
+                                      'priority' => '1',
+                                      'created_at' => undef,
+                                      'requires_qualifier' => '0',
+                                      'rating' => 'E',
+                                      '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00'
+                                    }, 'Side7::UserContent::Rating' ),
+                 'filename' => 'LameyJ_W3A2.gif'
+               }, 'Side7::UserContent::Image' );
+[2014/04/18 15:11:33] [DEBUG] Side7::UserContent::Image::show_image 314 - Image Hash: $VAR1 = {
+          'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+          'rating_qualifiers' => undef,
+          'is_archived' => '0',
+          'privacy' => 'Public',
+          'updated_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'filesize' => '103 KB',
+          'category_id' => '5',
+          'id' => '336287',
+          'created_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'dimensions' => '640 x 480',
+          'total_views' => '408',
+          'user' => {
+                      'username' => 'BadKarma',
+                      'user_directory' => '/data/galleries/2/2/2/',
+                      'user_uri' => '/galleries/2/2/2/'
+                    },
+          'category_text' => 'Fan Art - Animation/Comic',
+          'copyright_year' => '2012',
+          'stage_id' => '4',
+          'rating_id' => '1',
+          'title' => 'Principles of Animation Class: Bouncing Ball',
+          'user_id' => '2',
+          'rating_text' => 'E',
+          'filename' => 'LameyJ_W3A2.gif',
+          'stage_text' => 'Finished Piece'
+        };
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/04/18 15:11:33] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /image/336287 from 192.168.2.117
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:^\/dancer\-directory\-view/.*)$)/ (generated from '(?^:^\/dancer\-directory\-view/.*)')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual)$)/ (generated from '(?^u:\/pod_manual)')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^u:^(?^u:\/pod_manual\/(.*))$)/ (generated from '(?^u:\/pod_manual\/(.*))')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/$/ (generated from '/')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/pod_manual/(.*))$)/ (generated from '(?^:/pod_manual/(.*))')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/login$/ (generated from '/login')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/logout$/ (generated from '/logout')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/signup$/ (generated from '/signup')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/confirm_user\/?([^\/]+)?$/ (generated from '/confirm_user/?:confirmation_code?')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /(?^:^(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)$)/ (generated from '(?^:/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?)')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)$/ (generated from '/user/:username')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/gallery\/([^\/]+)\/?$/ (generated from '/gallery/:username/?')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/user\/([^\/]+)\/gallery\/?$/ (generated from '/user/:username/gallery/?')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - Trying to match 'GET /image/336287' against /^\/image\/([^\/]+)\/?$/ (generated from '/image/:image_id/?')
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> got 1
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 -   --> named tokens are: image_id
+[2014/04/18 15:11:34] [DEBUG] Side7::UserContent::Image::get_image_hash_for_template 169 - Img object: $VAR1 = bless( {
+                 'title' => 'Principles of Animation Class: Bouncing Ball',
+                 'rating_id' => '1',
+                 'stage_id' => '4',
+                 'rating' => bless( {
+                                      'priority' => '1',
+                                      'id' => '1',
+                                      'requires_qualifier' => '0',
+                                      'created_at' => undef,
+                                      '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00',
+                                      'rating' => 'E',
+                                      'db' => bless( {
+                                                       'username' => 's7dev',
+                                                       'password_closure' => sub { "DUMMY" },
+                                                       '_dbh_refcount' => 1,
+                                                       'host' => 'localhost',
+                                                       'connect_options_for' => {
+                                                                                  'development' => {
+                                                                                                     'main' => 1
+                                                                                                   }
+                                                                                },
+                                                       'dbh' => bless( {}, 'DBI::db' ),
+                                                       'error' => undef,
+                                                       'connect_options' => {
+                                                                              'Warn' => 0,
+                                                                              'private_pid' => 41500,
+                                                                              'PrintError' => 1,
+                                                                              'RaiseError' => 1,
+                                                                              'AutoCommit' => 1,
+                                                                              'ChopBlanks' => 1
+                                                                            },
+                                                       '_dbh_has_foreign_owner' => undef,
+                                                       'supports_on_duplicate_key_update' => undef,
+                                                       'keyword_function_calls' => 0,
+                                                       '_origin_class' => 'Side7::DB',
+                                                       'database' => 'side7_v5_dev',
+                                                       'type' => 'main',
+                                                       'domain' => 'development',
+                                                       'database_version' => '5005033',
+                                                       'id' => 'development main',
+                                                       'driver' => 'mysql'
+                                                     }, 'Side7::DB::__RoseDBPrivate__::Rose::DB::MySQL' ),
+                                      'content_type' => 'Image',
+                                      'updated_at' => undef,
+                                      '__xrdbopriv_in_db' => 1
+                                    }, 'Side7::UserContent::Rating' ),
+                 'user_id' => '2',
+                 '__xrdbopriv_updated_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'filename' => 'LameyJ_W3A2.gif',
+                 'dimensions' => '640 x 480',
+                 'user' => bless( {
+                                    'updated_at' => undef,
+                                    'password' => '044ced814b934891',
+                                    'db' => $VAR1->{'rating'}{'db'},
+                                    '__xrdbopriv_in_db' => 1,
+                                    'created_at' => undef,
+                                    'id' => '2',
+                                    '__xrdbopriv_created_at_formattedmysql' => '1998-11-16 00:00:00',
+                                    'username' => 'BadKarma',
+                                    '__xrdbopriv_updated_at_formattedmysql' => '2008-07-01 10:41:15',
+                                    'email_address' => 'badkarma@side7.com'
+                                  }, 'Side7::User' ),
+                 'copyright_year' => '2012',
+                 'stage' => bless( {
+                                     'updated_at' => undef,
+                                     'db' => $VAR1->{'rating'}{'db'},
+                                     'stage' => 'Finished Piece',
+                                     '__xrdbopriv_in_db' => 1,
+                                     'created_at' => undef,
+                                     'priority' => '4',
+                                     'id' => '4',
+                                     '__xrdbopriv_updated_at_formattedmysql' => '2013-10-27 00:00:00',
+                                     '__xrdbopriv_created_at_formattedmysql' => '2013-10-27 00:00:00'
+                                   }, 'Side7::UserContent::Stage' ),
+                 '__xrdbopriv_modified_columns' => {},
+                 'db' => $VAR1->{'rating'}{'db'},
+                 '__xrdbopriv_created_at_formattedmysql' => '2012-05-03 12:42:39',
+                 'properties' => [
+                                   bless( {
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'created_at' => undef,
+                                            'id' => '1386683',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Anonymous Comments',
+                                            'db' => $VAR1->{'rating'}{'db'}
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'Allow Comments',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386682'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386687',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'True',
+                                            'updated_at' => undef,
+                                            'name' => 'Allow Favoriting',
+                                            'db' => $VAR1->{'rating'}{'db'}
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'id' => '1386686',
+                                            'created_at' => undef,
+                                            'value' => 'True',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            'name' => 'Allow Sharing',
+                                            'updated_at' => undef
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            'created_at' => undef,
+                                            'id' => '1386684',
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'Show',
+                                            'updated_at' => undef,
+                                            'name' => 'Display Comments',
+                                            'db' => $VAR1->{'rating'}{'db'}
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            'updated_at' => undef,
+                                            'name' => 'For Sale',
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'False',
+                                            'created_at' => undef,
+                                            'id' => '1386688',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00'
+                                          }, 'Side7::UserContent::Image::Property' ),
+                                   bless( {
+                                            '__xrdbopriv_in_db' => 1,
+                                            'value' => 'Any Kind',
+                                            'updated_at' => undef,
+                                            'name' => 'Perfered Comment Type',
+                                            'db' => $VAR1->{'rating'}{'db'},
+                                            '__xrdbopriv_created_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'image_id' => '336287',
+                                            '__xrdbopriv_updated_at_formattedmysql' => '2014-04-08 00:00:00',
+                                            'created_at' => undef,
+                                            'id' => '1386685'
+                                          }, 'Side7::UserContent::Image::Property' )
+                                 ],
+                 '__xrdbopriv_loaded_from_driver' => 'mysql',
+                 'id' => '336287',
+                 'category' => bless( {
+                                        'content_type' => 'Image',
+                                        'db' => $VAR1->{'rating'}{'db'},
+                                        'updated_at' => undef,
+                                        '__xrdbopriv_in_db' => 1,
+                                        'id' => '5',
+                                        'category' => 'Fan Art - Animation/Comic',
+                                        'priority' => '6',
+                                        'created_at' => undef,
+                                        '__xrdbopriv_created_at_formattedmysql' => '0000-00-00 00:00:00',
+                                        '__xrdbopriv_updated_at_formattedmysql' => '0000-00-00 00:00:00'
+                                      }, 'Side7::UserContent::Category' ),
+                 'created_at' => undef,
+                 'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+                 '__xrdbopriv_in_db' => 1,
+                 'rating_qualifiers' => undef,
+                 'privacy' => 'Public',
+                 'is_archived' => '0',
+                 'filesize' => '106469',
+                 'category_id' => '5',
+                 'updated_at' => undef
+               }, 'Side7::UserContent::Image' );
+[2014/04/18 15:11:34] [DEBUG] Side7::UserContent::Image::show_image 314 - Image Hash: $VAR1 = {
+          'category_text' => 'Fan Art - Animation/Comic',
+          'total_views' => '409',
+          'user' => {
+                      'user_directory' => '/data/galleries/2/2/2/',
+                      'username' => 'BadKarma',
+                      'user_uri' => '/galleries/2/2/2/'
+                    },
+          'dimensions' => '640 x 480',
+          'copyright_year' => '2012',
+          'user_id' => '2',
+          'rating_text' => 'E',
+          'rating_id' => '1',
+          'title' => 'Principles of Animation Class: Bouncing Ball',
+          'stage_id' => '4',
+          'stage_text' => 'Finished Piece',
+          'filename' => 'LameyJ_W3A2.gif',
+          'rating_qualifiers' => undef,
+          'description' => 'Study of arcs, ease-in/ease-out, timing, spacing, squash/stretch.  32 frames.',
+          'filesize' => '103 KB',
+          'category_id' => '5',
+          'updated_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'is_archived' => '0',
+          'privacy' => 'Public',
+          'created_at' => 'Thursday, May 3, 2012 12:42:39 PM',
+          'id' => '336287'
+        };
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - entering before_template_render hook
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 200
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /css/style.css from 192.168.2.117
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - request: GET /images/perldancer-bg.jpg from 192.168.2.117
+[2014/04/18 15:11:34] [INFO] Dancer::Logger::Log4perl::core 46 - response: 304
