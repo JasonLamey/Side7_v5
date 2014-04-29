@@ -32,3 +32,11 @@ auto_reload: 0
 plugins:
     DirectoryView:
         url: /pod_manual
+
+    DebugToolbar:
+        enable: 0
+        show:
+            data: 1
+            database: 1
+            routes: 1
+            templates: 0

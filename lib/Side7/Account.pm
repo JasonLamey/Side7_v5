@@ -29,6 +29,7 @@ information, and is the model to which all other models are related.
 	last_name               :string(45)
 	user_type_id            :integer          default(1), not null
 	user_status_id          :integer          default(1), not null
+	user_role_id            :integer          default(1), not null
 	reinstate_on            :date
 	other_aliases           :string(255)
 	biography               :text
@@ -73,6 +74,10 @@ One-to-one relationship. FK = user_type_id
 
 One-to-one relationship. FK = user_status_id
 
+=item Side7::User::Role
+
+One-to-one relationship. FK = user_role_id
+
 =item Side7::DateVisibility
 
 One-to-one relationship. FK = birthday_visibility
@@ -90,12 +95,13 @@ __PACKAGE__->meta->setup
     table   => 'accounts',
     columns => 
     [
-        id                      => { type => 'integer', not_null => 1 },
+        id                      => { type => 'serial', not_null => 1 },
         user_id                 => { type => 'integer', not_null => 1 },
         first_name              => { type => 'varchar', length => 45 },
         last_name               => { type => 'varchar', length => 45 },
         user_type_id            => { type => 'integer', not_null => 1 },
         user_status_id          => { type => 'integer', not_null => 1 },
+        user_role_id            => { type => 'integer', not_null => 1 },
         reinstate_on            => { type => 'date' },
         other_aliases           => { type => 'varchar', length => 255 },
         biography               => { type => 'text' },

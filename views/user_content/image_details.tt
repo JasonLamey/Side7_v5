@@ -2,14 +2,19 @@
 
 <div>
     <div>
+        [% IF image.filepath_error %]
+        <div>[% image.filepath_error %]</div>
+        [% ELSE %]
         <h2>Image Here</h2>
+        <img src="[% image.filepath %]" alt='[% image.title %]' title='[% image.title %]' /><br />
         URI: [% image.user.user_uri %][% image.filename %]
+        [% END %]
     </div>
     <div style="width: 300px; float: left; padding 5px; margin: 10px; border: 1px solid #000;">
         Dimensions: [% image.dimensions %]<br />
         Uploaded on: [% image.created_at %]<br />
         Filesize: [% image.filesize %]<br />
-        Filepath: [% image.user.user_directory %]<br />
+        User Directory: [% image.user.user_directory %]<br />
         Owner: 
         [% IF image.user.username %]
         <a href="/user/[% image.user.username %]">[% image.user.username %]</a>

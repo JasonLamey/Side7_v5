@@ -4,6 +4,8 @@ use Dancer::Plugin::FlashMessage;
 use Dancer::Plugin::ValidateTiny;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::DirectoryView;
+use Dancer::Plugin::TimeRequests;
+use Dancer::Plugin::DebugToolbar;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -34,12 +36,17 @@ get '/' => sub
 get qr{/pod_manual/(.*)} => sub {
     my ( $path ) = splat;
 
-    warn( 'Path: ' . $path );
-        
     # Check if the user has permissions to access these files
     return directory_view(root_dir => 'pod_manual',
                           path     => $path,
                           system_path => 1);
+};
+
+# Cached files and images
+get qr{^/cached_files/(.*)} => sub {
+    my ( $path ) = splat;
+
+    send_file 'public/cached_files/' . $path;
 };
 
 ###################################
@@ -266,13 +273,18 @@ get '/gallery/:username/?' => sub
 
 get '/user/:username/gallery/?' => sub
 {
-    my $gallery = Side7::User::show_user_gallery( 
+    my ( $user, $gallery ) = Side7::User::show_user_gallery( 
         { 
             username => params->{'username'},
         }
     );
 
-    template 'user/show_gallery', { username => params->{'username'}, gallery => $gallery };
+    if ( ! defined $user )
+    {
+        redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'user/show_gallery', { user => $user, gallery => $gallery };
 };
 
 # Image display page.
@@ -282,6 +294,7 @@ get '/image/:image_id/?' => sub
                         image_id => params->{'image_id'}, 
                         request  => request,
                         session  => session,
+                        size     => 'large',
     );
 
     if ( defined $image_hash )
@@ -290,7 +303,7 @@ get '/image/:image_id/?' => sub
     }
     else
     {
-        redirect '/'; # Redirect to Image Doesn't Exist Page?
+        redirect '/'; # TODO: Redirect to Image Doesn't Exist Page?
     }
 };
 

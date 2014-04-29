@@ -43,3 +43,14 @@ plugins:
     rules_dir: validation_rules
     error_prefix: err_
     is_full: 0
+  Email:
+    # Set default headers (OPTIONAL)
+    headers:
+      from: 'oni@side7.com'
+      subject: 'default subject'
+      X-Mailer: 'MyDancer 1.0'
+      X-Accept-Language: 'en'
+    # Explicity set a transport (OPTIONAL)
+    transport:
+      Sendmail:
+        sendmail: '/usr/sbin/sendmail'

@@ -1,5 +1,11 @@
 [% IF user.image_count == 0 || ! user.image_count %]
   User has no Content to display.
 [% ELSE %]
-  Thumbs here
+  [% FOREACH image IN user.images %]
+    [% IF image.filepath %]
+        <a href='[% image.uri %]'><img src='[% image.filepath %]' alt='' title='' border='0' /></a>
+    [% ELSE %]
+        [ [% image.filepath_error %] ]
+    [% END %]
+  [% END %]
 [% END %]

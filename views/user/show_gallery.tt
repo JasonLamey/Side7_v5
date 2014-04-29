@@ -1,11 +1,17 @@
-<h1>[% username %]'s Gallery</h1>
+<h1>[% user.username %]'s Gallery</h1>
 [% IF NOT gallery %]
 <div>Nothing to show. Poke this user to get them to upload!</div>
 [% ELSE %]
-<p><a href="/user/[% username %]">[% username %]'s Profile</a></p>
+<p><a href="/user/[% user.username %]">[% user.username %]'s Profile</a></p>
 <ol type="1">
     [% FOREACH content IN gallery %]
-    <li><a href="/[% content.content_type %]/[% content.id %]">
+    <li>
+    [% IF content.filepath %]
+    <a href='[% content.uri %]'><img src='[% content.filepath %]' alt='' title='' border='0' /></a>
+    [% ELSE %]
+    [ [% content.filepath_error %] ]
+    [% END %]
+    <a href="/[% content.content_type %]/[% content.id %]">
     [% IF content.title %]
     [% content.title %]
     [% ELSE %]

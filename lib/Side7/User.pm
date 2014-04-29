@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object';
+use List::Util;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -109,7 +110,7 @@ sub get_user_hash_for_template
 {
     my $self = shift;
 
-    my $user_hash // {};
+    my $user_hash = {};
 
     # User values
     foreach my $key ( qw( username email_address ) )
@@ -708,17 +709,15 @@ sub get_users_for_directory
             ],
     ); 
 
-    my $offset = ( ( $page - 1 ) * $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} );
-
     my $iterator = Side7::User::Manager->get_users_iterator(
         query => 
             [ 
                 username => { $op => "$initial_string" },
             ],
-        with_objects => [ 'account' ],
-        sort_by => 'username ASC',
-        limit   => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
-        offset  => $offset,
+        with_objects => [ 'account', 'images' ],
+        sort_by      => 'username ASC',
+        page         => $page,
+        per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
     );
 
     my $users;
@@ -730,6 +729,45 @@ sub get_users_for_directory
             $full_name  = $user->account->full_name();
             $created_at = $user->account->get_formatted_created_at();
         }
+
+        # Gather up example, random thumbnails. Max of 5.
+        my @image_ids = ( List::Util::shuffle( 0 .. $#{ $user->images } ) )[ 0 .. 4 ];
+        my @images = ();
+
+        my $size = 'small';
+        foreach my $image_to_add ( @image_ids )
+        {
+
+            next if ! defined $image_to_add;
+
+            my $image = @{ $user->images }[ $image_to_add ];
+
+            my ( $filepath, $error ) = $image->get_image_path( size => $size );
+
+            if ( defined $error && $error ne '' )
+            {
+                $LOGGER->warn( $error );
+            }
+            else
+            {
+                if ( ! -f $filepath )
+                {
+                    my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                    if ( $success )
+                    {
+                        $filepath =~ s/^\/data//;
+                    }
+                }
+                else
+                {
+                    $filepath =~ s/^\/data//;
+                }
+            }
+            
+            push( @images, { filepath => $filepath, filepath_error => $error, uri => "/image/$image->{'id'}" } );
+        }
+
         push @$users, 
             {
                 id            => $user->id,
@@ -737,6 +775,7 @@ sub get_users_for_directory
                 full_name     => $full_name,
                 join_date     => $created_at,
                 image_count   => $user->get_image_count(),
+                images        => \@images,
             };
     }
     $iterator->finish();
@@ -790,7 +829,7 @@ sub show_user_gallery
 
     my $gallery = $user->get_gallery();
 
-    return $gallery;
+    return ( $user, $gallery );
 }
 
 

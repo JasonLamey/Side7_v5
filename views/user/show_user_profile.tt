@@ -1,4 +1,5 @@
 <h1>User Profile for [% user.username %]</h1>
+<p><a href="/user/[% user.username %]/gallery">See [% user.username %]'s Gallery</a></p>
 <ol>
     <li>Full Name: [% user.account.full_name %]</li>
     <li>Created At: [% user.created_at %]</li>

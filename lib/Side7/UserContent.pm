@@ -67,6 +67,7 @@ sub get_gallery
     my ( $user_id, $args ) = @_;
 
     my $sort_by = delete $args->{'sort_by'} // 'created_at DESC';
+    my $size    = delete $args->{'size'}    // 'small';
 
     if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
     {
@@ -91,7 +92,34 @@ sub get_gallery
     {
         my $image_hash = $image->get_image_hash_for_template();
         $image_hash->{'content_type'} = 'image';
-    
+
+        my ( $filepath, $error ) = $image->get_image_path( size => $size );
+
+        if ( defined $error && $error ne '' )
+        {
+            $LOGGER->warn( $error );
+        }
+        else
+        {
+            if ( ! -f $filepath )
+            {
+                my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                if ( $success )
+                {
+                    $filepath =~ s/^\/data//;
+                }
+            }
+            else
+            {
+                $filepath =~ s/^\/data//;
+            }
+        }
+
+        $image_hash->{'filepath'}       = $filepath;
+        $image_hash->{'filepath_error'} = $error;
+        $image_hash->{'uri'}            = "/image/$image->{'id'}";
+
         push @results, $image_hash;
     }
 

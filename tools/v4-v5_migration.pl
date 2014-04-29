@@ -10,6 +10,7 @@ use Side7::Globals;
 use Side7::DB;
 use Side7::User;
 use Side7::User::Country;
+use Side7::User::Role;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::DailyView;
@@ -168,10 +169,17 @@ sub migrate_users
     );
 
     my %types = (
-        1 => 1,
-        2 => 1,
-        3 => 2,
-        4 => 3,
+        1 => 1, # Visitor
+        2 => 1, # 1 Star
+        3 => 2, # 3 Star 
+        4 => 3, # 5 Star
+    );
+
+    my %user_roles = (
+        1 => 2, # Visitor
+        2 => 2, # 1 Star
+        3 => 2, # 3 Star
+        4 => 3, # 5 Star
     );
 
     my %datevis = (
@@ -249,6 +257,7 @@ sub migrate_users
             last_name               => $row->{last_name},
             user_type_id            => $types{$row->{access_control_list_id}},
             user_status_id          => $statuses{$row->{status}},
+            user_role_id            => $user_roles{$row->{access_control_list_id}},
             other_aliases           => $row->{alias},
             biography               => $row->{biography},
             sex                     => $row->{sex},

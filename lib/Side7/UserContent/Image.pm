@@ -13,6 +13,7 @@ use Side7::UserContent::Image::DetailedView::Manager;
 use Side7::UserContent::Comment;
 use Side7::Utils::File;
 use Side7::Utils::Text;
+use Side7::Utils::Image;
 
 =pod
 
@@ -141,13 +142,76 @@ __PACKAGE__->meta->setup
 
 =head1 METHODS
 
-=head2 method_name
+=head2 get_image_path()
 
-    $result = My::Package->method_name();
+Returns the path to the image file to be used to display the image.
 
-TODO: Define what this method does, describing both input and output values and types.
+Parameters:
+
+=over 4
+
+=item size: The image size to return. Valid values are 'tiny', 'small', 'medium', 'large', 'original'. Default is 'original'.
+
+=back
+
+    my ( $image_path, $error ) = $image->get_image_path( size => $size );
 
 =cut
+
+sub get_image_path
+{
+    my ( $self, %args ) = @_;
+
+    return undef if ! defined $self;
+
+    my $size = delete $args{'size'} // 'original';
+
+    my ( $success, $error, $image_path ) =
+            Side7::Utils::File::create_user_cached_file_directory( 
+                                                                    user_id      => $self->user_id, 
+                                                                    content_type => 'images', 
+                                                                    content_size => $size
+                                                                 );
+
+    if ( ! $success )
+    {
+        return ( undef, $error );
+    }
+
+    my $user_gallery_path = $self->user->get_content_directory();
+
+    my $original_image = Image::Magick->new();
+
+    my ( $width, $height, $filesize, $format ) = $original_image->Ping( $user_gallery_path . $self->filename );
+
+    if ( ! defined $format )
+    {
+        $LOGGER->warn( 'Getting image path FAILED while getting properties of input file >' . $user_gallery_path . $self->filename . '<' );
+        return( undef, 'A problem occurred while trying to get Image file.' );
+    }
+
+    my $extension = '';
+    if ( $format eq 'JPEG' )
+    {
+        $extension = '.jpg';
+    }
+    elsif ( $format eq 'GIF' )
+    {
+        $extension = '.gif';
+    }
+    elsif ( $format eq 'PNG' )
+    {
+        $extension = '.png';
+    }
+    else
+    {
+        return( undef, 'Invalid image file type.' );
+    }
+
+    my $filename = $self->id . $extension;
+
+    return ( $image_path . '/' . $filename, undef );
+}
 
 
 =head2 get_image_hash_for_template()
@@ -226,6 +290,53 @@ sub get_image_hash_for_template
 }
 
 
+=head2 create_cached_file()
+
+Creates a copy of the original file in the appropriate cached_file directory. Returns success or error.
+
+Parameters:
+
+=over 4
+
+=item size: The image size. Valid values are 'tiny', 'small', 'medium', 'large', 'original'
+
+=back
+
+    my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+=cut
+
+sub create_cached_file
+{
+    my ( $self, %args ) = @_;
+
+    return ( 0, 'Invalid Image Object' ) if ! defined $self;
+
+    my $size = delete $args{'size'} // undef;
+    my $path = delete $args{'path'} // undef;
+
+    if ( ! defined $size )
+    {
+        return ( 0, 'Invalid image size passed.' );
+    }
+
+    if ( ! defined $path || $path eq '' )
+    {
+        $path = $self->get_image_path( size => $size );
+    }
+
+    my ( $success, $error ) = Side7::Utils::Image::create_cached_image( image => $self, size => $size, path => $path );
+   
+    if ( ! defined $success )
+    {
+        $LOGGER->warn( "Could not create cached image file for >$self->filename<, ID: >$self->id<: $error" );
+        return ( 0, 'Could not create cached image.' );
+    } 
+
+    return ( $success, undef );
+}
+
+
 =head1 FUNCTIONS
 
 
@@ -250,6 +361,7 @@ sub show_image
     my $image_id = delete $args{'image_id'};
     my $request  = delete $args{'request'};
     my $session  = delete $args{'session'};
+    my $size     = delete $args{'size'} // 'original';
 
     return if ( ! defined $image_id );
 
@@ -287,6 +399,38 @@ sub show_image
                                                                         content_id   => $image_id
                                                                        ) // [];
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
+
+    # Filepath
+    my ( $filepath, $error ) = $image->get_image_path( size => $size );
+    if ( defined $error && $error ne '' )
+    {
+        $LOGGER->warn( $error );
+        $image_hash->{'filepath_error'} = $error;
+        $image_hash->{'filepath'} = '';
+    }
+    else
+    {
+        if ( ! -f $filepath )
+        {
+            my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+            if ( ! $success )
+            {
+                $image_hash->{'filepath_error'} = $error;
+                $image_hash->{'filepath'}       = '';
+            }
+            else
+            {
+                $filepath =~ s/^\/data//;
+                $image_hash->{'filepath'} = $filepath;
+            }
+        }
+        else
+        {
+            $filepath =~ s/^\/data//;
+            $image_hash->{'filepath'} = $filepath;
+        }
+    }
 
     # Add a new view
     ### Increase Daily View counter.

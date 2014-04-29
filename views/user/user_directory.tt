@@ -1,5 +1,6 @@
 <h1>User Directory</h1>
 
+[% BLOCK pagination_menu_letters %]
 [% FOREACH letter IN [ 'A'..'Z' ] %]
 <a href="/user_directory/[% letter %]">[% letter %]</a> &middot; 
 [% END %]
@@ -7,7 +8,9 @@
 <a href="/user_directory/[% number %]">[% number %]</a> &middot; 
 [% END %]
 <a href="/user_directory/_">_</a> 
+[% END %]
 
+[% BLOCK pagination_menu_pages %]
 <p>
 [% IF NOT pagination.previous_page %]
 &lt; Previous Page
@@ -23,12 +26,21 @@ Next Page &gt;
 </p>
 
 <p>Viewing [% pagination.first_item %] to [% pagination.last_item %] of [% pagination.total_count %] total.</p>
+[% END %]
+
+
+
+[% PROCESS pagination_menu_letters %]
+[% PROCESS pagination_menu_pages %]
 
 [% thumbs = 'user/_user_directory_thumbs.tt' %]
 [% IF users %]
     [% FOREACH user IN users %]
-    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]; Num Images: [% user.image_count %] | [% PROCESS $thumbs %]</div>
+    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]; Num Images: <a href="/user/[% user.username %]/gallery">[% user.image_count %]</a> | [% PROCESS $thumbs %]</div>
     [% END %]
 [% ELSE %]
 <p>No users to display. How sad.</p>
 [% END %]
+
+[% PROCESS pagination_menu_pages %]
+[% PROCESS pagination_menu_letters %]

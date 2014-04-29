@@ -34,6 +34,8 @@ sub new
     $CONFIG->{'general'}->{'version'}                = '5.0';
     $CONFIG->{'general'}->{'base_gallery_directory'} = '/data/galleries/';
     $CONFIG->{'general'}->{'base_gallery_uri'}       = '/galleries/';
+    $CONFIG->{'general'}->{'cached_file_directory'}  = '/data/cached_files/';
+    $CONFIG->{'general'}->{'cached_file_uri'}        = '/cached_files/';
 
     # Page-related variables
     $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} = 50;
