@@ -20,12 +20,23 @@ Supplies tools and functionality for parsing text in various and sundry ways.
 
 =head1 FUNCTIONS
 
+
 =head2 parse_bbcode_markup()
 
-    $parsed_text = Side7::Utils::Text::parse_bbcode_markup( $original_text, \%args );
+Returns a string that has the BBCode-like markup in the passed in string parsed into HTML.  
+C<%args> is a hash of arguments that can be passed to Parse::BBCode to customize its output.
 
-Returns a string that has the BBCode-like markup in the passed in string parsed into HTML.  C<%args> is a hash of arguments that can be passed
-to Parse::BBCode to customize its output.
+Parameters:
+
+=over 4
+
+=item original_text: The original text variable to parse.
+
+=item args: Hashref of additional options, such as smilies. TODO: Detail this.
+
+=back
+
+    $parsed_text = Side7::Utils::Text::parse_bbcode_markup( $original_text, \%args );
 
 =cut
 
@@ -47,6 +58,37 @@ sub parse_bbcode_markup
     my $parsed_text = $parser->render( $incoming_text );
 
     return $parsed_text;
+}
+
+
+=head2 true_false_to_int()
+
+Returns an integer value for true/false.
+
+Parameters:
+
+=over 4
+
+=item text: The text to evaluate.
+
+=back
+
+    my $int = Side7::Utils::Text::true_false_to_int( $text );
+
+=cut
+
+sub true_false_to_int
+{
+    my ( $text ) = @_;
+
+    return 0 if ! defined $text;
+
+    if ( lc( $text ) eq 'true' )
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 

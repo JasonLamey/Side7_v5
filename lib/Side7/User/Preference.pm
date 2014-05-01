@@ -27,6 +27,7 @@ This package handles all the management for User Preferences.
     | default_comment_type       | enum('Any','Commentary Only','Light Critique','Heavy Critique') | NO   |     | Any         |                |
     | allow_watching             | tinyint(1)                                                      | NO   |     | 1           |                |
     | allow_favoriting           | tinyint(1)                                                      | NO   |     | 1           |                |
+    | allow_sharing              | tinyint(1)                                                      | NO   |     | 1           |                |
     | allow_email_through_forms  | tinyint(1)                                                      | NO   |     | 1           |                |
     | allow_pms                  | tinyint(1)                                                      | NO   |     | 1           |                |
     | pms_notifications          | tinyint(1)                                                      | NO   |     | 1           |                |
@@ -77,6 +78,7 @@ __PACKAGE__->meta->setup
                                       }, 
         allow_watching             => { type => 'boolean',  not_null => 1, default => 1 },
         allow_favoriting           => { type => 'boolean',  not_null => 1, default => 1 },
+        allow_sharing              => { type => 'boolean',  not_null => 1, default => 1 },
         allow_email_through_forms  => { type => 'boolean',  not_null => 1, default => 1 },
         allow_pms                  => { type => 'boolean',  not_null => 1, default => 1 },
         pms_notifications          => { type => 'boolean',  not_null => 1, default => 1 },
@@ -96,7 +98,7 @@ __PACKAGE__->meta->setup
                                       }, 
         show_m_thumbs              => { type => 'boolean',  not_null => 1, default => 0 },
         show_adult_content         => { type => 'boolean',  not_null => 1, default => 0 },
-        show_full_sized_images     => { 
+        display_full_sized_images  => { 
                                         type     => 'enum',  
                                         values   => [ 'Same Window', 'New Window' ],  
                                         not_null => 1,

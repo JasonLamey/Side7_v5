@@ -11,12 +11,14 @@ use Side7::DB;
 use Side7::User;
 use Side7::User::Country;
 use Side7::User::Role;
+use Side7::User::Preference;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::DailyView;
 use Side7::UserContent::Image::Property;
 use Side7::UserContent::CommentThread;
 use Side7::UserContent::Comment;
+use Side7::Utils::Text;
 
 use Getopt::Std;
 use Carp;
@@ -86,6 +88,7 @@ sub migrate
 
     db_connect();
     migrate_users();
+    migrate_user_preferences();
     migrate_images();
     migrate_image_views();
     migrate_image_properties();
@@ -287,6 +290,85 @@ sub migrate_users
 
     $sth->finish();
     say "\t=> Migrated users & accounts: " . _commafy( $user_count ) if defined $opt{V};
+}
+
+sub migrate_user_preferences
+{
+    if ( defined $opt{V} ) { say "=> Migrating User Preferences."; }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 User Preferences tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ user_preferences / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 user_preferences table;
+    if ( defined $opt{V} ) { say "\t=> Pulling user preferences from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+       'SELECT up.*, up.id as user_preference_id
+        FROM user_preferences up 
+        ORDER BY up.id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $pref_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+
+        # Minor cleanup
+        my $show_m_thumbs = ( $row->{display_show_rated_m_thumbnails} eq 'Nowhere' ) ? 0 : 1;
+        my $display_type  = ( $row->{display_image_list_type} eq 'Thumbnails' )      ? 'Grid' : 'List';
+        my $comment_type  = ( $row->{account_default_comment_type_setting} eq 'Any Kind' ) ? 'Any' 
+                                : $row->{account_default_comment_type_setting};
+        my $comment_visibility = ( $row->{account_default_comment_visibility_setting} eq 'Hide All' ) ? 'Hide' : 'Show';
+
+        my $pref = Side7::User::Preference->new(
+            id                         => $row->{user_preference_id},
+            user_id                    => $row->{user_account_id},
+            display_signature          => Side7::Utils::Text::true_false_to_int( $row->{account_display_signature} ),
+            show_management_thumbs     => Side7::Utils::Text::true_false_to_int( $row->{account_show_management_thumbnails} ),
+            default_comment_visibility => $comment_visibility,
+            default_comment_type       => $comment_type,
+            allow_watching             => Side7::Utils::Text::true_false_to_int( $row->{privacy_prevent_museum_additions} ),
+            allow_favoriting           => Side7::Utils::Text::true_false_to_int( $row->{privacy_prevent_image_favorites} ),
+            allow_sharing              => 1,
+            allow_email_through_forms  => Side7::Utils::Text::true_false_to_int( $row->{privacy_allow_email_through_forms} ),
+            allow_pms                  => Side7::Utils::Text::true_false_to_int( $row->{privacy_allow_pms} ),
+            pms_notifications          => Side7::Utils::Text::true_false_to_int( $row->{privacy_notify_of_pms} ),
+            comment_notifications      => Side7::Utils::Text::true_false_to_int( $row->{privacy_notify_of_comments} ),
+            show_online                => Side7::Utils::Text::true_false_to_int( $row->{privacy_show_online} ),
+            thumbnail_size             => $row->{display_thumbnail_size},
+            content_display_type       => $display_type,
+            show_m_thumbs              => $show_m_thumbs,
+            show_adult_content         => 0,
+            display_full_sized_images  => $row->{display_full_sized_images},
+            created_at                 => 'now()',
+            updated_at                 => 'now()',
+        );
+        $pref->save if ! defined $opt{D};
+
+        $pref_count++;
+        print _progress_dot( total => $row_count, count => $pref_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated users preferences: " . _commafy( $pref_count ) if defined $opt{V};
 }
 
 sub migrate_images

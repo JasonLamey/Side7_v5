@@ -82,6 +82,18 @@ __PACKAGE__->meta->setup
             class      => 'Side7::Account',
             column_map => { id => 'user_id' },
         },
+        user_preferences =>
+        {
+            type       => 'one to one',
+            class      => 'Side7::User::Preference',
+            column_map => { id => 'user_id' },
+        },
+        user_owned_permissions =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::UserOwnedPermission',
+            column_map => { id => 'user_id' },
+        },
         images =>
         {
             type       => 'one to many',
@@ -92,12 +104,6 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::UserContent::Image::DetailedView',
-            column_map => { id => 'user_id' },
-        },
-        user_owned_permissions =>
-        {
-            type       => 'one to many',
-            class      => 'Side7::User::UserOwnedPermission',
             column_map => { id => 'user_id' },
         },
     ],
@@ -804,7 +810,7 @@ sub get_user_by_id
     return undef if ( ! defined $user_id || $user_id !~ /^\d+$/ );
 
     my $user = Side7::User->new( id => $user_id );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+    my $loaded = $user->load( speculative => 1, with => [ 'account', 'user_preferences' ] );
 
     if ( defined $user && $loaded != 0 )
     {
@@ -838,7 +844,7 @@ sub get_user_by_username
     return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+    my $loaded = $user->load( speculative => 1, with => [ 'account', 'user_preferences' ] );
 
     if ( defined $user && $loaded != 0 )
     {
@@ -894,7 +900,7 @@ sub get_users_for_directory
             [ 
                 username => { $op => "$initial_string" },
             ],
-        with_objects => [ 'account', 'images' ],
+        with_objects => [ 'account', 'images', 'user_preferences' ],
         sort_by      => 'username ASC',
         page         => $page,
         per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
