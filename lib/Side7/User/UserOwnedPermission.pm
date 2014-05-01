@@ -68,13 +68,15 @@ __PACKAGE__->meta->setup
     [
         user =>
         {
-            type       => 'many to one',
-            map_class  => 'Side7::User',
+            type       => 'one to one',
+            class      => 'Side7::User',
+            column_map => { user_id => 'id' },
         },
         permission =>
         {
-            type       => 'many to one',
-            map_class  => 'Side7::User::Permission',
+            type       => 'one to one',
+            class      => 'Side7::User::Permission',
+            column_map => { permission_id => 'id' },
         },
     ],
 );

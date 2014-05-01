@@ -60,6 +60,12 @@ __PACKAGE__->meta->setup
             type       => 'many to many',
             map_class  => 'Side7::User::RolesPermissionsMap',
         },
+        user_owned_permissions =>
+        {
+            type       => 'one to one',
+            class      => 'Side7::User::UserOwnedPermission',
+            column_map => { id => 'permission_id' },
+        },
     ],
 );
 

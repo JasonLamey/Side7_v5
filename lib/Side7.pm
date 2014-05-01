@@ -335,6 +335,33 @@ get '/user/:username/home/?' => sub
     template 'user/home', { user => $user_hash };
 };
 
+get '/user/:username/permissions/?' => sub
+{
+    my $authorized = Side7::Login::user_authorization( session_username => session('username'), username => params->{'username'} );
+
+    if ( ! session('username') )
+    {
+        return template 'login/login_form', { rd_url => '/user/' . params->{'username'} . '/home' };
+    }
+
+    if ( ! $authorized )
+    {
+        return redirect '/'; # Not an authorized page.
+    }
+
+    my $user = Side7::User::get_user_by_username( params->{'username'} );
+
+    if ( ! defined $user )
+    {
+        redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $permissions = $user->get_all_permissions();
+    my $user_hash = {};
+
+    template 'user/permissions', { user => $user_hash, permissions => $permissions };
+};
+
 #############################
 ### Moderator/Admin pages ###
 #############################

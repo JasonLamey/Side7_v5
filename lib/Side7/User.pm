@@ -12,6 +12,10 @@ use Side7::DataValidation;
 use Side7::User::Manager;
 use Side7::UserContent;
 use Side7::UserContent::Image;
+use Side7::User::Role;
+use Side7::User::Permission;
+use Side7::User::UserOwnedPermission;
+use Side7::User::UserOwnedPermission::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 
@@ -88,6 +92,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::UserContent::Image::DetailedView',
+            column_map => { id => 'user_id' },
+        },
+        user_owned_permissions =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::UserOwnedPermission',
             column_map => { id => 'user_id' },
         },
     ],
@@ -342,6 +352,176 @@ sub get_formatted_updated_at
     return $date;
 }
 
+
+=head2 has_permission()
+
+Checks against Side7::User::Role and Side7::User::UserOwnedPermission to see if the account has
+the requested permission.
+
+Parameters:
+
+=over 4
+
+=item permission: The permission being checked against.
+
+=back
+
+    my $has_permission = $user->has_permission( 'permission_name' );
+
+=cut
+
+sub has_permission
+{
+    my ( $self, $permission_name ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
+
+    return 0 if ! defined $permission_name;
+
+    # Does the permission that is being requested exist?
+    my $permission = Side7::User::Permission->new( name => $permission_name );
+    my $loaded = $permission->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 
+                        'Could not load Permission >' . $permission_name . 
+                        '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
+        );
+        return 0;
+    }
+   
+    # Get the User's Role. 
+    my $role = Side7::User::Role->new( id => $self->account->user_role_id );
+    $loaded = $role->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 
+                        'Could not load User Role >' . $self->account->user_role_id .
+                        '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
+        );
+        return 0;
+    }
+
+    # Check to see if the Role has the permission.
+    my $role_has_permission = $role->has_permission( $permission_name );
+
+    # See if the User has the permission owned, and also ensure it's not revoked or suspended.
+    my $user_owned_permission = Side7::User::UserOwnedPermission->new( 
+                                                                        user_id       => $self->id, 
+                                                                        permission_id => $permission->id
+                                                                     );
+    my $uop_loaded = $user_owned_permission->load( speculative => 1 );
+
+    if ( $uop_loaded != 0 )
+    {
+        if (
+            $user_owned_permission->suspended == 1
+            ||
+            $user_owned_permission->revoked == 1
+        )
+        {
+            $LOGGER->info(
+                            'User Permission suspended or revoked for Permission >' . $permission_name .
+                            '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
+            );
+            return 0;
+        }
+    }
+
+    # If the role has the permission, or the User has purchased the permission, return true.
+    if ( 
+        $role_has_permission == 1
+        ||
+        $uop_loaded != 0
+    )
+    {
+        return 1;
+    }
+
+    # No permission.
+    return 0;
+}
+
+
+=head2 get_all_permissions()
+
+Fetches all permissions a User has, based on their User Role and purchased Permissions.
+
+    my @permissions = $user->get_all_permissions();
+
+=cut
+
+sub get_all_permissions
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
+
+    # Get the User's Role. 
+    my $role = Side7::User::Role->new( id => $self->account->user_role_id );
+    my $loaded = $role->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 
+                        'Could not load User Role >' . $self->account->user_role_id .
+                        '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
+        );
+        return [];
+    }
+
+    my $role_based_permissions = $role->permissions();
+
+    my @permissions = ();
+    foreach my $permission ( @{ $role_based_permissions } )
+    {
+        push ( 
+                @permissions, { 
+                                id           => $permission->id, 
+                                name         => $permission->name, 
+                                description  => $permission->description,
+                                purchaseable => $permission->purchaseable,
+                            }
+        );
+    }
+
+
+    my $user_owned_permissions 
+            = Side7::User::UserOwnedPermission::Manager->get_user_owned_permissions( 
+                query =>
+                [
+                    user_id => [ $self->id ],
+                ],
+                with_objects => [ 'permission' ],
+            );
+
+    foreach my $permission ( @{ $user_owned_permissions } )
+    {
+        push ( 
+                @permissions, { 
+                                id           => $permission->permission->id, 
+                                name         => $permission->permission->name, 
+                                description  => $permission->permission->description,
+                                purchaseable => $permission->permission->purchaseable,
+                                suspended    => $permission->suspended,
+                                reinstate_on => $permission->reinstate_on,
+                                revoked      => $permission->revoked,
+                            }
+        );
+    }
+
+    return \@permissions;
+}
 
 =head1 FUNCTIONS
 

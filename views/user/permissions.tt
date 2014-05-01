@@ -1,0 +1,3 @@
+[% FOREACH permission IN permissions %]
+<div><b>[% permission.name %]:</b> [% permission.description %]</div>
+[% END %]

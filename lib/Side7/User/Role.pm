@@ -46,7 +46,7 @@ Many to many relationship, with id being the FK through user_roles_perks_map
 
 __PACKAGE__->meta->setup
 (
-    table   => 'permissions',
+    table   => 'user_roles',
     columns => [ 
         id            => { type => 'serial',   not_null => 1 },
         name          => { type => 'varchar',  length => 255,  not_null => 1 }, 

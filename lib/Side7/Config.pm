@@ -31,6 +31,7 @@ sub new
     my $CONFIG = {};
 
     # General Globals
+    $CONFIG->{'app_dir'} = '/home/badkarma/src/dancer_projects/side7v5/Side7';
     $CONFIG->{'general'}->{'version'}                = '5.0';
     $CONFIG->{'general'}->{'base_gallery_directory'} = '/data/galleries/';
     $CONFIG->{'general'}->{'base_gallery_uri'}       = '/galleries/';
@@ -43,7 +44,7 @@ sub new
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';
     $CONFIG->{'log4perl'}->{'LOGFILE'}          = 'Log::Log4perl::Appender::File';
-    $CONFIG->{'log4perl'}->{'LOGFILE.filename'} = 'log/logger.log';
+    $CONFIG->{'log4perl'}->{'LOGFILE.filename'} = $CONFIG->{'app_dir'} . '/log/logger.log';
     $CONFIG->{'log4perl'}->{'LOGFILE.mode'}     = 'append';
     $CONFIG->{'log4perl'}->{'LOGFILE.layout'}   = 'PatternLayout';
     $CONFIG->{'log4perl'}->{'LOGFILE.layout.ConversionPattern'} = '[%d] [%p] %M %L - %m%n';
