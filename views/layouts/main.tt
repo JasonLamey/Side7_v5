@@ -25,7 +25,7 @@
         [% IF not session.logged_in %]
         <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>
         [% ELSE %]
-        [% session.username %]: <a href="/user/[% session.username %]/home">Home</a> &middot; <a href="[% logout_url %]">log out</a>
+        [% session.username %]: <a href="/my/home">Home</a> &middot; <a href="[% logout_url %]">log out</a>
         [% END %]
     </div>
 [% IF flash.message %]

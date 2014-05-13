@@ -25,6 +25,7 @@ hook 'before_template_render' => sub {
    $tokens->{'login_url'}  = uri_for( '/login'  );
    $tokens->{'logout_url'} = uri_for( '/logout' );
    $tokens->{'signup_url'} = uri_for( '/signup' );
+   $tokens->{'user_home_url'} = uri_for( '/my/home' );
 };
 
 get '/' => sub 
@@ -96,7 +97,7 @@ post '/login' => sub
         flash message => 'Welcome back, ' . $user->username . '!';
         if ( $logged_in_url eq '/' )
         {
-            $logged_in_url = '/user/' . $user->username . '/home';
+            $logged_in_url = '/my/home';
         }
         return redirect $logged_in_url;
     }
@@ -311,55 +312,70 @@ get '/image/:image_id/?' => sub
 ### Pages requiring logins ###
 ##############################
 
-get '/user/:username/home/?' => sub
+hook 'before' => sub
 {
-    my $authorized = Side7::Login::user_authorization( session_username => session('username'), username => params->{'username'} );
+    if ( request->path_info =~ m{^/my/}) {
+        my $authorized = Side7::Login::user_authorization( 
+                                                            session_username => session( 'username' ), 
+                                                            username         => params->{'username'}
+                                                         );
 
-    if ( ! session('username') )
-    {
-        return template 'login/login_form', { rd_url => '/user/' . params->{'username'} . '/home' };
+        if ( ! session('username') )
+        {
+            return template 'login/login_form', { rd_url => request->path_info };
+        }
+
+        if ( ! $authorized )
+        {
+            flash error => 'You are not authorized to view that page.';
+            return redirect '/'; # Not an authorized page.
+        }
     }
+};
 
-    if ( ! $authorized )
-    {
-        return redirect '/'; # Not an authorized page.
-    }
-
-    my ( $user_hash ) = Side7::User::show_home( username => params->{'username'} );
+get '/my/home/?' => sub
+{
+    my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
 
     if ( ! defined $user_hash )
     {
+        flash error => 'User not found.';
         redirect '/';
     }
 
-    template 'user/home', { user => $user_hash };
+    template 'my/home', { user => $user_hash };
 };
 
-get '/user/:username/permissions/?' => sub
+get '/my/permissions/?' => sub
 {
-    my $authorized = Side7::Login::user_authorization( session_username => session('username'), username => params->{'username'} );
-
-    if ( ! session('username') )
-    {
-        return template 'login/login_form', { rd_url => '/user/' . params->{'username'} . '/home' };
-    }
-
-    if ( ! $authorized )
-    {
-        return redirect '/'; # Not an authorized page.
-    }
-
-    my $user = Side7::User::get_user_by_username( params->{'username'} );
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
     if ( ! defined $user )
     {
+        flash error => 'User not found.';
         redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
     my $permissions = $user->get_all_permissions();
     my $user_hash = {};
 
-    template 'user/permissions', { user => $user_hash, permissions => $permissions };
+    template 'my/permissions', { user => $user_hash, permissions => $permissions };
+};
+
+get '/my/perks/?' => sub
+{
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    if ( ! defined $user )
+    {
+        flash error => 'User not found.';
+        redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $perks = $user->get_all_perks();
+    my $user_hash = {};
+
+    template 'my/perks', { user => $user_hash, perks => $perks };
 };
 
 #############################

@@ -181,8 +181,11 @@ sub user_authorization
     my $username         = delete $args{'username'};
 
     return 0 if ! defined $session_username;
-    return 0 if ! defined $username;
-    return 0 if ( uc( $session_username ) ne uc( $username ) );
+
+    if ( defined $username )
+    {
+        return 0 if ( uc( $session_username ) ne uc( $username ) );
+    }
 
     return 1;
 }

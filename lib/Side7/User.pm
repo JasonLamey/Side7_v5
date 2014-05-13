@@ -16,6 +16,9 @@ use Side7::User::Role;
 use Side7::User::Permission;
 use Side7::User::UserOwnedPermission;
 use Side7::User::UserOwnedPermission::Manager;
+use Side7::User::Perk;
+use Side7::User::UserOwnedPerk;
+use Side7::User::UserOwnedPerk::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 
@@ -372,7 +375,7 @@ Parameters:
 
 =back
 
-    my $has_permission = $user->has_permission( 'permission_name' );
+    my $has_permission = $user->has_permission( 'permission_name' );ccount receives Subscriber-specific promos.
 
 =cut
 
@@ -527,6 +530,80 @@ sub get_all_permissions
     }
 
     return \@permissions;
+}
+
+=head2 get_all_perks()
+
+Fetches all perks a User has, based on their User Role and purchased Perks.
+
+    my @perks = $user->get_all_perks();
+
+=cut
+
+sub get_all_perks
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
+
+    # Get the User's Role. 
+    my $role = Side7::User::Role->new( id => $self->account->user_role_id );
+    my $loaded = $role->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 
+                        'Could not load User Role >' . $self->account->user_role_id .
+                        '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
+        );
+        return [];
+    }
+
+    my $role_based_perks = $role->perks();
+
+    my @perks = ();
+    foreach my $perk ( @{ $role_based_perks } )
+    {
+        push ( 
+                @perks, { 
+                            id           => $perk->id, 
+                            name         => $perk->name, 
+                            description  => $perk->description,
+                            purchaseable => $perk->purchaseable,
+                        }
+        );
+    }
+
+
+    my $user_owned_perks 
+            = Side7::User::UserOwnedPerk::Manager->get_user_owned_perks( 
+                query =>
+                [
+                    user_id => [ $self->id ],
+                ],
+                with_objects => [ 'perk' ],
+            );
+
+    foreach my $perk ( @{ $user_owned_perks } )
+    {
+        push ( 
+                @perk, { 
+                         id           => $perk->perk->id, 
+                         name         => $perk->perk->name, 
+                         description  => $perk->perk->description,
+                         purchaseable => $perk->perk->purchaseable,
+                         suspended    => $perk->suspended,
+                         reinstate_on => $perk->reinstate_on,
+                         revoked      => $perk->revoked,
+                       }
+        );
+    }
+
+    return \@perks;
 }
 
 =head1 FUNCTIONS
