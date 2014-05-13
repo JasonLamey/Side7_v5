@@ -1,0 +1,3 @@
+[% FOREACH perk IN perks %]
+<div><b>[% perk.name %]:</b> [% perk.description %]</div>
+[% END %]

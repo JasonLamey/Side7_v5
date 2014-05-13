@@ -591,15 +591,15 @@ sub get_all_perks
     foreach my $perk ( @{ $user_owned_perks } )
     {
         push ( 
-                @perk, { 
-                         id           => $perk->perk->id, 
-                         name         => $perk->perk->name, 
-                         description  => $perk->perk->description,
-                         purchaseable => $perk->perk->purchaseable,
-                         suspended    => $perk->suspended,
-                         reinstate_on => $perk->reinstate_on,
-                         revoked      => $perk->revoked,
-                       }
+                @perks, { 
+                          id           => $perk->perk->id, 
+                          name         => $perk->perk->name, 
+                          description  => $perk->perk->description,
+                          purchaseable => $perk->perk->purchaseable,
+                          suspended    => $perk->suspended,
+                          reinstate_on => $perk->reinstate_on,
+                          revoked      => $perk->revoked,
+                        }
         );
     }
 
