@@ -7,6 +7,7 @@ use Dancer qw( :syntax );
 use Data::Dumper;
 
 use Side7::Globals;
+use Side7::AuditLog;
 use Side7::User;
 
 
@@ -28,7 +29,7 @@ This class manages the login/logout status of a user.
 
 =head2 user_login
 
-    my ( $redirect_url, $user_object ) = Side7::Login::user_login(
+    my ( $redirect_url, $user_object, $audit_log_msg ) = Side7::Login::user_login(
                         username => $username,
                         password => $password,
                         rd_url   => $rd_url,
@@ -49,8 +50,6 @@ sub user_login
 
     $rd_url ||= '/'; # Set default redirect path to root, so we don't return to the login screen.
 
-    $LOGGER->debug( 'rd_url: >' . $rd_url . '<' );
-
     if 
     (
         $username eq ''
@@ -59,7 +58,7 @@ sub user_login
     )
     {
         $LOGGER->warn('No username or password given from login_form.');
-        return undef;
+        return ( $rd_url, undef, 'Error - No username or password provided.' );
     }
 
     my $digest = Side7::Utils::Crypt::sha1_hex_encode( $password );
@@ -76,7 +75,7 @@ sub user_login
         if ( $digest eq $user->{'password'} )
         {
             $LOGGER->debug( 'SHA1 matched.' );
-            return ( $rd_url, $user );
+            return ( $rd_url, $user, undef );
         }
 
         my $md5_hex = Side7::Utils::Crypt::md5_hex_encode( $password );
@@ -87,7 +86,7 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            return ( $rd_url, $user );
+            return ( $rd_url, $user, undef );
         }
 
         my $crypt = Side7::Utils::Crypt::old_side7_crypt( $password );
@@ -98,7 +97,7 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            return ( $rd_url, $user );
+            return ( $rd_url, $user, undef );
         }
 
         my $db_pass = Side7::Utils::Crypt::old_mysql_password( $password );
@@ -109,15 +108,25 @@ sub user_login
             $user->{'password'} = $digest;
             $user->save;
 
-            return ( $rd_url, $user );
+            return ( $rd_url, $user, undef );
         }
 
-        $LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
+        #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
+    }
+    else
+    {
+        # Invalid User
+        $LOGGER->error( "User >$username< doesn't exist in the database." );
+        return ( $rd_url, undef, "Invalid login attempt - User &gt;<b>$username</b>&lt; doesn't exist in the database." );
     }
 
     # Failure
+    my $error = 'Invalid login attempt - Bad username/password combo - Username: &gt;<b>' . $username . '</b>&lt;; ';
+    $error   .= 'Password: &gt;<b>' . $password . '</b>&lt; ';
+    $error   .= 'RD_URL: &gt;<b>' . $rd_url  . '</b>&lt;';
+
     $LOGGER->info("Login check failed: un - >$username<; pw - >$password<");
-    return undef;
+    return ( $rd_url, undef, $error );
 }
 
 

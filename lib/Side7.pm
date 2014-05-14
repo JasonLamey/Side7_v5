@@ -6,9 +6,11 @@ use Dancer::Plugin::Email;
 use Dancer::Plugin::DirectoryView;
 use Dancer::Plugin::TimeRequests;
 use Dancer::Plugin::DebugToolbar;
+use DateTime;
 use Data::Dumper;
 
 use Side7::Globals;
+use Side7::AuditLog;
 use Side7::Login;
 use Side7::User;
 use Side7::Account;
@@ -57,6 +59,8 @@ get qr{^/cached_files/(.*)} => sub {
 # Login form page
 get '/login' => sub
 {
+    params->{'rd_url'} //= vars->{'rd_url'} // undef;
+
     my $rd_url = Side7::Login::sanitize_redirect_url( 
         { 
             rd_url   => params->{'rd_url'}, 
@@ -81,7 +85,7 @@ post '/login' => sub
         return template 'login/login_form', { rd_url => params->{'rd_url'} };
     }
 
-    my ( $logged_in_url, $user ) = Side7::Login::user_login(
+    my ( $logged_in_url, $user, $audit_message ) = Side7::Login::user_login(
         {
             username => params->{'username'}, 
             password => params->{'password'},
@@ -89,7 +93,7 @@ post '/login' => sub
         }
     );
 
-    if ( defined $logged_in_url && $logged_in_url ne '' )
+    if ( defined $user && ref( $user ) eq 'Side7::User' )
     {
         session logged_in => true;
         session username  => $user->username;
@@ -99,7 +103,30 @@ post '/login' => sub
         {
             $logged_in_url = '/my/home';
         }
+
+        my $success_message = 'Login - User &gt;<b>' . $user->username . '</b>&lt; successfully logged in.';
+        my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Successful Login',
+                                                description => $success_message,
+                                                ip_address  => request->address() . $remote_host,
+                                                timestamp   => DateTime->now(),
+        );
+        $audit_log->save();
+
         return redirect $logged_in_url;
+    }
+
+    if ( defined $audit_message )
+    {
+        my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Invalid Login Attempt',
+                                                description => $audit_message,
+                                                ip_address  => request->address() . $remote_host,
+                                                timestamp   => DateTime->now(),
+        );
+        $audit_log->save();
     }
 
     flash error => 'Either your Username or your Password (or both) is incorrect.';
@@ -195,6 +222,18 @@ post '/signup' => sub
     session logged_in => true;
     session username  => $user->username;
     session user_id   => $user->id;
+
+    my $audit_message = 'New user signup - User: &gt;<b>' . $user->username . '</b>&lt;; ';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . $confirmation_code . '</b>&lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'New User Signup',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
     flash message => 'Welcome to Side 7, ' . $user->username . '!';
     return redirect '/'; # TODO: This should redirect the user to a welcome/what-to-do-next page.
     
@@ -216,6 +255,17 @@ get '/confirm_user/?:confirmation_code?' => sub
         flash error => $error;
         return template 'user/confirmation_form', { confirmation_code => params->{'confirmation_code'} };
     }
+
+    my $audit_message = 'New user confirmation - Successful - ';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'New User Confirmation',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
 
     template 'user/confirmed_user';
 };
@@ -314,21 +364,28 @@ get '/image/:image_id/?' => sub
 
 hook 'before' => sub
 {
-    if ( request->path_info =~ m{^/my/}) {
-        my $authorized = Side7::Login::user_authorization( 
-                                                            session_username => session( 'username' ), 
-                                                            username         => params->{'username'}
-                                                         );
-
+    if ( request->path_info =~ m/^\/my\// )
+    {
         if ( ! session('username') )
         {
-            return template 'login/login_form', { rd_url => request->path_info };
+            $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+            flash error => 'You must be logged in to view that page.';
+            var rd_url => request->path_info;
+            request->path_info( '/login' );
         }
-
-        if ( ! $authorized )
+        else
         {
-            flash error => 'You are not authorized to view that page.';
-            return redirect '/'; # Not an authorized page.
+            my $authorized = Side7::Login::user_authorization( 
+                                                                session_username => session( 'username' ), 
+                                                                username         => params->{'username'},
+                                                             );
+
+            if ( $authorized != 1 )
+            {
+                $LOGGER->info( 'User >' . session( 'username' ) . '< not authorized to view >' . request->path_info . '<' );
+                flash error => 'You are not authorized to view that page.';
+                return redirect '/'; # Not an authorized page.
+            }
         }
     }
 };
@@ -339,8 +396,8 @@ get '/my/home/?' => sub
 
     if ( ! defined $user_hash )
     {
-        flash error => 'User not found.';
-        redirect '/';
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
     template 'my/home', { user => $user_hash };
@@ -352,8 +409,8 @@ get '/my/permissions/?' => sub
 
     if ( ! defined $user )
     {
-        flash error => 'User not found.';
-        redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
     my $permissions = $user->get_all_permissions();
@@ -368,7 +425,7 @@ get '/my/perks/?' => sub
 
     if ( ! defined $user )
     {
-        flash error => 'User not found.';
+        flash error => 'Either you are not logged in, or your account can not be found.';
         redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
