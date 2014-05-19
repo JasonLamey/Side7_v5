@@ -18,6 +18,7 @@ use Side7::UserContent::Image::DailyView;
 use Side7::UserContent::Image::Property;
 use Side7::UserContent::CommentThread;
 use Side7::UserContent::Comment;
+use Side7::KudosCoin;
 use Side7::Utils::Text;
 
 use Getopt::Std;
@@ -89,6 +90,7 @@ sub migrate
     db_connect();
     migrate_users();
     migrate_user_preferences();
+    migrate_account_credits();
     migrate_images();
     migrate_image_views();
     migrate_image_properties();
@@ -887,3 +889,63 @@ sub _progress_dot
 
     return;
 }
+
+sub migrate_account_credits
+{
+    if ( defined $opt{V} ) { say "=> Migrating Account Points."; }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Kudos Coins tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ kudos_coin_ledger / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 account_credits table;
+    if ( defined $opt{V} ) { say "\t=> Pulling account credits records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as account_credit_id
+         FROM account_credit_transactions
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $credit_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create image and save it.
+        my $kudo = Side7::KudosCoin->new(
+            id                => $row->{account_credit_id},
+            user_id           => $row->{user_account_id},
+            timestamp         => $row->{timestamp},
+            amount            => $row->{amount},
+            description       => $row->{description},
+        );
+        $kudo->save if ! defined $opt{D};
+
+        $credit_count++;
+
+        print _progress_dot( total => $row_count, count => $credit_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated account credit records: " . _commafy( $credit_count ) if defined $opt{V};
+}
+

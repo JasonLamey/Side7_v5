@@ -11,6 +11,7 @@ use Data::Dumper;
 
 use Side7::Globals;
 use Side7::AuditLog;
+use Side7::Search;
 use Side7::Login;
 use Side7::User;
 use Side7::Account;
@@ -280,6 +281,23 @@ post '/confirm_user' => sub
 ###########################
 ### Public-facing pages ###
 ###########################
+
+# Search
+get '/search/?' => sub
+{
+    template 'search/search_form', { look_for => params->{'look_for'} };
+};
+
+post '/search/?' => sub
+{
+    my $page = params->{'page'} // 1;
+
+    my $search = Side7::Search->new();
+
+    my $search_results = $search->get_results( look_for => params->{'look_for'}, page=> $page );
+
+    template 'search/search_form', { look_for => params->{'look_for'}, results => $search_results };
+};
 
 # User directory.
 get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
