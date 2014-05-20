@@ -133,6 +133,40 @@ sub get_gallery
 }
 
 
+=head2 get_default_thumbnail_path()
+
+Returns a path for a default image in the event of a missing or unloadable User Content thumbnail.
+
+Parameters:
+
+=over 4
+
+=item type: Determines the type of image to show: 'broken_image', 'default_image', 'default_music', 'default_literature'. Required, no default.
+
+=item size: The thumbnail size being requested: 'tiny', 'small', 'medium', 'large', 'original'. Required, defaults to 'original'
+
+=back
+
+    my $path = Side7::UserContent::get_default_thumbnail_path( type => $type, size => $size );
+
+=cut
+
+sub get_default_thumbnail_path
+{
+    my ( %args ) = @_;
+
+    my $type = delete $args{'type'} // return undef;
+    my $size = delete $args{'size'} // 'original';
+
+    my $path = $CONFIG->{'image'}->{'default_thumb_path'};
+   
+    $path =~ s/:::SIZE:::/$size/g;
+    $path =~ s/:::TYPE:::/$type/g;
+
+    return lc( $path );
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

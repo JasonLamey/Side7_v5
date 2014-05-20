@@ -92,6 +92,40 @@ sub true_false_to_int
 }
 
 
+=head2 sanitize_text_for_html()
+
+Removes HTML glyphs from text to sanitize it for HTML display.
+
+Parameters:
+
+=over 4
+
+=item text: The text to evaluate.
+
+=back
+
+    my $new_text = Side7::Utils::Text::sanitize_text_for_html( $text );
+
+=cut
+
+sub sanitize_text_for_html
+{
+    my ( $text ) = @_;
+
+    return undef if ! defined $text;
+
+    $text =~ s/"/&quot;/g;
+    $text =~ s/'/&apos;/g;
+    $text =~ s/</&lt;/g;
+    $text =~ s/>/&gt;/g;
+
+    return $text;
+}
+
+
+
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

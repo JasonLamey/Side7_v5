@@ -8,6 +8,7 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Data::Dumper;
 
 use Side7::Globals;
+use Side7::UserContent;
 use Side7::UserContent::Image::DailyView::Manager;
 use Side7::UserContent::Image::DetailedView::Manager;
 use Side7::UserContent::Comment;
@@ -144,7 +145,7 @@ __PACKAGE__->meta->setup
 
 =head2 get_image_path()
 
-Returns the path to the image file to be used to display the image.
+Returns the path to the cached image file to be used to display the image.
 
 Parameters:
 
@@ -292,7 +293,8 @@ sub get_image_hash_for_template
 
 =head2 create_cached_file()
 
-Creates a copy of the original file in the appropriate cached_file directory. Returns success or error.
+Creates a copy of the original file in the appropriate cached_file directory if it doesn't exist. Returns success or error.
+Returns success if already existent.
 
 Parameters:
 
@@ -406,7 +408,7 @@ sub show_image
     {
         $LOGGER->warn( $error );
         $image_hash->{'filepath_error'} = $error;
-        $image_hash->{'filepath'} = '';
+        $image_hash->{'filepath'} = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
     }
     else
     {
@@ -416,11 +418,14 @@ sub show_image
 
             if ( ! $success )
             {
+                $LOGGER->warn( $error );
                 $image_hash->{'filepath_error'} = $error;
-                $image_hash->{'filepath'}       = '';
+                $image_hash->{'filepath'}       = Side7::UserContent::get_default_thumbnail_path( 
+                                                                                                    type => 'default_image', 
+                                                                                                    size => $size,
+                                                                                                );
             }
-            else
-            {
+            else {
                 $filepath =~ s/^\/data//;
                 $image_hash->{'filepath'} = $filepath;
             }

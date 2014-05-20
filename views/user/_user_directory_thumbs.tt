@@ -3,7 +3,13 @@
 [% ELSE %]
   [% FOREACH image IN user.images %]
     [% IF image.filepath %]
-        <a href='[% image.uri %]'><img src='[% image.filepath %]' alt='' title='' border='0' /></a>
+        [% title = '' %]
+        [% IF image.filepath_error %]
+            [% title = image.filepath_error %]
+        [% ELSE %]
+            [% title = image.title %]
+        [% END %]
+        <a href='[% image.uri %]'><img src='[% image.filepath %]' alt='[% title %]' title='[% title %]' border='0' /></a>
     [% ELSE %]
         [ [% image.filepath_error %] ]
     [% END %]

@@ -41,6 +41,9 @@ sub new
     # Page-related variables
     $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} = 50;
 
+    # Image Related
+    $CONFIG->{'image'}->{'default_thumb_path'} = '/images/defaults/:::SIZE:::/:::TYPE:::.jpg';
+
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';
     $CONFIG->{'log4perl'}->{'LOGFILE'}          = 'Log::Log4perl::Appender::File';

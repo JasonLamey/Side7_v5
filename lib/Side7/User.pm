@@ -21,6 +21,7 @@ use Side7::User::UserOwnedPerk;
 use Side7::User::UserOwnedPerk::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
+use Side7::Utils::Text;
 
 =pod
 
@@ -1098,16 +1099,22 @@ sub get_users_for_directory
             if ( defined $error && $error ne '' )
             {
                 $LOGGER->warn( $error );
+                $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
             }
             else
             {
                 if ( ! -f $filepath )
                 {
-                    my ( $success, $error ) = $image->create_cached_file( size => $size );
+                    my $success = 0;
+                    ( $success, $error ) = $image->create_cached_file( size => $size );
 
                     if ( $success )
                     {
                         $filepath =~ s/^\/data//;
+                    }
+                    else
+                    {
+                        $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_image', size => $size );
                     }
                 }
                 else
@@ -1115,8 +1122,16 @@ sub get_users_for_directory
                     $filepath =~ s/^\/data//;
                 }
             }
+
+            $LOGGER->debug( 'FILEPATH: ' . $filepath );
             
-            push( @images, { filepath => $filepath, filepath_error => $error, uri => "/image/$image->{'id'}" } );
+            push( @images, { 
+                            filepath       => $filepath, 
+                            filepath_error => $error, 
+                            uri            => "/image/$image->{'id'}",
+                            title          => Side7::Utils::Text::sanitize_text_for_html( $image->title ),
+                           }
+            );
         }
 
         push @$users, 
