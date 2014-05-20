@@ -1,1 +1,28 @@
-<h1>User Home Page</h1>
+<div class="page">
+
+    [% PROCESS 'my/_home_menu.tt' %]
+
+    <div style="margin-left: 210px; padding: 5px;">
+        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px;">
+            <h2>Account Information</h2>
+            <p>
+                <b>Joined:</b> [% user.account.created_at %]<br />
+                <b>Account Status:</b> [% user.account.status.user_status %]<br />
+                <b>Account Type:</b> [% user.account.type.user_type %]<br />
+                <b>Subscription Expires:</b> [% user.account.subscription_expires_on %]<br />
+                [% IF user.account.delete_on %]
+                <b>Your Account Will Be Deleted On:</b> [% user.account.delete_on %] &nbsp; <a href="/my/account">Cancel Deletion</a><br />
+                [% END %]
+                <br />
+                [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
+            </p>
+        </div>
+        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px;">
+            <h2>Kudos Coins</h2>
+            <p><b>Your Kudos Coins:</b> [% user.kudos_coins.total %] &nbsp; <a href="/my/kudos">Check your history</a></p>
+        </div>
+        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px;">
+            <h2>Gallery Information</h2>
+        </div>
+    </div>
+</div>

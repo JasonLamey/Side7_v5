@@ -5,7 +5,8 @@ use Dancer::Plugin::ValidateTiny;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::DirectoryView;
 use Dancer::Plugin::TimeRequests;
-use Dancer::Plugin::DebugToolbar;
+use Dancer::Plugin::NYTProf;
+
 use DateTime;
 use Data::Dumper;
 
@@ -419,6 +420,19 @@ get '/my/home/?' => sub
     }
 
     template 'my/home', { user => $user_hash };
+};
+
+get '/my/kudos/?' => sub
+{
+    my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
+
+    if ( ! defined $user_hash )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'my/kudos', { user => $user_hash };
 };
 
 get '/my/permissions/?' => sub

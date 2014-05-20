@@ -174,17 +174,17 @@ sub migrate_users
     );
 
     my %types = (
-        1 => 1, # Visitor
-        2 => 1, # 1 Star
-        3 => 2, # 3 Star 
-        4 => 3, # 5 Star
+        1 => 1, # Visitor -> Basic
+        2 => 1, # 1 Star  -> Basic
+        3 => 2, # 3 Star  -> Premiere
+        4 => 3, # 5 Star  -> Subscriber
     );
 
     my %user_roles = (
-        1 => 2, # Visitor
-        2 => 2, # 1 Star
-        3 => 2, # 3 Star
-        4 => 3, # 5 Star
+        1 => 2, # Visitor -> Basic
+        2 => 2, # 1 Star  -> Basic
+        3 => 2, # 3 Star  -> Basic
+        4 => 3, # 5 Star  -> Subscriber
     );
 
     my %datevis = (

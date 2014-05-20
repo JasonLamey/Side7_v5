@@ -153,6 +153,12 @@ __PACKAGE__->meta->setup
             key_columns       => { user_status_id => 'id' },
             relationship_type => 'many to one',
         },
+        user_role =>
+        {
+            class             => 'Side7::User::Role',
+            key_columns       => { user_role_id => 'id' },
+            relationship_type => 'many to one',
+        },
         country =>
         {
             class             => 'Side7::User::Country',
@@ -237,7 +243,7 @@ sub get_formatted_birthday
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %c';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
     if ( 
         $self->birthday_visibility == 3 
@@ -247,15 +253,15 @@ sub get_formatted_birthday
         $self->birthday eq '0000-00-00'
     )
     {
-        return undef;
+        return '[ Private ]';
     }
     elsif ( $self->birthday_visibility == 2 )
     {
-        $date_format = '%B %d';
+        $date_format = '%d %B';
     }
     else
     {
-        $date_format = '%B %d, %Y';
+        $date_format = '%d %B, %Y';
     }
 
     my $date = $self->birthday( format => $date_format ) // undef;
@@ -287,9 +293,14 @@ sub get_formatted_subscription_expires_on
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%B %d, %Y';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
-    my $date = $self->subscription_expires_on( format => $date_format ) // undef;
+    if ( $self->user_type->user_type ne 'Subscriber' )
+    {
+        return 'Not a Subscriber';
+    }
+
+    my $date = $self->subscription_expires_on( format => $date_format ) // 'Invalid Date';
 
     if ( defined $date )
     {
@@ -318,7 +329,7 @@ sub get_formatted_delete_on
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %c';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
     my $date = $self->delete_on( format => $date_format ) // undef;
 
@@ -349,7 +360,7 @@ sub get_formatted_created_at
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
     my $date = $self->created_at( format => $date_format ) // undef;
 
@@ -380,7 +391,7 @@ sub get_formatted_updated_at
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
+    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
     my $date = $self->updated_at( format => $date_format ) // undef;
 

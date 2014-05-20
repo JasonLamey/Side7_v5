@@ -3,7 +3,11 @@ package Side7::Utils::File;
 use strict;
 use warnings;
 
+use DateTime;
+use File::Path;
+
 use Side7::Globals;
+use Side7::AuditLog;
 
 
 =head1 NAME
@@ -62,19 +66,61 @@ sub create_user_directory
     my $tier1 = substr( $user_id, 0, 1 );
     my $tier2 = substr( $user_id, 0, 3 );
 
-    if ( ! -d $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 )
+    my $user_dir  = $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 . '/' . $tier2 . '/' . $user_id;
+
+    if ( ! -d $CONFIG->{'general'}->{'base_gallery_directory'} )
     {
-        mkdir $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 || return ( 0, $! );
+        my $error = 'ERROR: Base directory >' . $CONFIG->{'general'}->{'base_gallery_directory'} . '< does not exist.';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Directory Creation Error',
+                                                description => $error,
+                                                ip_address  => '',
+                                                timestamp   => DateTime->now(),
+        );
+        $audit_log->save();
+        return ( 0, 'An error occurred while creating the User directory.' );
     }
 
-    if ( ! -d $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 . '/' . $tier2 )
+    my $error_message = '';
+    if ( ! -d $user_dir )
     {
-        mkdir $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 . '/' . $tier2 || return ( 0, $! );
+        File::Path::make_path( $user_dir, { error => \my $error } );
+        if ( @{ $error } )
+        {
+            foreach my $diag ( @{ $error } )
+            {
+                my ( $file, $message ) = %{ $diag };
+                if ( $file eq '' )
+                {
+                    $error_message .= 'Directory creation error: ' . $message . '; ';
+                }
+                else
+                {
+                    $error_message .= 'Problem creating User directory >' . $file . '<: ' . $message . '; ';
+                }
+            }
+            my $audit_msg = 'ERROR: User directory >' . $user_dir . '< was not created: ' . $error_message;
+            my $audit_log = Side7::AuditLog->new(
+                                                    title       => 'Directory Creation Error',
+                                                    description => $error_message,
+                                                    ip_address  => '',
+                                                    timestamp   => DateTime->now(),
+            );
+            $audit_log->save();
+            return ( 0, $error_message );
+        }
     }
 
-    if ( ! -d $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 . '/' . $tier2 . '/' . $user_id )
+    if ( ! -d $user_dir )
     {
-        mkdir $CONFIG->{'general'}->{'base_gallery_directory'} . $tier1 . '/' . $tier2 . '/' . $user_id || return ( 0, $! );
+        my $error = 'ERROR: User directory >' . $user_dir . '< does not exist even after successful creation return.';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Directory Creation Error',
+                                                description => $error,
+                                                ip_address  => '',
+                                                timestamp   => DateTime->now(),
+        );
+        return ( 0, 'User directory still does not exist after successful creation return.' );
     }
 
     return ( 1, undef );

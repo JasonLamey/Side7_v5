@@ -15,19 +15,28 @@ my $INVALID_PASSWORD = 'bad_password';
 my $VALID_USERNAME = 'badkarma';
 my $VALID_PASSWORD = 'Vengence';
 
-my ( $rd_url, $user );
+my ( $rd_url, $user, $error );
 # Invalid username test
-( $rd_url, $user ) = Side7::Login::user_login( { username => $INVALID_USERNAME, password => $INVALID_PASSWORD } );
+( $rd_url, $user, $error ) = Side7::Login::user_login( { username => $INVALID_USERNAME, password => $INVALID_PASSWORD } );
 
-is( $rd_url, undef, 'Invalid username/password didn\'t log in.' );
+is(
+    $error, 
+    "Invalid login attempt - User &gt;<b>$INVALID_USERNAME</b>&lt; doesn't exist in the database.", 
+    'Invalid username/password didn\'t log in.'
+);
 
 # Invalid password test
-( $rd_url, $user ) = Side7::Login::user_login( { username => $VALID_USERNAME, password => $INVALID_PASSWORD } );
+( $rd_url, $user, $error ) = Side7::Login::user_login( { username => $VALID_USERNAME, password => $INVALID_PASSWORD } );
 
-is( $rd_url, undef, 'Valid username/Invalid password didn\'t log in.' );
+is(
+    $error, 
+    "Invalid login attempt - Bad username/password combo - Username: &gt;<b>$VALID_USERNAME</b>&lt;; " .
+    "Password: &gt;<b>$INVALID_PASSWORD</b>&lt; " .
+    'RD_URL: &gt;<b>/</b>&lt;',
+    'Valid username/Invalid password didn\'t log in.' );
 
 # Full valid credentials test
-( $rd_url, $user ) = Side7::Login::user_login( { username => $VALID_USERNAME, password => $VALID_PASSWORD } );
+( $rd_url, $user, $error ) = Side7::Login::user_login( { username => $VALID_USERNAME, password => $VALID_PASSWORD } );
 
 isa_ok( $user, 'Side7::User', 'User object' );
 

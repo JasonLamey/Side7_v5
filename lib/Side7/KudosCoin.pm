@@ -4,6 +4,9 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
+use Rose::DB::Object::QueryBuilder;
+
+use Side7::Globals;
 
 =pod
 
@@ -66,26 +69,87 @@ __PACKAGE__->meta->setup
 =head1 METHODS
 
 
-=head2 method_name()
+=head2 get_current_balance()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns the current Kudos Coin balance for a User.
 
 Parameters:
 
 =over 4
 
-=item parameter1: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
-
-=item parameter2: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
+=item user_id: The User for whom to get the balance.
 
 =back
 
-    my $result = My::Package->method_name();
+    my $current_balance = Side7::KudosCoins->get_current_balance( user_id => $user_id );
 
 =cut
 
-sub method_name
+sub get_current_balance
 {
+    my ( $self, %args ) = @_;
+
+    my $user_id = delete $args{'user_id'} // undef;
+
+    if ( ! defined $user_id )
+    {
+        return 0;
+    }
+
+    $user_id =~ s/\D//g;
+
+    my ( $sql, $bind ) = Rose::DB::Object::QueryBuilder::build_select(
+                                                            dbh     => $DB->dbh,
+                                                            select  => 'SUM( amount ) as total',
+                                                            tables  => [ 'kudos_coin_ledger' ],
+                                                            columns => { kudos_coin_ledger => [ qw( amount user_id ) ] },
+                                                            query   => [ user_id => $user_id ],
+                                                            query_is_sql => 1,
+                                                          );
+
+    my $sth = $DB->dbh->prepare( $sql );
+    $sth->execute( @{ $bind } );
+ 
+    my $row = $sth->fetchrow_hashref();
+
+    $sth->finish();
+   
+    return $row->{'total'} // 0;
+}
+
+
+=head2 get_formatted_timestamp()
+
+Returns a properly formatted timestamp for an individual ledger entry.
+
+Parameters:
+
+=over 4
+
+=item date_format: The data format to return the timestamp in. Defaults to '%a, %c'.
+
+=back
+
+    my $timestamp = $record->get_formatted_timestamp();
+
+=cut
+
+sub get_formatted_timestamp
+{
+    my ( $self, %args ) = @_;
+
+    return undef if ! defined $self;
+
+    my $date_format = delete $args{'date_format'} // '%a, %c';
+
+    my $date = $self->timestamp( format => $date_format ) // undef;
+
+    if ( defined $date )
+    {
+        $date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
+    }
+
+    return $date;
 }
 
 

@@ -92,26 +92,31 @@ sub get_db
 Returns a hashref of selected results from the DB, based on the parameters passed in.
 Refer to the L<Rose::DB::Object::QueryBuilder CPAN page|http://search.cpan.org/dist/Rose-DB-Object/lib/Rose/DB/Object/QueryBuilder.pm> for more info.
 
+    my $result = Side7::DB::build_select(
+                                            select  => 'OLD_PASSWORD(?) as db_pass',
+                                            tables  => [ 'users' ],
+                                            columns => { users => [ 'db_pass' ] },
+                                            query   => [],
+                                            bind    => [ $string ],
+                                            limit   => 1,
+                                        );
+
+
 =cut
 
 sub build_select
 {
     my ( %args ) = @_;
 
-    my $select  = delete $args{'select'};   # Optional, specific fields or SQL functions, e.g., "COUNT(*)'
-    my $tables  = delete $args{'tables'};   # Mandatory, Array of table names
-    my $columns = delete $args{'columns'};  # Mandatory, hash of array refs of columns, keyed to each table
-    my $query   = delete $args{'query'};    # Mandatory, Where clauses, in a hash of scalars, array refs, and hash refs
-    my $sort_by = delete $args{'sort_by'};  # Optional, body of the sort by clause, e.g.,  "name ASC, date DESC"
-    my $limit   = delete $args{'limit'};    # Optional, string of the limit body, e.g., 5
-    my $bind    = delete $args{'bind'};     # Optional, bind parameters
+    my $select  = delete $args{'select'}  // undef; # Optional, specific fields or SQL functions, e.g., "COUNT(*)'
+    my $tables  = delete $args{'tables'}  // [];    # Mandatory, Array of table names
+    my $columns = delete $args{'columns'} // {};    # Mandatory, hash of array refs of columns, keyed to each table
+    my $query   = delete $args{'query'}   // [];    # Mandatory, Where clauses, in a hash of scalars, array refs, and hash refs
+    my $sort_by = delete $args{'sort_by'} // undef; # Optional, body of the sort by clause, e.g.,  "name ASC, date DESC"
+    my $limit   = delete $args{'limit'}   // undef; # Optional, string of the limit body, e.g., 5
+    my $bind    = delete $args{'bind'}    // [];    # Optional, bind parameters
 
     my $dataset_type = delete $args{'dataset_type'} // 'hashref'; # hashref or arrayref
-
-    $tables  //= [];
-    $columns //= {};
-    $query   //= [];
-    $bind    //= [];
 
     if ( ! defined $tables || ref $tables ne 'ARRAY' )
     {

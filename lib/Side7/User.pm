@@ -109,6 +109,12 @@ __PACKAGE__->meta->setup
             class      => 'Side7::UserContent::Image::DetailedView',
             column_map => { id => 'user_id' },
         },
+        kudos_coins =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::KudosCoin',
+            column_map => { id => 'user_id' },
+        }
     ],
 );
 
@@ -162,6 +168,11 @@ sub get_user_hash_for_template
             $user_hash->{'account'}->{$key} = $account->$key;
         }
 
+        # Account Stats
+        $user_hash->{'account'}->{'status'} = $account->user_status;
+        $user_hash->{'account'}->{'type'}   = $account->user_type;
+        $user_hash->{'account'}->{'role'}   = $account->user_role;
+
         # Date values
         $user_hash->{'account'}->{'birthday'}                = $account->get_formatted_birthday();
         $user_hash->{'account'}->{'subscription_expires_on'} = $account->get_formatted_subscription_expires_on();
@@ -169,6 +180,38 @@ sub get_user_hash_for_template
         $user_hash->{'account'}->{'created_at'}              = $account->get_formatted_created_at();
         $user_hash->{'account'}->{'updated_at'}              = $account->get_formatted_updated_at();
     }
+
+    # Kudos Coins (if included)
+    if ( defined $self->{'kudos_coins'} )
+    {
+        my $kudos_ledger = $self->{'kudos_coins'};
+
+        $user_hash->{'kudos_coins'}->{'total'} = Side7::KudosCoin->get_current_balance( user_id => $self->id() );
+
+        # Because we're working our ledger in reverse, we're going to be working the running balance
+        # in reverse, too.  We'll be subtracting from the total balance, rather than adding the starting
+        # balance.
+
+        my $running_balance = $user_hash->{'kudos_coins'}->{'total'};
+        my $prev_amount = 0;
+
+        $user_hash->{'kudos_coins'}->{'ledger'} = [];
+        foreach my $record ( reverse @{ $kudos_ledger } )
+        {
+            my $timestamp   = $record->get_formatted_timestamp();
+            $running_balance -= $prev_amount;   # Subtracting the previous amount from the current balance.
+            $prev_amount = $record->{'amount'}; # Set a new previous amount.
+
+            push ( $user_hash->{'kudos_coins'}->{'ledger'}, { 
+                                                                timestamp   => $timestamp, 
+                                                                amount      => $record->{'amount'},
+                                                                description => $record->{'description'},
+                                                                balance     => $running_balance,
+                                                            }
+            );
+        }
+    }
+
 
     return $user_hash;
 }
@@ -844,7 +887,52 @@ sub show_home
     return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+    my $loaded = $user->load( speculative => 1, with => [ 'account', 'kudos_coins' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
+        return undef;
+    }
+
+    # User Not Found
+    if ( ! defined $user )
+    {
+        return undef;
+    }
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+    return ( $user_hash );
+}
+
+
+=head2 show_kudos
+
+Displays the User's Kudos Coins page.
+
+Parameters:
+
+=over 4
+
+=item username: The username to use for looking up the User object to get the appropriate hash for use with the template.
+
+=back
+
+    my $user_hash = Side7::User::show_home( username => $username )
+
+=cut
+
+sub show_kudos
+{
+    my ( %args ) = @_;
+
+    my $username = delete $args{'username'};
+
+    return undef if ( ! defined $username || $username eq '' );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'kudos_coins' ] );
 
     if ( $loaded == 0 )
     {

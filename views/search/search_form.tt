@@ -17,7 +17,7 @@
             [% IF result.content_type == 'user' %]
                 <div><h2>Users</h2></div>
             [% ELSE %]
-                [% IF content_type == 'user' %]
+                [% IF content_type == 'user' || content_type == '' %]
                     <div><h2>User Content</h2></div>
                 [% END %]
             [% END %]
