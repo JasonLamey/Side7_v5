@@ -141,7 +141,7 @@ Parameters:
 
 =over 4
 
-=item type: Determines the type of image to show: 'broken_image', 'default_image', 'default_music', 'default_literature'. Required, no default.
+=item type: Determines the type of image to show: 'broken_image', 'blocked_image', 'default_image', 'default_music', 'default_literature'. Required, no default.
 
 =item size: The thumbnail size being requested: 'tiny', 'small', 'medium', 'large', 'original'. Required, defaults to 'original'
 
