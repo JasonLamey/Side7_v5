@@ -5,6 +5,7 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use DateTime;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -254,9 +255,12 @@ sub get_image_hash_for_template
     # Date values
     foreach my $key ( qw( created_at updated_at ) )
     {
-        my $date = $self->$key( format => '%A, %c' );
-        $date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
+        my $date       = $self->$key( format => '%A, %c' );
+        my $epoch_date = $self->$key( format => '%s' );
+        $date       =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
+        $epoch_date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
         $image_hash->{$key} = $date;
+        $image_hash->{$key . '_epoch'} = $epoch_date;
     }
 
     # User values:

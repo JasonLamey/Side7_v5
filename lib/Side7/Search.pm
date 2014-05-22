@@ -3,7 +3,13 @@ package Side7::Search;
 use strict;
 use warnings;
 
+use Data::Dumper;
+use DateTime;
+use Try::Tiny;
+
 use Side7::Globals;
+use Side7::Search::History;
+use Side7::Search::History::Manager;
 use Side7::User;
 use Side7::User::Manager;
 use Side7::UserContent::Image;
@@ -84,16 +90,37 @@ sub get_results
     my $page     = delete $args{'page'}     // 1;
     my $size     = delete $args{'size'}     // 'small';
 
+    # Search Term Validation:
+    if ( ! defined $look_for || $look_for eq '' )
+    {
+        return ( [], 'Invalid search term: You need to provide at least one word of at least 3 characters in length.' );
+    }
+
+    if ( length( $look_for ) < 3 )
+    {
+        return ( [], 'Invalid search term: You need to provide at least one word of at least 3 characters in length.' );
+    }
+
     my @results = ();
+
+    # Check Side7::Search::History to see if this same search has been done within the past 30 minutes.
+    # If so, let's pull the cached results instead of re-searching.
+    my $history = Side7::Search::get_history( search_term => $look_for );
+    if ( defined $history && scalar( @{ $history } ) > 0 )
+    {
+        $LOGGER->debug( 'RETURNING CACHED RESULTS FOR >' . $look_for . '<' );
+        return $history;
+    }
 
     # Users
     my $users = Side7::Search::search_users( look_for => $look_for, page => $page, size => $size );
     $LOGGER->debug( 'Found users: ' . scalar( @{ $users } ) );
-    my @sorted_users = sort { $a->{'username'} cmp $b->{'username'} } @{ $users };
+    my @sorted_users = sort { lc( $a->{'username'} ) cmp lc( $b->{'username'} ) } @{ $users };
 
     # Images
     my $images = Side7::Search::search_images( look_for => $look_for, page => $page, size => $size );
     $LOGGER->debug( 'Found images: ' . scalar( @{ $images } ) );
+    push( @results, @{ $images } );
 
     # Literature
 
@@ -101,21 +128,122 @@ sub get_results
 
     # Videos
 
-    push( @results, @{ $images } );
-
     my @sorted_results = sort { 
-                                $b->{'created_at'} cmp $a->{'created_at'} 
+                                $b->{'created_at_epoch'} cmp $a->{'created_at_epoch'} 
                                 ||
                                 $a->{'title'} cmp $b->{'title'}
                               } @results;
 
     unshift( @sorted_results, @sorted_users );
 
-    return \@sorted_results;
+    # Before returning the sorted results, let's cache them for future reference.
+    my $now = DateTime->now();
+    my $history_results = Dumper( \@sorted_results );
+    $history_results =~ s/\A\$VAR\d+\s*=\s*//; # Remove the variable assignment.
+    $history_results =~ s/;$//;
+    my $search_history = Side7::Search::History->new(
+                                                        search_term  => $look_for,
+                                                        timestamp    => $now,
+                                                        user_id      => undef,
+                                                        ip_address   => undef,
+                                                        results      => $history_results,
+                                                        search_count => 1,
+                                                    );
+    $search_history->save();
+
+    return ( \@sorted_results, undef );
 }
 
 
 =head1 FUNCTIONS
+
+
+=head2 get_history()
+
+Searches the Search History for any similar searches within the last 30 minutes.
+
+Parameters:
+
+=over 4
+
+=item search_term: The search string.
+
+=back
+
+    my $history = Side7::Search::get_history( search_term => $look_for );
+
+=cut
+
+sub get_history
+{
+    my ( %args ) = @_;
+
+    my $search_term = delete $args{'search_term'} // return [];
+
+    my $searches = Side7::Search::History::Manager->get_searches
+    (
+        query =>
+        [
+            search_term => $search_term,
+            \'TIMESTAMPDIFF(MINUTE, timestamp, NOW()) <= 30',
+        ],
+        sort_by => 'timestamp DESC',
+        limit => 1,
+        query_is_sql => 1,
+    );
+
+    if ( ! defined $searches )
+    {
+        return [];
+    }
+
+    my $results = $searches->[0]->{'results'};
+
+    my $history = eval $results if ( defined $results && $results ne '' );
+
+    # Update the count on the history record.
+    if ( defined $results && $results ne '' )
+    {
+        my $updated = 0;
+        try
+        {
+            $updated = Side7::Search::History::Manager->update_searches
+            (
+                set =>
+                {
+                    search_count => { sql => 'search_count + 1' },
+                },
+                where =>
+                [
+                    id => $searches->[0]->{'id'},
+                ],
+            );
+        }
+        catch
+        {
+            $LOGGER->warn( 
+                            'Search count update FAILED for search ID: >' . 
+                            $searches->[0]->{'id'} . 
+                            '<, term: >' . 
+                            $searches->[0]->{'search_term'} . 
+                            '<: ' . $_
+                         );
+        };
+        
+        if ( $updated != 1 )
+        {
+            $LOGGER->warn( 
+                            'Search count not updated for search ID: >' . 
+                            $searches->[0]->{'id'} . 
+                            '<, term: >' . 
+                            $searches->[0]->{'search_term'} . 
+                            '<'
+                         );
+        }
+    }
+
+    return $history // [];
+}
 
 
 =head2 search_users()

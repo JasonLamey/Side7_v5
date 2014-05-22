@@ -5,9 +5,13 @@
     </form>
 </div>
 
+[% IF search_error %]
+    <div style="text-align: center; font-weight: bold; color: #FF0000;">[% search_error %]</div>
+[% END %]
+
 
 [% IF results.size == 0 %]
-    <div style="text-align: center;">No search results found.</div>
+    <div style="text-align: center; font-weight: bold;">No search results found.</div>
 [% ELSE %]
     <div style="text-align: center; margin: 5px 0;">Found [% results.size %] results</div>
     [% content_type = '' %]
@@ -32,6 +36,7 @@
             [% IF result.filepath %]
                 <a href='[% result.uri %]'><img src='[% result.filepath %]' alt='' title='' border='0' /></a>
                 <a href='[% result.uri %]'>[% result.title %]</a>
+                <b>Uploaded:</b> [% result.created_at %]
             [% ELSE %]
                 [ [% result.filepath_error %] ]
             [% END %]

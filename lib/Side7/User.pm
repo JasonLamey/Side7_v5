@@ -170,9 +170,9 @@ sub get_user_hash_for_template
         }
 
         # Account Stats
-        $user_hash->{'account'}->{'status'} = $account->user_status;
-        $user_hash->{'account'}->{'type'}   = $account->user_type;
-        $user_hash->{'account'}->{'role'}   = $account->user_role;
+        $user_hash->{'account'}->{'status'} = $account->user_status->user_status();
+        $user_hash->{'account'}->{'type'}   = $account->user_type->user_type();
+        $user_hash->{'account'}->{'role'}   = $account->user_role->name();
 
         # Date values
         $user_hash->{'account'}->{'birthday'}                = $account->get_formatted_birthday();

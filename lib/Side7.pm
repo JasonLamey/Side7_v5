@@ -295,9 +295,13 @@ post '/search/?' => sub
 
     my $search = Side7::Search->new();
 
-    my $search_results = $search->get_results( look_for => params->{'look_for'}, page=> $page );
+    my ( $search_results, $search_error ) = $search->get_results( look_for => params->{'look_for'}, page=> $page );
 
-    template 'search/search_form', { look_for => params->{'look_for'}, results => $search_results };
+    template 'search/search_form', { 
+                                    look_for     => params->{'look_for'}, 
+                                    results      => $search_results, 
+                                    search_error => $search_error,
+                                   };
 };
 
 # User directory.
