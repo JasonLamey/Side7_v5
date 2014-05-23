@@ -144,7 +144,7 @@ __PACKAGE__->meta->setup
 
 =head1 METHODS
 
-=head2 get_image_path()
+=head2 get_cached_image_path()
 
 Returns the path to the cached image file to be used to display the image.
 
@@ -156,11 +156,11 @@ Parameters:
 
 =back
 
-    my ( $image_path, $error ) = $image->get_image_path( size => $size );
+    my ( $image_path, $error ) = $image->get_cached_image_path( size => $size );
 
 =cut
 
-sub get_image_path
+sub get_cached_image_path
 {
     my ( $self, %args ) = @_;
 
@@ -177,7 +177,10 @@ sub get_image_path
 
     if ( ! $success )
     {
-        return ( undef, $error );
+        return ( 
+                    Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
+                    $error
+               );
     }
 
     my $user_gallery_path = $self->user->get_content_directory();
@@ -189,7 +192,10 @@ sub get_image_path
     if ( ! defined $format )
     {
         $LOGGER->warn( 'Getting image path FAILED while getting properties of input file >' . $user_gallery_path . $self->filename . '<' );
-        return( undef, 'A problem occurred while trying to get Image file.' );
+        return( 
+                Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
+                'A problem occurred while trying to get Image file.'
+              );
     }
 
     my $extension = '';
@@ -207,7 +213,10 @@ sub get_image_path
     }
     else
     {
-        return( undef, 'Invalid image file type.' );
+        return( 
+                Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
+                'Invalid image file type.'
+              );
     }
 
     my $filename = $self->id . $extension;
@@ -328,7 +337,7 @@ sub create_cached_file
 
     if ( ! defined $path || $path eq '' )
     {
-        $path = $self->get_image_path( size => $size );
+        $path = $self->get_cached_image_path( size => $size );
     }
 
     my ( $success, $error ) = Side7::Utils::Image::create_cached_image( image => $self, size => $size, path => $path );
@@ -407,7 +416,7 @@ sub show_image
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
 
     # Filepath
-    my ( $filepath, $error ) = $image->get_image_path( size => $size );
+    my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
     if ( defined $error && $error ne '' )
     {
         $LOGGER->warn( $error );

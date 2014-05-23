@@ -243,7 +243,7 @@ sub get_formatted_birthday
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
+    my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
 
     if ( 
         $self->birthday_visibility == 3 
@@ -293,7 +293,7 @@ sub get_formatted_subscription_expires_on
 
     return undef if ! defined $self;
 
-    my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
+    my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
 
     if ( $self->user_type->user_type ne 'Subscriber' )
     {

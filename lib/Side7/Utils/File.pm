@@ -102,7 +102,7 @@ sub create_user_directory
             my $audit_msg = 'ERROR: User directory >' . $user_dir . '< was not created: ' . $error_message;
             my $audit_log = Side7::AuditLog->new(
                                                     title       => 'Directory Creation Error',
-                                                    description => $error_message,
+                                                    description => $audit_msg,
                                                     ip_address  => '',
                                                     timestamp   => DateTime->now(),
             );
@@ -224,48 +224,79 @@ sub create_user_cached_file_directory
     my $tier1 = substr( $user_id, 0, 1 );
     my $tier2 = substr( $user_id, 0, 3 );
 
-    my $base_cached_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 'user_content';
-
-    if ( ! -d $base_cached_dir )
+    my $cached_file_dir = '';
+    if ( lc( $content_type ) eq 'images' )
     {
-        mkdir $base_cached_dir || return ( 0, $!, undef );
+        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 
+                            'user_content' . 
+                            '/' . 
+                            $content_type . 
+                            '/' . 
+                            $content_size .
+                            '/' . 
+                            $tier1 . '/' . $tier2 . '/' . $user_id;
+    }
+    elsif ( 
+            lc( $content_type ) eq 'words'
+            ||
+            lc( $content_type ) eq 'music'
+          )
+    {
+        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 
+                            'user_content' . 
+                            '/' . 
+                            $content_type . 
+                            '/' . 
+                            $tier1 . '/' . $tier2 . '/' . $user_id;
+    }
+    else
+    {
+        return ( 0, 'Invalid content_type passed in.', undef );
     }
 
-    my $base_content_dir = join( '/', $base_cached_dir, $content_type );
-
-    if ( ! -d $base_content_dir )
+    if ( ! -d $cached_file_dir )
     {
-        mkdir $base_content_dir || return ( 0, $!, undef );
-    }
-
-    if ( defined $content_size )
-    {
-        $base_content_dir = join( '/', $base_content_dir, lc( $content_size ) );
-        if ( ! -d $base_content_dir )
+        File::Path::make_path( $cached_file_dir, { error => \my $error } );
+        if ( @{ $error } )
         {
-            mkdir $base_content_dir || return ( 0, $!, undef );
+            my $error_message = '';
+            foreach my $diag ( @{ $error } )
+            {
+                my ( $file, $message ) = %{ $diag };
+                if ( $file eq '' )
+                {
+                    $error_message .= 'Directory creation error: ' . $message . '; ';
+                }
+                else
+                {
+                    $error_message .= 'Problem creating User cache directory >' . $file . '<: ' . $message . '; ';
+                }
+            }
+            my $audit_msg = 'ERROR: User cache directory >' . $cached_file_dir . '< was not created: ' . $error_message;
+            my $audit_log = Side7::AuditLog->new(
+                                                    title       => 'Directory Creation Error',
+                                                    description => $audit_msg,
+                                                    ip_address  => '',
+                                                    timestamp   => DateTime->now(),
+            );
+            $audit_log->save();
+            return ( 0, $error_message, undef );
         }
     }
-   
-    my $base_content_t1_dir = join( '/', $base_content_dir, $tier1 );
-    if ( ! -d $base_content_t1_dir )
+
+    if ( ! -d $cached_file_dir )
     {
-        mkdir $base_content_t1_dir || return ( 0, $!, undef );
-    }
-    
-    my $base_content_t1_t2_dir = join( '/', $base_content_t1_dir, $tier2 );
-    if ( ! -d $base_content_t1_t2_dir )
-    {
-        mkdir $base_content_t1_t2_dir || return ( 0, $!, undef );
-    }
-    
-    my $base_content_t1_t2_id_dir = join( '/', $base_content_t1_t2_dir, $user_id );
-    if ( ! -d $base_content_t1_t2_id_dir )
-    {
-        mkdir $base_content_t1_t2_id_dir || return ( 0, $!, undef );
+        my $error = 'ERROR: User cache directory >' . $cached_file_dir . '< does not exist even after successful creation return.';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Directory Creation Error',
+                                                description => $error,
+                                                ip_address  => '',
+                                                timestamp   => DateTime->now(),
+        );
+        return ( 0, 'User cache directory still does not exist after successful creation return.', undef );
     }
 
-    return( 1, undef, $base_content_t1_t2_id_dir );
+    return( 1, undef, $cached_file_dir );
 }
 
 

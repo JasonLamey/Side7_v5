@@ -82,7 +82,7 @@ sub create_cached_image
 
     if ( ! defined $path || $path eq '' )
     {
-        my ( $filepath, $error ) = $image->get_image_path( size => $size );
+        my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
         if ( ! defined $filepath || $filepath eq '' )
         {

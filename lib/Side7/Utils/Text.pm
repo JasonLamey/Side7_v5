@@ -83,7 +83,17 @@ sub true_false_to_int
 
     return 0 if ! defined $text;
 
-    if ( lc( $text ) eq 'true' )
+    if ( 
+            lc( $text ) eq 'true'
+            ||
+            $text eq '1'
+            ||
+            (
+                $text =~ m/^\d+$/
+                &&
+                $text == 1
+            )
+       )
     {
         return 1;
     }

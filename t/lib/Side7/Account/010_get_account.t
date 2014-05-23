@@ -26,11 +26,11 @@ is( $full_name, 'Jason Lamey', 'Can get full_name.' );
 
 my $birthday = $account->get_formatted_birthday();
 
-is( $birthday, 'January 15, 1973', 'Can get formatted birthday' );
+is( $birthday, '15 January, 1973', 'Can get formatted birthday' );
 
 my $expires_on = $account->get_formatted_subscription_expires_on();
 
-is( $expires_on, 'January 16, 3000', 'Can get formatted subscription expiration date.' );
+is( $expires_on, '16 January, 3000', 'Can get formatted subscription expiration date.' );
 
 my $created_at = $account->get_formatted_created_at();
 
