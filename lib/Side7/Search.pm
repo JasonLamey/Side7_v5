@@ -341,7 +341,7 @@ sub search_images
         my $image_hash = $image->get_image_hash_for_template();
         $image_hash->{'content_type'} = 'image';
 
-        my ( $filepath, $error ) = $image->get_image_path( size => $size );
+        my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
         if ( defined $error && $error ne '' )
         {

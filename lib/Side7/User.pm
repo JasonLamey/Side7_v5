@@ -904,7 +904,7 @@ sub show_home
 
     my $user_hash = $user->get_user_hash_for_template();
 
-    return ( $user_hash );
+    return $user_hash;
 }
 
 
@@ -949,7 +949,7 @@ sub show_kudos
 
     my $user_hash = $user->get_user_hash_for_template();
 
-    return ( $user_hash );
+    return $user_hash;
 }
 
 
@@ -1048,7 +1048,7 @@ sub get_users_for_directory
 
     my $initial_string = "$initial%";
     my $op = 'like';
-    if ( $initial eq '_' )
+    if ( $initial =~ m/^[^a-z0-9]+$/i )
     {
         $op = 'regexp';
         $initial_string = '^[^A-Z0-9]';
@@ -1094,7 +1094,7 @@ sub get_users_for_directory
 
             my $image = @{ $user->images }[ $image_to_add ];
 
-            my ( $filepath, $error ) = $image->get_image_path( size => $size );
+            my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
             if ( defined $error && $error ne '' )
             {
@@ -1123,7 +1123,7 @@ sub get_users_for_directory
                 }
             }
 
-            $LOGGER->debug( 'FILEPATH: ' . $filepath );
+            #$LOGGER->debug( 'FILEPATH: ' . $filepath );
             
             push( @images, { 
                             filepath       => $filepath, 

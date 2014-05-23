@@ -169,7 +169,14 @@ sub create_user_cached_file_directory
                                 ( defined $content_type ) ? '' : 'content_type'
                               )
         );
-        return ( 0, 'Cannot confirm cached file directory. Invalid User Content information.', undef );
+        return ( 0, 'Cannot confirm cached file directory. Invalid User or Content information.', undef );
+    }
+
+    my $user = Side7::User->new( id => $user_id )->load( speculative => 1 );
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        $LOGGER->warn( 'Invalid User ID passed in: >' . $user_id . '<' );
+        return( 0, 'Cannot confirm cached file directory. Invalid User information.', undef );
     }
 
     if ( 
@@ -251,7 +258,8 @@ sub create_user_cached_file_directory
     }
     else
     {
-        return ( 0, 'Invalid content_type passed in.', undef );
+        $LOGGER->error( 'Invalid Content Type value >' . $content_type . '< supplied when creating cached_file dir.' );
+        return ( 0, 'An error occurred. Invalid Content Type passed in.', undef );
     }
 
     if ( ! -d $cached_file_dir )
@@ -282,18 +290,18 @@ sub create_user_cached_file_directory
             $audit_log->save();
             return ( 0, $error_message, undef );
         }
-    }
 
-    if ( ! -d $cached_file_dir )
-    {
-        my $error = 'ERROR: User cache directory >' . $cached_file_dir . '< does not exist even after successful creation return.';
-        my $audit_log = Side7::AuditLog->new(
-                                                title       => 'Directory Creation Error',
-                                                description => $error,
-                                                ip_address  => '',
-                                                timestamp   => DateTime->now(),
-        );
-        return ( 0, 'User cache directory still does not exist after successful creation return.', undef );
+        if ( ! -d $cached_file_dir )
+        {
+            my $error = 'ERROR: User cache directory >' . $cached_file_dir . '< does not exist even after successful creation return.';
+            my $audit_log = Side7::AuditLog->new(
+                                                    title       => 'Directory Creation Error',
+                                                    description => $error,
+                                                    ip_address  => '',
+                                                    timestamp   => DateTime->now(),
+            );
+            return ( 0, 'User cache directory still does not exist after successful creation return.', undef );
+        }
     }
 
     return( 1, undef, $cached_file_dir );

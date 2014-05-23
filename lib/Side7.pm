@@ -309,8 +309,15 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 {
     my ( $initial, $page ) = splat;
 
-    $initial ||= 'a';
-    $page    ||= 1;
+    if ( ! defined $initial || $initial eq '' )
+    {
+        $initial = 'a';
+    }
+
+    if ( ! defined $page || $page eq '' )
+    {
+        $page = 1;
+    }
 
     my ( $users, $user_count ) = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
 

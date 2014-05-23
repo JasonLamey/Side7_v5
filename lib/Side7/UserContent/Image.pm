@@ -378,7 +378,7 @@ sub show_image
     my $session  = delete $args{'session'};
     my $size     = delete $args{'size'} // 'original';
 
-    return if ( ! defined $image_id );
+    return if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
     my $loaded = $image->load( 
@@ -421,13 +421,12 @@ sub show_image
     {
         $LOGGER->warn( $error );
         $image_hash->{'filepath_error'} = $error;
-        $image_hash->{'filepath'} = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
     }
     else
     {
         if ( ! -f $filepath )
         {
-            my ( $success, $error ) = $image->create_cached_file( size => $size );
+            my ( $success, $error ) = $image->create_cached_file( size => $size, path => $filepath );
 
             if ( ! $success )
             {
