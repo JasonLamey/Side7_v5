@@ -8,7 +8,6 @@ use List::Util;
 use Data::Dumper;
 
 use Side7::Globals;
-use Side7::DataValidation;
 use Side7::User::Manager;
 use Side7::UserContent;
 use Side7::UserContent::Image;
@@ -419,7 +418,7 @@ Parameters:
 
 =back
 
-    my $has_permission = $user->has_permission( 'permission_name' );ccount receives Subscriber-specific promos.
+    my $has_permission = $user->has_permission( 'permission_name' );
 
 =cut
 

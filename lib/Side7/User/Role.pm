@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
 =pod
 
 =head1 NAME
@@ -74,26 +76,47 @@ __PACKAGE__->meta->setup
 =head1 METHODS
 
 
-=head2 method_name()
+=head2 has_permission()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns a true/false value for whether a role has a particular permission.
 
 Parameters:
 
 =over 4
 
-=item parameter1: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
-
-=item parameter2: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
+=item The permission name.
 
 =back
 
-    my $result = My::Package->method_name();
+    my $has_permission = Side7::User::Role->has_permission( $permission_name );
 
 =cut
 
-sub method_name
+sub has_permission
 {
+    my ( $self, $permission_name ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'Invalid or undefined Role object passed in.' );
+        return 0;
+    }
+
+    if ( ! defined $permission_name || $permission_name eq '' )
+    {
+        $LOGGER->warn( 'Invalid or undefined permission name passed in.' );
+        return 0;
+    }
+
+    foreach my $permission ( map { $_->name } $self->permissions )
+    {
+        if ( lc( $permission ) eq lc( $permission_name ) )
+        {
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 

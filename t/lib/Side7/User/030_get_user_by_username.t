@@ -16,15 +16,19 @@ my $user = Side7::User::get_user_by_username( $USERNAME );
 
 isa_ok( $user, 'Side7::User' );
 
-my $email_address = $user->email_address();
+SKIP: {
 
-is( $email_address, 'badkarma@side7.com', 'Can retrieve e-mail address.' );
+    skip 'No User loaded', 3 if ref( $user ) ne 'Side7::User';
 
-my $created_at = $user->get_formatted_created_at();
+    my $email_address = $user->email_address();
 
-is( $created_at, 'Monday, 16 November, 1998', 'Can get formatted created_at date.' );
+    is( $email_address, 'badkarma@side7.com', 'Can retrieve e-mail address.' );
 
-my $updated_at = $user->get_formatted_updated_at();
+    my $created_at = $user->get_formatted_created_at();
 
-is( $updated_at, 'Tuesday, 01 July, 2008', 'Can get formatted updated_at date.' );
+    is( $created_at, 'Monday, 16 November, 1998', 'Can get formatted created_at date.' );
 
+    my $updated_at = $user->get_formatted_updated_at();
+
+    is( $updated_at, 'Tuesday, 01 July, 2008', 'Can get formatted updated_at date.' );
+}
