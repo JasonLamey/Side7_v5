@@ -3,17 +3,22 @@ package Side7::UserContent::AlbumImageMap;
 use strict;
 use warnings;
 
+use Side7::Globals;
+
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::AlbumImageMap
 
+
 =head1 DESCRIPTION
 
 This package handles all the mapping of Images to Albums.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -64,7 +69,7 @@ __PACKAGE__->meta->setup
         },
         image =>
         {
-            type        => 'many to many',
+            type        => 'many to one',
             class       => 'Side7::UserContent::Image',
             key_columns => { image_id => 'id' },
         },

@@ -18,6 +18,8 @@ use Side7::UserContent::Image::DailyView;
 use Side7::UserContent::Image::Property;
 use Side7::UserContent::CommentThread;
 use Side7::UserContent::Comment;
+use Side7::UserContent::Album;
+use Side7::UserContent::AlbumImageMap;
 use Side7::KudosCoin;
 use Side7::Utils::Text;
 
@@ -29,7 +31,7 @@ use Time::HiRes qw( gettimeofday tv_interval );
 use DateTime;
 
 use vars qw(
-    $VERSION %opt $has_opts $DB4 $DB5
+    $VERSION %opt $has_opts $DB4 $DB5 %ID_TRANSLATIONS
 );
 
 $|++; 
@@ -96,6 +98,10 @@ sub migrate
     migrate_image_properties();
     migrate_image_comments();
     migrate_image_comment_threads();
+    migrate_albums();
+    migrate_album_images();
+    migrate_related_image_groups();
+    migrate_related_image_group_images();
     db_disconnect();
 }
 
@@ -359,8 +365,8 @@ sub migrate_user_preferences
             show_m_thumbs              => $show_m_thumbs,
             show_adult_content         => 0,
             display_full_sized_images  => $row->{display_full_sized_images},
-            created_at                 => 'now()',
-            updated_at                 => 'now()',
+            created_at                 => DateTime->now(),
+            updated_at                 => DateTime->now(),
         );
         $pref->save if ! defined $opt{D};
 
@@ -756,6 +762,299 @@ sub migrate_image_comment_threads
     say "\t=> Migrated image comment threads: " . _commafy( $image_thread_count ) if defined $opt{V};
 }
 
+sub migrate_account_credits
+{
+    if ( defined $opt{V} ) { say "=> Migrating Account Points."; }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Kudos Coins tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ kudos_coin_ledger / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 account_credits table;
+    if ( defined $opt{V} ) { say "\t=> Pulling account credits records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT *, id as account_credit_id
+         FROM account_credit_transactions
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $credit_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create image and save it.
+        my $kudo = Side7::KudosCoin->new(
+            id                => $row->{account_credit_id},
+            user_id           => $row->{user_account_id},
+            timestamp         => $row->{timestamp},
+            amount            => $row->{amount},
+            description       => $row->{description},
+        );
+        $kudo->save if ! defined $opt{D};
+
+        $credit_count++;
+
+        print _progress_dot( total => $row_count, count => $credit_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated account credit records: " . _commafy( $credit_count ) if defined $opt{V};
+}
+
+sub migrate_albums
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Portfolios."; }
+
+    # Cleanup from any previous migrations.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Albums tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ albums album_image_map album_music_map album_words_map / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 account_credits table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image portfolio records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT ip.*, ip.id as image_portfolio_id, ipt.name
+         FROM image_portfolios ip
+         INNER JOIN image_portfolio_types ipt
+         ON ip.image_portfolio_type_id = ipt.id
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $album_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+        my %albums = (
+            1 => { name => undef, description => undef, system => undef },
+            2 => { name => undef, description => undef, system => undef },
+            3 => { 
+                    name        => 'Art Trades', 
+                    description => 'User Content traded or commissioned.', 
+                    system      => 1,
+                 },
+            4 => { name => undef, description => undef, system => undef },
+            5 => { name => undef, description => undef, system => undef },
+            6 => { name => undef, description => undef, system => undef },
+            7 => { name => undef, description => undef, system => undef },
+        );
+
+        # Create album and save it.
+        if ( $row->{'image_portfolio_type_id'} == 3 )
+        {
+            my $album = Side7::UserContent::Album->new(
+                user_id           => $row->{user_account_id},
+                name              => $albums{$row->{'image_portfolio_type_id'}}{name},
+                description       => $albums{$row->{'image_portfolio_type_id'}}{description},
+                system            => $albums{$row->{'image_portfolio_type_id'}}{system},
+                created_at        => DateTime->now(),
+                updated_at        => DateTime->now(),
+            );
+            $album->save if ! defined $opt{D};
+
+            $ID_TRANSLATIONS{ $row->{image_portfolio_id} } = $album->id;
+
+            $album_count++;
+
+            print _progress_dot( total => $row_count, count => $album_count, interval => $interval ) if defined $opt{V};
+        }
+
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated album records: " . _commafy( $album_count ) if defined $opt{V};
+}
+
+sub migrate_album_images
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Portfolio Associations."; }
+
+    # Cleanup from any previous migrations occurred with Album migration.
+
+    # Pull data from the v4 image_portfolio_image_associations table;
+    if ( defined $opt{V} ) { say "\t=> Pulling image portfolio association records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT ipia.*, ip.image_portfolio_type_id
+         FROM image_portfolio_image_associations ipia
+         INNER JOIN image_portfolios ip
+         ON ip.id = ipia.image_portfolio_id
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $map_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create album and save it.
+        if ( $row->{'image_portfolio_type_id'} == 3 )
+        {
+            my $map = Side7::UserContent::AlbumImageMap->new(
+                album_id          => $ID_TRANSLATIONS{ $row->{image_portfolio_id} },
+                image_id          => $row->{image_id},
+                created_at        => DateTime->now(),
+                updated_at        => DateTime->now(),
+            );
+            $map->save if ! defined $opt{D};
+
+            $map_count++;
+
+            print _progress_dot( total => $row_count, count => $map_count, interval => $interval ) if defined $opt{V};
+        }
+
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated album-image map records: " . _commafy( $map_count ) if defined $opt{V};
+    %ID_TRANSLATIONS = (); # Clear out the translations
+}
+
+sub migrate_related_image_groups
+{
+    if ( defined $opt{V} ) { say "=> Migrating Related Image Groups."; }
+
+    # Cleanup from any previous migrations will not be done; it's done with the Album migratio..
+
+    # Pull data from the v4 account_credits table;
+    if ( defined $opt{V} ) { say "\t=> Pulling related image group records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT rig.*, rig.id as related_image_group_id
+         FROM related_images_groups rig
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $album_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create album and save it.
+        my $album = Side7::UserContent::Album->new(
+            user_id           => $row->{user_account_id},
+            name              => $row->{name},
+            description       => undef,
+            system            => 0,
+            created_at        => DateTime->now(),
+            updated_at        => DateTime->now(),
+        );
+        $album->save if ! defined $opt{D};
+
+        $ID_TRANSLATIONS{ $row->{'related_image_group_id'} } = $album->id;
+
+        $album_count++;
+
+        print _progress_dot( total => $row_count, count => $album_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated album records: " . _commafy( $album_count ) if defined $opt{V};
+}
+
+sub migrate_related_image_group_images
+{
+    if ( defined $opt{V} ) { say "=> Migrating Image Portfolio Associations."; }
+
+    # Cleanup from any previous migrations occurred with Album migration.
+
+    # Pull data from the v4 image_portfolio_image_associations table;
+    if ( defined $opt{V} ) { say "\t=> Pulling related image group association records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT riga.*
+         FROM related_image_group_associations riga
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $map_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create album and save it.
+        my $map = Side7::UserContent::AlbumImageMap->new(
+            album_id          => $ID_TRANSLATIONS{ $row->{related_images_group_id} },
+            image_id          => $row->{image_id},
+            created_at        => DateTime->now(),
+            updated_at        => DateTime->now(),
+        );
+        $map->save if ! defined $opt{D};
+
+        $map_count++;
+
+        print _progress_dot( total => $row_count, count => $map_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated album-image map records: " . _commafy( $map_count ) if defined $opt{V};
+    %ID_TRANSLATIONS = (); # Clear out the translations
+}
+
 sub time_elapsed
 {
     my $elapsed = shift;
@@ -889,63 +1188,3 @@ sub _progress_dot
 
     return;
 }
-
-sub migrate_account_credits
-{
-    if ( defined $opt{V} ) { say "=> Migrating Account Points."; }
-
-    # Cleanup from any previous migrations.
-    if ( ! defined $opt{D} )
-    {
-        if ( defined $opt{V} ) { say "\t=> Truncating v5 Kudos Coins tables."; }
-
-        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
-
-        foreach my $table ( qw/ kudos_coin_ledger / )
-        {
-            $dbh5->do( "TRUNCATE TABLE $table" );
-        }
-    }
-
-    # Pull data from the v4 account_credits table;
-    if ( defined $opt{V} ) { say "\t=> Pulling account credits records from v4 DB."; }
-
-    my $sth = $DB4->prepare(
-        'SELECT *, id as account_credit_id
-         FROM account_credit_transactions
-         ORDER BY id'
-    );
-    $sth->execute();
-
-    my $row_count = $sth->rows();
-    my $interval  = int( $row_count / 10 );
-
-    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
-
-    my $credit_count = 0;
-
-    print "\t=> Inserting records into v5 DB " if defined $opt{V};
-    while ( my $row = $sth->fetchrow_hashref() )
-    {
-        # Some conversion and clean up.
-
-        # Create image and save it.
-        my $kudo = Side7::KudosCoin->new(
-            id                => $row->{account_credit_id},
-            user_id           => $row->{user_account_id},
-            timestamp         => $row->{timestamp},
-            amount            => $row->{amount},
-            description       => $row->{description},
-        );
-        $kudo->save if ! defined $opt{D};
-
-        $credit_count++;
-
-        print _progress_dot( total => $row_count, count => $credit_count, interval => $interval ) if defined $opt{V};
-    }
-    print "\n" if defined $opt{V};
-
-    $sth->finish();
-    say "\t=> Migrated account credit records: " . _commafy( $credit_count ) if defined $opt{V};
-}
-

@@ -139,6 +139,11 @@ __PACKAGE__->meta->setup
             key_columns => { id => 'content_id' },
             type        => 'one to many',
         },
+        albums =>
+        {
+            type        => 'many to many',
+            map_class   => 'Side7::UserContent::AlbumImageMap',
+        },
     ],
 );
 

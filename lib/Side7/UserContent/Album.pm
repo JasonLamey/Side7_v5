@@ -28,6 +28,7 @@ into logical groups.
     | id         | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
     | user_id    | int(20) unsigned | NO   | UNI | NULL    |                |
     | name       | varchar(255)     | NO   |     | NULL    |                |
+    | description| text(16)         | YES  |     | NULL    |                |
     | system     | tinyint(1)       | NO   |     | 0       |                |
     | created_at | datetime         | NO   |     | NULL    |                |
     | updated_at | datetime         | NO   |     | NULL    |                |
@@ -64,15 +65,16 @@ __PACKAGE__->meta->setup
 (
     table   => 'albums',
     columns => [ 
-        id         => { type => 'serial',   not_null => 1 },
-        user_id    => { type => 'integer',  not_null => 1 }, 
-        name       => { type => 'varchar',  length => 255, not_null => 1 }, 
-        system     => { type => 'integer',  not_null => 1, default => 0 }, 
-        created_at => { type => 'datetime', not_null => 1, default => 'now()' }, 
-        updated_at => { type => 'datetime', not_null => 1, default => 'now()' },
+        id          => { type => 'serial',   not_null => 1 },
+        user_id     => { type => 'integer',  not_null => 1 }, 
+        name        => { type => 'varchar',  length => 255, not_null => 1 }, 
+        description => { type => 'text',     default => 'null' }, 
+        system      => { type => 'integer',  not_null => 1, default => 0 }, 
+        created_at  => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        updated_at  => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ [ 'user_id', 'name' ], [ 'user_id' ], [ 'user_id', 'system' ], ],
+    unique_key => [ 'user_id', 'name' ],
     foreign_keys =>
     [
         user =>
