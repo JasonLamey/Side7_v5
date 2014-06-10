@@ -5,6 +5,9 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+use Side7::UserContent::Category::Manager;
+
 =pod
 
 =head1 NAME
@@ -64,17 +67,51 @@ __PACKAGE__->meta->setup
     ],
 );
 
+
 =head1 METHODS
 
-=head2 method_name
 
-    $result = My::Package->method_name();
+=head2 get_categories_for_form()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns an array ref of keys and values for categories, depending upon the content type provided.
+
+Parameters:
+
+=over 4
+
+=item content_type: The Content type to filter on. Accepts 'image', 'music', or 'literature'.
+
+=back
+
+    my $categories = Side7::UserContent::Category->get_categories_for_form( content_type => $content_type );
 
 =cut
 
-=pod
+sub get_categories_for_form
+{
+    my ( $self, %args ) = @_;
+
+    my $content_type = delete $args{'content_type'} // undef;
+
+    return [] if ! defined $content_type;
+
+    my $categories = Side7::UserContent::Category::Manager->get_categories(
+        query =>
+        [
+            content_type => $content_type,
+        ],
+        sort_by => 'priority ASC',
+    );
+
+    my @results = ();
+    foreach my $category ( @{ $categories } )
+    {
+        push( @results, { id => $category->id(), category => $category->category() } );
+    }
+
+    return \@results;
+}
+
 
 =head1 COPYRIGHT
 

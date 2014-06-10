@@ -1,0 +1,50 @@
+<div class="page">
+
+    [% PROCESS 'my/_home_menu.tt' %]
+
+    [% form_title = '' %]
+    [% file_types = '' %]
+    [% file_label = '' %]
+    [% content_form = '' %]
+    [% IF upload_type == 'image' %]
+        [% form_title = 'An Image' %]
+        [% file_types = '.jpg/.gif/.png' %]
+        [% file_label = 'Your Image File' %]
+        [% content_form = 'my/_upload_image_content_form.tt' %]
+    [% ELSIF upload_type == 'music' %]
+        [% form_title = 'Music' %]
+        [% file_types = '.mp3/.wma/.aac/.ogg/.wav' %]
+        [% file_label = 'Your Music File' %]
+        [% content_form = 'my/_upload_music_content_form.tt' %]
+    [% ELSIF upload_type == 'literature' %]
+        [% form_title = 'Literature' %]
+        [% file_types = '.txt/.rtf/.pdf/.doc/.docx/.odf' %]
+        [% file_label = 'Your Document' %]
+        [% content_form = 'my/_upload_words_content_form.tt' %]
+    [% END %]
+    [% od_checked = '' %]
+    [% IF overwrite_dupe %]
+        [% od_checked = ' checked="checked"' %]
+    [% END %]
+
+    <h2>Upload [% form_title %]</h2>
+
+    <div style="margin-left: 220px;">
+        <form action="/my/upload" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="upload_type" value="[% upload_type %]" />
+            <label for="filename">[% file_label %]:</label>
+            <input type="file" name="filename" required="required" /><br />
+            <span style="font-size: 8pt;">( For example, [% file_types %] )</span><br /><br />
+            <label for="overwrite_dupe">Overwrite File With The Same Filename?</label>
+            <input type="checkbox" name="overwrite_dupe" value="1"[% od_checked %] /><br /><br />
+
+            [% PROCESS $content_form %]
+
+            <label for="agree_to_rules">Do you agree to the site rules?</label>
+            <input type="checkbox" value="1" name="agree_to_rules"> Yes<br />
+            <span style="font-size: 8pt;">By checking "I Agree", you are agreeing to comply both with copyright laws and <a href="#">site rules</a>, and are only uploading content that was created by you and does not contain content that is copyrighted or trademarked to another person or entity.</span><br /><br />
+
+            <input type="submit" value="Upload" /><br />
+        </form>
+    </div>
+</div>

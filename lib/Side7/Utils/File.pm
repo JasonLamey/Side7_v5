@@ -138,7 +138,7 @@ Parameters:
 
 =item user_id: The User ID of the user to whom the directory is attributed.
 
-=item content_type: The User Content type for this stored file type. Valid types are 'images', 'words', 'music', and 'videos'.
+=item content_type: The User Content type for this stored file type. Valid types are 'images', 'literature', 'music', and 'videos'.
 
 =item content_size: The User Content size (dimensions) for this stored file type. Valid types are 'tiny', 'small', 'medium', 'large', and 'original'.
 
@@ -215,7 +215,7 @@ sub create_user_cached_file_directory
     # So, for images:
     # /cached_files/user_content/images/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
-    # For words:
+    # For literature:
     # /cached_files/user_content/words/[user_id breakdown]/words_id.[doc|docx|rtf|txt|pdf]
     #
     # For music:
@@ -244,7 +244,7 @@ sub create_user_cached_file_directory
                             $tier1 . '/' . $tier2 . '/' . $user_id;
     }
     elsif ( 
-            lc( $content_type ) eq 'words'
+            lc( $content_type ) eq 'literature'
             ||
             lc( $content_type ) eq 'music'
           )

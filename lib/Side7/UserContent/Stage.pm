@@ -5,6 +5,9 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+use Side7::UserContent::Stage::Manager;
+
 =pod
 
 =head1 NAME
@@ -62,17 +65,47 @@ __PACKAGE__->meta->setup
     ],
 );
 
+
 =head1 METHODS
 
-=head2 method_name
 
-    $result = My::Package->method_name();
+=head2 get_stages_for_form()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns an array ref of keys and values for stages, depending upon the content type provided.
+
+Parameters:
+
+=over 4
+
+=item content_type: The Content type to filter on. Accepts 'image', 'music', or 'literature'.
+
+=back
+
+    my $stages = Side7::UserContent::Stage->get_stages_for_form( content_type => $content_type );
 
 =cut
 
-=pod
+sub get_stages_for_form
+{
+    my ( $self, %args ) = @_;
+
+    my $content_type = delete $args{'content_type'} // undef;
+
+    return [] if ! defined $content_type;
+
+    my $stages = Side7::UserContent::Stage::Manager->get_stages(
+        sort_by => 'priority ASC',
+    );
+
+    my @results = ();
+    foreach my $stage ( @{ $stages } )
+    {
+        push( @results, { id => $stage->id(), stage => $stage->stage() } );
+    }
+
+    return \@results;
+}
+
 
 =head1 COPYRIGHT
 

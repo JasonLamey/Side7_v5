@@ -156,6 +156,78 @@ sub create_cached_image
 }
 
 
+=head2 get_image_stats()
+
+Returns an hashref with width, height, filesize in bytes, and format.  Or, specific stats can be requested.
+
+Parameters:
+
+=over 4
+
+=item image: Full file path to the image file. Required.
+
+=item dimensions: Boolean. Returns the image dimensions ("width x height") as a string. Defaults to false.
+
+=item filesize: Boolean. Returns the image filesize in bytes as a string.  Defaults to false.
+
+=item format: Boolean. Returns the format of the image as a string.  Defaults to false.
+
+=back
+
+    my $image_stats = Side7::Utils::Image( image => $image );
+
+=cut
+
+sub get_image_stats
+{
+    my ( %args ) = @_;
+
+    my $image      = delete $args{'image'}      // undef;
+    my $dimensions = delete $args{'dimensions'} // undef;
+    my $filesize   = delete $args{'filesize'}   // undef;
+    my $format     = delete $args{'format'}     // undef;
+
+    if
+    (
+        ! defined $image
+        ||
+        ! -f $image
+    )
+    {
+        return { error => 'Invalid or missing image file passed in. >' . $image . '<' };
+    }
+
+    my $original_image = Image::Magick->new();
+
+    my ( $width, $height, $size, $file_format ) = $original_image->Ping( $image );
+
+    if ( ! defined $file_format )
+    {
+        return { error => 'Invalid image file format.' };
+    }
+    
+    my %stats = ();
+
+    if
+    (
+        ! defined $dimensions
+        &&
+        ! defined $filesize
+        &&
+        ! defined $format
+    )
+    {
+        return { width => $width, height => $height, filesize => $size, format => $file_format };
+    }
+
+    $stats{'dimensions'} = $width . 'x' . $height if defined $dimensions;
+    $stats{'filesize'}   = $size                  if defined $filesize;
+    $stats{'format'}     = $file_format           if defined $format;
+
+    return \%stats;
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

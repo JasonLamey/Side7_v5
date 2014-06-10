@@ -19,6 +19,7 @@ use Rose::DB::Object::QueryBuilder qw( build_select );
 
 use Data::Dumper;
 use Carp qw( confess );
+use List::Util;
 
 use Side7::Globals;
 
@@ -174,8 +175,60 @@ sub build_select
 
     return \@rows;
 }
+
+
+=head2 get_enum_values_for_form()
+
+Retrieves the enum values for one or more fields from a table. Takes an array of field names for which to check
+for the values, and passes back a hash of arrays with the enum values for each field.
+
+Parameters:
+
+=over 4
+
+=item fields: An array of field names to match against.
+
+=item table: The table against which to check for enum values.
+
+=back
+
+    my $enum_values = Side7::DB::get_enum_values_for_form( fields => [ $field_name, $another_field ], table => $table );
+
+=cut
+
+sub get_enum_values_for_form
+{
+    my ( %args ) = @_;
+    my $fields = delete $args{'fields'} // [];
+    my $table  = delete $args{'table'}  // undef;
+
+    return {} if ! defined $table;
+    return {} if scalar( @{ $fields } ) == 0;
+
+    $DB //= $Side7::Globals::DB;
+
+    my $dbh = $DB->dbh;
+
+    my $sth = $dbh->column_info( undef, undef, $table, '%' );
+
+    my %enum_field_values = ();
+    while ( my $col_info  = $sth->fetchrow_hashref )
+    {
+        if 
+        (
+            ( List::Util::any { $col_info->{'COLUMN_NAME'} eq $_ } @{ $fields } )
+            &&
+            $col_info->{'TYPE_NAME'} eq 'ENUM'
+        )
+        {
+            # The mysql_values key contains a reference to an array of valid enum values
+            $enum_field_values{ $col_info->{'COLUMN_NAME'} } = $col_info->{'mysql_values'};
+        }
+    }
+
+    return \%enum_field_values;
+}
  
-=pod
 
 =head1 COPYRIGHT
 

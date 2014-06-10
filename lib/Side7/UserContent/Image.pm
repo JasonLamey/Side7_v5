@@ -357,6 +357,30 @@ sub create_cached_file
 }
 
 
+=head2 get_enum_values()
+
+Returns a hash ref of arrays of enum values for each related field for an Image.
+
+Parameters: None.
+
+    my $enums = Side7::UserContent::Image->get_enum_values();
+
+=cut
+
+sub get_enum_values
+{
+    my $self = shift;
+
+    my $enums = {};
+
+    my $image_enums = Side7::DB::get_enum_values_for_form( fields => [ 'privacy' ], table => 'images' );
+
+    $enums = ( $image_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
 =head1 FUNCTIONS
 
 

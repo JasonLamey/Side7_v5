@@ -17,8 +17,10 @@ use Side7::Login;
 use Side7::User;
 use Side7::Account;
 use Side7::UserContent::Image;
+use Side7::UserContent::RatingQualifier;
 use Side7::Utils::Crypt;
 use Side7::Utils::Pagination;
+use Side7::Utils::Image;
 
 our $VERSION = '0.1';
 
@@ -153,7 +155,6 @@ get '/signup' => sub
 post '/signup' => sub
 {
     my $params = params;
-    my $is_data_valid = 0;
  
     # Validating params with rule file
     my $data = validator( $params, 'signup_form.pl' );
@@ -282,6 +283,25 @@ post '/confirm_user' => sub
 ###########################
 ### Public-facing pages ###
 ###########################
+
+# Progress Bar
+#get '/progress_bar' => sub {
+#    long_running 'progress_bar', 5, sub {
+#        my $state = shift;
+# 
+#        $state->{timer} =
+#        AnyEvent->timer(after => 1, interval => 1, cb => sub {
+#            if (++$state->{cnt} == 5) {
+#                undef $state->{timer};
+#                finished 'progress_bar';
+#            } else {
+#                progress 'progress_bar' => $state->{cnt};
+#            }
+#        });
+#    };
+# 
+#    template 'progressbar', { name => 'progress_bar' };
+#};
 
 # Search
 get '/search/?' => sub
@@ -444,6 +464,184 @@ get '/my/kudos/?' => sub
     }
 
     template 'my/kudos', { user => $user_hash };
+};
+
+get '/my/gallery/?' => sub
+{
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my ( $user_hash ) = $user->get_user_hash_for_template();
+
+    if ( ! defined $user_hash )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'my/gallery', { user => $user_hash };
+};
+
+get '/my/upload/?:upload_type?/?' => sub
+{
+
+    if ( ! defined params->{'upload_type'} )
+    {
+        flash error => 'Please ensure you have chosen which type of content you would like to upload.';
+        return template 'my/gallery';
+    }
+
+    my $enums             = Side7::UserContent::get_enums_for_form( content_type => params->{'upload_type'} );
+    my $categories        = Side7::UserContent::Category->get_categories_for_form( content_type => params->{'upload_type'} );
+    my $ratings           = Side7::UserContent::Rating->get_ratings_for_form( content_type => params->{'upload_type'} );
+    my $stages            = Side7::UserContent::Stage->get_stages_for_form( content_type => params->{'upload_type'} );
+    my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
+
+    template 'my/upload', { 
+                            upload_type => params->{'upload_type'}, 
+                            enums       => $enums,
+                            categories  => $categories,
+                            ratings     => $ratings,
+                            qualifiers  => $qualifiers,
+                            stages      => $stages,
+                          };
+};
+
+post '/my/upload' => sub
+{
+    my $params = params;
+
+    $LOGGER->debug( 'RATING_QUALIFIERS: ' . Dumper( params->{'rating_qualifiers'} ) );
+
+    my $return_to_form = sub
+    {
+        my $enums             = Side7::UserContent::get_enums_for_form( content_type => params->{'upload_type'} );
+        my $categories        = Side7::UserContent::Category->get_categories_for_form( content_type => params->{'upload_type'} );
+        my $ratings           = Side7::UserContent::Rating->get_ratings_for_form( content_type => params->{'upload_type'} );
+        my $stages            = Side7::UserContent::Stage->get_stages_for_form( content_type => params->{'upload_type'} );
+        my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
+        return template 'my/upload', {
+                            upload_type       => params->{'upload_type'}, 
+                            overwrite_dupe    => params->{'overwrite_dupe'},
+                            category_id       => params->{'category_id'},
+                            rating_id         => params->{'rating_id'},
+                            rating_qualifiers => params->{'rating_qualifiers'},
+                            stage_id          => params->{'stage_id'},
+                            title             => params->{'title'},
+                            description       => params->{'description'},
+                            copyright_year    => params->{'copyright_year'},
+                            privacy           => params->{'privacy'},
+                            enums             => $enums,
+                            categories        => $categories,
+                            ratings           => $ratings,
+                            qualifiers        => $qualifiers,
+                            stages            => $stages,
+        };
+    };
+
+    # Validating params with rule file
+    my $data = validator( $params, params->{'upload_type'} . '_upload_form.pl' );
+
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+        return $return_to_form->();
+    }
+
+    # Get User & Content Path
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my $upload_dir = $user->get_content_directory();
+
+    # If filename exists, and overwrite_dupe is not checked, bail with an error message.
+    if
+    (
+        -f $upload_dir . params->{'filename'}
+        &&
+        ! defined params->{'overwrite_dupe'}
+    )
+    {
+        my $err_message = 'You already have a file named <b>&apos;' . params->{'filename'} . '&apos;</b>.<br />';
+        $err_message .= 'If you would like to replace that file with an updated copy, please check the <b>Overwrite file</b> box.';
+
+        flash error => $err_message;
+        return $return_to_form->();
+    }
+
+    # Upload the file
+    my $file = request->upload( 'filename' );
+
+    # Copy file to the User's directory
+    $file->copy_to( $upload_dir . $file->filename() );
+
+    # Insert the content record into the database.
+    if ( lc( params->{'upload_type'} ) eq 'image' )
+    {
+        my $copyright_year = undef;
+        if ( defined params->{'copyright_year'} )
+        {
+            $copyright_year = DateTime->today->year();
+        }
+        my $rating_qualifiers = undef;
+        if ( defined params->{'rating_qualifiers'} )
+        {
+            $rating_qualifiers = join( '', @{ params->{'rating_qualifiers'} } );
+        }
+
+        my $file_stats = Side7::Utils::Image::get_image_stats( image => $upload_dir . $file->filename(), dimensions => 1 );
+        if ( defined $file_stats->{'error'} )
+        {
+            $LOGGER->warn( 'ERROR GETTING IMAGE STATS: ' . $file_stats->{'error'} );
+            flash error => 'Invalid file format has been uploaded as an image.';
+            return $return_to_form->();
+        }
+
+        my $image = Side7::UserContent::Image->new(
+                                                    user_id           => $user->id(),
+                                                    filename          => params->{'filename'},
+                                                    filesize          => $file->size(),
+                                                    dimensions        => $file_stats->{'dimensions'},
+                                                    category_id       => params->{'category_id'},
+                                                    rating_id         => params->{'rating_id'},
+                                                    rating_qualifiers => $rating_qualifiers,
+                                                    stage_id          => params->{'stage_id'},
+                                                    title             => params->{'title'},
+                                                    description       => params->{'description'},
+                                                    copyright_year    => $copyright_year,
+                                                    privacy           => params->{'privacy'},
+                                                    created_at        => DateTime->now(),
+                                                    updated_at        => DateTime->now(),
+                                                  );
+
+        $image->save();
+    }
+    elsif ( lc( params->{'upload_type'} ) eq 'music' )
+    {
+        # TODO: Create Music object.
+    }
+    elsif ( lc( params->{'upload_type'} ) eq 'literature' )
+    {
+        # TODO: Create Literature object.
+    }
+    else
+    {
+        my $err_message = 'Could not add your upload to the database as we could not determine what kind of content it was.' .
+                          ' We have made note of this error and will look into it.';
+
+        flash error => $err_message;
+        return $return_to_form->();
+    }
+
+    flash message => 'Hooray! Your file <b>' . $file->filename() . '</b> has been uploaded successfully.';
+
+    template 'my/gallery';
 };
 
 get '/my/permissions/?' => sub

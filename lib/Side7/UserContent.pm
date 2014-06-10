@@ -167,6 +167,51 @@ sub get_default_thumbnail_path
 }
 
 
+=head2 get_enums_for_form()
+
+Retrieves the enum values for the appropriate fields for the content type. Returns a hash ref of arrays.
+
+Parameters:
+
+=over 4
+
+=item content_type: The content type to retrieve enum values to return. Takes 'image', 'music', 'literature'.
+
+=back
+
+    my $enums = Side7::UserContent::get_enums_for_form( content_type => $content_type );
+
+=cut
+
+sub get_enums_for_form
+{
+    my ( %args ) = @_;
+
+    my $content_type = delete $args{'content_type'} // undef;
+
+    return {} if ! defined $content_type;
+
+    my $enums = ();
+    if ( lc( $content_type ) eq 'image' )
+    {
+        $enums = Side7::UserContent::Image->get_enum_values();
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+    }
+    elsif ( lc( $content_type ) eq 'video' )
+    {
+    }
+
+    # TODO: ADD IN CHECKS FOR MUSIC AND LITERATURE.
+
+    return $enums;
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014
