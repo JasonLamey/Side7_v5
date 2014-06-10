@@ -404,6 +404,49 @@ sub get_formatted_updated_at
 }
 
 
+=head2 get_account_hash_for_template()
+
+Returns a hash reference for the appropriate account data values, formatted properly.
+
+    my $account_hash = $account->get_account_hash_for_template();
+
+=cut
+
+sub get_account_hash_for_template
+{
+    my $self = shift;
+
+    my $account_hash = {};
+
+    # General data
+    $account_hash->{'full_name'} = $self->full_name();
+
+    foreach my $key (
+        qw(
+            id first_name last_name biography sex webpage_name webpage_url
+            blog_name blog_url aim yahoo gtalk skype state
+        )
+    )
+    {
+        $account_hash->{$key} = $self->$key;
+    }
+
+    # Account Stats
+    $account_hash->{'status'} = $self->user_status->user_status();
+    $account_hash->{'type'}   = $self->user_type->user_type();
+    $account_hash->{'role'}   = $self->user_role->name();
+
+    # Date values
+    $account_hash->{'birthday'}                = $self->get_formatted_birthday();
+    $account_hash->{'subscription_expires_on'} = $self->get_formatted_subscription_expires_on();
+    $account_hash->{'delete_on'}               = $self->get_formatted_delete_on();
+    $account_hash->{'created_at'}              = $self->get_formatted_created_at();
+    $account_hash->{'updated_at'}              = $self->get_formatted_updated_at();
+
+    return $account_hash;
+}
+
+
 =head1 FUNCTIONS
 
 

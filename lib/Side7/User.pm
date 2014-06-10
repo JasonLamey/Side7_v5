@@ -154,31 +154,7 @@ sub get_user_hash_for_template
     if ( defined $self->{'account'} )
     {
         my $account = $self->{'account'}->[0];
-
-        # General data
-        $user_hash->{'account'}->{'full_name'} = $account->full_name();
-
-        foreach my $key ( 
-            qw( 
-                id first_name last_name biography sex webpage_name webpage_url
-                blog_name blog_url aim yahoo gtalk skype state
-            )
-        )
-        {
-            $user_hash->{'account'}->{$key} = $account->$key;
-        }
-
-        # Account Stats
-        $user_hash->{'account'}->{'status'} = $account->user_status->user_status();
-        $user_hash->{'account'}->{'type'}   = $account->user_type->user_type();
-        $user_hash->{'account'}->{'role'}   = $account->user_role->name();
-
-        # Date values
-        $user_hash->{'account'}->{'birthday'}                = $account->get_formatted_birthday();
-        $user_hash->{'account'}->{'subscription_expires_on'} = $account->get_formatted_subscription_expires_on();
-        $user_hash->{'account'}->{'delete_on'}               = $account->get_formatted_delete_on();
-        $user_hash->{'account'}->{'created_at'}              = $account->get_formatted_created_at();
-        $user_hash->{'account'}->{'updated_at'}              = $account->get_formatted_updated_at();
+        $user_hash->{'account'} = $account->get_account_hash_for_template();
     }
 
     # Kudos Coins (if included)
