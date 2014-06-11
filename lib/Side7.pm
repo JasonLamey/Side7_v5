@@ -21,6 +21,9 @@ use Side7::UserContent::RatingQualifier;
 use Side7::Utils::Crypt;
 use Side7::Utils::Pagination;
 use Side7::Utils::Image;
+use Side7::FAQCategory;
+use Side7::FAQCategory::Manager;
+use Side7::FAQEntry;
 
 our $VERSION = '0.1';
 
@@ -322,6 +325,69 @@ post '/search/?' => sub
                                     results      => $search_results, 
                                     search_error => $search_error,
                                    };
+};
+
+# FAQ routes.
+get '/faq/?:category_id?/?:entry_id?/?' => sub
+{
+    if
+    (
+        defined params->{'category_id'}
+        &&
+        defined params->{'entry_id'}
+    )
+    {
+        # FAQ Entry Permalink
+        my $category   = Side7::FAQCategory->new( id => params->{'category_id'} );
+        my $cat_loaded = $category->load( speculative => 1 );
+
+        if ( $cat_loaded == 0 )
+        {
+            flash error => 'That is not a valid FAQ Category';
+            return redirect '/faq';
+        }
+
+        my $entry = Side7::FAQEntry->new( id => params->{'entry_id'} );
+        my $ent_loaded = $entry->load( speculative => 1 );
+
+        if ( $ent_loaded == 0 )
+        {
+            flash error => 'That is not a valid FAQ Entry';
+            return redirect '/faq';
+        }
+
+        return template 'faq', { category => $category, entry => $entry };
+    }
+    elsif
+    (
+        defined params->{'category_id'}
+        &&
+        ! defined params->{'entry_id'}
+    )
+    {
+        # FAQ Category Page
+        my $category   = Side7::FAQCategory->new( id => params->{'category_id'} );
+        my $cat_loaded = $category->load( speculative => 1, with => [ 'faq_entries' ] );
+
+        if ( $cat_loaded == 0 )
+        {
+            flash error => 'That is not a valid FAQ Category';
+            return redirect '/faq';
+        }
+
+        $LOGGER->debug( 'CATEGORY: ' . Dumper( $category ) );
+
+        my @entries = sort { $a->{'priority'} <=> $b->{'priority'} } ( @{ ( $category->{'faq_entries'} // [] ) } );
+
+        return template 'faq', { category => $category, entries => \@entries };
+    }
+    else
+    {
+        # FAQ General Page
+        my $categories = Side7::FAQCategory::Manager->get_faq_categories( sort_by => 'priority ASC' );
+
+        return template 'faq', { categories => $categories };
+    }
 };
 
 # User directory.

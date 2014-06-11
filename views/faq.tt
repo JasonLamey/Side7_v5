@@ -1,0 +1,32 @@
+<div>
+    [% IF category %]
+        <h1>F.A.Q. - [% category.name %]</h1>
+    [% ELSE %]
+        <h1>F.A.Q.</h1>
+    [% END %]
+
+    [% IF entry %]
+        <div class="faq_entry">
+            <div class="question">[% entry.question %] &middot; <a href="/faq/[% category.id %]/[% entry.id %]">Permalink</a></div>
+            <div class="answer">[% entry.answer %]</div>
+        </div>
+    [% ELSIF entries %]
+        [% IF entries.size == 0 || entries == undef || entries == '' %]
+            <div class="faq_entry">No Entries for this Category.</div>
+        [% ELSE %]
+            [% FOREACH entry IN entries %]
+            <div class="faq_entry">
+                <div class="question">[% entry.question %] &middot; <a href="/faq/[% category.id %]/[% entry.id %]">Permalink</a></div>
+                <div class="answer">[% entry.answer %]</div>
+            </div>
+            <hr />
+            [% END %]
+        [% END %]
+    [% ELSE %]
+        [% FOREACH category IN categories %]
+        <div class="faq_category">
+            [% loop.count %]: <a href="/faq/[% category.id %]">[% category.name %]</a>
+        </div>
+        [% END %]
+    [% END %]
+</div>

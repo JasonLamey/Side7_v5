@@ -22,6 +22,8 @@ use Side7::UserContent::Album;
 use Side7::UserContent::AlbumImageMap;
 use Side7::KudosCoin;
 use Side7::Utils::Text;
+use Side7::FAQCategory;
+use Side7::FAQEntry;
 
 use Getopt::Std;
 use Carp;
@@ -102,6 +104,8 @@ sub migrate
     migrate_album_images();
     migrate_related_image_groups();
     migrate_related_image_group_images();
+    migrate_faq_categories();
+    migrate_faq_entries();
     db_disconnect();
 }
 
@@ -1053,6 +1057,126 @@ sub migrate_related_image_group_images
     $sth->finish();
     say "\t=> Migrated album-image map records: " . _commafy( $map_count ) if defined $opt{V};
     %ID_TRANSLATIONS = (); # Clear out the translations
+}
+
+sub migrate_faq_categories
+{
+    if ( defined $opt{V} ) { say "=> Migrating FAQ Categories."; }
+
+    # Cleanup from any previous migrations occurred with Album migration.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 FAQ Category tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ faq_categories / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 image_portfolio_image_associations table;
+    if ( defined $opt{V} ) { say "\t=> Pulling FAQ Category records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT fc.*, fc.id as fc_id
+         FROM faq_categories fc
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 ) || 1;
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $category_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create Category and save it.
+        my $category = Side7::FAQCategory->new(
+            id         => $row->{fc_id},
+            name       => $row->{name},
+            priority   => $row->{priority},
+            created_at => DateTime->now(),
+            updated_at => DateTime->now(),
+        );
+        $category->save if ! defined $opt{D};
+
+        $category_count++;
+
+        print _progress_dot( total => $row_count, count => $category_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated FAQ Category records: " . _commafy( $category_count ) if defined $opt{V};
+}
+
+sub migrate_faq_entries
+{
+    if ( defined $opt{V} ) { say "=> Migrating FAQ Entries."; }
+
+    # Cleanup from any previous migrations occurred with Album migration.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 FAQ Entry tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ faq_entries / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 image_portfolio_image_associations table;
+    if ( defined $opt{V} ) { say "\t=> Pulling FAQ Entry records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT fe.*, fe.id as fe_id
+         FROM faq_entries fe
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $entry_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create Entry and save it.
+        my $entry = Side7::FAQEntry->new(
+            id              => $row->{fe_id},
+            faq_category_id => $row->{faq_category_id},
+            question        => $row->{question},
+            answer          => $row->{answer},
+            priority        => $row->{priority},
+            created_at      => DateTime->now(),
+            updated_at      => DateTime->now(),
+        );
+        $entry->save if ! defined $opt{D};
+
+        $entry_count++;
+
+        print _progress_dot( total => $row_count, count => $entry_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated FAQ Entry records: " . _commafy( $entry_count ) if defined $opt{V};
 }
 
 sub time_elapsed

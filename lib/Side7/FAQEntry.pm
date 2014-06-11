@@ -1,4 +1,4 @@
-package My::Package;
+package Side7::FAQEntry;
 
 use strict;
 use warnings;
@@ -7,31 +7,37 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 =pod
 
+
 =head1 NAME
 
-My::Package
+Side7::FAQEntry
+
 
 =head1 DESCRIPTION
 
-TODO: Define a package description.
+This package represents a FAQ entry.
+
 
 =head1 SCHEMA INFORMATION
 
-    Table name: stages
+    Table name: faq_entries
+
+    | id              | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
+    | faq_category_id | int(3) unsigned     | NO   | MUL | NULL    |                |
+    | question        | varchar(255)        | NO   |     | NULL    |                |
+    | answer          | text                | NO   |     | NULL    |                |
+    | priority        | int(3)              | NO   |     | NULL    |                |
+    | created_at      | datetime            | NO   |     | NULL    |                |
+    | updated_at      | datetime            | NO   |     | NULL    |                |
      
-    | id         | int(1) unsigned | NO   | PRI | NULL    | auto_increment |
-    | stage      | varchar(45)     | NO   |     | NULL    |                |
-    | priority   | int(1)          | NO   | MUL | NULL    |                |
-    | created_at | datetime        | NO   |     | NULL    |                |
-    | updated_at | datetime        | NO   |     | NULL    |                |
 
 =head1 RELATIONSHIPS
 
 =over
 
-=item Class::Name
+=item Side7::FAQCategory
 
-TODO: Define the relationship type, and list the foreign key (FK).
+Many to one relationship, with faq_category_id as the FK
 
 =back
 
@@ -41,24 +47,25 @@ TODO: Define the relationship type, and list the foreign key (FK).
 
 __PACKAGE__->meta->setup
 (
-    table   => 'users',
+    table   => 'faq_entries',
     columns => [ 
-        id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
-        updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
+        id              => { type => 'serial', not_null => 1 },
+        faq_category_id => { type => 'integer', not_null => 1 }, 
+        question        => { type => 'varchar', length => 255, not_null => 1 }, 
+        answer          => { type => 'text', not_null => 1 }, 
+        priority        => { type => 'integer', not_null => 1 }, 
+        created_at      => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        updated_at      => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ 'username', 'email_address' ],
-    relationships =>
+    unique_key => [ [ 'id', 'faq_category_id' ], [ 'faq_category_id' ], ],
+    foreign_keys =>
     [
-        account =>
+        faq_category =>
         {
-            type       => 'one to one',
-            class      => 'Side7::Account',
-            column_map => { id => 'user_id' },
+            type       => 'many to one',
+            class      => 'Side7::FAQCategory',
+            column_map => { faq_category_id => 'id' },
         },
     ],
 );
