@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object';
+
 use List::Util;
 use Data::Dumper;
 
@@ -18,6 +19,7 @@ use Side7::User::UserOwnedPermission::Manager;
 use Side7::User::Perk;
 use Side7::User::UserOwnedPerk;
 use Side7::User::UserOwnedPerk::Manager;
+use Side7::User::Preference;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 use Side7::Utils::Text;
@@ -278,17 +280,19 @@ Parameters:
 
 =over 4
 
+=item session: The visitor's session hash from the request.
+
 =item TODO: Additional paramters to be defined as functionality is created.
 
 =back
 
-    my $gallery = $user->get_gallery( { args } );
+    my $gallery = $user->get_gallery( session => $session );
 
 =cut
 
 sub get_gallery
 {
-    my ( $self, $args ) = @_;
+    my ( $self, %args ) = @_;
 
     if ( ! defined $self )
     {
@@ -296,8 +300,10 @@ sub get_gallery
         return undef;
     }
 
+    my $session = delete $args{'session'} // undef;
+
     # TODO: BUILD OUT ADDITIONAL, OPTIONAL ARGUMENTS TO CONTROL CONTENT.
-    my $gallery = Side7::UserContent::get_gallery( $self->id , {} );
+    my $gallery = Side7::UserContent::get_gallery( $self->id , { session => $session } );
 
     return $gallery;
 }
@@ -1008,18 +1014,21 @@ Parameters:
 
 =item C<page>: the pagination segment to view. Defaults to '1'
 
+=item C<session>: the session of the visitor. Defaults to undef
+
 =back
 
-    my $users = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
+    my $users = Side7::User::get_users_for_directory( initial => $initial, page => $page, session => $session );
 
 =cut
 
 sub get_users_for_directory
 {
-    my ( $args ) = @_;
+    my ( %args ) = @_;
 
-    my $initial = delete $args->{'initial'} // 'a';
-    my $page    = delete $args->{'page'}    // 1;
+    my $initial = delete $args{'initial'} // 'a';
+    my $page    = delete $args{'page'}    // 1;
+    my $session = delete $args{'session'} // undef;
 
     my $initial_string = "$initial%";
     my $op = 'like';
@@ -1041,7 +1050,7 @@ sub get_users_for_directory
             [ 
                 username => { $op => "$initial_string" },
             ],
-        with_objects => [ 'account', 'images', 'user_preferences' ],
+        with_objects => [ 'account', 'user_preferences', 'images', 'images.rating' ],
         sort_by      => 'username ASC',
         page         => $page,
         per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
@@ -1069,32 +1078,41 @@ sub get_users_for_directory
 
             my $image = @{ $user->images }[ $image_to_add ];
 
-            my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
-
-            if ( defined $error && $error ne '' )
+            my ( $filepath, $error );
+            if ( $image->block_thumbnail( session => $session ) == 1 )
             {
-                $LOGGER->warn( $error );
-                $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
+                $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
+                $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
             }
             else
             {
-                if ( ! -f $filepath )
-                {
-                    my $success = 0;
-                    ( $success, $error ) = $image->create_cached_file( size => $size );
+                ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
-                    if ( $success )
-                    {
-                        $filepath =~ s/^\/data//;
-                    }
-                    else
-                    {
-                        $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_image', size => $size );
-                    }
+                if ( defined $error && $error ne '' )
+                {
+                    $LOGGER->warn( $error );
+                    $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
                 }
                 else
                 {
-                    $filepath =~ s/^\/data//;
+                    if ( ! -f $filepath )
+                    {
+                        my $success = 0;
+                        ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                        if ( $success )
+                        {
+                            $filepath =~ s/^\/data//;
+                        }
+                        else
+                        {
+                            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_image', size => $size );
+                        }
+                    }
+                    else
+                    {
+                        $filepath =~ s/^\/data//;
+                    }
                 }
             }
 
@@ -1136,13 +1154,16 @@ Parameters:
 
 =item username: The username used to find the User.
 
+=item session: The session of the visitor. Defaults to undef.
+
 =item TODO: DEFINE ADDITIONAL OPTIONAL ARGS
 
 =back
 
     my $gallery = Side7::User::show_user_gallery (
         {
-            username = $username,
+            username => $username,
+            session  => $session,
             TODO: DEFINE ADDITIONAL OPTIONAL ARGS
         }
     );
@@ -1153,7 +1174,8 @@ sub show_user_gallery
 {
     my ( $args ) = @_;
 
-    my $username = delete $args->{'username'};
+    my $username = delete $args->{'username'} // undef;
+    my $session  = delete $args->{'session'}  // undef;
 
     if ( ! defined $username || $username eq '' )
     {
@@ -1168,7 +1190,7 @@ sub show_user_gallery
         return undef; # TODO: Need to redirect to invalid user error page.
     }
 
-    my $gallery = $user->get_gallery();
+    my $gallery = $user->get_gallery( session => $session );
 
     return ( $user, $gallery );
 }

@@ -405,7 +405,7 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
         $page = 1;
     }
 
-    my ( $users, $user_count ) = Side7::User::get_users_for_directory( { initial => $initial, page => $page } );
+    my ( $users, $user_count ) = Side7::User::get_users_for_directory( initial => $initial, page => $page, session => session );
 
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $user_count, page => $page } );
 
@@ -443,6 +443,7 @@ get '/user/:username/gallery/?' => sub
     my ( $user, $gallery ) = Side7::User::show_user_gallery( 
         { 
             username => params->{'username'},
+            session  => session,
         }
     );
 
@@ -458,10 +459,10 @@ get '/user/:username/gallery/?' => sub
 get '/image/:image_id/?' => sub
 {
     my $image_hash = Side7::UserContent::Image::show_image( 
-                        image_id => params->{'image_id'}, 
-                        request  => request,
-                        session  => session,
-                        size     => 'large',
+                                                            image_id => params->{'image_id'}, 
+                                                            size     => 'large',
+                                                            request  => request,
+                                                            session  => session,
     );
 
     if ( defined $image_hash )

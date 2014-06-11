@@ -109,7 +109,7 @@ __PACKAGE__->meta->setup
     ],
     pk_columns => 'id',
     unique_key => [ 'user_id' ],
-    relationships =>
+    foreign_keys =>
     [
         user =>
         {

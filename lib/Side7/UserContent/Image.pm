@@ -381,20 +381,75 @@ sub get_enum_values
 }
 
 
+=head2 block_thumbnail()
+
+Returns a boolean value to indicate if the image thumbnail should be blocked for the viewer or not, based on
+the image's rating, the logged-in status of the User, and the User's Preferences.
+
+Parameters: None.
+
+    my $block = $image->block_thumbnail();
+
+=cut
+
+sub block_thumbnail
+{
+    my ( $self, %args ) = @_;
+
+    my $session = $args{'session'} // {};
+
+    my $logged_in = ( $session->{'logged_in'} == 1 ) ? 1 : 0;
+
+    # Don't block the image if the rating isn't 'M'.
+    if ( $self->{'rating'}->{'rating'} ne 'M' )
+    {
+        return 0;
+    }
+
+    # Do block the image if the rating is 'M' and the User isn't logged in.
+    if ( $logged_in == 0 )
+    {
+        return 1;
+    }
+
+    my $visitor = Side7::User->new( id => $session->{'user_id'} );
+    my $vis_loaded = $visitor->load( speculative => 1, with => [ 'user_preferences' ] );
+
+    # If the session contains invalid data, block the image.
+    if ( $vis_loaded == 0 )
+    {
+        return 1;
+    }
+
+    # Don't block the image if the rating is 'M', the User is logged in, and the Preference is not to block.
+    if ( $visitor->user_preferences->show_m_thumbs == 1 )
+    {
+        return 0;
+    }
+
+    # Fall-through: Do block the image.
+    return 1;
+}
+
+
 =head1 FUNCTIONS
 
 
 =head2 show_image()
 
-    my $image = Side7::UserContent::Image::show_image( image_id => $image_id );
+Returns an image hash ref for the requested image, for the display page.
+
+Parameters:
 
 =over 4
 
-=item Returns an image hash for the requested image, for the display page.
+=item image_id: The ID of the image to be displayed.
 
-=item Returns nothing if image_id doesn't exist.
+=item size: The image size to show: 'tiny', 'small', 'medium', 'large', 'orginal'.
 
 =back
+
+    my $image_hash = Side7::UserContent::Image::show_image( image_id => $image_id, size => $size );
 
 =cut
 
@@ -407,7 +462,7 @@ sub show_image
     my $session  = delete $args{'session'};
     my $size     = delete $args{'size'} // 'original';
 
-    return if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
+    return {} if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
     my $loaded = $image->load( 
@@ -430,7 +485,7 @@ sub show_image
     )
     {
         $LOGGER->warn( 'Could not find image with ID >' . $image_id . '< in database.' );
-        return;
+        return {};
     }
 
     # Image Found

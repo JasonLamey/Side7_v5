@@ -3,6 +3,7 @@ package Side7::UserContent;
 use strict;
 use warnings;
 
+use Dancer qw( :script );
 use Data::Dumper;
 
 use Side7::Globals;
@@ -50,15 +51,28 @@ TODO: Define what this method does, describing both input and output values and 
 
 =head2 get_gallery()
 
+Fetches the User Content associated to a User, sorted and arranged in a way that matches any passed in parameters.
+
+Parameters:
+
+=over 4
+
+=item session: The visitor's session for User Preference controls/filtering.  Defaults to undef.
+
+=item sort_by: Custom sort-by routine. Defaults to 'created_at DESC'.
+
+=item size: Thumbnail size; defaults to 'small'.
+
+=back
+
     my $gallery = Side7::UserContent::get_gallery( 
         $user_id, 
         { 
+            session => $session,
             sort_by => 'created_at DESC',
             TODO: DEFINE ADDITIONAL OPTIONAL ARGUMENTS
         }
     );
-
-Fetches the User Content associated to a User, sorted and arranged in a way that matches any passed in parameters.
 
 =cut
 
@@ -68,6 +82,7 @@ sub get_gallery
 
     my $sort_by = delete $args->{'sort_by'} // 'created_at DESC';
     my $size    = delete $args->{'size'}    // 'small';
+    my $session = delete $args->{'session'} // undef;
 
     if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
     {
@@ -93,26 +108,37 @@ sub get_gallery
         my $image_hash = $image->get_image_hash_for_template();
         $image_hash->{'content_type'} = 'image';
 
-        my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
-
-        if ( defined $error && $error ne '' )
+        my ( $filepath, $error );
+ 
+        if ( $image->block_thumbnail( session => $session ) == 1 )
         {
-            $LOGGER->warn( $error );
+            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
+            $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
         }
         else
         {
-            if ( ! -f $filepath )
-            {
-                my ( $success, $error ) = $image->create_cached_file( size => $size );
 
-                if ( $success )
-                {
-                    $filepath =~ s/^\/data//;
-                }
+            ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
+
+            if ( defined $error && $error ne '' )
+            {
+                $LOGGER->warn( $error );
             }
             else
             {
-                $filepath =~ s/^\/data//;
+                if ( ! -f $filepath )
+                {
+                    my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                    if ( $success )
+                    {
+                        $filepath =~ s/^\/data//;
+                    }
+                }
+                else
+                {
+                    $filepath =~ s/^\/data//;
+                }
             }
         }
 
