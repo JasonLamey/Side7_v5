@@ -262,7 +262,7 @@ get '/confirm_user/?:confirmation_code?' => sub
         return template 'user/confirmation_form', { confirmation_code => params->{'confirmation_code'} };
     }
 
-    my $audit_message = 'New user confirmation - Successful - ';
+    my $audit_message = 'New user confirmation - <b>Successful</b> - ';
     $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -648,6 +648,9 @@ post '/my/upload' => sub
     # Copy file to the User's directory
     $file->copy_to( $upload_dir . $file->filename() );
 
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_message = '';
+
     # Insert the content record into the database.
     if ( lc( params->{'upload_type'} ) eq 'image' )
     {
@@ -670,6 +673,8 @@ post '/my/upload' => sub
             return $return_to_form->();
         }
 
+        my $now = DateTime->now();
+
         my $image = Side7::UserContent::Image->new(
                                                     user_id           => $user->id(),
                                                     filename          => params->{'filename'},
@@ -683,11 +688,27 @@ post '/my/upload' => sub
                                                     description       => params->{'description'},
                                                     copyright_year    => $copyright_year,
                                                     privacy           => params->{'privacy'},
-                                                    created_at        => DateTime->now(),
-                                                    updated_at        => DateTime->now(),
+                                                    created_at        => $now,
+                                                    updated_at        => $now,
                                                   );
 
         $image->save();
+
+        $audit_message = 'User ' . session( 'username' ) . ' (ID: ' . session( 'user_id' ) . ') uploaded new Content:<br />';
+        $audit_message .= 'Content Type: image<br />';
+        $audit_message .= 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
+        $audit_message .= 'Filesize: &gt;' . $file->size() . '&lt;<br />';
+        $audit_message .= 'Dimensions: &gt;' . $file_stats->{'dimensions'} . '&lt;<br />';
+        $audit_message .= 'Category_id: &gt;' . params->{'category_id'} . '&lt;<br />';
+        $audit_message .= 'Rating_id: &gt;' . params->{'rating_id'} . '&lt;<br />';
+        $audit_message .= 'Rating_qualifiers: &gt;' . $rating_qualifiers . '&lt;<br />';
+        $audit_message .= 'Stage_id: &gt;' . params->{'stage_id'} . '&lt;<br />';
+        $audit_message .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
+        $audit_message .= 'Description: &gt;' . params->{'description'} . '&lt;<br />';
+        $audit_message .= 'Copyright_year: &gt;' . $copyright_year . '&lt;<br />';
+        $audit_message .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
+        $audit_message .= 'Created_at: &gt;' . $now . '&lt;<br />';
+        $audit_message .= 'Updated_at: &gt;' . $now . '&lt;<br />';
     }
     elsif ( lc( params->{'upload_type'} ) eq 'music' )
     {
@@ -705,6 +726,15 @@ post '/my/upload' => sub
         flash error => $err_message;
         return $return_to_form->();
     }
+
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'New User Content Uploaded',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          timestamp   => DateTime->now(),
+    );
+
+    $audit_log->save();
 
     flash message => 'Hooray! Your file <b>' . $file->filename() . '</b> has been uploaded successfully.';
 
