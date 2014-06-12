@@ -38,6 +38,7 @@ This package handles all the management for User Preferences.
     | show_m_thumbs              | tinyint(1)                                                      | NO   |     | 0           |                |
     | show_adult_content         | tinyint(1)                                                      | NO   |     | 0           |                |
     | display_full_sized_images  | enum('Same Window','New Window')                                | NO   |     | Same Window |                |
+    | filter_profanity           | tinyint(1)                                                      | NO   |     | 1           |                |
     | created_at                 | datetime                                                        | NO   |     | NULL        |                |
     | updated_at                 | datetime                                                        | NO   |     | NULL        |                |
 
@@ -104,6 +105,7 @@ __PACKAGE__->meta->setup
                                         not_null => 1,
                                         default  => 'Same Window',
                                       }, 
+        filter_profanity           => { type => 'boolean',  not_null => 1, default => 1 },
         created_at                 => { type => 'datetime', not_null => 1, default => 'now()' }, 
         updated_at                 => { type => 'datetime', not_null => 1, default => 'now()' },
     ],

@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Parse::BBCode;
+use Regexp::Common qw/profanity/;
 
 use Side7::Globals;
 
@@ -133,7 +134,34 @@ sub sanitize_text_for_html
 }
 
 
+=head2 filter_profanity()
 
+Receives a string variable and filters out any profanity found within it.
+
+Parameters:
+
+=over 4
+
+=item text: The string to be parsed for profanity.
+
+=back
+
+    my $filtered_text = Side7::Utils::Text::filter_profanity( text => $text );
+
+=cut
+
+sub filter_profanity
+{
+    my ( %args ) = @_;
+
+    my $text = delete $args{'text'} // undef;
+
+    return '' if ! defined $text;
+
+    ( my $filtered_text = $text ) =~ s/$RE{profanity}{contextual}/[****]/ig;
+
+    return $filtered_text;
+}
 
 
 =head1 COPYRIGHT

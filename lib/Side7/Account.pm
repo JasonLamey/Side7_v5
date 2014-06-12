@@ -414,7 +414,11 @@ Returns a hash reference for the appropriate account data values, formatted prop
 
 sub get_account_hash_for_template
 {
-    my $self = shift;
+    my ( $self, %args ) = @_;
+
+    return {} if ! defined $self;
+
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     my $account_hash = {};
 
@@ -443,6 +447,16 @@ sub get_account_hash_for_template
     $account_hash->{'created_at'}              = $self->get_formatted_created_at();
     $account_hash->{'updated_at'}              = $self->get_formatted_updated_at();
 
+    # Filter Profanity
+    if ( $filter_profanity == 1 )
+    {
+        foreach my $key ( qw/ full_name first_name last_name biography webpage_name blog_name / )
+            {
+                $account_hash->{$key} =
+                    Side7::Utils::Text::filter_profanity( text => $account_hash->{$key} );
+            }
+    }
+
     return $account_hash;
 }
 
@@ -452,7 +466,7 @@ sub get_account_hash_for_template
 
 =head1 COPYRIGHT
 
-Copyright (C) Side 7 1992 - 2013
+Copyright (C) Side 7 1992 - 2014
 
 =cut
 

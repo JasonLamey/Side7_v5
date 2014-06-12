@@ -135,7 +135,11 @@ templates.  Additionally, it formats the associated dates properly for output.
 
 sub get_user_hash_for_template
 {
-    my $self = shift;
+    my ( $self, %args ) = @_;
+
+    return {} if ! defined $self;
+
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     my $user_hash = {};
 
@@ -156,7 +160,7 @@ sub get_user_hash_for_template
     if ( defined $self->{'account'} )
     {
         my $account = $self->{'account'}->[0];
-        $user_hash->{'account'} = $account->get_account_hash_for_template();
+        $user_hash->{'account'} = $account->get_account_hash_for_template( filter_profanity => $filter_profanity );
     }
 
     # Kudos Coins (if included)
@@ -190,6 +194,15 @@ sub get_user_hash_for_template
         }
     }
 
+    # Filter Profanity
+    # Currently, the User object has nothing that we care about filtering profanity on.
+#    if ( $filter_profanity == 1 )
+#    {
+#        foreach my $key ( qw/ / )
+#        {
+#            $user_hash->{$key} = Side7::Utils::Text::filter_profanity( text => $user_hash->{$key} );
+#        }
+#    }
 
     return $user_hash;
 }
@@ -737,7 +750,10 @@ sub process_signup
         updated_at          => 'now',
     );
 
+    my $user_preferences = Side7::User::Preference->new();
+
     $user->account( $account );
+    $user->user_preferences( $user_preferences );
 
     $user->save;
 
@@ -808,6 +824,8 @@ Parameters:
 
 =item username: The username for lookup for getting the user_hash for template use.
 
+=item filter_profanity: Boolean value deterimining if profanity should be filtered out of user content.
+
 =back
 
     my $user_hash = Side7::User::show_profile( username => $username )
@@ -818,7 +836,8 @@ sub show_profile
 {
     my ( %args ) = @_;
 
-    my $username = delete $args{'username'};
+    my $username         = delete $args{'username'};
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     return undef if ( ! defined $username || $username eq '' );
 
@@ -838,7 +857,7 @@ sub show_profile
     }
 
     # User Found
-    my $user_hash = $user->get_user_hash_for_template();
+    my $user_hash = $user->get_user_hash_for_template( filter_profanity => $filter_profanity );
 
     return $user_hash;
 }

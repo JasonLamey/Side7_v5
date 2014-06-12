@@ -232,21 +232,27 @@ sub get_cached_image_path
 
 =head2 get_image_hash_for_template()
 
-    my $image_hash = $image->get_image_hash_for_template();
+Takes Image object and converts it into an easily accessible hash to pass to the templates.  Additionally, it formats the associated dates and other data properly for output.
+
+Parameters:
 
 =over 4
 
-=item Takes Image object and converts it into an easily accessible hash to pass to the templates.  Additionally, it formats the associated dates properly for output.
+=item filter_profanity: Boolean value, whether to filter out profanity. Defaults to 1.
 
 =back
+
+    my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity );
 
 =cut
 
 sub get_image_hash_for_template
 {
-    my $self = shift;
+    my ( $self, %args ) = @_;
 
     return {} if ! defined $self;
+
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     my $image_hash = {};
 
@@ -304,6 +310,15 @@ sub get_image_hash_for_template
     # Stage values:
     my $stage = $self->{'stage'};
     $image_hash->{'stage_text'} = $stage->stage;
+
+    # Filter Profanity
+    if ( $filter_profanity == 1 )
+    {
+        foreach my $key ( qw/ title description / )
+        {
+            $image_hash->{$key} = Side7::Utils::Text::filter_profanity( text => $image_hash->{$key} );
+        }
+    }
 
     return $image_hash;
 }
@@ -457,10 +472,11 @@ sub show_image
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'};
-    my $request  = delete $args{'request'};
-    my $session  = delete $args{'session'};
-    my $size     = delete $args{'size'} // 'original';
+    my $image_id         = delete $args{'image_id'};
+    my $request          = delete $args{'request'}          // undef;
+    my $session          = delete $args{'session'}          // undef;
+    my $size             = delete $args{'size'}             // 'original';
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     return {} if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
 
@@ -489,7 +505,7 @@ sub show_image
     }
 
     # Image Found
-    my $image_hash = $image->get_image_hash_for_template() // {};
+    my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity ) // {};
 
     # Fetch Image Comments
     my $image_comments = 

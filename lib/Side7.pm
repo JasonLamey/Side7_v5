@@ -37,6 +37,41 @@ hook 'before_template_render' => sub {
    $tokens->{'user_home_url'} = uri_for( '/my/home' );
 };
 
+hook 'before' => sub {
+
+    # Setting Visitor-relavent user preferences.
+    my $visitor = undef;
+    if ( defined session( 'logged_in' ) ) {
+        $visitor = Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => 'user_preferences' );
+        foreach my $key ( 
+                            qw/ display_signature show_management_thumbs show_m_thumbs show_adult_content
+                                filter_profanity thumbnail_size content_display_type display_full_sized_images /
+                        )
+        {
+            var $key => $visitor->user_preferences->$key;
+        }
+    }
+    else
+    {
+        # Default 0
+        foreach my $key ( qw/ display_signature show_m_thumbs show_adult_content / )
+        {
+            var $key => 0;
+        }
+
+        # Default 1
+        foreach my $key ( qw/ show_management_thumbs filter_profanity / )
+        {
+            var $key => 1;
+        }
+
+        # Specific Defaults
+        var thumbnail_size            => 'Small';
+        var content_display_type      => 'List';
+        var display_full_sized_images => 'Same Window';
+    }
+};
+
 get '/' => sub 
 {
     template 'index';
@@ -318,7 +353,11 @@ post '/search/?' => sub
 
     my $search = Side7::Search->new();
 
-    my ( $search_results, $search_error ) = $search->get_results( look_for => params->{'look_for'}, page=> $page );
+    my ( $search_results, $search_error ) = $search->get_results(
+                                                                    look_for         => params->{'look_for'}, 
+                                                                    page             => $page,
+                                                                    filter_profanity => vars->{'filter_profanity'},
+                                                                 );
 
     template 'search/search_form', { 
                                     look_for     => params->{'look_for'}, 
@@ -420,7 +459,10 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 # User profile page.
 get '/user/:username' => sub
 {
-    my $user_hash = Side7::User::show_profile( username => params->{'username'} );
+    my $user_hash = Side7::User::show_profile( 
+                                                username => params->{'username'}, 
+                                                filter_profanity => vars->{'filter_profanity'},
+                                             );
 
     if ( defined $user_hash )
     {
@@ -460,9 +502,10 @@ get '/image/:image_id/?' => sub
 {
     my $image_hash = Side7::UserContent::Image::show_image( 
                                                             image_id => params->{'image_id'}, 
-                                                            size     => 'large',
-                                                            request  => request,
-                                                            session  => session,
+                                                            size             => 'large',
+                                                            request          => request,
+                                                            session          => session,
+                                                            filter_profanity => vars->{'filter_profanity'},
     );
 
     if ( defined $image_hash )

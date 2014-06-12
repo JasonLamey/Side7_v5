@@ -4,4 +4,5 @@
         <div><a href="/my/profile">My Profile</a></div>
         <div><a href="/my/gallery">My Gallery</a></div>
         <div><a href="/my/kudos">My Kudos Coins</a></div>
+        <div><a href="/my/preferences">My Preferences</a></div>
     </div>

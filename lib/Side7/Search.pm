@@ -71,12 +71,15 @@ Parameters:
 
 =item page: The search page to hand back.
 
+=item filter_profanity: Boolean to deterimine if profanity should be filtered out.
+
 =back
 
     my $results = $search->get_results( 
-                                        look_for => $search_string, 
-                                        page     => $page,
-                                        size     => $size,
+                                        look_for         => $search_string, 
+                                        page             => $page,
+                                        size             => $size,
+                                        filter_profanity => $filter_profanity,
                                         TODO: ADD IN ADDITIONAL ARGUMENTS FOR FILTERING
                                       );
 
@@ -86,9 +89,10 @@ sub get_results
 {
     my ( $self, %args ) = @_;
 
-    my $look_for = delete $args{'look_for'} // undef;
-    my $page     = delete $args{'page'}     // 1;
-    my $size     = delete $args{'size'}     // 'small';
+    my $look_for         = delete $args{'look_for'}         // undef;
+    my $page             = delete $args{'page'}             // 1;
+    my $size             = delete $args{'size'}             // 'small';
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     # Search Term Validation:
     if ( ! defined $look_for || $look_for eq '' )
@@ -113,12 +117,22 @@ sub get_results
     }
 
     # Users
-    my $users = Side7::Search::search_users( look_for => $look_for, page => $page, size => $size );
+    my $users = Side7::Search::search_users( 
+                                            look_for         => $look_for, 
+                                            page             => $page, 
+                                            size             => $size, 
+                                            filter_profanity => $filter_profanity,
+                                           );
     $LOGGER->debug( 'Found users: ' . scalar( @{ $users } ) );
     my @sorted_users = sort { lc( $a->{'username'} ) cmp lc( $b->{'username'} ) } @{ $users };
 
     # Images
-    my $images = Side7::Search::search_images( look_for => $look_for, page => $page, size => $size );
+    my $images = Side7::Search::search_images( 
+                                                look_for         => $look_for, 
+                                                page             => $page, 
+                                                size             => $size,
+                                                filter_profanity => $filter_profanity,
+                                             );
     $LOGGER->debug( 'Found images: ' . scalar( @{ $images } ) );
     push( @results, @{ $images } );
 
@@ -258,6 +272,8 @@ Parameters:
 
 =item page: The page number
 
+=item filter_profanity: Boolean to indicate if profanity should be filtered out. Defaults to 1.
+
 =back
 
     my $users = Side7::Search::search_users( look_for => $look_for, page => $page );
@@ -268,8 +284,9 @@ sub search_users
 {
     my ( %args ) = @_;
 
-    my $look_for = delete $args{'look_for'} // undef;
-    my $page     = delete $args{'page'}     // undef;
+    my $look_for         = delete $args{'look_for'}         // undef;
+    my $page             = delete $args{'page'}             // undef;
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     my $users = Side7::User::Manager->get_users
     (
@@ -284,7 +301,7 @@ sub search_users
 
     foreach my $user ( @{ $users } )
     {
-        my $user_hash = $user->get_user_hash_for_template();
+        my $user_hash = $user->get_user_hash_for_template( filter_profanity => $filter_profanity );
         $user_hash->{'content_type'} = 'user';
         push( @results, $user_hash );
     }
@@ -307,6 +324,8 @@ Parameters:
 
 =item size: The size of the thumbnails to return.
 
+=item filter_profanity: Boolean to indicate if profanity should be filtered out. Defaults to 1.
+
 =back
 
     my $images = Side7::Search::search_images( look_for => $look_For, page => $page, size => $size );
@@ -317,9 +336,10 @@ sub search_images
 {
     my ( %args ) = @_;
    
-    my $look_for = delete $args{'look_for'} // undef;
-    my $page     = delete $args{'page'}     // 1;
-    my $size     = delete $args{'size'}     // 'small';
+    my $look_for         = delete $args{'look_for'}         // undef;
+    my $page             = delete $args{'page'}             // 1;
+    my $size             = delete $args{'size'}             // 'small';
+    my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
     my $images = Side7::UserContent::Image::Manager->get_images
     (
@@ -338,7 +358,7 @@ sub search_images
 
     foreach my $image ( @{ $images } )
     {
-        my $image_hash = $image->get_image_hash_for_template();
+        my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity );
         $image_hash->{'content_type'} = 'image';
 
         my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );

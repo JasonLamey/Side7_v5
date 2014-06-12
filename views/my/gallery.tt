@@ -2,7 +2,7 @@
 
     [% PROCESS 'my/_home_menu.tt' %]
 
-    <div>
+    <div style="margin-left: 210px; padding: 5px;">
         <h2>Upload Content</h2>
         <b>Upload:</b>
         <a href="/my/upload/image">An Image</a> | 
