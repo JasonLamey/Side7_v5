@@ -303,6 +303,16 @@ sub search_users
     {
         my $user_hash = $user->get_user_hash_for_template( filter_profanity => $filter_profanity );
         $user_hash->{'content_type'} = 'user';
+
+        foreach my $key ( qw/ username first_name last_name full_name / )
+        {
+            if ( defined $user_hash->{$key} )
+            {
+                $user_hash->{'highlighted_' . $key} = 
+                            Side7::Search::highlight_match( look_for => $look_for, text => $user_hash->{$key} );
+            }
+        }
+
         push( @results, $user_hash );
     }
 
@@ -328,7 +338,7 @@ Parameters:
 
 =back
 
-    my $images = Side7::Search::search_images( look_for => $look_For, page => $page, size => $size );
+    my $images = Side7::Search::search_images( look_for => $look_for, page => $page, size => $size );
 
 =cut
 
@@ -361,6 +371,17 @@ sub search_images
         my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity );
         $image_hash->{'content_type'} = 'image';
 
+        $image_hash->{'blurb'} = substr( $image_hash->{'description'}, 0, 200 );
+
+        foreach my $key ( qw/ title description blurb / )
+        {
+            if ( defined $image_hash->{$key} )
+            {
+                $image_hash->{'highlighted_' . $key} = 
+                            Side7::Search::highlight_match( look_for => $look_for, text => $image_hash->{$key} );
+            }
+        }
+
         my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
         if ( defined $error && $error ne '' )
@@ -392,6 +413,40 @@ sub search_images
     }
 
     return \@results;
+}
+
+
+=head2 highlight_match()
+
+Returns the passed-in text, with the matching words wrapped in spanned highlight code.
+
+Parameters:
+
+=over 4
+
+=item text: The text to find matches within.
+
+=item look_for: The text to match against.
+
+=back
+
+    my $highlighted_text = Side7::Search::highlight_match( text => $text, look_for => $look_for );
+
+=cut
+
+sub highlight_match
+{
+    my ( %args ) = @_;
+
+    my $text     = delete $args{'text'}     // undef;
+    my $look_for = delete $args{'look_for'} // undef;
+
+    return ''    if ! defined $text;
+    return $text if ! defined $look_for;
+
+    ( my $highlighted_text = $text ) =~ s/($look_for)/<span style="background-color: #FFFF80;">$1<\/span>/gi;
+
+    return $highlighted_text;
 }
 
 

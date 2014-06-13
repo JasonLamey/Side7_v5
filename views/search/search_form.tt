@@ -31,16 +31,19 @@
         <div style="border: solid 1px #000; padding: 5px; margin-bottom: 5px;">
         <!-- &gt;[% result.content_type %]&lt; -->
         [% IF result.content_type == 'user' %]
-            <a href="/user/[% result.username %]">[% result.username %]</a>
+            <a href="/user/[% result.username %]">[% result.highlighted_username %] ( [% result.account.full_name %] )</a><br />
+            <b>Joined:</b> [% result.created_at %]
         [% ELSIF result.content_type == 'image' %]
             [% IF result.filepath %]
                 <a href='[% result.uri %]'><img src='[% result.filepath %]' alt='' title='' border='0' /></a>
-                <a href='[% result.uri %]'>[% result.title %]</a>
+                <a href='[% result.uri %]'>[% result.highlighted_title %]</a>
                 <b>Uploaded:</b> [% result.created_at %]
             [% ELSE %]
                 [ [% result.filepath_error %] ]
             [% END %]
-                by <a href="/user/[% result.user.username %]">[% result.user.username %]</a>
+                by <a href="/user/[% result.user.username %]">[% result.user.username %]</a><br />
+                <hr style="height: 1px; color: #000000;" />
+                [% result.highlighted_blurb %]
         [% ELSE %]
         [% END %]
         </div>
