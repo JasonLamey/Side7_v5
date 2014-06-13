@@ -85,6 +85,7 @@ __PACKAGE__->meta->setup
         },
         is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 }, 
         copyright_year    => { type => 'integer', length => 4 }, 
+        checksum          => { type => 'varchar', length => 255, not_null => 1 },
         created_at        => { type => 'datetime',               not_null => 1, default => 'now()' }, 
         updated_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
     ],

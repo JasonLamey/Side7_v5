@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Parse::BBCode;
-use Regexp::Common qw/profanity/;
+use Regexp::Common qw/profanity profanity_us/;
 
 use Side7::Globals;
 
@@ -158,7 +158,8 @@ sub filter_profanity
 
     return '' if ! defined $text;
 
-    ( my $filtered_text = $text ) =~ s/$RE{profanity}{contextual}/[****]/ig;
+    #( my $filtered_text = $text ) =~ s/$RE{profanity}{contextual}/[****]/ig;
+    ( my $filtered_text = $text ) =~ s/$RE{profanity}{us}{normal}{label}/[****]/ig;
 
     return $filtered_text;
 }
