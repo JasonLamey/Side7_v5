@@ -31,6 +31,8 @@ use Data::Dumper;
 use DBI();
 use Time::HiRes qw( gettimeofday tv_interval );
 use DateTime;
+use Digest::MD5;
+use IO::File;
 
 use vars qw(
     $VERSION %opt $has_opts $DB4 $DB5 %ID_TRANSLATIONS
@@ -449,6 +451,23 @@ sub migrate_images
             }
         }
 
+        my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} .
+            substr( $row->{'user_account_id'}, 0, 1 ) . '/' . 
+            substr( $row->{'user_account_id'}, 0, 3 ) . '/' . 
+            $row->{'user_account_id'} . '/';
+
+        my $checksum = '';
+        my $fh = new IO::File;
+        if ( $fh->open( '< ' . $content_directory . $row->{'filename'} ) )
+        {
+            binmode ($fh);
+            $checksum = Digest::MD5->new->addfile($fh)->hexdigest();
+        }
+        else
+        {
+            warn "Can't open >" . $content_directory . $row->{'filename'} . "< for checksum: $!";
+        }
+
         # Create image and save it.
         my $image = Side7::UserContent::Image->new(
             id                => $row->{image_id},
@@ -465,6 +484,7 @@ sub migrate_images
             privacy           => $privacy,
             is_archived       => $archived,
             copyright_year    => $row->{copyright_year},
+            checksum          => $checksum,
             created_at        => $row->{uploaded_date},
             updated_at        => $row->{last_modified_date},
         );

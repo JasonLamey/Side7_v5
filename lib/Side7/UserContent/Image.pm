@@ -45,6 +45,7 @@ This package represents an Image object as uploaded by a User.
     privacy           :enum             not null
     is_archived       :int(1)           not null
     copyright_year    :int(4)
+    checksum          :varchar(120)
     created_at        :datetime         not null
     updated_at        :datetime         not null
 
@@ -85,7 +86,7 @@ __PACKAGE__->meta->setup
         },
         is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 }, 
         copyright_year    => { type => 'integer', length => 4 }, 
-        checksum          => { type => 'varchar', length => 255, not_null => 1 },
+        checksum          => { type => 'varchar', length => 120 },
         created_at        => { type => 'datetime',               not_null => 1, default => 'now()' }, 
         updated_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
     ],
@@ -414,7 +415,7 @@ sub block_thumbnail
 
     my $session = $args{'session'} // {};
 
-    my $logged_in = ( $session->{'logged_in'} == 1 ) ? 1 : 0;
+    my $logged_in = ( defined $session->{'logged_in'} && $session->{'logged_in'} == 1 ) ? 1 : 0;
 
     # Don't block the image if the rating isn't 'M'.
     if ( $self->{'rating'}->{'rating'} ne 'M' )
