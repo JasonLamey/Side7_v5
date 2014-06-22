@@ -1,0 +1,9 @@
+[% FOREACH option IN main_menu %]
+    <div class="admin_menu_option">
+    [% IF option.enabled == 1 %]
+        <a href="[% option.link %]">[% option.name %]</a>
+    [% ELSE %]
+        <span class="disabled">[% option.name %]</span>
+    [% END %]
+    </div>
+[% END %]

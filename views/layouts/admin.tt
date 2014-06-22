@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>Side7 Admin Dashboard
+[% IF title %]
+ - [% title %]
+[% END %]
+</title>
+<link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
+
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">/* <![CDATA[ */
+    !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
+/* ]]> */</script>
+
+<style>
+#page_content {
+    display: block;
+    position:absolute;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    font-family: Verdana, sans-serif;
+}
+.column_wrap {position:relative;}
+#page_header {
+    width: 100%;
+    padding: 3px 5px;
+    margin: 0;
+}
+#header_search {
+    float: right;
+    width: 200px;
+    text-align: right;
+}
+.metanav {
+}
+.admin_menu {
+    width:200px;
+    position:absolute;
+    left:0;
+    top:40px;
+    bottom:40px;
+    height:auto;
+    display: block;
+    margin-right: 5px;
+}
+.admin_menu_option {
+    text-align: left; 
+    padding: 3px; 
+    border-bottom: solid 1px #000;
+}
+.admin_menu_option a {
+    font-weight: bold;
+}
+.admin_menu_option .disabled {
+    font-weight: normal;
+    color: #777;
+}
+#section_content {
+    margin-left: 205px;
+    padding: 5px;
+    overflow: auto;
+    width: auto;
+    height: auto;
+    border: solid 1px #666;
+}
+</style>
+
+</head>
+<body>
+<div id="page_content">
+    <div id="page_header">
+        <div id="header_search">
+            <form method="post" action="/search">
+                <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div class="metanav">
+            [% IF not session.logged_in %]
+            <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>
+            [% ELSE %]
+            [% session.username %]: <a href="/my/home">Home</a>
+            &middot;
+            <a href="/user/[% session.username %]">Profile</a>
+            &middot;
+            <a href="/user/[% session.username %]/gallery">Gallery</a>
+            &middot;
+            <a href="[% logout_url %]">log out</a>
+            [% END %]
+        </div>
+        <div>
+            <a href="/">Main</a> &middot;
+            <a href="/faq">F.A.Q.</a> &middot;
+            <a href="/user_directory">User Directory</a>
+        </div>
+    </div>
+[% IF flash.message %]
+    <div class="flash"> [% flash.message %] </div>
+[% END %]
+[% IF flash.error %]
+    <div class="error"> [% flash.error %] </div>
+[% END %]
+    <div class="admin_menu">
+[% PROCESS 'admin/_main_menu.tt' %]
+    </div>
+    <div id="section_content">
+[% content %]
+    </div>
+    <div id="footer">
+    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
+    </div>
+</div>
+</body>
+</html>

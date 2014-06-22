@@ -186,8 +186,10 @@ sub user_authorization
 {
     my ( %args ) = @_;
 
-    my $session_username = delete $args{'session_username'};
-    my $username         = delete $args{'username'};
+    my $session_username = delete $args{'session_username'} // undef;
+    my $username         = delete $args{'username'}         // undef;
+    my $requires_admin   = delete $args{'requires_admin'}   // undef;
+    my $requires_mod     = delete $args{'requires_mod'}     // undef;
 
     return 0 if ! defined $session_username;
 
@@ -196,13 +198,49 @@ sub user_authorization
         return 0 if ( uc( $session_username ) ne uc( $username ) );
     }
 
+    my $user = undef;
+    my $user_role = undef;
+    if ( defined $requires_mod || defined $requires_admin )
+    {
+        $user      = Side7::User::get_user_by_username( $session_username );
+        $user_role = $user->account->user_role->name();
+    }
+
+    if ( defined $requires_mod )
+    {
+        if
+        ( 
+            $user_role ne 'Moderator'
+            &&
+            $user_role ne 'Admin'
+            &&
+            $user_role ne 'Owner'
+        )
+        {
+            return 0;
+        }
+    }
+
+    if ( defined $requires_admin )
+    {
+        if
+        ( 
+            $user_role ne 'Admin'
+            &&
+            $user_role ne 'Owner'
+        )
+        {
+            return 0;
+        }
+    }
+
     return 1;
 }
 
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2014
 
 =cut
 

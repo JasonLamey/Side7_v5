@@ -820,4 +820,64 @@ get '/my/perks/?' => sub
 ### Moderator/Admin pages ###
 #############################
 
+package Side7::Admin;
+use Dancer ':syntax';
+use Dancer::Plugin::FlashMessage;
+use Dancer::Plugin::ValidateTiny;
+use Dancer::Plugin::Email;
+use Dancer::Plugin::DirectoryView;
+use Dancer::Plugin::TimeRequests;
+use Dancer::Plugin::NYTProf;
+
+use DateTime;
+use Data::Dumper;
+
+use Side7::Globals;
+use Side7::AuditLog;
+use Side7::Login;
+use Side7::User;
+use Side7::Admin::Dashboard;
+use Side7::Admin::Report;
+
+prefix '/admin';
+
+hook 'before' => sub
+{
+    if ( request->path_info =~ m/^\/admin\// )
+    {
+        if ( ! session('username') )
+        {
+            $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+            flash error => 'You must be logged in, and a Moderator or Admin to view that page.';
+            var rd_url => request->path_info;
+            request->path_info( '/login' );
+        }
+        else
+        {
+            my $authorized = Side7::Login::user_authorization( 
+                                                                session_username => session( 'username' ), 
+                                                                username         => params->{'username'},
+                                                                requires_mod     => 1,
+                                                             );
+
+            if ( $authorized != 1 )
+            {
+                $LOGGER->info( 'User >' . session( 'username' ) . '< not authorized to view >' . request->path_info . '<' );
+                flash error => 'You are not authorized to view that page.';
+                return redirect '/'; # Not an authorized page.
+            }
+        }
+    }
+};
+
+get '/' => sub
+{
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::show_main_dashboard();
+
+    template 'admin/main', { main_menu => $menu_options, data => $data }, { layout => 'admin' };
+};
+
+
 true;

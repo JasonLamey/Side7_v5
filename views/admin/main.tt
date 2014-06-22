@@ -1,0 +1,237 @@
+<script src="/javascripts/highcharts/highcharts.js"></script>
+<script src="/javascripts/highcharts/modules/exporting.js"></script>
+<h2>Server Stats</h2>
+<div><b>Server Uptime:</b> [% data.uptime %]<br>
+<b>Users on Server:</b> <div><pre>[% data.who %]</pre></div>
+
+<div style="margin: 5px 0; display: block;">
+    <h2>Quick Site Stats</h2>
+    <div style="width: 50%; font-family: monospace; float: left;">
+        <div id="count_by_type" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px auto"></div>
+
+        <script>
+        $(function () {
+                var chart;
+                
+                $(document).ready(function () {
+                    
+                    // Build the chart
+                    $('#count_by_type').highcharts({
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: true
+                        },
+                        title: {
+                            text: 'Counts by User Type'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: 'Users By Type',
+                            data: [
+                                [% FOR record IN data.user_stats.total_by_type %]
+                                
+                                    [% IF record.user_type == 'Subscriber' %]
+                                {
+                                    name: '[% record.user_type %]',
+                                    y: [% record.num_users %],
+                                    sliced: true,
+                                    selected: true,
+                                },
+                                    [% ELSE %]
+                                [ '[% record.user_type %]', [% record.num_users %] ],
+                                    [% END %]
+                                [% END %]
+                            ]
+                        }]
+                    });
+                });
+                
+            });
+        </script>
+
+    </div>
+
+    <div style="width: 50%; font-family: monospace; float: right;">
+        <div id="count_by_status" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px auto"></div>
+
+        <script>
+        $(function () {
+                var chart;
+                
+                $(document).ready(function () {
+                    
+                    // Build the chart
+                    $('#count_by_status').highcharts({
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: true
+                        },
+                        title: {
+                            text: 'Counts by User Status'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: 'Users By Status',
+                            data: [
+                                [% FOR record IN data.user_stats.total_by_status %]
+                                
+                                    [% IF record.user_status == 'Active' %]
+                                {
+                                    name: '[% record.user_status %]',
+                                    y: [% record.num_users %],
+                                    sliced: true,
+                                    selected: true
+                                },
+                                    [% ELSE %]
+                                [ '[% record.user_status %]', [% record.num_users %] ],
+                                    [% END %]
+                                [% END %]
+                            ]
+                        }]
+                    });
+                });
+                
+            });
+        </script>
+    </div>
+</div>
+
+<div style="width: 100%; margin-top: 10px; clear: both;">
+[% duration = 30 %]
+    <div id="new_del_users" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px 0 auto"></div>
+    <script>
+        $(function () {
+            $('#new_del_users').highcharts({
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'New & Deleted Users Over The Last [% duration %] Days'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        day: '%e %b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Number of Users'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: true
+                    }
+                },
+                series: [{
+                    name: 'New Users',
+                    data: [ [% data.user_data.new_users %] ],
+                    pointStart: Date.UTC([% data.user_data.start_date %]),
+                    pointInterval: 24 * 3600 * 1000 // one day
+                }, {
+                    name: 'Deleted Users',
+                    data: [ [% data.user_data.deleted_users %] ],
+                    pointStart: Date.UTC([% data.user_data.start_date %]),
+                    pointInterval: 24 * 3600 * 1000 // one day
+                }]
+            });
+        });
+    </script>
+</div>
+
+<div style="width: 100%; clear: both;">
+[% duration = 30 %]
+    <div id="new_content" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px 0 auto"></div>
+    <script>
+        $(function () {
+            $('#new_content').highcharts({
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'New Content Uploaded Over The Last [% duration %] Days'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        day: '%e %b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Content Uploaded'
+                    }
+                },
+                plotOptions: {
+                    area: {
+                        stacking: 'normal',
+                        lineColor: '#666666',
+                        lineWidth: 1,
+                        marker: {
+                            lineWidth: 1,
+                            lineColor: '#666666'
+                        }
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    valueSuffix: ' uploads',
+                },
+                series: [{
+                    name: 'Images',
+                    data: [ [% data.content_data.images %] ],
+                    pointStart: Date.UTC([% data.content_data.start_date %]),
+                    pointInterval: 24 * 3600 * 1000 // one day
+                }, {
+                    name: 'Music',
+                    data: [ [% data.content_data.music %] ],
+                    pointStart: Date.UTC([% data.content_data.start_date %]),
+                    pointInterval: 24 * 3600 * 1000 // one day
+                }, {
+                    name: 'Literature',
+                    data: [ [% data.content_data.literature %] ],
+                    pointStart: Date.UTC([% data.content_data.start_date %]),
+                    pointInterval: 24 * 3600 * 1000 // one day
+                }]
+            });
+        });
+    </script>
+</div>
