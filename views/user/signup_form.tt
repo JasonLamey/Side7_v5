@@ -1,19 +1,43 @@
 <h1>Sign Up!</h1>
+<script>
+EnableSubmit = function(val)
+{
+    var signup = document.getElementById("SignUp");
+
+    if (val.checked == true)
+    {
+        signup.disabled = false;
+    }
+    else
+    {
+        signup.disabled = true;
+    }
+}
+</script>
 <form action="[% signup_url %]" method="post">
-    <label for="username">Username (required): </label>
+    <label for="username" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Username (required): </label>
     <input type="text" name="username" size="30" maxlength="45" value="[% username %]" />
     <br />
-    <label for="email_address">E-mail Address (required): </label>
+    <label for="email_address" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">E-mail Address (required): </label>
     <input type="text" name="email_address" size="30" maxlength="45" value="[% email_address %]" />
     <br />
-    <label for="birthday">Birthday (required): </label>
+    <label for="birthday" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Birthday (required): </label>
     <input type="text" name="birthday" size="30" maxlength="10" value="[% birthday %]" /> <i>( MM/DD/YYYY )</i>
     <br />
-    <label for="password">Password (required): </label>
+    <label for="password" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Password (required): </label>
     <input type="password" name="password" size="30" maxlength="45" />
     <br />
-    <label for="password_confirmation">Password Confirmation: </label>
+    <label for="password_confirmation" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Password Confirmation: </label>
     <input type="password" name="password_confirmation" size="30" maxlength="45" />
     <br />
-    <input type="submit" value="Sign Up!" />
+    <br />
+    
+    <label for="referred_by">If someone referred you to Side 7, please give us their username so that we can say thank you!</label><br />
+    <input type="text" name="referred_by" value="[% referred_by %]" placeholder="Referrer's Username" maxlength="255" size="45"><br /><br />
+
+    <!-- THESE LINKS SHOULD POP-UP IN LIGHTBOXES -->
+    <label for="agree_to_rules">I have read &amp; agree to the <a href="#">site rules</a> and <a href="#">rules of conduct</a>:</label>
+    <input type="checkbox" name="agree_to_rules" value="1" onClick="EnableSubmit( this )"><br />
+
+    <input type="submit" value="Sign Up!" id="SignUp" disabled="disabled" />
 </form>

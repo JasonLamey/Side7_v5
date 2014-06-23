@@ -43,6 +43,7 @@ the user class is only used for login, log out, sign up, subscription and termin
 	username        :string(45)
 	email_address   :string(255)
 	password        :string(45)
+	referred_by     :string(45)
 	created_at      :datetime         not null
 	updated_at      :datetime         not null
 
@@ -74,6 +75,7 @@ __PACKAGE__->meta->setup
         username      => { type => 'varchar', length => 45,  not_null => 1 }, 
         email_address => { type => 'varchar', length => 255, not_null => 1 }, 
         password      => { type => 'varchar', length => 45,  not_null => 1 }, 
+        referred_by   => { type => 'varchar', length => 45 }, 
         created_at    => { type => 'timestamp', not_null => 1, default => 'now()' }, 
         updated_at    => { type => 'timestamp', not_null => 1, default => 'now()' },
     ],
@@ -159,7 +161,7 @@ sub get_user_hash_for_template
     # Account values (if included)
     if ( defined $self->{'account'} )
     {
-        my $account = $self->{'account'}->[0];
+        my $account = $self->account();
         $user_hash->{'account'} = $account->get_account_hash_for_template( filter_profanity => $filter_profanity );
     }
 
@@ -665,6 +667,8 @@ Parameters:
 
 =item confirmation_code: The confirmation_code field from the form.
 
+=item referred_by: The User who referred the signing up User.
+
 =back
 
     my $user_hash = Side7::User::process_signup(
@@ -673,6 +677,7 @@ Parameters:
                                                 email_address     => $email_address,
                                                 birthday          => $birthday,
                                                 confirmation_code => $confirmation_code,
+                                                referred_by       => $referred_by,
                                             );
 
 =cut
@@ -681,11 +686,12 @@ sub process_signup
 {
     my ( $args ) = @_;
 
-    my $username          = delete $args->{'username'};
-    my $password          = delete $args->{'password'};
-    my $email_address     = delete $args->{'email_address'};
-    my $birthday          = delete $args->{'birthday'};
-    my $confirmation_code = delete $args->{'confirmation_code'};
+    my $username          = delete $args->{'username'}          // undef;
+    my $password          = delete $args->{'password'}          // undef;
+    my $email_address     = delete $args->{'email_address'}     // undef;
+    my $birthday          = delete $args->{'birthday'}          // undef;
+    my $confirmation_code = delete $args->{'confirmation_code'} // undef;
+    my $referred_by       = delete $args->{'referred_by'}       // undef;
 
     my $saved = 0;
     my @form_errors = ();
@@ -732,6 +738,7 @@ sub process_signup
         username      => $username,
         password      => Side7::Utils::Crypt::sha1_hex_encode( $password ),
         email_address => $email_address,
+        referred_by   => $referred_by,
         created_at    => 'now',
         updated_at    => 'now',
     );
@@ -741,10 +748,11 @@ sub process_signup
         user_id             => $user->id,
         user_type_id        => 1, # Basic
         user_status_id      => 1, # Pending
+        user_role_id        => 1, # Guest
         birthday            => $birthday,
-        birthday_visibility => 1, # Visible
+        birthday_visibility => 1,   # Visible
         country_id          => 228, # USA
-        is_public           => 0, # Nothing is public by default
+        is_public           => 0,   # Nothing is public by default
         confirmation_code   => $confirmation_code, # Used for e-mail confirmation.
         created_at          => 'now',
         updated_at          => 'now',
@@ -790,20 +798,41 @@ sub confirm_new_user
     }
 
     my $account = Side7::Account->new( confirmation_code => $confirmation_code );
-    my $loaded = $account->load( speculative => 1 );
+    my $loaded = $account->load( speculative => 1, with => [ 'user' ] );
 
-    if ( ! defined $account || $loaded == 0 )
+    if ( $loaded == 0 )
     {
         $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
         return ( 0, 'The confirmation code >' . $confirmation_code . '< is invalid. Please check your code and try again.' );
     }
 
-    $account->user_status_id( 2 );
-    $account->confirmation_code( 'null' );
+    $account->user_status_id( 2 ); # Active
+    $account->user_role_id( 2 );   # User
+    $account->confirmation_code( undef );
     $account->updated_at( 'now' );
     $account->save;
 
     my ( $success, $error ) = Side7::Utils::File::create_user_directory( $account->user_id );
+
+    # If a referrer was given, let's award that User.
+    if ( defined $account->user->referred_by() )
+    {
+        my $referrer = Side7::User::get_user_by_username( $account->user->referred_by() );
+        if ( defined $referrer && ref( $referrer ) eq 'Side7::User' )
+        {
+            my ( $success, $error ) = Side7::KudosCoin->give_kudos_coins(
+                user_id     => $referrer->id(),
+                amount      => $CONFIG->{'kudos_coins'}->{'award'}->{'referral'},
+                description => 'Referral Award for referring <strong>' . $account->user->username() . '</strong>',
+                purchased   => 0,
+            ); 
+            if ( ! $success )
+            {
+                $LOGGER->error( 'Could not award >' . $referrer->username() . '< Kudos Coins for referring >' .
+                                $account->user->username() . '<' );
+            }
+        }
+    }
 
     if ( ! $success )
     {

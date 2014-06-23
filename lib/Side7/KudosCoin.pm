@@ -5,6 +5,7 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Rose::DB::Object::QueryBuilder;
+use Try::Tiny;
 
 use Side7::Globals;
 
@@ -28,6 +29,7 @@ of Side 7 Kudos Coins.
     | timestamp   | datetime            | NO   |     | NULL    |       |
     | amount      | int(11)             | NO   |     | NULL    |       |
     | description | text                | NO   |     | NULL    |       |
+    | purachased  | tinyint(1)          | NO   |     | 0       |       |
 
 =head1 RELATIONSHIPS
 
@@ -52,6 +54,7 @@ __PACKAGE__->meta->setup
         timestamp     => { type => 'datetime', not_null => 1, default => 'now()' }, 
         amount        => { type => 'integer', not_null => 1 }, 
         description   => { type => 'text',    not_null => 1 }, 
+        purchased     => { type => 'boolean', not_null => 1, default => 0 }, 
     ],
     pk_columns => 'id',
     unique_key => [ [ 'user_id' ], [ 'timestamp' ], [ 'user_id', 'timestamp' ], ],
@@ -115,6 +118,84 @@ sub get_current_balance
     $sth->finish();
    
     return $row->{'total'} // 0;
+}
+
+
+=head2 give_kudos_coins()
+
+Gives Kudos Coins to a User, along with a reason.  Also records the transaction to the Audit Log. Returns a boolean.
+
+Parameters:
+
+=over 4
+
+=item user_id: The User for whom to get the balance.
+
+=item amount: The number of Kudos coins to award.
+
+=item description: The reason for the award.
+
+=item purchased: Boolean as to whether or not these coins were purchased.
+
+=back
+
+    my $success = Side7::KudosCoins->give_kudos_coins( 
+                                                        user_id     => $user_id, 
+                                                        amount      => $amount,
+                                                        description => $description,
+                                                        purchased   => $purchased,
+                                                     );
+
+=cut
+
+sub give_kudos_coins
+{
+    my ( $self, %args ) = @_;
+
+    my $user_id     = delete $args{'user_id'}     // undef;
+    my $amount      = delete $args{'amount'}      // undef;
+    my $description = delete $args{'description'} // undef;
+    my $purchased   = delete $args{'purchased'}   // 0;
+
+    if ( ! defined $user_id )
+    {
+        $LOGGER->warning( 'Invalid User ID provided when giving Kudos Coins.' );
+        return ( 0, 'There was an error adding Kudos Coins. This has been reported.' );
+    }
+
+    if ( ! defined $amount )
+    {
+        $LOGGER->warning( 'Undefined Amount passed in when giving Kudos Coins.' );
+        return ( 0, 'There was an error adding Kudos Coins. This has been reported.' );
+    }
+
+    if ( $amount == 0 )
+    {
+        $LOGGER->warning( 'Amount with value >0< (zero) passed in when giving Kudos Coins.' );
+        return ( 0, 'There was an error adding Kudos Coins. This has been reported.' );
+    }
+
+    $user_id =~ s/\D//g;
+
+    my $ledger = Side7::KudosCoin->new(
+                                        user_id     => $user_id,
+                                        amount      => $amount,
+                                        description => $description,
+                                        purchased   => $purchased,
+                                        timestamp   => 'now',
+                                      );
+    #try
+    #{
+        $LOGGER->debug( 'Attempting to save a new Ledger entry.' );
+        $ledger->save();
+    #}
+    #catch
+    #{
+        #$LOGGER->error( 'Could not give Kudos Coins to User #>' . $user_id . '<: ' . $_ );
+        #return ( 0, 'There was an error adding Kudos Coins. This has been reported.' );
+    #}
+   
+    return ( 1, undef );
 }
 
 

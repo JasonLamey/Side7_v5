@@ -6,8 +6,8 @@
 
 <div style="margin: 5px 0; display: block;">
     <h2>Quick Site Stats</h2>
-    <div style="width: 50%; font-family: monospace; float: left;">
-        <div id="count_by_type" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px auto"></div>
+    <div style="width: 33%; font-family: monospace; float: left;">
+        <div id="count_by_type" style="min-width: 275px; height: 400px; max-width: 100%; margin: 5px auto"></div>
 
         <script>
         $(function () {
@@ -23,7 +23,7 @@
                             plotShadow: true
                         },
                         title: {
-                            text: 'Counts by User Type'
+                            text: 'User Type Breakdown'
                         },
                         tooltip: {
                             pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
@@ -59,14 +59,13 @@
                         }]
                     });
                 });
-                
             });
         </script>
 
     </div>
 
-    <div style="width: 50%; font-family: monospace; float: right;">
-        <div id="count_by_status" style="min-width: 310px; height: 400px; max-width: 100%; margin: 5px auto"></div>
+    <div style="width: 34%; font-family: monospace; float: left;">
+        <div id="count_by_status" style="min-width: 275px; height: 400px; max-width: 100%; margin: 5px auto"></div>
 
         <script>
         $(function () {
@@ -82,7 +81,7 @@
                             plotShadow: true
                         },
                         title: {
-                            text: 'Counts by User Status'
+                            text: 'User Status Breakdown'
                         },
                         tooltip: {
                             pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
@@ -118,7 +117,63 @@
                         }]
                     });
                 });
+            });
+        </script>
+    </div>
+
+    <div style="width: 33%; font-family: monospace; float: left;">
+        <div id="count_by_role" style="min-width: 275px; height: 400px; max-width: 100%; margin: 5px auto"></div>
+
+        <script>
+        $(function () {
+                var chart;
                 
+                $(document).ready(function () {
+                    
+                    // Build the chart
+                    $('#count_by_role').highcharts({
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: true
+                        },
+                        title: {
+                            text: 'User Role Breakdown'
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: 'Users By Role',
+                            data: [
+                                [% FOR record IN data.user_stats.total_by_role %]
+                                
+                                    [% IF record.user_status == 'Subscriber' %]
+                                {
+                                    name: '[% record.user_role %]',
+                                    y: [% record.num_users %],
+                                    sliced: true,
+                                    selected: true
+                                },
+                                    [% ELSE %]
+                                [ '[% record.user_role %]', [% record.num_users %] ],
+                                    [% END %]
+                                [% END %]
+                            ]
+                        }]
+                    });
+                });
             });
         </script>
     </div>

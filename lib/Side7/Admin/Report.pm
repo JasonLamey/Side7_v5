@@ -190,6 +190,36 @@ sub get_user_account_stats
     }
 
     $user_stats{'total_by_status'} = \@user_status_counts;
+ 
+    # Counts by User Role
+    my @user_role_counts = ();
+    my $role_sql = build_select(
+                                db      => $DB,
+                                dbh     => $dbh,
+                                select  => 'COUNT( 1 ) AS num_users, name',
+                                tables  => [ 'users', 'accounts', 'user_roles' ],
+                                classes => { 
+                                                users      => 'Side7::User', 
+                                                accounts   => 'Side7::Account',
+                                                user_roles => 'Side7::User::Role',
+                                           },
+                                columns => { users => [], accounts => [], user_roles => [ 'name' ], },
+                                clauses => [
+                                                't1.id = t2.user_id',
+                                                't2.user_role_id = t3.id',
+                                           ],
+                                group_by => 'name',
+                             );
+
+    my $role_sth = $dbh->prepare( $role_sql );
+    $role_sth->execute;
+
+    while ( my $row = $role_sth->fetchrow_hashref )
+    {
+        push ( @user_role_counts, { user_role => $row->{'name'}, num_users => $row->{'num_users'} } );
+    }
+
+    $user_stats{'total_by_role'} = \@user_role_counts;
 
     return \%user_stats;
 }
@@ -220,13 +250,17 @@ sub get_thirty_day_new_and_deleted_users
 
     # Date Range Array
     my @date_range = ();
-    foreach my $interval ( reverse( 1 .. 30 ) )
+    foreach my $interval ( reverse( 0 .. 30 ) )
     {
         my $date = DateTime->today->subtract( days => $interval )->ymd();
+        $LOGGER->debug( 'Date for interval: >' . $interval . '<: >' . $date . '<' );
         push ( @date_range, $date );
     }
 
-    $user_data{'start_date'} = join( ', ', split( /-/, $date_range[0] ) );
+    my ( $year, $month, $day ) = split( /-/, $date_range[0] );
+    $month -= 1;
+
+    $user_data{'start_date'} = join( ', ', ( $year, $month, $day ) );
 
     my $dbh = $DB->dbh();
     my $nu_sql = build_select(
@@ -238,7 +272,7 @@ sub get_thirty_day_new_and_deleted_users
                                 columns => { users => [ qw( created_at ) ] },
                                 query => [
                                             created_at => { ge => $thirty_days_ago },
-                                            created_at => { lt => $today },
+                                            created_at => { le => $today },
                                          ],
                                 order_by => 'created_at ASC',
                                 group_by => 'created_at',
@@ -272,10 +306,11 @@ sub get_thirty_day_new_and_deleted_users
                                 select  => 'COUNT( 1 ) AS num_users, DATE( timestamp ) AS timestamp',
                                 tables  => [ 'audit_logs' ],
                                 classes => { audit_logs => 'Side7::AuditLog' },
-                                columns => { audit_logs => [ qw( timestamp ) ] },
+                                columns => { audit_logs => [ qw( title timestamp ) ] },
                                 query => [
                                             timestamp => { ge => $thirty_days_ago },
-                                            timestamp => { lt => $today },
+                                            timestamp => { le => $today },
+                                            title     => { like => '%User Purged%' },
                                          ],
                                 order_by => 'timestamp ASC',
                                 group_by => 'timestamp',
@@ -332,14 +367,17 @@ sub get_thirty_day_new_content
 
     # Date Range Array
     my @date_range = ();
-    foreach my $interval ( reverse( 1 .. 30 ) )
+    foreach my $interval ( reverse( 0 .. 30 ) )
     {
         my $date = DateTime->today->subtract( days => $interval )->ymd();
         push ( @date_range, $date );
     }
 
     # Image Data
-    $content_data{'start_date'} = join( ', ', split( /-/, $date_range[0] ) );
+    my ( $year, $month, $day ) = split( /-/, $date_range[0] );
+    $month -= 1;
+
+    $content_data{'start_date'} = join( ', ', ( $year, $month, $day ) );
 
     my $dbh = $DB->dbh();
     my $i_sql = build_select(
@@ -351,7 +389,7 @@ sub get_thirty_day_new_content
                                 columns => { images => [ qw( created_at ) ] },
                                 query => [
                                             created_at => { ge => $thirty_days_ago },
-                                            created_at => { lt => $today },
+                                            created_at => { le => $today },
                                          ],
                                 order_by => 'created_at ASC',
                                 group_by => 'created_at',
@@ -363,6 +401,7 @@ sub get_thirty_day_new_content
     my %images;
     while ( my $row = $i_sth->fetchrow_hashref )
     {
+        $LOGGER->debug( 'IMAGE FOUND: ' . "$row->{'created_at'} - $row->{'num_images'}" );
         $images{$row->{'created_at'}} = $row->{'num_images'};
     }
 

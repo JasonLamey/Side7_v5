@@ -52,6 +52,10 @@ sub new
     $CONFIG->{'log4perl'}->{'LOGFILE.layout'}   = 'PatternLayout';
     $CONFIG->{'log4perl'}->{'LOGFILE.layout.ConversionPattern'} = '[%d] [%p] %M %L - %m%n';
 
+    # Kudos Coins Awards & Costs
+    $CONFIG->{'kudos_coins'}->{'award'}->{'referral'} = 25;
+    $CONFIG->{'kudos_coins'}->{'cost'}->{'test'}      = -50;
+
     return $CONFIG;
 }
 

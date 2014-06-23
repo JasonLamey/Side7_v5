@@ -131,7 +131,7 @@ __PACKAGE__->meta->setup
         updated_at              => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ 'user_id', 'confirmation_code' ],
+    unique_key => [ [ 'user_id' ], [ 'confirmation_code' ], ],
     allow_inline_column_values => 1,
     foreign_keys =>
     [

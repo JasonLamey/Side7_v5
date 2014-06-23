@@ -213,6 +213,7 @@ post '/signup' => sub
             username      => params->{'username'}, 
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
+            referred_by   => params->{'referred_by'},
         };
     }
 
@@ -227,6 +228,7 @@ post '/signup' => sub
             password          => params->{'password'},
             birthday          => params->{'birthday'},
             confirmation_code => $confirmation_code,
+            referred_by       => params->{'referred_by'},
         }
     );
 
@@ -245,6 +247,7 @@ post '/signup' => sub
             username      => params->{'username'}, 
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
+            referred_by   => params->{'referred_by'},
         };
     }
 
