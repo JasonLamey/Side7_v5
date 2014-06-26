@@ -70,6 +70,8 @@ hook 'before' => sub {
         var content_display_type      => 'List';
         var display_full_sized_images => 'Same Window';
     }
+
+    set layout => 'main';
 };
 
 get '/' => sub 
@@ -417,8 +419,6 @@ get '/faq/?:category_id?/?:entry_id?/?' => sub
             return redirect '/faq';
         }
 
-        $LOGGER->debug( 'CATEGORY: ' . Dumper( $category ) );
-
         my @entries = sort { $a->{'priority'} <=> $b->{'priority'} } ( @{ ( $category->{'faq_entries'} // [] ) } );
 
         return template 'faq', { category => $category, entries => \@entries };
@@ -549,6 +549,8 @@ hook 'before' => sub
                 flash error => 'You are not authorized to view that page.';
                 return redirect '/'; # Not an authorized page.
             }
+
+            set layout => 'my';
         }
     }
 };
@@ -621,8 +623,6 @@ get '/my/upload/?:upload_type?/?' => sub
 post '/my/upload' => sub
 {
     my $params = params;
-
-    $LOGGER->debug( 'RATING_QUALIFIERS: ' . Dumper( params->{'rating_qualifiers'} ) );
 
     my $return_to_form = sub
     {
@@ -869,6 +869,8 @@ hook 'before' => sub
                 flash error => 'You are not authorized to view that page.';
                 return redirect '/'; # Not an authorized page.
             }
+
+            set layout => 'admin';
         }
     }
 };

@@ -272,7 +272,7 @@ sub get_image_hash_for_template
     $image_hash->{'description'} = Side7::Utils::Text::parse_bbcode_markup( $self->description );
 
     # Filesize
-    $image_hash->{'filesize'} = Side7::Utils::File::get_formatted_filesize_from_bytes( $self->filesize );
+    $image_hash->{'filesize'} = Side7::Utils::File::get_formatted_filesize_from_bytes( bytes => $self->filesize );
 
     # Date values
     foreach my $key ( qw( created_at updated_at ) )

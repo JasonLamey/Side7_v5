@@ -120,6 +120,50 @@ sub has_permission
 }
 
 
+=head2 has_perk()
+
+Returns a true/false value for whether a role has a particular perk.
+
+Parameters:
+
+=over 4
+
+=item The perk name.
+
+=back
+
+    my $has_perk = Side7::User::Role->has_perk( $permission_name );
+
+=cut
+
+sub has_perk
+{
+    my ( $self, $perk_name ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'Invalid or undefined Role object passed in.' );
+        return 0;
+    }
+
+    if ( ! defined $perk_name || $perk_name eq '' )
+    {
+        $LOGGER->warn( 'Invalid or undefined perk name passed in.' );
+        return 0;
+    }
+
+    foreach my $perk ( map { $_->name } $self->perks )
+    {
+        if ( lc( $perk ) eq lc( $perk_name ) )
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+
 =head1 FUNCTIONS
 
 

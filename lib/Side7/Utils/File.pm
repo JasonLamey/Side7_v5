@@ -5,6 +5,8 @@ use warnings;
 
 use DateTime;
 use File::Path;
+use Filesys::DiskUsage;
+use List::Util;
 
 use Side7::Globals;
 use Side7::AuditLog;
@@ -25,27 +27,58 @@ Provides file and file attribute-related tools
 
 =head2 get_formatted_filesize_from_bytes()
 
-    $filesize = Side7::Utils::File::get_formatted_filesize_from_bytes( $filesize_in_bytes );
-
 Returns a formatted string from the value passed in.  Value is assumed to be in bytes.
+If wantarray is set, then passes back the value and the units as separate values in an array.
+
+Parameters:
+
+=over 4
+
+=item bytes: the filesize to format, given in bytes. Required.
+
+=item force_units: A string to which to force a calculation. Optional, takes ( B, KB, MB, GB, TB, PB )
+
+=back
+
+    $filesize = Side7::Utils::File::get_formatted_filesize_from_bytes( 
+                                                                        bytes       => $filesize_in_bytes, 
+                                                                        force_units => $unit
+                                                                     );
 
 =cut
 
 sub get_formatted_filesize_from_bytes
 {
-    my ( $size_in_bytes ) = @_;
+    my ( %args ) = @_;
+    my $size_in_bytes = delete $args{'bytes'} // 0;
+    my $force_units   = delete $args{'force_units'} // undef;
+
+    my @units = ( qw( B KB MB GB TB PB ) );
+
+    # Ensure that force_units is a valid term, otherwise, undef it.
+    if ( defined $force_units )
+    {
+        if ( ! List::Util::any { lc( $force_units ) eq lc( $_ ) } @units )
+        {
+            $force_units = undef;
+        }
+    }
 
     my $exp = 0;
-
-    my $units = [ qw( B KB MB GB TB PB ) ];
-
-    foreach my $unit ( @$units ) {
-        last if $size_in_bytes < 1024;
+    foreach my $unit ( @units ) {
+        if ( defined $force_units )
+        {
+            last if lc( $force_units ) eq lc( $unit );
+        }
+        else
+        {
+            last if $size_in_bytes < 1024;
+        }
         $size_in_bytes /= 1024;
         $exp++;
     }
 
-    return wantarray ? ( $size_in_bytes, $units->[$exp] ) : sprintf( "%d %s", $size_in_bytes, $units->[$exp] );
+    return wantarray ? ( $size_in_bytes, $units[$exp] ) : sprintf( "%d %s", $size_in_bytes, $units[$exp] );
 }
 
 
@@ -305,6 +338,46 @@ sub create_user_cached_file_directory
     }
 
     return( 1, undef, $cached_file_dir );
+}
+
+
+=head2 get_disk_usage()
+
+Returns in bytes the amount of disk usage a particular account is using.
+
+Parameters:
+
+=over 4
+
+=item filepath: The filepath to check for disk usage.
+
+=back
+
+    my $bytes = Side7::Utils::File::get_disk_usage( filepath => $filepath );
+
+=cut
+
+sub get_disk_usage
+{
+    my ( %args ) = @_;
+
+    my $filepath = delete $args{'filepath'} // undef;
+
+    if ( ! defined $filepath )
+    {
+        $LOGGER->warn( 'Invalid filepath provided: Null filepath.' );
+        return 0;
+    }
+
+    if ( ! -d $filepath )
+    {
+        $LOGGER->warn( 'Invalid filepath provided: >' . $filepath . '< does not exist.' );
+        return 0;
+    }
+
+    my $total = Filesys::DiskUsage::du( $filepath );
+
+    return $total;
 }
 
 

@@ -74,7 +74,6 @@ sub user_login
     {
         if ( $digest eq $user->{'password'} )
         {
-            $LOGGER->debug( 'SHA1 matched.' );
             return ( $rd_url, $user, undef );
         }
 

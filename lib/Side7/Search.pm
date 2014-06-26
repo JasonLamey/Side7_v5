@@ -112,7 +112,6 @@ sub get_results
     my $history = Side7::Search::get_history( search_term => $look_for );
     if ( defined $history && scalar( @{ $history } ) > 0 )
     {
-        $LOGGER->debug( 'RETURNING CACHED RESULTS FOR >' . $look_for . '<' );
         return $history;
     }
 
@@ -123,7 +122,6 @@ sub get_results
                                             size             => $size, 
                                             filter_profanity => $filter_profanity,
                                            );
-    $LOGGER->debug( 'Found users: ' . scalar( @{ $users } ) );
     my @sorted_users = sort { lc( $a->{'username'} ) cmp lc( $b->{'username'} ) } @{ $users };
 
     # Images
@@ -133,7 +131,6 @@ sub get_results
                                                 size             => $size,
                                                 filter_profanity => $filter_profanity,
                                              );
-    $LOGGER->debug( 'Found images: ' . scalar( @{ $images } ) );
     push( @results, @{ $images } );
 
     # Literature

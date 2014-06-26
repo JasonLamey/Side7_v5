@@ -1,9 +1,3 @@
-<div class="page">
-
-    [% PROCESS 'my/_home_menu.tt' %]
-
-    <div style="margin-left: 210px; padding: 5px;">
-
         [% form_title = '' %]
         [% file_types = '' %]
         [% file_label = '' %]
@@ -47,5 +41,3 @@
 
             <input type="submit" value="Upload" /><br />
         </form>
-    </div>
-</div>

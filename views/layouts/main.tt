@@ -16,43 +16,70 @@
     !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
 /* ]]> */</script>
 
+<style>
+    #page_content {
+        display: block;
+        position:absolute;
+        bottom:0;
+        top:0;
+        left:0;
+        right:0;
+        font-family: Verdana, sans-serif;
+    }
+    .column_wrap {position:relative;}
+    #page_header {
+        width: auto;
+        padding: 3px 5px;
+        margin: 0;
+    }
+    #header_search {
+        float: right;
+        width: 200px;
+        text-align: right;
+    }
+    .metanav {
+    }
+    .admin_menu {
+        width:200px;
+        position:absolute;
+        left:0;
+        top:40px;
+        bottom:40px;
+        height:auto;
+        display: block;
+        margin-right: 5px;
+    }
+    .admin_menu_option {
+        text-align: left;
+        padding: 3px;
+        border-bottom: solid 1px #000;
+    }
+    .admin_menu_option a {
+        font-weight: bold;
+    }
+    .admin_menu_option .disabled {
+        font-weight: normal;
+        color: #777;
+    }
+    #section_content {
+        margin-left: 205px;
+        padding: 5px;
+        width: auto;
+        height: auto;
+        border: solid 1px #666;
+    }
+</style>
+
 </head>
 <body>
-    <div id="page_header" style="padding: 3px 5px; margin: 0;">
-        <div style="float: right; width: 200px; text-align: right;">
-            <form method="post" action="/search">
-                <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
-                <input type="submit" value="Go" />
-            </form>
-        </div>
-        <div class=metanav>
-            [% IF not session.logged_in %]
-            <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>
-            [% ELSE %]
-            [% session.username %]: <a href="/my/home">Home</a>
-            &middot;
-            <a href="/user/[% session.username %]">Profile</a>
-            &middot;
-            <a href="/user/[% session.username %]/gallery">Gallery</a>
-            &middot;
-            <a href="[% logout_url %]">log out</a>
-            [% END %]
-        </div>
-        <div>
-            <a href="/">Main</a> &middot;
-            <a href="/faq">F.A.Q.</a> &middot;
-            <a href="/user_directory">User Directory</a>
-        </div>
+<div id="page_content">
+[% PROCESS 'site/_page_header.tt' %]
+    <div id="section_content">
+    [% content %]
     </div>
-[% IF flash.message %]
-      <div class="flash"> [% flash.message %] </div>
-[% END %]
-[% IF flash.error %]
-      <div class="error"> [% flash.error %] </div>
-[% END %]
-[% content %]
-<div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
+    <div id="footer">
+    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
+    </div>
 </div>
 </body>
 </html>

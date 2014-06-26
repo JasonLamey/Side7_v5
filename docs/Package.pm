@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
 =pod
 
 =head1 NAME

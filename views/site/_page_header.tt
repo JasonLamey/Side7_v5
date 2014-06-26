@@ -1,0 +1,32 @@
+    <div id="page_header">
+        <div id="header_search">
+            <form method="post" action="/search">
+                <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div class="metanav">
+            [% IF not session.logged_in %]
+            <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>
+            [% ELSE %]
+            [% session.username %]: <a href="/my/home">Home</a>
+            &middot;
+            <a href="/user/[% session.username %]">Profile</a>
+            &middot;
+            <a href="/user/[% session.username %]/gallery">Gallery</a>
+            &middot;
+            <a href="[% logout_url %]">log out</a>
+            [% END %]
+        </div>
+        <div>
+            <a href="/">Main</a> &middot;
+            <a href="/faq">F.A.Q.</a> &middot;
+            <a href="/user_directory">User Directory</a>
+        </div>
+    </div>
+[% IF flash.message %]
+    <div class="flash"> [% flash.message %] </div>
+[% END %]
+[% IF flash.error %]
+    <div class="error"> [% flash.error %] </div>
+[% END %]

@@ -186,7 +186,6 @@ sub give_kudos_coins
                                       );
     #try
     #{
-        $LOGGER->debug( 'Attempting to save a new Ledger entry.' );
         $ledger->save();
     #}
     #catch

@@ -20,6 +20,7 @@ use Side7::UserContent::CommentThread;
 use Side7::UserContent::Comment;
 use Side7::UserContent::Album;
 use Side7::UserContent::AlbumImageMap;
+use Side7::UserContent::Category;
 use Side7::KudosCoin;
 use Side7::Utils::Text;
 use Side7::FAQCategory;
@@ -406,8 +407,9 @@ sub migrate_images
     if ( defined $opt{V} ) { say "\t=> Pulling image records from v4 DB."; }
 
     my $sth = $DB4->prepare(
-        'SELECT *, id as image_id
+        'SELECT *, images.id as image_id, category
          FROM images
+         INNER JOIN image_categories ic ON image_category_id = ic.id
          ORDER BY images.id'
     );
     $sth->execute();
@@ -476,7 +478,7 @@ sub migrate_images
             title             => $row->{title},
             filesize          => $row->{filesize},
             dimensions        => $row->{dimensions},
-            category_id       => $row->{image_category_id},
+            category_id       => _get_new_image_category_id( $row->{category} ),
             rating_id         => $row->{image_rating_id},
             rating_qualifiers => ( $qualifiers // undef ),
             stage_id          => $row->{image_class_id},
@@ -1227,6 +1229,21 @@ sub VERSION_MESSAGE
 }
 
 # PRIVATE FUNCTIONS
+
+# This function takes the image category name, and looks up the new ID for it in the v5 DB.
+sub _get_new_image_category_id
+{
+    my ( $category ) = @_;
+
+    die 'Did not get a category name' if ! defined $category;
+
+    my $new_category = Side7::UserContent::Category->new( category => $category, content_type => 'image' );
+    my $loaded = $new_category->load( speculative => 1 );
+
+    die 'Invalid category name >' . $category . '<; no image category found.' if $loaded == 0;
+
+    return $new_category->id();
+}
 
 # This function comes from the v4 Library_side7.pm
 sub _get_is_public_hash

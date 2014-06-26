@@ -253,7 +253,6 @@ sub get_thirty_day_new_and_deleted_users
     foreach my $interval ( reverse( 0 .. 30 ) )
     {
         my $date = DateTime->today->subtract( days => $interval )->ymd();
-        $LOGGER->debug( 'Date for interval: >' . $interval . '<: >' . $date . '<' );
         push ( @date_range, $date );
     }
 
@@ -401,7 +400,6 @@ sub get_thirty_day_new_content
     my %images;
     while ( my $row = $i_sth->fetchrow_hashref )
     {
-        $LOGGER->debug( 'IMAGE FOUND: ' . "$row->{'created_at'} - $row->{'num_images'}" );
         $images{$row->{'created_at'}} = $row->{'num_images'};
     }
 

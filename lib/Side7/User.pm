@@ -7,6 +7,7 @@ use base 'Side7::DB::Object';
 
 use List::Util;
 use Data::Dumper;
+use POSIX;
 
 use Side7::Globals;
 use Side7::User::Manager;
@@ -23,6 +24,7 @@ use Side7::User::Preference;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 use Side7::Utils::Text;
+use Side7::Report;
 
 =pod
 
@@ -99,6 +101,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::User::UserOwnedPermission',
+            column_map => { id => 'user_id' },
+        },
+        user_owned_perks =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::UserOwnedPerk',
             column_map => { id => 'user_id' },
         },
         images =>
@@ -705,7 +713,6 @@ sub process_signup
 	    {
 	        push @form_errors, 'A user with the Username >' . $username . '< already exists.';
 	    }
-        $LOGGER->debug( 'In Username exists check, found user: ' . (($loaded) ? 'yes' : 'no') );
     }
     else
     {
@@ -720,7 +727,6 @@ sub process_signup
         {
             push @form_errors, 'A user with the E-mail Address >' . $email_address . '< already exists.';
         }
-        $LOGGER->debug( 'In Email_address exists check, found user: ' . (($loaded) ? 'yes' : 'no') );
     }
     else
     {
@@ -917,7 +923,13 @@ sub show_home
     return undef if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
-    my $loaded = $user->load( speculative => 1, with => [ 'account', 'kudos_coins' ] );
+    my $loaded = $user->load( speculative => 1, with => [
+                                                            'kudos_coins?', 
+                                                            'user_owned_perks?', 
+                                                            'user_owned_permissions?', 
+                                                            'account'
+                                                        ],
+    );
 
     if ( $loaded == 0 )
     {
@@ -932,6 +944,66 @@ sub show_home
     }
 
     my $user_hash = $user->get_user_hash_for_template();
+
+
+    # Content Counts By Category
+    $user_hash->{'content_data'} = Side7::Report->get_user_content_breakdown_by_category( $user->id() );
+
+    if ( defined $user->{'account'} && defined $user->account->user_role->name() )
+    {
+        # Disk Quota
+        my $disk_usage = Side7::Utils::File::get_disk_usage( filepath => $user->get_content_directory() ) // 0;
+        my $disk_quota = 0;
+
+        if ( $user->account->user_role->has_perk( 'disk_quota_unlimited' ) )
+        {
+            $disk_quota = 1073741824; # 1GB in bytes
+        }
+        elsif
+        ( 
+            defined $user->{'user_owned_perks'}
+        )
+        {
+            foreach my $perk ( @{ $user->user_owned_perks } )
+            {
+                if ( 
+                        $perk->perk->name() eq 'disk_quota_500'
+                        &&
+                        $perk->perk->suspended != 1
+                        &&
+                        $perk->perk->revoked != 1
+                )
+                {
+                    $disk_quota = 524288000; # 500MB in bytes
+                }
+            }
+        }
+        else
+        {
+            $disk_quota = 209715200; # 200MB in bytes
+        }
+
+        ( $user_hash->{'disk_quota'}, $user_hash->{'disk_quota_units'} )
+                                = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                                bytes       => $disk_quota,
+                                                                force_units => 'MB',
+                                );
+
+        ( $user_hash->{'disk_used'}, undef )
+                = Side7::Utils::File::get_formatted_filesize_from_bytes( 
+                                                                bytes       => $disk_usage, 
+                                                                force_units => 'MB',
+                );
+
+        $user_hash->{'disk_used'} = POSIX::ceil( $user_hash->{'disk_used'} );
+
+        $user_hash->{'disk_band1_start'} = 0;
+        $user_hash->{'disk_band1_end'}   = int( $user_hash->{'disk_quota'} * .60 );
+        $user_hash->{'disk_band2_start'} = $user_hash->{'disk_band1_end'};
+        $user_hash->{'disk_band2_end'}   = int( $user_hash->{'disk_quota'} * .80 );
+        $user_hash->{'disk_band3_start'} = $user_hash->{'disk_band2_end'};
+        $user_hash->{'disk_band3_end'}   = $user_hash->{'disk_quota'};
+    }
 
     return $user_hash;
 }
@@ -1164,8 +1236,6 @@ sub get_users_for_directory
                 }
             }
 
-            #$LOGGER->debug( 'FILEPATH: ' . $filepath );
-            
             push( @images, { 
                             filepath       => $filepath, 
                             filepath_error => $error, 
