@@ -1,0 +1,7 @@
+        <h2>Delete Flag Successfully Set!</h2>
+        <p>Your account has been flagged for purging from our system.</p>
+        <p>Again, you have <strong>30 days</strong> in which to change your mind and remove the deletion flag.
+        Your account will be removed on <strong>[% delete_on %]</strong>.</p>
+
+        <p>Return to <a href="/my/account">My Account</a>.</p>
+

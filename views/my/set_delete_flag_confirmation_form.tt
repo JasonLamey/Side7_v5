@@ -1,0 +1,7 @@
+<h1>Confirm Set Deletion Flag: Enter Your Confirmation Code</h1>
+
+<form action='/my/confirm_set_delete_flag' method='post'>
+    <label for="confirmation_code">Conformation Code:</label>
+    <input type="text" name="confirmation_code" size="40" maxlength="45" value="[% confirmation_code %]" />
+    <input type="submit" value="Send Code" />
+</form>

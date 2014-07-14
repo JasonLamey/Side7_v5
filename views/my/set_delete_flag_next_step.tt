@@ -1,0 +1,12 @@
+        <h2>Set My Account For Deletion</h2>
+        <p>Your request to set the delete flag on your account has been recorded. <b>It will <u>not</u> be set until you complete the following:</b></p>
+
+        <ul>
+            <li>An e-mail was sent to <b>[% user.email_address %]</b> with a confirmation code.</li>
+            <li>Read that e-mail and follow the instructions contained therein to confirm setting the delete flag.</li>
+            <li><strong>If you do not receive the e-mail within 15 minutes, check your junk mail folder to ensure that it wasn't flagged as spam.</strong></li>
+        </ul>
+
+        <p><strong>Again, your account will not be set for deletion until you do the above.</strong> Once you have completed the above instructions, you have 30 days to change your mind before your account, and all associated content, is <strong><em>permanently</em></strong> purged from the system automatically. Once this purge occurs, we <strong>cannot</strong> recover your account and files.</p>
+
+        <p>Return to <a href="/my/account">My Account</a>.</p>

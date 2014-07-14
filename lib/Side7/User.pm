@@ -8,6 +8,7 @@ use base 'Side7::DB::Object';
 use List::Util;
 use Data::Dumper;
 use POSIX;
+use DateTime;
 
 use Side7::Globals;
 use Side7::User::Manager;
@@ -976,6 +977,103 @@ sub confirm_password_change
     $change_results{'new_password'}      = $new_encoded_password;
 
     return \%change_results;
+}
+
+
+=head2 confirm_set_delete_flag()
+
+Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's delete_on to 30 days from now.
+
+Parameters:
+
+=over 4
+
+=item confirmation_code: Just the value of the confirmation code. No default.
+
+=back
+
+    my ( $confirmed, $error ) = Side7::User::confirm_set_delete_flag( $confirmation_code );
+
+=cut
+
+sub confirm_set_delete_flag
+{
+    my ( $confirmation_code ) = @_;
+
+    my %change_results = ();
+
+    if ( ! defined $confirmation_code || length( $confirmation_code ) < 40 )
+    {
+        $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
+        $change_results{'confirmed'} = 0;
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+                                        '< is invalid. Please check your code and try again.';
+        return \%change_results;
+    }
+
+    my $change = Side7::User::AccountDelete->new( confirmation_code => $confirmation_code );
+    my $loaded = $change->load( speculative => 1, with => [ 'user', 'user.account' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
+        $change_results{'confirmed'} = 0;
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+                                        '< is invalid. Please check your code and try again.';
+        return \%change_results;
+    }
+
+    my $today_plus_thirty = DateTime->today()->add( days => 30 );
+
+    $change->user->account->delete_on( $today_plus_thirty->ymd() );
+    $change->user->account->updated_at( 'now' );
+    $change->user->account->save;
+    $change->user->updated_at( 'now' );
+    $change->user->save;
+
+    $change->delete;
+
+    $change_results{'confirmed'} = 1;
+    $change_results{'delete_on'} = $today_plus_thirty->strftime( '%A, %b %d, %Y' );
+
+    return \%change_results;
+}
+
+
+=head2 clear_delete_flag()
+
+Removes the delete_on flag from the User's account.
+
+Parameters:
+
+=over 4
+
+=item username: The username for the account to clear the flag from.
+
+    my $change_results = Side7::User::clear_delete_flag( $username );
+
+=cut
+
+sub clear_delete_flag
+{
+    my ( $username ) = @_;
+
+    return { cleared => 0, error => 'Invalid or missing Username' } if ! defined $username;
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+    if ( ref( $user ) ne 'Side7::User' )
+    {
+        return { cleared => 0, error => 'Invalid Username' };
+    }
+
+    $user->account->delete_on( undef );
+    $user->account->updated_at( 'now' );
+    $user->account->save();
+    $user->updated_at( 'now' );
+    $user->save();
+
+    return { cleared => 1, error => undef };
 }
 
 

@@ -16,6 +16,7 @@ use Side7::Search;
 use Side7::Login;
 use Side7::User;
 use Side7::User::ChangePassword;
+use Side7::User::AccountDelete;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::RatingQualifier;
@@ -658,6 +659,7 @@ post '/my/changepassword/?' => sub
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,
                                           user_id     => session( 'user_id' ),
+                                          affected_id => session( 'user_id' ),
                                           timestamp   => DateTime->now(),
     );
     $audit_log->save();
@@ -698,6 +700,7 @@ get '/my/confirm_password_change/?:confirmation_code?' => sub
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,
                                           user_id     => session( 'user_id' ),
+                                          affected_id => session( 'user_id' ),
                                           timestamp   => DateTime->now(),
     );
     $audit_log->save();
@@ -754,6 +757,7 @@ post '/my/setdelete/?' => sub
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,
                                           user_id     => session( 'user_id' ),
+                                          affected_id => session( 'user_id' ),
                                           timestamp   => DateTime->now(),
     );
     $audit_log->save();
@@ -763,14 +767,14 @@ post '/my/setdelete/?' => sub
 };
 
 # User Set Delete Flag Step 2
-get '/my/confirm_password_change/?:confirmation_code?' => sub
+get '/my/confirm_set_delete_flag/?:confirmation_code?' => sub
 {
     if ( ! defined params->{'confirmation_code'} )
     {
-        return template 'my/change_password_confirmation_form';
+        return template 'my/set_delete_flag_confirmation_form';
     }
 
-    my $change_result = Side7::User::confirm_password_change( params->{'confirmation_code'} );
+    my $change_result = Side7::User::confirm_set_delete_flag( params->{'confirmation_code'} );
 
     if
     (
@@ -780,33 +784,63 @@ get '/my/confirm_password_change/?:confirmation_code?' => sub
     )
     {
         flash error => $change_result->{'error'};
-        return template 'my/change_password_confirmation_form',
+        return template 'my/set_delete_flag_confirmation_form',
                                     { confirmation_code => params->{'confirmation_code'} };
     }
 
-    my $audit_message = 'Password Change confirmation - <b>Successful</b> - ';
+    my $audit_message = 'Set Delete Flag confirmation - <b>Successful</b> - ';
     $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt; - ';
-    $audit_message   .= 'Original value: &gt;<b>' . $change_result->{'original_password'} . '</b>%lt; - ';
-    $audit_message   .= 'New value: &gt;<b>' . $change_result->{'new_password'} . '</b>%lt;';
+    $audit_message   .= 'Delete On: &gt;<b>' . $change_result->{'delete_on'} . '</b>%lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
-                                          title       => 'Password Change Confirmation',
+                                          title       => 'Set Delete Flag Confirmation',
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,
                                           user_id     => session( 'user_id' ),
+                                          affected_id => session( 'user_id' ),
                                           timestamp   => DateTime->now(),
     );
     $audit_log->save();
 
-    template 'my/password_change_confirmed';
+    template 'my/set_delete_flag_confirmed', { delete_on => $change_result->{'delete_on'} };
 };
 
-# User Change Password Post-redirect to Get
-post '/my/confirm_password_change' => sub
+# User Set Delete Flag Post-redirect to Get
+post '/my/confirm_set_delete_flag' => sub
 {
-    return redirect '/my/confirm_password_change/' . params->{'confirmation_code'};
+    return redirect '/my/confirm_set_delete_flag/' . params->{'confirmation_code'};
 };
 
+# Remove Delete Flag from account.
+post '/my/cleardelete' => sub
+{
+    my $change_result = Side7::User::clear_delete_flag( session( 'username' ) );
+    if
+    (
+        ! defined $change_result->{'cleared'}
+        ||
+        $change_result->{'cleared'} == 0
+    )
+    {
+        flash error => $change_result->{'error'};
+        return template 'my/account';
+    }
+
+    my $audit_message = 'Delete Flag Removal - <b>Successful</b>';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Cleared Delete Flag',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          user_id     => session( 'user_id' ),
+                                          affected_id => session( 'user_id' ),
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    flash message => 'Deletion Flag Removed';
+    return redirect '/my/account';
+};
 
 # User Gallery Landing Page
 get '/my/gallery/?' => sub
