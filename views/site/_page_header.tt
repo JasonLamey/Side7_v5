@@ -25,8 +25,30 @@
         </div>
     </div>
 [% IF flash.message %]
-    <div class="flash"> [% flash.message %] </div>
+    <!-- <div class="flash"> [% flash.message %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl( "[% flash.message %]", { life: 10000, theme: 'Blitzer', themeState: 'highlight' } );
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
 [% END %]
 [% IF flash.error %]
-    <div class="error"> [% flash.error %] </div>
+    <!-- <div class="error"> [% flash.error %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl("[% flash.error %]", { header: 'Error', sticky: true, theme: 'Blitzer', themeState: 'error' });
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
 [% END %]

@@ -15,6 +15,7 @@ use Side7::AuditLog;
 use Side7::Search;
 use Side7::Login;
 use Side7::User;
+use Side7::User::ChangePassword;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::RatingQualifier;
@@ -555,6 +556,7 @@ hook 'before' => sub
     }
 };
 
+# User Home Page
 get '/my/home/?' => sub
 {
     my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
@@ -568,9 +570,10 @@ get '/my/home/?' => sub
     template 'my/home', { user => $user_hash };
 };
 
-get '/my/kudos/?' => sub
+# User Account Management Landing Page
+get '/my/account/?' => sub
 {
-    my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
+    my ( $user_hash ) = Side7::User::show_account( username => session( 'username' ) );
 
     if ( ! defined $user_hash )
     {
@@ -578,9 +581,234 @@ get '/my/kudos/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/kudos', { user => $user_hash };
+    template 'my/account', { user => $user_hash };
 };
 
+# User Change Password Step 1
+post '/my/changepassword/?' => sub
+{
+    my $params = params;
+ 
+    # Validating params with rule file
+    my $data = validator( $params, 'change_password_form.pl' );
+
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+        return redirect '/my/account';
+    }
+
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my ( $success, $error ) = $user->is_valid_password( params->{'old_password'} );
+
+    if ( $success == 0 )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        $err_message .= "Your Current Password is incorrect: $error";
+
+        flash error => $err_message;
+        return redirect '/my/account';
+    }
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+    my $confirmation_code = Side7::Utils::Crypt::sha1_hex_encode( session( 'username' ) . time() );
+    my $confirmation_link = uri_for( "/my/confirm_password_change/$confirmation_code" );
+
+    # Record change to be made in a temp record
+    my $password_change = Side7::User::ChangePassword->new(
+                                                            user_id           => session( 'user_id' ),
+                                                            confirmation_code => $confirmation_code,
+                                                            new_password      => params->{'new_password'},
+                                                            created_at        => 'now',
+                                                            updated_at        => 'now',
+                                                          );
+
+    $password_change->save();
+
+    # Send e-mail to User with a confirmation link
+    my $email_body = template 'email/password_change_confirmation', { 
+        user              => $user, 
+        confirmation_link => $confirmation_link 
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $user->email_address,
+        subject => "Password change on Side 7, $user->username!",
+        body    => $email_body,
+    };
+
+    my $audit_message = 'Password Change Request Sent - ';
+    $audit_message   .= 'User: &gt;<b>' . session( 'username' ) . '</b>&lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Password Change Request',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          user_id     => session( 'user_id' ),
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Display page with instructions to the User
+    return template 'my/password_change_next_step', { user => $user_hash };
+};
+
+# User Change Password Step 2
+get '/my/confirm_password_change/?:confirmation_code?' => sub
+{
+    if ( ! defined params->{'confirmation_code'} )
+    {
+        return template 'my/change_password_confirmation_form';
+    }
+
+    my $change_result = Side7::User::confirm_password_change( params->{'confirmation_code'} );
+
+    if
+    (
+        ! defined $change_result->{'confirmed'}
+        ||
+        $change_result->{'confirmed'} == 0
+    )
+    {
+        flash error => $change_result->{'error'};
+        return template 'my/change_password_confirmation_form',
+                                    { confirmation_code => params->{'confirmation_code'} };
+    }
+
+    my $audit_message = 'Password Change confirmation - <b>Successful</b> - ';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt; - ';
+    $audit_message   .= 'Original value: &gt;<b>' . $change_result->{'original_password'} . '</b>%lt; - ';
+    $audit_message   .= 'New value: &gt;<b>' . $change_result->{'new_password'} . '</b>%lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Password Change Confirmation',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          user_id     => session( 'user_id' ),
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    template 'my/password_change_confirmed';
+};
+
+# User Change Password Post-redirect to Get
+post '/my/confirm_password_change' => sub
+{
+    return redirect '/my/confirm_password_change/' . params->{'confirmation_code'};
+};
+
+# User Set Delete Flag Step 1
+post '/my/setdelete/?' => sub
+{
+    my $params = params;
+ 
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+    my $confirmation_code = Side7::Utils::Crypt::sha1_hex_encode( session( 'username' ) . time() );
+    my $confirmation_link = uri_for( "/my/confirm_set_delete/$confirmation_code" );
+
+    # Record change to be made in a temp record
+    my $set_delete = Side7::User::AccountDelete->new(
+                                                        user_id           => session( 'user_id' ),
+                                                        confirmation_code => $confirmation_code,
+                                                        created_at        => 'now',
+                                                        updated_at        => 'now',
+                                                    );
+
+    $set_delete->save();
+
+    # Send e-mail to User with a confirmation link
+    my $email_body = template 'email/set_account_delete_flag_confirmation', { 
+        user              => $user, 
+        confirmation_link => $confirmation_link 
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $user->email_address,
+        subject => "Setting Your Account For Deletion From Side 7, $user->username!",
+        body    => $email_body,
+    };
+
+    my $audit_message = 'Set Account Delete Flag Request Sent - ';
+    $audit_message   .= 'User: &gt;<b>' . session( 'username' ) . '</b>&lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Set Delete Flag Request',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          user_id     => session( 'user_id' ),
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Display page with instructions to the User
+    return template 'my/set_delete_flag_next_step', { user => $user_hash };
+};
+
+# User Set Delete Flag Step 2
+get '/my/confirm_password_change/?:confirmation_code?' => sub
+{
+    if ( ! defined params->{'confirmation_code'} )
+    {
+        return template 'my/change_password_confirmation_form';
+    }
+
+    my $change_result = Side7::User::confirm_password_change( params->{'confirmation_code'} );
+
+    if
+    (
+        ! defined $change_result->{'confirmed'}
+        ||
+        $change_result->{'confirmed'} == 0
+    )
+    {
+        flash error => $change_result->{'error'};
+        return template 'my/change_password_confirmation_form',
+                                    { confirmation_code => params->{'confirmation_code'} };
+    }
+
+    my $audit_message = 'Password Change confirmation - <b>Successful</b> - ';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt; - ';
+    $audit_message   .= 'Original value: &gt;<b>' . $change_result->{'original_password'} . '</b>%lt; - ';
+    $audit_message   .= 'New value: &gt;<b>' . $change_result->{'new_password'} . '</b>%lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Password Change Confirmation',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          user_id     => session( 'user_id' ),
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    template 'my/password_change_confirmed';
+};
+
+# User Change Password Post-redirect to Get
+post '/my/confirm_password_change' => sub
+{
+    return redirect '/my/confirm_password_change/' . params->{'confirmation_code'};
+};
+
+
+# User Gallery Landing Page
 get '/my/gallery/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
@@ -595,6 +823,36 @@ get '/my/gallery/?' => sub
     template 'my/gallery', { user => $user_hash };
 };
 
+# User Kudos Landing Page
+get '/my/kudos/?' => sub
+{
+    my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
+
+    if ( ! defined $user_hash )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'my/kudos', { user => $user_hash };
+};
+
+# User Gallery Landing Page
+get '/my/gallery/?' => sub
+{
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my ( $user_hash ) = $user->get_user_hash_for_template();
+
+    if ( ! defined $user_hash )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'my/gallery', { user => $user_hash };
+};
+
+# User Content Upload Page
 get '/my/upload/?:upload_type?/?' => sub
 {
 
@@ -620,6 +878,7 @@ get '/my/upload/?:upload_type?/?' => sub
                           };
 };
 
+# Upload Submission Processor
 post '/my/upload' => sub
 {
     my $params = params;
@@ -698,6 +957,7 @@ post '/my/upload' => sub
     my $audit_message = '';
 
     # Insert the content record into the database.
+    # TODO: REFACTOR THIS CRAP.
     if ( lc( params->{'upload_type'} ) eq 'image' )
     {
         my $copyright_year = undef;
@@ -787,6 +1047,7 @@ post '/my/upload' => sub
     template 'my/gallery';
 };
 
+# User Permissions Explanation Page ( Might be temporary )
 get '/my/permissions/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
@@ -803,6 +1064,7 @@ get '/my/permissions/?' => sub
     template 'my/permissions', { user => $user_hash, permissions => $permissions };
 };
 
+# User Perks Landing Page ( Might be temporary )
 get '/my/perks/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
@@ -844,6 +1106,7 @@ use Side7::Admin::Report;
 
 prefix '/admin';
 
+# Ensure only those accounts with permission to reach the admin dashboard reach it.
 hook 'before' => sub
 {
     if ( request->path_info =~ m/^\/admin\// )
@@ -875,6 +1138,7 @@ hook 'before' => sub
     }
 };
 
+# Admin Main Dashboard Page
 get '/' => sub
 {
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );

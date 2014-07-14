@@ -1,0 +1,53 @@
+        <div style="border: solid 1px #000000; padding: 5px;">
+            <h2>Account Information</h2>
+            <p>
+                <b>Joined:</b> [% user.account.created_at %]<br />
+                <b>Account Status:</b> [% user.account.status %]<br />
+                <b>Account Type:</b> [% user.account.type %]<br />
+                <b>Subscription Expires:</b> [% user.account.subscription_expires_on %]<br />
+                [% IF user.account.delete_on %]
+                <b>Your Account Will Be Deleted On:</b> [% user.account.delete_on %]<br />
+                [% END %]
+                <br />
+                [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
+            </p>
+        </div>
+        <div style="border: solid 1px #000000; padding: 5px;">
+            <h2>Change Your Password</h2>
+            <form action='/my/changepassword' method='post'>
+                <label for='old_password'>Current Password:</label> 
+                <input type="password" name="old_password" value="" placeholder="Current Password" size="30" maxlength="45"><br />
+                <label for='new_password'>New Password:</label> 
+                <input type="password" name="new_password" value="" placeholder="New Password" size="30" maxlength="45"><br />
+                <label for='confirm_new_password'>Confirm New Password:</label> 
+                <input type="password" name="confirm_new_password" value="" placeholder="Confirm Password" size="30" maxlength="45"><br />
+                <input type="submit" value="Change Password">
+            </form>
+        </div>
+        <div style="border: solid 1px #000000; padding: 5px;">
+            <h2>Delete Your Account</h2>
+            <p style="text-align: justify; font-size: 8pt;">If you would like to delete your account 
+            and all of your content uploads, click &quot;Set Delete Flag&quot;. 
+            This will mark your account for automatic removal. You will have 30 days before your 
+            account is removed, and during that time, you can come back to this page and remove 
+            the flag if you change your mind.</p>
+
+            [% IF user.account.delete_on %]
+            [% delete_form_action = '/my/cleardelete' %]
+            [% delete_button      = 'Remove Account Deletion Flag' %]
+            [% delete_date        = "(Account will be purged on <strong>${user.account.delete_on}</strong>.)" %]
+            [% delete_style       = '' %]
+            [% action_flag        = 'clear_flag' %]
+            [% ELSE %]
+            [% delete_form_action = '/my/setdelete' %]
+            [% delete_button      = 'Set Account Deletion Flag' %]
+            [% delete_date        = '' %]
+            [% delete_style       = 'background-color: #993333; color: #fff;' %]
+            [% action_flag        = 'set_flag' %]
+            [% END %]
+            <form action='[% delete_form_action %]' method='post'>
+            <input type='hidden' name='[% action_flag %]' value='1'>
+            <input type='submit' value='[% delete_button %]' style="[% delete_style %]">
+            [% delete_date %]
+            </form>
+        </div>

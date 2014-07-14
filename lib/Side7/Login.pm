@@ -61,66 +61,29 @@ sub user_login
         return ( $rd_url, undef, 'Error - No username or password provided.' );
     }
 
-    my $digest = Side7::Utils::Crypt::sha1_hex_encode( $password );
-
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1 );
 
-    # Provided that we returned a proper User, we can try comparing the
-    # password. New or recently logged in accounts will be in SHA1,
-    # migrated accounts will have passwords in crypt.  We will convert
-    # MD5 and crypt'ed passwords to SHA1 on their first login for more security.
-    if ( ref($user) eq 'Side7::User' && $loaded != 0 )
-    {
-        if ( $digest eq $user->{'password'} )
-        {
-            return ( $rd_url, $user, undef );
-        }
-
-        my $md5_hex = Side7::Utils::Crypt::md5_hex_encode( $password );
-
-        if ( $md5_hex eq $user->{'password'} )
-        {
-            # If the password is MD5_hex, let's convert it to SHA1.
-            $user->{'password'} = $digest;
-            $user->save;
-
-            return ( $rd_url, $user, undef );
-        }
-
-        my $crypt = Side7::Utils::Crypt::old_side7_crypt( $password );
-
-        if ( $crypt eq $user->{'password'} )
-        {
-            # If the password is crypted, let's convert it to SHA1.
-            $user->{'password'} = $digest;
-            $user->save;
-
-            return ( $rd_url, $user, undef );
-        }
-
-        my $db_pass = Side7::Utils::Crypt::old_mysql_password( $password );
-
-        if ( $db_pass eq $user->{'password'} )
-        {
-            # If the password is db password, let's convert it to SHA1.
-            $user->{'password'} = $digest;
-            $user->save;
-
-            return ( $rd_url, $user, undef );
-        }
-
-        #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
-    }
-    else
+    if ( ref($user) ne 'Side7::User' || $loaded == 0 )
     {
         # Invalid User
         $LOGGER->error( "User >$username< doesn't exist in the database." );
         return ( $rd_url, undef, "Invalid login attempt - User &gt;<b>$username</b>&lt; doesn't exist in the database." );
     }
 
+    # Provided that we returned a proper User, we can try comparing the
+    # password. New or recently logged in accounts will be in SHA1,
+    # migrated accounts will have passwords in crypt.  We will convert
+    # MD5 and crypt'ed passwords to SHA1 on their first login for more security.
+    my ( $matched, $error ) = $user->is_valid_password( $password );
+
+    if ( $matched == 1 )
+    {
+        return ( $rd_url, $user, undef );
+    }
+
     # Failure
-    my $error = 'Invalid login attempt - Bad username/password combo - Username: &gt;<b>' . $username . '</b>&lt;; ';
+    $error = 'Invalid login attempt - Bad username/password combo - Username: &gt;<b>' . $username . '</b>&lt;; ';
     $error   .= 'Password: &gt;<b>' . $password . '</b>&lt; ';
     $error   .= 'RD_URL: &gt;<b>' . $rd_url  . '</b>&lt;';
 

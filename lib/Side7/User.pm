@@ -654,6 +654,76 @@ sub get_all_perks
     return \@perks;
 }
 
+
+=head2 is_valid_password()
+
+Tests to see if a provided password is valid, and if the password is in a non-SHA1 format, it converts it to one.
+Returns an arrayref of success code, and error.
+
+Parameters:
+
+=over4
+
+=item password: The plain-text password the User supplied.
+
+=back
+
+    my ( $success, $error ) = $user->is_valid_password( $password );
+
+=cut
+
+sub is_valid_password
+{
+    my ( $self, $password ) = @_;
+
+    return ( 0, 'Invalid password provided: blank password' ) if ! defined $password;
+
+    my $digest = Side7::Utils::Crypt::sha1_hex_encode( $password );
+
+    if ( $digest eq $self->{'password'} )
+    {
+        return ( 1, undef );
+    }
+
+    my $md5_hex = Side7::Utils::Crypt::md5_hex_encode( $password );
+
+    if ( $md5_hex eq $self->{'password'} )
+    {
+        # If the password is MD5_hex, let's convert it to SHA1.
+        $self->{'password'} = $digest;
+        $self->save;
+
+        return ( 1, undef );
+    }
+
+    my $crypt = Side7::Utils::Crypt::old_side7_crypt( $password );
+
+    if ( $crypt eq $self->{'password'} )
+    {
+        # If the password is crypted, let's convert it to SHA1.
+        $self->{'password'} = $digest;
+        $self->save;
+
+        return ( 1, undef );
+    }
+
+    my $db_pass = Side7::Utils::Crypt::old_mysql_password( $password );
+
+    if ( $db_pass eq $self->{'password'} )
+    {
+        # If the password is db password, let's convert it to SHA1.
+        $self->{'password'} = $digest;
+        $self->save;
+
+        return ( 1, undef );
+    }
+
+    #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
+
+    return ( 0, 'Invalid credentials provided. Check that you have typed your username and/or password correctly.' );
+}
+
+
 =head1 FUNCTIONS
 
 
@@ -849,6 +919,66 @@ sub confirm_new_user
 }
 
 
+=head2 confirm_password_change()
+
+Checks for a User account that has the confirmation_code that is passed in. If so, updates the User's password to the new value.
+
+Parameters:
+
+=over 4
+
+=item confirmation_code: Just the value of the confirmation code. No default.
+
+=back
+
+    my ( $confirmed, $error ) = Side7::User::confirm_password_change( $confirmation_code );
+
+=cut
+
+sub confirm_password_change
+{
+    my ( $confirmation_code ) = @_;
+
+    my %change_results = ();
+
+    if ( ! defined $confirmation_code || length( $confirmation_code ) < 40 )
+    {
+        $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
+        $change_results{'confirmed'} = 0;
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+                                        '< is invalid. Please check your code and try again.';
+        return \%change_results;
+    }
+
+    my $change = Side7::User::ChangePassword->new( confirmation_code => $confirmation_code );
+    my $loaded = $change->load( speculative => 1, with => [ 'user' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
+        $change_results{'confirmed'} = 0;
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+                                        '< is invalid. Please check your code and try again.';
+        return \%change_results;
+    }
+
+    my $new_encoded_password = Side7::Utils::Crypt::sha1_hex_encode( $change->new_password() );
+    my $original_password    = $change->user->password();
+
+    $change->user->password( $new_encoded_password );
+    $change->user->updated_at( 'now' );
+    $change->user->save;
+
+    $change->delete;
+
+    $change_results{'confirmed'}         = 1;
+    $change_results{'original_password'} = $original_password;
+    $change_results{'new_password'}      = $new_encoded_password;
+
+    return \%change_results;
+}
+
+
 =head2 show_profile()
 
 Displays the public profile page for the given user
@@ -1009,6 +1139,51 @@ sub show_home
 }
 
 
+=head2 show_account
+
+Displays the User's Account Management page.
+
+Parameters:
+
+=over 4
+
+=item username: The username to use for looking up the User object to get the appropriate hash for use with the template.
+
+=back
+
+    my $user_hash = Side7::User::show_account( username => $username )
+
+=cut
+
+sub show_account
+{
+    my ( %args ) = @_;
+
+    my $username = delete $args{'username'};
+
+    return undef if ( ! defined $username || $username eq '' );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
+        return undef;
+    }
+
+    # User Not Found
+    if ( ! defined $user )
+    {
+        return undef;
+    }
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+    return $user_hash;
+}
+
+
 =head2 show_kudos
 
 Displays the User's Kudos Coins page.
@@ -1021,7 +1196,7 @@ Parameters:
 
 =back
 
-    my $user_hash = Side7::User::show_home( username => $username )
+    my $user_hash = Side7::User::show_kudos( username => $username )
 
 =cut
 

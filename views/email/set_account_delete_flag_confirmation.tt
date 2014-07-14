@@ -1,0 +1,13 @@
+<p>Greetings [% user.username %]!</p>
+
+<p>This e-mail is being sent to you because you, or someone else, are attempting to set the account deletion flag on your account. If you are <b>not</b> the one who made this request, then you do not need to do anything. This change request will automatically expire in 48 hours, and nothing will be changed.</p>
+
+<p>If you did make the request, do the following:</p>
+
+<p>Go to <a href="[% confirmation_link %]">this page</a> to confirm that you want to set the account deletion flag. If your e-mail client doesn't support links in the e-mail, you can copy and paste the following URL into your browser:</p>
+
+<p><pre>[% confirmation_link %]</pre></p>
+
+<p>Confirming your set deletion flag request will set your account to be removed via automated process in 30 days. Your account, and all content you've uploaded, will be deleted permanently from our system.</p>
+
+<p>-- The Side 7 Staff</p>
