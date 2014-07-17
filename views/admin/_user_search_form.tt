@@ -1,20 +1,37 @@
-<div style="margin-bottom: 5px;">
+<div style="margin-bottom: 10px;">
     <h3>User Search:</h3>
     <form action="/admin/users/search" method="post">
+    <input type="hidden" name="page" value="1">
+    <input type="hidden" name="initial" value="[% initial %]">
     Search for users using one or more of the following criteria:<br />
-    <label for="username">Username</label>
-    <input type="text" name="username" value="[% query.username %]" size="30" maxlength="45" placeholder="Full or partial">
+    <label for="search_term">Search For</label>
+    <input type="text" name="search_term" value="[% query.search_term %]" size="30" maxlength="45" placeholder="Username, Name, E-mail">
     &middot;
     <label for="status">Status</label>
     <select name="status">
+    <option value="">Any</option>
+    [% FOREACH status IN data.statuses %]
+    [% selected = '' %] [% IF query.status == status.id %] [% selected = ' selected' %] [% END %]
+    <option value="[% status.id %]"[% selected %]>[% status.user_status %]</option>
+    [% END %]
     </select>
     &middot;
     <label for="type">Type</label>
     <select name="type">
+    <option value="">Any</option>
+    [% FOREACH type IN data.types %]
+    [% selected = '' %] [% IF query.type == type.id %] [% selected = ' selected' %] [% END %]
+    <option value="[% type.id %]"[% selected %]>[% type.user_type %]</option>
+    [% END %]
     </select>
     &middot;
     <label for="role">Role</label>
     <select name="role">
+    <option value="">Any</option>
+    [% FOREACH role IN data.roles %]
+    [% selected = '' %] [% IF query.role == role.id %] [% selected = ' selected' %] [% END %]
+    <option value="[% role.id %]"[% selected %]>[% role.name %]</option>
+    [% END %]
     </select>
     <input type="submit" value="Search">
     </form>

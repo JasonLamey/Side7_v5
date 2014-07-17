@@ -1,14 +1,16 @@
 <p>
+
+[% base = link_base_uri %][% IF pagination_base_uri %][% base = pagination_base_uri %][% END %]
 [% IF NOT pagination.previous_page %]
 &lt; Previous Page
 [% ELSE %]
-<a href="[% link_base_uri %]/[% initial %]/[% pagination.previous_page %]">&lt; Previous Page</a>
+<a href="[% base %]/[% initial %]/[% pagination.previous_page %]">&lt; Previous Page</a>
 [% END %]
  | Page [% pagination.current_page %] of [% pagination.total_pages %] |
 [% IF NOT pagination.next_page %]
 Next Page &gt;
 [% ELSE %]
-<a href="[% link_base_uri %]/[% initial %]/[% pagination.next_page %]">Next Page &gt;</a>
+<a href="[% base %]/[% initial %]/[% pagination.next_page %]">Next Page &gt;</a>
 [% END %]
 </p>
 

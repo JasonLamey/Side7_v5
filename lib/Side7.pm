@@ -364,7 +364,7 @@ post '/search/?' => sub
                                                                     look_for         => params->{'look_for'}, 
                                                                     page             => $page,
                                                                     filter_profanity => vars->{'filter_profanity'},
-                                                                 );
+                                                                );
 
     template 'search/search_form', { 
                                     look_for     => params->{'look_for'}, 
@@ -1174,6 +1174,7 @@ hook 'before' => sub
                                 '< attempted but is not authorized to view >' . request->path_info . '<';
                 $LOGGER->info( $error );
 
+                my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
                 my $audit_log = Side7::AuditLog->new(
                                                       title       => 'Unauthorized Admin Access Attempt',
                                                       description => $error,
@@ -1229,5 +1230,124 @@ get '/users/?:initial?/?:page?/?' => sub
 };
 
 # Admin User Dashboard Search Page
+post '/users/search' => sub
+{
+    my $search_term = params->{'search_term'} // undef;
+    my $status      = params->{'status'}      // undef;
+    my $type        = params->{'type'}        // undef;
+    my $role        = params->{'role'}        // undef;
+    my $initial     = params->{'initial'}     // '0';
+    my $page        = params->{'page'}        // '1';
+
+    if
+    (
+        ( ! defined $search_term || $search_term eq '' )
+        &&
+        ( ! defined $status || $status eq '' )
+        &&
+        ( ! defined $type || $type eq '' )
+        &&
+        ( ! defined $role || $role eq '' )
+    )
+    {
+        return redirect '/admin/users/' . $initial . '/' . $page;
+    }
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::search_users(
+                                                        search_term => $search_term,
+                                                        status      => $status,
+                                                        type        => $type,
+                                                        role        => $role,
+                                                        page        => $page,
+                                                    );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'user_count'}, page => $page } );
+
+    my $search_url_base = '/admin/users/search/' .
+                          $search_term . '/' .
+                          $status . '/' .
+                          $type . '/' .
+                          $role;
+
+    template 'admin/user', { 
+                                title         => 'Users',
+                                query         => { 
+                                                    search_term => $search_term,
+                                                    status      => $status,
+                                                    type        => $type,
+                                                    role        => $role,
+                                                 },
+                                main_menu           => $menu_options, 
+                                data                => $data, 
+                                initial             => $initial, 
+                                page                => $page,
+                                pagination          => $pagination,
+                                link_base_uri       => '/admin/users',
+                                pagination_base_uri => $search_url_base,
+                           },
+                           { layout => 'admin' };
+};
+
+# Admin User Dashboard Search Get Redirect for Pagination
+get '/users/search/:search_term?/:status?/:type?/:role?/:intial/:page' => sub
+{
+    my $search_term = params->{'search_term'} // undef;
+    my $status      = params->{'status'}      // undef;
+    my $type        = params->{'type'}        // undef;
+    my $role        = params->{'role'}        // undef;
+    my $initial     = params->{'initial'}     // '0';
+    my $page        = params->{'page'}        // '1';
+
+    if (
+        ( ! defined $search_term || $search_term eq '' )
+        &&
+        ( ! defined $status || $status eq '' )
+        &&
+        ( ! defined $type || $type eq '' )
+        &&
+        ( ! defined $role || $role eq '' )
+    )
+    {
+        return redirect '/admin/users/' . $initial . '/' . $page;
+    }
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::search_users(
+                                                        search_term => $search_term,
+                                                        status      => $status,
+                                                        type        => $type,
+                                                        role        => $role,
+                                                        page        => $page,
+                                                    );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'user_count'}, page => $page } );
+
+    my $search_url_base = '/admin/users/search/' .
+                          $search_term . '/' .
+                          $status . '/' .
+                          $type . '/' .
+                          $role;
+
+    template 'admin/user', { 
+                                title         => 'Users',
+                                query         => { 
+                                                    search_term => $search_term,
+                                                    status      => $status,
+                                                    type        => $type,
+                                                    role        => $role,
+                                                 },
+                                main_menu           => $menu_options, 
+                                data                => $data, 
+                                initial             => $initial, 
+                                page                => $page,
+                                pagination          => $pagination,
+                                link_base_uri       => '/admin/users',
+                                pagination_base_uri => $search_url_base,
+                           },
+                           { layout => 'admin' };
+};
 
 true;

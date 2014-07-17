@@ -3,8 +3,14 @@ package Side7::Admin::Dashboard;
 use strict;
 use warnings;
 
+use Data::Dumper;
+
 use Side7::Globals;
 use Side7::User;
+use Side7::User::Manager;
+use Side7::User::Status::Manager;
+use Side7::User::Type::Manager;
+use Side7::User::Role::Manager;
 
 =pod
 
@@ -194,17 +200,209 @@ sub show_user_dashboard
     my $initials = Side7::User::get_username_initials();
 
     my ( $users, $user_count ) = Side7::User::get_users_for_directory( 
-                                                                            initial   => $initial,
-                                                                            page      => $page,
-                                                                            no_images => 1,
+                                                                            initial          => $initial,
+                                                                            page             => $page,
+                                                                            no_images        => 1,
+                                                                            filter_profanity => 0,
                                                                          );
+
+    my $statuses = Side7::Admin::Dashboard::get_user_statuses_for_select();
+    my $roles    = Side7::Admin::Dashboard::get_user_roles_for_select();
+    my $types    = Side7::Admin::Dashboard::get_user_types_for_select();
 
     return {
                 users      => $users, 
                 user_count => $user_count,
                 initials   => $initials,
+                statuses   => $statuses,
+                roles      => $roles,
+                types      => $types,
            };
 };
+
+
+=head2 get_user_statuses_for_select()
+
+Returns a hashref of User Status IDs and names;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $statuses = Side7::Admin::Dashboard::get_user_statuses_for_select();
+
+=cut
+
+sub get_user_statuses_for_select
+{
+    my $statuses = Side7::User::Status::Manager->get_statuses(
+                                                                sort_by => 'id',
+                                                             );
+
+    return $statuses;
+}
+
+
+=head2 get_user_roles_for_select()
+
+Returns a hashref of User Roles IDs and names;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $statuses = Side7::Admin::Dashboard::get_user_roles_for_select();
+
+=cut
+
+sub get_user_roles_for_select
+{
+    my $roles = Side7::User::Role::Manager->get_roles(
+                                                         sort_by => 'priority',
+                                                       );
+
+    return $roles;
+}
+
+
+=head2 get_user_types_for_select()
+
+Returns a hashref of User Types IDs and names;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $types = Side7::Admin::Dashboard::get_user_types_for_select();
+
+=cut
+
+sub get_user_types_for_select
+{
+    my $types = Side7::User::Type::Manager->get_types(
+                                                        sort_by => 'id',
+                                                     );
+
+    return $types;
+}
+
+
+=head2 search_users()
+
+Returns an hashref of user accounts that match the search criteria.
+
+Parameters:
+
+=over 4
+
+=item search_term: A string containing the text for which to search in the username, first_name, last_name, and email.
+
+=item status: The status ID upon which to search.
+
+=item type: The type ID upon which to search.
+
+=item role: The role ID upon which to search.
+
+=item page: The page of results to return.
+
+=back
+
+    my $data = Side7::Admin::Dashboard::search_users(
+                                                        search_term => $search_term,
+                                                        status      => $status,
+                                                        type        => $type,
+                                                        role        => $role,
+                                                        page        => $page,
+                                                    );
+
+=cut
+
+sub search_users
+{
+    my ( %args ) = @_;
+
+    my $search_term = delete $args{'search_term'} // undef;
+    my $status      = delete $args{'status'}      // undef;
+    my $type        = delete $args{'type'}        // undef;
+    my $role        = delete $args{'role'}        // undef;
+    my $page        = delete $args{'page'}        // 1;
+
+    my $query = '';
+
+    if ( defined $search_term && $search_term ne '' )
+    {
+        my $search = $search_term;
+        $search =~ s/([\@\$\#\%])/\\$1/g;
+        $query .= qq( 
+                    or => [
+                            'username'           => { like => "%$search%" },
+                            'email_address'      => { like => "%$search%" },
+                            'account.first_name' => { like => "%$search%" },
+                            'account.last_name'  => { like => "%$search%" },
+                          ], );
+    }
+    if ( defined $status && $status ne '' )
+    {
+        $query .= qq( 'account.user_status_id' => "$status", );
+    }
+    if ( defined $role && $role ne '' )
+    {
+        $query .= qq( 'account.user_role_id' => "$role", );
+    }
+    if ( defined $type && $type ne '' )
+    {
+        $query .= qq( 'account.user_type_id' => "$type", );
+    }
+
+    my $user_count = Side7::User::Manager->get_users_count(
+        query =>
+            [
+                eval $query,
+            ],
+        with_objects => [ 'account' ],
+    );
+
+    my $users = Side7::User::Manager->get_users
+    (
+        query => [
+                    eval $query,
+                 ],
+        with_objects => [ 'account' ],
+        sort_by      => 'username ASC',
+        page         => $page,
+        per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
+    );
+
+    my @results = ();
+
+    foreach my $user ( @{ $users } )
+    {
+        push( @results, { user_hash => $user->get_user_hash_for_template( filter_profanity => 0 ) } );
+    }
+
+    my %data = ();
+
+    $data{'users'}      = \@results;
+    $data{'user_count'} = $user_count;
+    $data{'initials'}   = Side7::User::get_username_initials();
+    $data{'statuses'}   = Side7::Admin::Dashboard::get_user_statuses_for_select();
+    $data{'roles'}      = Side7::Admin::Dashboard::get_user_roles_for_select();
+    $data{'types'}      = Side7::Admin::Dashboard::get_user_types_for_select();
+
+    return \%data;
+}
 
 
 =head1 COPYRIGHT

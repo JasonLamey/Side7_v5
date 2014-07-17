@@ -47,7 +47,7 @@ $(document).ready(function()
         <td align="center"><span class="user_role_[% user.user_hash.account.role %]">[% user.user_hash.account.role %]</span></td>
         <td>[% user.user_hash.created_at %]</td>
         <td align="center">
-                    <a href="/user/[% user.user_hash.username %]" data-jkit="[lightbox:modal=yes;width=800px;height=550px]">
+                    <a href="/user/[% user.user_hash.username %]" data-jkit="[lightbox:width=900px;height=550px]">
                     <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details</a> | 
                            <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit | 
                            <img src="/images/icons/user_delete.gif" alt="Delete User" title="Delete User" align="absmiddle" border="0"> Delete</td>
