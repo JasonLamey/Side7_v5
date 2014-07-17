@@ -1,0 +1,61 @@
+<script>
+$(document).ready(function() 
+    { 
+        $("#users_table").tablesorter({ 
+            // sort on the username column (second column), order asc 
+            sortList: [[1,0]],
+            headers: {
+                7: { sorter: false },
+            },
+            widgets: ['zebra'],
+        }); 
+    } 
+);
+</script>
+
+<h2>Users</h2>
+
+[% PROCESS 'admin/_user_search_form.tt' %]
+
+[% PROCESS 'site/_pagination_menu_initials.tt' %]
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
+
+<table width="100%" cellspacing="1" id="users_table" class="tablesorter">
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>Role</th>
+        <th>Joined</th>
+        <th>Tools</th>
+    </tr>
+</thead>
+<tbody>
+    [% IF data.user_count == 0 || data.user_count == '' %]
+    <tr><td colspan="8" align="center"><strong>No Users Found For '[% initial %]'</strong></td></tr>
+    [% ELSE %]
+        [% FOR user IN data.users %]
+    <tr class="admin_row_bg_[% user.user_hash.account.status %]">
+        <td align="right">[% user.user_hash.id %]</td>
+        <td>[% user.user_hash.username %]</td>
+        <td>[% user.user_hash.account.full_name %]</td>
+        <td align="center"><span class="user_status_[% user.user_hash.account.status %]">[% user.user_hash.account.status %]</span></td>
+        <td align="center">[% user.user_hash.account.type %]</td>
+        <td align="center"><span class="user_role_[% user.user_hash.account.role %]">[% user.user_hash.account.role %]</span></td>
+        <td>[% user.user_hash.created_at %]</td>
+        <td align="center">
+                    <a href="/user/[% user.user_hash.username %]" data-jkit="[lightbox:modal=yes;width=800px;height=550px]">
+                    <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details</a> | 
+                           <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit | 
+                           <img src="/images/icons/user_delete.gif" alt="Delete User" title="Delete User" align="absmiddle" border="0"> Delete</td>
+    </tr>
+        [% END %]
+    [% END %]
+</tbody>
+</table>
+
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
+[% PROCESS 'site/_pagination_menu_initials.tt' %]

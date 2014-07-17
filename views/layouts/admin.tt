@@ -11,19 +11,27 @@
 <link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
 
 <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">/* <![CDATA[ */
     !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
 /* ]]> */</script>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/css/jkit.new.css" />
+<script type="text/javascript" src="/javascripts/jkit/jquery.jkit.1.2.16.min.js"></script>
+<link rel="stylesheet" href="/javascripts/tablesorter/themes/blue/style.css" />
+<script src="/javascripts/tablesorter/jquery.tablesorter.min.js"></script>
 
 [% IF ( flash.message || flash.error ) %]
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
-<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
 [% END %]
 
+<script type="text/javascript">
+$(document).ready(function(){
+    $('body').jKit();
+});
+</script>
 
 <style>
     #page_content {
@@ -76,6 +84,48 @@
         width: auto;
         height: auto;
         border: solid 1px #666;
+    }
+    .user_status_Pending {
+        color: purple; 
+        background-color: #FFAAFF;
+        font-weight: bold;
+    }
+    .user_status_Active {
+        color: green; 
+    }
+    .user_status_Suspended {
+        color: orange; 
+        background-color: #FFFFAA;
+        font-weight: bold;
+    }
+    .user_status_Disabled {
+        color: red; 
+        background-color: #FFAAAA;
+        font-weight: bold;
+    }
+    .user_role_Guest {
+        color: gray;
+    }
+    .user_role_User {
+    }
+    .user_role_Subscriber {
+        color: gold;
+        background-color: seagreen;
+    }
+    .user_role_Moderator {
+        font-weight: bold;
+        color: lightsteelblue;
+        background-color: navy;
+    }
+    .user_role_Admin {
+        font-weight: bold;
+        color: yellow;
+        background-color: orangered;
+    }
+    .user_role_Owner {
+        font-weight: bold;
+        color: white;
+        background-color: black;
     }
 </style>
 

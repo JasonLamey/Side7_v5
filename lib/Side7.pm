@@ -449,15 +449,22 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
         $page = 1;
     }
 
+    my $initials = Side7::User::get_username_initials();
+
     my ( $users, $user_count ) = Side7::User::get_users_for_directory( initial => $initial, page => $page, session => session );
 
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $user_count, page => $page } );
 
     template 'user/user_directory', {
-                                        users      => $users, 
-                                        initial    => $initial, 
-                                        page       => $page, 
-                                        pagination => $pagination,
+                                        data          => { 
+                                                            initials   => $initials,
+                                                            users      => $users, 
+                                                            user_count => $user_count,
+                                                         },
+                                        initial       => $initial, 
+                                        page          => $page, 
+                                        pagination    => $pagination,
+                                        link_base_uri => '/user_directory',
                                     };
 };
 
@@ -1137,6 +1144,7 @@ use Side7::Login;
 use Side7::User;
 use Side7::Admin::Dashboard;
 use Side7::Admin::Report;
+use Side7::Utils::Pagination;
 
 prefix '/admin';
 
@@ -1162,7 +1170,19 @@ hook 'before' => sub
 
             if ( $authorized != 1 )
             {
-                $LOGGER->info( 'User >' . session( 'username' ) . '< not authorized to view >' . request->path_info . '<' );
+                my $error = 'User >' . session( 'username' ) . 
+                                '< attempted but is not authorized to view >' . request->path_info . '<';
+                $LOGGER->info( $error );
+
+                my $audit_log = Side7::AuditLog->new(
+                                                      title       => 'Unauthorized Admin Access Attempt',
+                                                      description => $error,
+                                                      ip_address  => request->address() . $remote_host,
+                                                      timestamp   => DateTime->now(),
+                );
+
+                $audit_log->save();
+
                 flash error => 'You are not authorized to view that page.';
                 return redirect '/'; # Not an authorized page.
             }
@@ -1182,5 +1202,32 @@ get '/' => sub
     template 'admin/main', { main_menu => $menu_options, data => $data }, { layout => 'admin' };
 };
 
+# Admin User Dashboard Page
+get '/users/?:initial?/?:page?/?' => sub
+{
+    my $initial = params->{'initial'} // '0';
+    my $page    = params->{'page'}    // '1';
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::show_user_dashboard(
+                                                            initial => $initial, 
+                                                            page    => $page,
+                                                           );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'user_count'}, page => $page } );
+
+    template 'admin/user', { 
+                                main_menu     => $menu_options, 
+                                data          => $data, 
+                                initial       => $initial, 
+                                page          => $page,
+                                pagination    => $pagination,
+                                link_base_uri => '/admin/users',
+                           },
+                           { layout => 'admin' };
+};
+
+# Admin User Dashboard Search Page
 
 true;

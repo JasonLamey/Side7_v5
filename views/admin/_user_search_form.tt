@@ -1,0 +1,21 @@
+<div style="margin-bottom: 5px;">
+    <h3>User Search:</h3>
+    <form action="/admin/users/search" method="post">
+    Search for users using one or more of the following criteria:<br />
+    <label for="username">Username</label>
+    <input type="text" name="username" value="[% query.username %]" size="30" maxlength="45" placeholder="Full or partial">
+    &middot;
+    <label for="status">Status</label>
+    <select name="status">
+    </select>
+    &middot;
+    <label for="type">Type</label>
+    <select name="type">
+    </select>
+    &middot;
+    <label for="role">Role</label>
+    <select name="role">
+    </select>
+    <input type="submit" value="Search">
+    </form>
+</div>

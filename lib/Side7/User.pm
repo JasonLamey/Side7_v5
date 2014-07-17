@@ -9,6 +9,7 @@ use List::Util;
 use Data::Dumper;
 use POSIX;
 use DateTime;
+use Rose::DB::Object::QueryBuilder;
 
 use Side7::Globals;
 use Side7::User::Manager;
@@ -155,14 +156,19 @@ sub get_user_hash_for_template
     my $user_hash = {};
 
     # User values
-    foreach my $key ( qw( username email_address ) )
+    foreach my $key ( qw( id username email_address ) )
     {
         $user_hash->{$key} = $self->$key;
     }
     # Date values
     foreach my $key ( qw( created_at updated_at ) )
     {
-        my $date = $self->$key( format => '%A, %c' );
+        my $format = '%A, %c';
+        if ( $key eq 'created_at' )
+        {
+            $format = '%a, %d %b %Y';
+        }
+        my $date = $self->$key( format => $format );
         $date =~ s/ 1$//; # Unsure why, but the returned formatted date always appends a > 1< to the end.
         $user_hash->{$key} = $date;
     }
@@ -1419,9 +1425,10 @@ sub get_users_for_directory
 {
     my ( %args ) = @_;
 
-    my $initial = delete $args{'initial'} // 'a';
-    my $page    = delete $args{'page'}    // 1;
-    my $session = delete $args{'session'} // undef;
+    my $initial   = delete $args{'initial'}   // 'a';
+    my $page      = delete $args{'page'}      // 1;
+    my $session   = delete $args{'session'}   // undef;
+    my $no_images = delete $args{'no_images'} // undef;
 
     my $initial_string = "$initial%";
     my $op = 'like';
@@ -1464,66 +1471,66 @@ sub get_users_for_directory
         my @images = ();
 
         my $size = 'small';
-        foreach my $image_to_add ( @image_ids )
+        if ( ! defined $no_images )
         {
-
-            next if ! defined $image_to_add;
-
-            my $image = @{ $user->images }[ $image_to_add ];
-
-            my ( $filepath, $error );
-            if ( $image->block_thumbnail( session => $session ) == 1 )
+            foreach my $image_to_add ( @image_ids )
             {
-                $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
-                $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
-            }
-            else
-            {
-                ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
-                if ( defined $error && $error ne '' )
+                next if ! defined $image_to_add;
+
+                my $image = @{ $user->images }[ $image_to_add ];
+
+                my ( $filepath, $error );
+                if ( $image->block_thumbnail( session => $session ) == 1 )
                 {
-                    $LOGGER->warn( $error );
-                    $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
+                    $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
+                    $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
                 }
                 else
                 {
-                    if ( ! -f $filepath )
-                    {
-                        my $success = 0;
-                        ( $success, $error ) = $image->create_cached_file( size => $size );
+                    ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 
-                        if ( $success )
-                        {
-                            $filepath =~ s/^\/data//;
-                        }
-                        else
-                        {
-                            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_image', size => $size );
-                        }
+                    if ( defined $error && $error ne '' )
+                    {
+                        $LOGGER->warn( $error );
+                        $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
                     }
                     else
                     {
-                        $filepath =~ s/^\/data//;
+                        if ( ! -f $filepath )
+                        {
+                            my $success = 0;
+                            ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                            if ( $success )
+                            {
+                                $filepath =~ s/^\/data//;
+                            }
+                            else
+                            {
+                                $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_image', size => $size );
+                            }
+                        }
+                        else
+                        {
+                            $filepath =~ s/^\/data//;
+                        }
                     }
                 }
+
+                push( @images, { 
+                                filepath       => $filepath, 
+                                filepath_error => $error, 
+                                uri            => "/image/$image->{'id'}",
+                                title          => Side7::Utils::Text::sanitize_text_for_html( $image->title ),
+                               }
+                );
             }
-
-            push( @images, { 
-                            filepath       => $filepath, 
-                            filepath_error => $error, 
-                            uri            => "/image/$image->{'id'}",
-                            title          => Side7::Utils::Text::sanitize_text_for_html( $image->title ),
-                           }
-            );
         }
-
+ 
         push @$users, 
             {
-                id            => $user->id,
-                username      => $user->username,
-                full_name     => $full_name,
-                join_date     => $created_at,
+                user_hash     => $user->get_user_hash_for_template(),
                 image_count   => $user->get_image_count(),
                 images        => \@images,
             };
@@ -1531,6 +1538,49 @@ sub get_users_for_directory
     $iterator->finish();
 
     return ( $users, $user_count );
+}
+
+
+=head2 get_username_initials()
+
+Returns an arrayref of the initial letters/characters for all usernames.
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $initials = Side7::User::get_username_initials();
+
+=cut
+
+sub get_username_initials
+{
+    my ( $sql, $bind ) = Rose::DB::Object::QueryBuilder::build_select(
+                                                            dbh     => $DB->dbh,
+                                                            select  => 'DISTINCT SUBSTR(username, 1, 1) as initial',
+                                                            tables  => [ 'users' ],
+                                                            columns => { users => [ qw( username ) ] },
+                                                            query   => [],
+                                                            sort_by => 'username ASC',
+                                                            query_is_sql => 1,
+                                                          );
+
+    my $sth = $DB->dbh->prepare( $sql );
+    $sth->execute( @{ $bind } );
+
+    my @initials = ();
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        push( @initials, uc( $row->{'initial'} ) );
+    }
+
+    $sth->finish();
+
+    return \@initials;
 }
 
 

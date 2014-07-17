@@ -1,46 +1,16 @@
 <h1>User Directory</h1>
 
-[% BLOCK pagination_menu_letters %]
-[% FOREACH letter IN [ 'A'..'Z' ] %]
-<a href="/user_directory/[% letter %]">[% letter %]</a> &middot; 
-[% END %]
-[% FOREACH number IN [ 0..9 ] %]
-<a href="/user_directory/[% number %]">[% number %]</a> &middot; 
-[% END %]
-<a href="/user_directory/_">_</a> 
-[% END %]
-
-[% BLOCK pagination_menu_pages %]
-<p>
-[% IF NOT pagination.previous_page %]
-&lt; Previous Page
-[% ELSE %]
-<a href="/user_directory/[% initial %]/[% pagination.previous_page %]">&lt; Previous Page</a>
-[% END %]
- | Page [% pagination.current_page %] of [% pagination.total_pages %] | 
-[% IF NOT pagination.next_page %]
-Next Page &gt; 
-[% ELSE %]
-<a href="/user_directory/[% initial %]/[% pagination.next_page %]">Next Page &gt;</a>
-[% END %]
-</p>
-
-<p>Viewing [% pagination.first_item %] to [% pagination.last_item %] of [% pagination.total_count %] total.</p>
-[% END %]
-
-
-
-[% PROCESS pagination_menu_letters %]
-[% PROCESS pagination_menu_pages %]
+[% PROCESS 'site/_pagination_menu_initials.tt' %]
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
 
 [% thumbs = 'user/_user_directory_thumbs.tt' %]
-[% IF users %]
-    [% FOREACH user IN users %]
-    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.username %]">[% user.username %]</a> ([% user.full_name %]); Joined: [% user.join_date %]; Num Images: <a href="/user/[% user.username %]/gallery">[% user.image_count %]</a> | [% PROCESS $thumbs %]</div>
+[% IF data.users %]
+    [% FOREACH user IN data.users %]
+    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.user_hash.username %]">[% user.user_hash.username %]</a> ([% user.user_hash.account.full_name %]); Joined: [% user.user_hash.created_at %]; Num Images: <a href="/user/[% user.user_hash.username %]/gallery">[% user.image_count %]</a> | [% PROCESS $thumbs %]</div>
     [% END %]
 [% ELSE %]
 <p>No users to display. How sad.</p>
 [% END %]
 
-[% PROCESS pagination_menu_pages %]
-[% PROCESS pagination_menu_letters %]
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
+[% PROCESS 'site/_pagination_menu_initials.tt' %]

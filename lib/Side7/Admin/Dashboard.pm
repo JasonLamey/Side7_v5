@@ -164,6 +164,49 @@ sub show_main_dashboard
 }
 
 
+=head2 show_user_dashboard()
+
+Returns a hashref of data to be displayed on the User Management dashboard.
+
+Parameters:
+
+=over 4
+
+=item initial: The character with which the username should start. Defaults to '0'.
+
+=item page: The page to display, for pagination within a particular initial filter.  Defaults to 1.
+
+=back
+
+    my $admin_data = Side7::Admin::Dashboard::show_user_dashboar();
+
+=cut
+
+sub show_user_dashboard
+{
+    my ( %args ) = @_;
+
+    my $initial = delete $args{'initial'} // '0';
+    my $page    = delete $args{'page'}    // 1;
+
+    my %admin_data = ();
+
+    my $initials = Side7::User::get_username_initials();
+
+    my ( $users, $user_count ) = Side7::User::get_users_for_directory( 
+                                                                            initial   => $initial,
+                                                                            page      => $page,
+                                                                            no_images => 1,
+                                                                         );
+
+    return {
+                users      => $users, 
+                user_count => $user_count,
+                initials   => $initials,
+           };
+};
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

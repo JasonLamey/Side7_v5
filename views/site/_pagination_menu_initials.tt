@@ -1,0 +1,10 @@
+[% FOREACH m_initial IN data.initials %]
+    [% IF initial.upper == m_initial.upper %]
+    <strong>[% m_initial %]</strong>
+    [% ELSE %]
+    <a href="[% link_base_uri %]/[% m_initial %]">[% m_initial %]</a>
+    [% END %]
+    [% IF NOT loop.last %]
+    &middot;
+    [% END %]
+[% END %]
