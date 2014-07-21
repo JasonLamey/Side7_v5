@@ -171,7 +171,7 @@ __PACKAGE__->meta->setup
             key_columns       => { referred_by => 'id' },
             relationship_type => 'many to one',
         },
-        bday_visiblity =>
+        bday_visibility =>
         {
             class             => 'Side7::DateVisibility',
             key_columns       => { birthday_visibility => 'id' },
@@ -244,24 +244,30 @@ sub get_formatted_birthday
     return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
+    my $admin_dates = delete $args{'admin_dates'} // undef;
 
-    if ( 
-        $self->birthday_visibility == 3 
-        ||
-        ! defined $self->birthday
-        ||
-        $self->birthday eq '0000-00-00'
-    )
+    $date_format = '%Y-%m-%d' if defined $admin_dates; # '2014-01-01' (yyyy-mm-dd)
+
+    if ( ! defined $admin_dates )
     {
-        return '[ Private ]';
-    }
-    elsif ( $self->birthday_visibility == 2 )
-    {
-        $date_format = '%d %B';
-    }
-    else
-    {
-        $date_format = '%d %B, %Y';
+        if ( 
+            $self->birthday_visibility == 3 
+            ||
+            ! defined $self->birthday
+            ||
+            $self->birthday eq '0000-00-00'
+        )
+        {
+            return '[ Private ]';
+        }
+        elsif ( $self->birthday_visibility == 2 )
+        {
+            $date_format = '%d %B';
+        }
+        else
+        {
+            $date_format = '%d %B, %Y';
+        }
     }
 
     my $date = $self->birthday( format => $date_format ) // undef;
@@ -294,10 +300,16 @@ sub get_formatted_subscription_expires_on
     return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
+    my $admin_dates = delete $args{'admin_dates'} // undef;
 
-    if ( $self->user_type->user_type ne 'Subscriber' )
+    $date_format = '%Y-%m-%d' if defined $admin_dates; # '2014-01-01' (yyyy-mm-dd)
+
+    if ( ! not defined $admin_dates )
     {
-        return 'Not a Subscriber';
+        if ( $self->user_type->user_type ne 'Subscriber' )
+        {
+            return 'Not a Subscriber';
+        }
     }
 
     my $date = $self->subscription_expires_on( format => $date_format ) // 'Invalid Date';
@@ -330,6 +342,9 @@ sub get_formatted_delete_on
     return undef if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
+    my $admin_dates = delete $args{'admin_dates'} // undef;
+
+    $date_format = '%Y-%m-%d' if defined $admin_dates; # '2014-01-01' (yyyy-mm-dd)
 
     my $date = $self->delete_on( format => $date_format ) // undef;
 
@@ -419,11 +434,13 @@ sub get_account_hash_for_template
     return {} if ! defined $self;
 
     my $filter_profanity = delete $args{'filter_profanity'} // 1;
+    my $admin_dates      = delete $args{'admin_dates'}      // undef;
 
     my $account_hash = {};
 
     # General data
     $account_hash->{'full_name'} = $self->full_name();
+    $account_hash->{'country'}   = $self->country->name();
 
     foreach my $key (
         qw(
@@ -441,9 +458,10 @@ sub get_account_hash_for_template
     $account_hash->{'role'}   = $self->user_role->name();
 
     # Date values
-    $account_hash->{'birthday'}                = $self->get_formatted_birthday();
-    $account_hash->{'subscription_expires_on'} = $self->get_formatted_subscription_expires_on();
-    $account_hash->{'delete_on'}               = $self->get_formatted_delete_on();
+    $account_hash->{'birthday'}                = $self->get_formatted_birthday( admin_dates => $admin_dates );
+    $account_hash->{'birthday_visibility'}     = $self->bday_visibility->visibility();
+    $account_hash->{'subscription_expires_on'} = $self->get_formatted_subscription_expires_on( admin_dates => $admin_dates );
+    $account_hash->{'delete_on'}               = $self->get_formatted_delete_on( admin_dates => $admin_dates );
     $account_hash->{'created_at'}              = $self->get_formatted_created_at();
     $account_hash->{'updated_at'}              = $self->get_formatted_updated_at();
 

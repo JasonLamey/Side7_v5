@@ -1,0 +1,48 @@
+<h1>[% user.username %]</h1>
+
+<div>
+    <a href="/user/[% user.username %]" target="_blank">Profile</a>
+    &middot;
+    <a href="/user/[% user.username %]/gallery" target="_blank">Gallery</a>
+</div>
+
+<div style="border: solid 1px #000; margin: 5px; padding: 5px;">
+    <h3>User Data:</h3>
+    <strong>E-mail Address:</strong> [% user.email_address %]<br>
+    <strong>Referred By:</strong> [% user.referred_by %]<br>
+    <strong>Joined:</strong> [% user.created_at %]<br>
+    <strong>Last Updated:</strong> [% user.updated_at %]
+</div>
+
+<div style="border: solid 1px #000; margin: 0 5px 5px; padding: 5px;">
+    <h3>Account Data</h3>
+    <strong>Status:</strong> [% user.account.status %]<br>
+    <strong>Type:</strong> [% user.account.type %]<br>
+    <strong>Role:</strong> [% user.account.role %]<br>
+    <strong>Subscription Expires On:</strong>
+    [% IF user.account.subscription_expires_on %][% user.account.subscription_expires_on %][% ELSE %]N/A[% END %]<br>
+    <strong>Deletion Flag Set For:</strong>
+    [% IF user.account.delete_on %][% user.account.delete_on %][% ELSE %]N/A[% END %]<br>
+    <br>
+    <strong>First Name:</strong> [% user.account.first_name %]<br>
+    <strong>Last Name:</strong> [% user.account.last_name %]<br>
+    <strong>Sex:</strong> [% user.account.sex %]<br>
+    <strong>Birthday:</strong> [% user.account.birthday_raw %] ( Visibility: [% user.account.birthday_visibility %] )<br>
+    <strong>State:</strong> [% user.account.state %]<br>
+    <strong>Country:</strong> [% user.account.country %]
+    <br>
+    <strong>Webpage:</strong>
+    [% IF user.account.webpage_url %]<a href="[% user.account.webpage_url %]" target="_blank">[% user.account.webpage_name %]</a>[% ELSE %]None[% END %]<br>
+    <strong>Blog:</strong>
+    [% IF user.account.blog_url %]<a href="[% user.account.blog_url %]" target="_blank">[% user.account.blog_name %]</a>[% ELSE %]None[% END %]<br>
+    <strong>AIM:</strong> [% user.account.aim %]<br>
+    <strong>Yahoo IM:</strong> [% user.account.yahoo %]<br>
+    <strong>Google Hangouts:</strong> [% user.account.gtalk %]<br>
+    <strong>Skype:</strong> [% user.account.skype %]<br>
+    <br>
+    <strong>Biography:</strong><br>
+    <div style="margin: 10px 0;">[% user.account.biography %]</div>
+    <br>
+    <strong>Created:</strong> [% user.account.created_at %]<br>
+    <strong>Last Updated:</strong> [% user.account.updated_at %]
+</div>

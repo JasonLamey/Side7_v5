@@ -152,6 +152,7 @@ sub get_user_hash_for_template
     return {} if ! defined $self;
 
     my $filter_profanity = delete $args{'filter_profanity'} // 1;
+    my $admin_dates      = delete $args{'admin_dates'}      // undef;
 
     my $user_hash = {};
 
@@ -177,7 +178,10 @@ sub get_user_hash_for_template
     if ( defined $self->{'account'} )
     {
         my $account = $self->account();
-        $user_hash->{'account'} = $account->get_account_hash_for_template( filter_profanity => $filter_profanity );
+        $user_hash->{'account'} = $account->get_account_hash_for_template( 
+                                                                            filter_profanity => $filter_profanity,
+                                                                            admin_dates      => $admin_dates,
+                                                                         );
     }
 
     # Kudos Coins (if included)

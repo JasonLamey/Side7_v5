@@ -44,7 +44,8 @@ hook 'before' => sub {
     # Setting Visitor-relavent user preferences.
     my $visitor = undef;
     if ( defined session( 'logged_in' ) ) {
-        $visitor = Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => 'user_preferences' );
+        $visitor = 
+            Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => [ 'user_preferences' ] );
         foreach my $key ( 
                             qw/ display_signature show_management_thumbs show_m_thumbs show_adult_content
                                 filter_profanity thumbnail_size content_display_type display_full_sized_images /
@@ -72,6 +73,7 @@ hook 'before' => sub {
         var content_display_type      => 'List';
         var display_full_sized_images => 'Same Window';
     }
+
 
     set layout => 'main';
 };
@@ -1164,7 +1166,7 @@ hook 'before' => sub
         {
             my $authorized = Side7::Login::user_authorization( 
                                                                 session_username => session( 'username' ), 
-                                                                username         => params->{'username'},
+                                                                username         => undef,
                                                                 requires_mod     => 1,
                                                              );
 
@@ -1204,10 +1206,11 @@ get '/' => sub
 };
 
 # Admin User Dashboard Page
-get '/users/?:initial?/?:page?/?' => sub
+get qr{/users/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 {
-    my $initial = params->{'initial'} // '0';
-    my $page    = params->{'page'}    // '1';
+    my ( $initial, $page ) = splat;
+    $initial //= '0';
+    $page    //= '1';
 
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
 
@@ -1218,6 +1221,8 @@ get '/users/?:initial?/?:page?/?' => sub
 
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'user_count'}, page => $page } );
 
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
     template 'admin/user', { 
                                 main_menu     => $menu_options, 
                                 data          => $data, 
@@ -1225,6 +1230,11 @@ get '/users/?:initial?/?:page?/?' => sub
                                 page          => $page,
                                 pagination    => $pagination,
                                 link_base_uri => '/admin/users',
+                                permissions         => {
+                                                        can_view_account_details => $admin_user->has_permission( 'can_view_account_details' ),
+                                                        can_modify_user_account  => $admin_user->has_permission( 'can_modify_user_account' ),
+                                                        can_disable_accounts     => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                       },
                            },
                            { layout => 'admin' };
 };
@@ -1271,6 +1281,8 @@ post '/users/search' => sub
                           $type . '/' .
                           $role;
 
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
     template 'admin/user', { 
                                 title         => 'Users',
                                 query         => { 
@@ -1286,6 +1298,11 @@ post '/users/search' => sub
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/users',
                                 pagination_base_uri => $search_url_base,
+                                permissions         => {
+                                                        can_view_account_details => $admin_user->has_permission( 'can_view_account_details' ),
+                                                        can_modify_user_account  => $admin_user->has_permission( 'can_modify_user_account' ),
+                                                        can_disable_accounts     => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                       },
                            },
                            { layout => 'admin' };
 };
@@ -1331,6 +1348,8 @@ get '/users/search/:search_term?/:status?/:type?/:role?/:intial/:page' => sub
                           $type . '/' .
                           $role;
 
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
     template 'admin/user', { 
                                 title         => 'Users',
                                 query         => { 
@@ -1346,8 +1365,94 @@ get '/users/search/:search_term?/:status?/:type?/:role?/:intial/:page' => sub
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/users',
                                 pagination_base_uri => $search_url_base,
+                                permissions         => {
+                                                        can_view_account_details => $admin_user->has_permission( 'can_view_account_details' ),
+                                                        can_modify_user_account  => $admin_user->has_permission( 'can_modify_user_account' ),
+                                                        can_disable_accounts     => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                       },
                            },
                            { layout => 'admin' };
+};
+
+# Admin User Dashboard Show User Details
+get '/users/:username/show' => sub
+{
+    my $username = params->{'username'} // undef;
+
+    if ( ! defined $username )
+    {
+        flash error => "Invalid username provided. Cannot display the User's details.";
+        return redirect '/admin/users';
+    }
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+    my $user_hash = $user->get_user_hash_for_template( filter_profanity => 0 );
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/user_details', {
+                                        user => $user_hash,
+                                        permissions => {
+                                                        can_modify_user_account  => $admin_user->has_permission( 'can_modify_user_account' ),
+                                                       },
+                                   },
+                                   { layout => 'admin_lightbox' };
+};
+
+# Admin User Dashboard Edit User Details
+get '/users/:username/edit' => sub
+{
+    my $username = params->{'username'} // undef;
+
+    if ( ! defined $username )
+    {
+        flash error => "Invalid username provided. Cannot edit the User's details.";
+        return redirect '/admin/users';
+    }
+
+    my $sexes        = Side7::Admin::Dashboard::get_user_sexes_for_select();
+    my $visibilities = Side7::Admin::Dashboard::get_birthday_visibilities_for_select();
+    my $countries    = Side7::Admin::Dashboard::get_countries_for_select();
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+    my $user_hash = $user->get_user_hash_for_template( 
+                                                        filter_profanity => 0,
+                                                        admin_dates      => 1,
+                                                     );
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/user_edit_form', {
+                                        user        => $user_hash,
+                                        data        => {
+                                                        sexes                 => $sexes,
+                                                        birthday_visibilities => $birthday_visibilities,
+                                                        countries             => $countries,
+                                                       },
+                                        permissions => {
+                                                        can_disable_accounts                => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                        can_refund_account_credits          => $admin_user->has_permission( 'can_refund_account_credits' ),
+                                                        can_award_account_credits           => $admin_user->has_permission( 'can_award_account_credits' ),
+                                                        can_suspend_accounts                => $admin_user->has_permission( 'can_suspend_accounts' ),
+                                                        can_reinstate_accounts              => $admin_user->has_permission( 'can_reinstate_accounts' ),
+                                                        can_reset_users_password            => $admin_user->has_permission( 'can_reset_users_password' ),
+                                                        can_disable_accounts                => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                        can_reenable_accounts               => $admin_user->has_permission( 'can_reenable_accounts' ),
+                                                        can_promote_site_moderators         => $admin_user->has_permission( 'can_promote_site_moderators' ),
+                                                        can_demote_site_moderators          => $admin_user->has_permission( 'can_demote_site_moderators' ),
+                                                        can_promote_site_admins             => $admin_user->has_permission( 'can_promote_site_admins' ),
+                                                        can_demote_site_admins              => $admin_user->has_permission( 'can_demote_site_admins' ),
+                                                        can_promote_owner                   => $admin_user->has_permission( 'can_promote_owner' ),
+                                                        can_demote_owner                    => $admin_user->has_permission( 'can_demote_owner' ),
+                                                        can_suspend_permissions             => $admin_user->has_permission( 'can_suspend_permissions' ),
+                                                        can_reinstate_suspended_permissions => $admin_user->has_permission( 'can_reinstate_suspended_permissions' ),
+                                                        can_revoke_permissions              => $admin_user->has_permission( 'can_revoke_permissions' ),
+                                                        can_reinstate_revoked_permissions   => $admin_user->has_permission( 'can_reinstate_revoked_permissions' ),
+                                                       },
+                                   },
+                                   { layout => 'admin_lightbox' };
 };
 
 true;

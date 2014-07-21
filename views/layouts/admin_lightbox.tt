@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>Side7 Admin Dashboard
+[% IF title %]
+ - [% title %]
+[% END %]
+</title>
+<link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
+
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!--<script type="text/javascript">/* <![CDATA[ */
+    !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
+/* ]]> */</script>-->
+
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" href="/css/jkit.new.css" />
+<script type="text/javascript" src="/javascripts/jkit/jquery.jkit.1.2.16.min.js"></script>
+
+<link rel="stylesheet" href="/javascripts/tablesorter/themes/blue/style.css" />
+<script src="/javascripts/tablesorter/jquery.tablesorter.min.js"></script>
+
+[% IF ( flash.message || flash.error ) %]
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
+[% END %]
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('body').jKit();
+});
+</script>
+
+<style>
+    #page_content {
+        display: block;
+        position:absolute;
+        bottom:0;
+        top:0;
+        left:0;
+        right:0;
+        font-family: Verdana, sans-serif;
+    }
+    .column_wrap {position:relative;}
+    #page_header {
+        width: auto;
+        padding: 3px 5px;
+        margin: 0;
+    }
+    #header_search {
+        float: right;
+        width: 200px;
+        text-align: right;
+    }
+    .metanav {
+    }
+    #section_content {
+        margin: auto;
+        padding: 5px;
+        width: auto;
+        height: auto;
+        border: solid 1px #666;
+    }
+    .user_status_Pending {
+        color: purple; 
+        background-color: #FFAAFF;
+        font-weight: bold;
+    }
+    .user_status_Active {
+        color: green; 
+    }
+    .user_status_Suspended {
+        color: orange; 
+        background-color: #FFFFAA;
+        font-weight: bold;
+    }
+    .user_status_Disabled {
+        color: red; 
+        background-color: #FFAAAA;
+        font-weight: bold;
+    }
+    .user_role_Guest {
+        color: gray;
+    }
+    .user_role_User {
+    }
+    .user_role_Subscriber {
+        color: gold;
+        background-color: seagreen;
+    }
+    .user_role_Moderator {
+        font-weight: bold;
+        color: lightsteelblue;
+        background-color: navy;
+    }
+    .user_role_Admin {
+        font-weight: bold;
+        color: yellow;
+        background-color: orangered;
+    }
+    .user_role_Owner {
+        font-weight: bold;
+        color: white;
+        background-color: black;
+    }
+</style>
+
+</head>
+<body>
+<div id="page_content">
+    <div id="section_content">
+    [% content %]
+    </div>
+</div>
+</body>
+</html>

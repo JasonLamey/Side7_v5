@@ -299,6 +299,90 @@ sub get_user_types_for_select
 }
 
 
+=head2 get_user_sexes_for_select()
+
+Returns a hashref of User Sex names;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $sexes = Side7::Admin::Dashboard::get_user_sexes_for_select();
+
+=cut
+
+sub get_user_sexes_for_select
+{
+    my $enums = {};
+
+    my $sex_enums = Side7::DB::get_enum_values_for_form( fields => [ 'sex' ], table => 'accounts' );
+
+    $enums = ( $sex_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
+=head2 get_countries_for_select()
+
+Returns a hashref of Countries;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $sexes = Side7::Admin::Dashboard::get_user_sexes_for_select();
+
+=cut
+
+sub get_user_sexes_for_select
+{
+    my $enums = {};
+
+    my $sex_enums = Side7::DB::get_enum_values_for_form( fields => [ 'sex' ], table => 'accounts' );
+
+    $enums = ( $sex_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
+=head2 get_birthday_visibilities_for_select()
+
+Returns a hashref of Birthday Visibilities;
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $sexes = Side7::Admin::Dashboard::get_user_sexes_for_select();
+
+=cut
+
+sub get_user_sexes_for_select
+{
+    my $enums = {};
+
+    my $sex_enums = Side7::DB::get_enum_values_for_form( fields => [ 'sex' ], table => 'accounts' );
+
+    $enums = ( $sex_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
 =head2 search_users()
 
 Returns an hashref of user accounts that match the search criteria.

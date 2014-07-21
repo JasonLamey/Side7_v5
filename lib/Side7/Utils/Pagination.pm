@@ -40,6 +40,16 @@ sub get_pagination
     my $pagination_limit = delete $args->{'pagination_limit'} // 
                                     $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'};
 
+    # In the event a blank but defined parameter is passed in.
+    if ( $total_count eq '' )
+    {
+        $total_count = 1;
+    }
+    if ( $page eq '' )
+    {
+        $page = 1;
+    }
+
     my $last_page = ( $total_count % $pagination_limit == 0 )
                   ? ( $total_count / $pagination_limit )
                   : ( int( $total_count / $pagination_limit ) ) + 1;

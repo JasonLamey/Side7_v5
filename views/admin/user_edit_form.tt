@@ -1,0 +1,105 @@
+<script type="text/javascript">
+    $( document ).ready( function() {
+        $( '#sub_expire' ).datepicker( { 
+            changeMonth: true, 
+            changeYear: true, 
+            dateFormat: 'yy-mm-dd', 
+            showAnim: 'fadeIn',
+        } );
+        $( '#delete_on' ).datepicker( { 
+            changeMonth: true, 
+            changeYear: true, 
+            dateFormat: 'yy-mm-dd', 
+            showAnim: 'fadeIn'
+        } );
+        $( '#birthday' ).datepicker( { 
+            changeMonth: true, 
+            changeYear: true, 
+            dateFormat: 'yy-mm-dd', 
+            showAnim: 'fadeIn'
+        } );
+        $( '#user_edit_tabs' ).jKit( 'tabs', { 'animation': 'fade' } );
+    } );
+</script>
+
+<h1>Edit Account For [% user.username %]</h1>
+
+<div>
+    <a href="/user/[% user.username %]" target="_blank">Profile</a>
+    &middot;
+    <a href="/user/[% user.username %]/gallery" target="_blank">Gallery</a>
+</div>
+<br>
+
+<form action="/admin/users/edit" method="post" id="user_edit_form" data-jkit="[form:validateonly=true]>
+<input type="hidden" name="user_id" value="[% user.id %]">
+<div id="user_edit_tabs" class="tabs" style="width: 100%;">
+    <div>
+        <h3>User Data</h3>
+        <div>
+            <label for="username">Username:</label> <input type="text" name="username" size="30" maxlength="45" value="[% user.username %]" data-jkit="[validate:required=true;error=Username is required.]"><br>
+            <label for="email_address">E-mail Address:</label> <input type="text" name="email_address" size="30" maxlength="255" value="[% user.email_address %]" data-jkit="[validate:required=true;type=email;error=A valid e-mail address is required.]"><br>
+            <label for="referred_by">Referred By:</label> <input type="text" name="referred_by" size="30" maxlength="45" value="[% user.referred_by %]"><br>
+            <label>Joined:</label> [% user.created_at %]<br>
+            <label>Last Updated:</label> [% user.updated_at %]<br>
+            <input type="submit" value="Save Changes">
+        </div>
+    </div>
+
+    <div>
+        <h3>Account Data</h3>
+        <div>
+            <label for="status">Status:</label> [% user.account.status %]<br>
+            <label for="type">Type:</label> [% user.account.type %]<br>
+            <label for="role">Role:</label> [% user.account.role %]<br>
+
+            <label for="subscription_expires_on">Subscription Expires On:</label>
+            <input id="sub_expire" type="date" name="subscription_expires_on" size="30" maxlength="15" value="[% user.account.subscription_expires_on %]"><br>
+            <label for="delete_on">Deletion Flag Set For:</label>
+            <input id="delete_on" type="date" name="delete_on" size="30" maxlength="15" value="[% user.account.delete_on %]"><br>
+            <br>
+            <label for="first_name">First Name:</label> <input type="text" name="first_name" size="30" maxlength="15" value="[% user.account.first_name %]"><br>
+            <label for="last_name">Last Name:</label> <input type="text" name="last_name" size="30" maxlength="15" value="[% user.account.last_name %]"><br>
+            <label>Sex:</label> [% user.account.sex %]<br>
+            <label for="birthday">Birthday:</label> <input type="date" id="birthday" name="birthday" size="30" maxlength="15" value="[% user.account.birthday %]"><br>
+            <label for="birthday_visibility">Birthday Visibility:</label> ( Visibility: [% user.account.birthday_visibility %] )<br>
+            <label for="state">State:</label> <input type="text" name="state" size="20" maxlength="20" value="[% user.account.state %]"><br>
+            <label>Country:</label> [% user.account.country %]
+            <br>
+            <label for="webpage_name">Webpage Name:</label> <input name="webpage_name" type="text" size="30" maxlength="255" value="[% user.account.webpage_name %]"><br>
+            <label for="webpage_url">Webpage URL:</label> <input name="webpage_url" type="text" size="30" maxlength="255" value="[% user.account.webpage_url %]"><br>
+            <label for="blog_name">Blog Name:</label> <input type="text" name="blog_name" size="30" maxlength="255" value="[% user.account.blog_name %]"><br>
+            <label for="blog_url">Blog URL:</label> <input type="text" name="blog_url" size="30" maxlength="255" value="[% user.account.blog_url %]"><br>
+            <label for="aim">AIM:</label> <input type="text" name="aim" size="30" maxlength="45" value="[% user.account.aim %]"><br>
+            <label for="yahoo">Yahoo IM:</label> <input type="text" name="yahoo" size="30" maxlength="45" value="[% user.account.yahoo %]"><br>
+            <label for="gtalk">Google Hangouts:</label> <input type="text" name="gtalk" size="30" maxlength="45" value="[% user.account.gtalk %]"><br>
+            <label for="skype">Skype:</label> <input type="text" name="skype" size="30" maxlength="45" value="[% user.account.skype %]"><br>
+            <br>
+            <label>Biography:</label><br>
+            <textarea name="biography" cols="80" rows="10">[% user.account.biography %]</textarea>
+            <br>
+            <label>Created:</label> [% user.account.created_at %]<br>
+            <label>Last Updated:</label> [% user.account.updated_at %]<br>
+            <input type="submit" value="Save Changes">
+        </div>
+    </div>
+
+    <div>
+        <h3>Kudos Coins</h3>
+        <div>
+        </div>
+    </div>
+
+    <div>
+        <h3>Permissions</h3>
+        <div>
+        </div>
+    </div>
+
+    <div>
+        <h3>Perks</h3>
+        <div>
+        </div>
+    </div>
+</div>
+</form>
