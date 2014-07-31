@@ -1209,8 +1209,16 @@ get '/' => sub
 get qr{/users/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 {
     my ( $initial, $page ) = splat;
-    $initial //= '0';
-    $page    //= '1';
+
+    if ( ! defined $initial || $initial eq '' )
+    {
+        $initial = '0';
+    }
+
+    if ( ! defined $page || $page eq '' )
+    {
+        $page = 1;
+    }
 
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
 
@@ -1428,7 +1436,7 @@ get '/users/:username/edit' => sub
                                         user        => $user_hash,
                                         data        => {
                                                         sexes                 => $sexes,
-                                                        birthday_visibilities => $birthday_visibilities,
+                                                        birthday_visibilities => $visibilities,
                                                         countries             => $countries,
                                                        },
                                         permissions => {
@@ -1440,6 +1448,8 @@ get '/users/:username/edit' => sub
                                                         can_reset_users_password            => $admin_user->has_permission( 'can_reset_users_password' ),
                                                         can_disable_accounts                => $admin_user->has_permission( 'can_disable_accounts' ),
                                                         can_reenable_accounts               => $admin_user->has_permission( 'can_reenable_accounts' ),
+                                                        can_promote_forum_moderators        => $admin_user->has_permission( 'can_promote_forum_moderators' ),
+                                                        can_demote_forum_moderators         => $admin_user->has_permission( 'can_demote_forum_moderators' ),
                                                         can_promote_site_moderators         => $admin_user->has_permission( 'can_promote_site_moderators' ),
                                                         can_demote_site_moderators          => $admin_user->has_permission( 'can_demote_site_moderators' ),
                                                         can_promote_site_admins             => $admin_user->has_permission( 'can_promote_site_admins' ),
@@ -1453,6 +1463,199 @@ get '/users/:username/edit' => sub
                                                        },
                                    },
                                    { layout => 'admin_lightbox' };
+};
+
+# Admin User Dashboard Edit User Submission
+post '/users/:username/edit' => sub
+{
+    my $params   = params;
+    my $username = params->{'username'};
+
+    my $return_to_form = sub
+    {
+        my $user = Side7::User::get_user_by_username( $username );
+
+        my $user_hash = $user->get_user_hash_for_template( 
+                                                            filter_profanity => 0,
+                                                            admin_dates      => 1,
+                                                         );
+
+        my $sexes        = Side7::Admin::Dashboard::get_user_sexes_for_select();
+        my $visibilities = Side7::Admin::Dashboard::get_birthday_visibilities_for_select();
+        my $countries    = Side7::Admin::Dashboard::get_countries_for_select();
+
+        my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+        return template 'admin/user_edit_form', {
+                                            user        => $user_hash,
+                                            data        => {
+                                                            sexes                 => $sexes,
+                                                            birthday_visibilities => $visibilities,
+                                                            countries             => $countries,
+                                                           },
+                                            permissions => {
+                                                            can_disable_accounts                => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                            can_refund_account_credits          => $admin_user->has_permission( 'can_refund_account_credits' ),
+                                                            can_award_account_credits           => $admin_user->has_permission( 'can_award_account_credits' ),
+                                                            can_suspend_accounts                => $admin_user->has_permission( 'can_suspend_accounts' ),
+                                                            can_reinstate_accounts              => $admin_user->has_permission( 'can_reinstate_accounts' ),
+                                                            can_reset_users_password            => $admin_user->has_permission( 'can_reset_users_password' ),
+                                                            can_disable_accounts                => $admin_user->has_permission( 'can_disable_accounts' ),
+                                                            can_reenable_accounts               => $admin_user->has_permission( 'can_reenable_accounts' ),
+                                                            can_promote_forum_moderators        => $admin_user->has_permission( 'can_promote_forum_moderators' ),
+                                                            can_demote_forum_moderators         => $admin_user->has_permission( 'can_demote_forum_moderators' ),
+                                                            can_promote_site_moderators         => $admin_user->has_permission( 'can_promote_site_moderators' ),
+                                                            can_demote_site_moderators          => $admin_user->has_permission( 'can_demote_site_moderators' ),
+                                                            can_promote_site_admins             => $admin_user->has_permission( 'can_promote_site_admins' ),
+                                                            can_demote_site_admins              => $admin_user->has_permission( 'can_demote_site_admins' ),
+                                                            can_promote_owner                   => $admin_user->has_permission( 'can_promote_owner' ),
+                                                            can_demote_owner                    => $admin_user->has_permission( 'can_demote_owner' ),
+                                                            can_suspend_permissions             => $admin_user->has_permission( 'can_suspend_permissions' ),
+                                                            can_reinstate_suspended_permissions => $admin_user->has_permission( 'can_reinstate_suspended_permissions' ),
+                                                            can_revoke_permissions              => $admin_user->has_permission( 'can_revoke_permissions' ),
+                                                            can_reinstate_revoked_permissions   => $admin_user->has_permission( 'can_reinstate_revoked_permissions' ),
+                                                           },
+                                       },
+                                       { layout => 'admin_lightbox' };
+    };
+
+    # Validating params with rule file
+    my $data = validator( $params, 'admin_user_edit_form.pl' );
+
+    # Return to User Dashboard if errors.
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+
+        $return_to_form->();
+    }
+
+    # Save User.
+    my $orig_user = Side7::User->new( id => params->{'user_id'} );
+    my $loaded = $orig_user->load( speculative => 1, with_objects => [ 'account' ] );
+
+    if ( $loaded == 0 || ref( $orig_user ) ne 'Side7::User' )
+    {
+        # Return to form.
+        flash error => 'User >' . $username . '< could not be loaded from the database for editing.';
+        $return_to_form->();
+    }
+
+    # User-specific
+    my %user_changes = ();
+    my $user_updated = 0;
+    foreach my $field ( qw/ username email_address referred_by / )
+    {
+        if (
+            ( defined params->{$field} && ! defined $orig_user->$field() )
+            ||
+            ( ! defined params->{$field} && defined $orig_user->$field() )
+            ||
+            ( 
+                defined params->{$field} 
+                &&
+                defined $orig_user->$field()
+                &&
+                $orig_user->$field() ne params->{$field}
+            )
+        )
+        {
+            # Record change in hash.
+            $user_changes{$field}{'old'} = ( $orig_user->$field() || '' );
+            $user_changes{$field}{'new'} = ( params->{$field} || '' );
+
+            # Make change.
+            $orig_user->$field( ( params->{$field} || undef ) );
+            $user_updated = 1;
+        }
+    }
+
+    # Account-specific
+    my %account_changes = ();
+    my $account_updated = 0;
+    foreach my $field ( qw/ first_name last_name biography sex birthday birthday_visibility webpage_name 
+                            webpage_url blog_name blog_url aim yahoo gtalk skype state country_id 
+                            subscription_expires_on delete_on / )
+    {
+        if (
+            ( defined params->{$field} && ! defined $orig_user->account->$field() )
+            ||
+            ( ! defined params->{$field} && defined $orig_user->account->$field() )
+            ||
+            ( 
+                defined params->{$field}
+                &&
+                defined $orig_user->account->$field()
+                &&
+                $orig_user->account->$field() ne params->{$field}
+            )
+        )
+        {
+            # Record change in hash.
+            $account_changes{$field}{'old'} = ( $orig_user->account->$field() || '' );
+            $account_changes{$field}{'new'} = ( params->{$field} || '' );
+
+            # Make change.
+            $orig_user->account->$field( ( params->{$field} || undef ) );
+            $account_updated = 1;
+        }
+    }
+
+    # Save changes
+    if ( $account_updated == 1 || $user_updated == 1 )
+    {
+        # Update user updated_at
+        $orig_user->updated_at( 'now' );
+
+        if ( $account_updated == 1 )
+        {
+            # Update account updated_at
+            $orig_user->account->updated_at( 'now' );
+            $orig_user->account->save();
+        }
+
+        $orig_user->save();
+
+        # Update Audit Log
+        my $audit_msg = 'User Account Updated -- Successful<br>';
+        foreach my $key ( keys %user_changes )
+        {
+            $audit_msg .= "&gt;$key&lt; - Old value: &gt;" . 
+                            ( $user_changes{$key}{'old'} || '' ) . "&lt; || New value: &gt;" .
+                            ( $user_changes{$key}{'new'} || '' ) . "&lt;<br>";
+        }
+        foreach my $key ( keys %account_changes )
+        {
+            $audit_msg .= "&gt;$key&lt; - Old value: &gt;" . 
+                            ( $account_changes{$key}{'old'} || '' ) . "&lt; || New value: &gt;" . 
+                            ( $account_changes{$key}{'new'} || '' ) . "&lt;<br>";
+        }
+
+        my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+        my $audit_log = Side7::AuditLog->new(
+                                              title       => 'User Account Updated',
+                                              description => $audit_msg,
+                                              ip_address  => request->address() . $remote_host,
+                                              user_id     => session( 'user_id' ),
+                                              affected_id => params->{'user_id'},
+                                              timestamp   => DateTime->now(),
+        );
+
+        $audit_log->save();
+
+    }
+
+    flash message => 'User account for &gt;<b>' . $username . '</b>&lt; has been updated.';
+    return redirect '/admin/users/' . $username . '/show';
 };
 
 true;

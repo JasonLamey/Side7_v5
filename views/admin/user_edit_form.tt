@@ -24,6 +24,32 @@
 
 <h1>Edit Account For [% user.username %]</h1>
 
+<div style="float: right;">
+    [% IF permissions.can_promote_forum_moderators == 1 && user.account.role != 'Forum Moderator' %]
+    Promote To Forum Moderator |
+    [% END %]
+    [% IF permissions.can_demote_forum_moderators == 1 && user.account.role == 'Forum Moderator' %]
+    Demote From Forum Moderator |
+    [% END %]
+    [% IF permissions.can_promote_site_moderators == 1 && user.account.role != 'Moderator' %]
+    Promote To Moderator |
+    [% END %]
+    [% IF permissions.can_demote_site_moderators == 1 && user.account.role == 'Moderator' %]
+    Demote From Moderator |
+    [% END %]
+    [% IF permissions.can_promote_site_admins == 1 && user.account.role != 'Admin' %]
+    Promote To Admin |
+    [% END %]
+    [% IF permissions.can_demote_site_admins == 1 && user.account.role == 'Admin' %]
+    Demote From Admin |
+    [% END %]
+    [% IF permissions.can_promote_owners == 1 && user.account.role != 'Owner' %]
+    Promote To Owner
+    [% END %]
+    [% IF permissions.can_demote_owners == 1 && user.account.role == 'Owner' %]
+    Demote From Owner
+    [% END %]
+</div>
 <div>
     <a href="/user/[% user.username %]" target="_blank">Profile</a>
     &middot;
@@ -31,24 +57,22 @@
 </div>
 <br>
 
-<form action="/admin/users/edit" method="post" id="user_edit_form" data-jkit="[form:validateonly=true]>
-<input type="hidden" name="user_id" value="[% user.id %]">
 <div id="user_edit_tabs" class="tabs" style="width: 100%;">
     <div>
-        <h3>User Data</h3>
+        <h3>User &amp; Account Data</h3>
+        <form action="/admin/users/[% user.username %]/edit" method="post" id="user_edit_form">
+        <input type="hidden" name="user_id" value="[% user.id %]">
         <div>
+            <h4>User Data</h4>
             <label for="username">Username:</label> <input type="text" name="username" size="30" maxlength="45" value="[% user.username %]" data-jkit="[validate:required=true;error=Username is required.]"><br>
             <label for="email_address">E-mail Address:</label> <input type="text" name="email_address" size="30" maxlength="255" value="[% user.email_address %]" data-jkit="[validate:required=true;type=email;error=A valid e-mail address is required.]"><br>
             <label for="referred_by">Referred By:</label> <input type="text" name="referred_by" size="30" maxlength="45" value="[% user.referred_by %]"><br>
             <label>Joined:</label> [% user.created_at %]<br>
             <label>Last Updated:</label> [% user.updated_at %]<br>
-            <input type="submit" value="Save Changes">
         </div>
-    </div>
 
-    <div>
-        <h3>Account Data</h3>
         <div>
+            <h4>Account Data</h4>
             <label for="status">Status:</label> [% user.account.status %]<br>
             <label for="type">Type:</label> [% user.account.type %]<br>
             <label for="role">Role:</label> [% user.account.role %]<br>
@@ -60,11 +84,29 @@
             <br>
             <label for="first_name">First Name:</label> <input type="text" name="first_name" size="30" maxlength="15" value="[% user.account.first_name %]"><br>
             <label for="last_name">Last Name:</label> <input type="text" name="last_name" size="30" maxlength="15" value="[% user.account.last_name %]"><br>
-            <label>Sex:</label> [% user.account.sex %]<br>
-            <label for="birthday">Birthday:</label> <input type="date" id="birthday" name="birthday" size="30" maxlength="15" value="[% user.account.birthday %]"><br>
-            <label for="birthday_visibility">Birthday Visibility:</label> ( Visibility: [% user.account.birthday_visibility %] )<br>
+            <label>Sex:</label> <select name="sex">
+                <option value=''>--</option>
+                [% FOREACH sex IN data.sexes.sex %]
+                [% IF sex == user.account.sex %][% selected = ' selected' %][% ELSE %][% selected = '' %][% END %]
+                <option value='[% sex %]'[% selected %]>[% sex %]</option>
+                [% END %]
+            </select><br>
+            <label for="birthday">Birthday:</label> <input type="date" id="birthday" name="birthday" size="30" maxlength="15" value="[% user.account.birthday %]" data-jkit="[validate:required=true;error=Birthday is required.]"><br>
+            <label for="birthday_visibility">Birthday Visibility:</label> <select name='birthday_visibility'>
+                <option value=''>--</option>
+                [% FOREACH birthday_visibility IN data.birthday_visibilities %]
+                [% IF birthday_visibility.visibility == user.account.birthday_visibility %][% selected = ' selected' %][% ELSE %][% selected = '' %][% END %]
+                <option value='[% birthday_visibility.id %]'[% selected %]>[% birthday_visibility.visibility %]</option>
+                [% END %]
+            </select><br>
             <label for="state">State:</label> <input type="text" name="state" size="20" maxlength="20" value="[% user.account.state %]"><br>
-            <label>Country:</label> [% user.account.country %]
+            <label for="country_id">Country:</label> <select name="country_id">
+                <option value=''>--</option>
+                [% FOREACH country IN data.countries %]
+                [% IF country.id == user.account.country_id %][% selected = ' selected' %][% ELSE %][% selected = '' %][% END %]
+                <option value='[% country.id %]'[% selected %]>[% country.name %] ([% country.code %])</option>
+                [% END %]
+            </select><br>
             <br>
             <label for="webpage_name">Webpage Name:</label> <input name="webpage_name" type="text" size="30" maxlength="255" value="[% user.account.webpage_name %]"><br>
             <label for="webpage_url">Webpage URL:</label> <input name="webpage_url" type="text" size="30" maxlength="255" value="[% user.account.webpage_url %]"><br>
@@ -80,8 +122,9 @@
             <br>
             <label>Created:</label> [% user.account.created_at %]<br>
             <label>Last Updated:</label> [% user.account.updated_at %]<br>
-            <input type="submit" value="Save Changes">
         </div>
+        <input type="submit" value="Save Changes">
+        </form>
     </div>
 
     <div>
@@ -102,4 +145,3 @@
         </div>
     </div>
 </div>
-</form>

@@ -7,7 +7,7 @@
         </div>
         <div class="metanav">
             [% IF not session.logged_in %]
-            <a href="[% login_url %]">log in</a> | <a href="[% signup_url %]">sign up</a>
+            <a href="[% login_url %]">Log In</a> | <a href="[% signup_url %]">Sign Up</a>
             [% ELSE %]
             [% session.username %]: <a href="/my/home">Home</a>
             &middot;
@@ -15,7 +15,7 @@
             &middot;
             <a href="/user/[% session.username %]/gallery">Gallery</a>
             &middot;
-            <a href="[% logout_url %]">log out</a>
+            <a href="[% logout_url %]">Log Out</a>
             [% END %]
         </div>
         <div>

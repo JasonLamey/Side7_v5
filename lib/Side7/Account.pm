@@ -47,7 +47,6 @@ information, and is the model to which all other models are related.
 	state                   :string(255)
 	country_id              :integer
 	is_public               :integer
-	referred_by             :integer
 	subscription_expires_on :date
 	delete_on               :date
 	delete_on               :string(100)      default(NULL)
@@ -123,7 +122,6 @@ __PACKAGE__->meta->setup
         state                   => { type => 'varchar', length => 255 },
         country_id              => { type => 'integer' },
         is_public               => { type => 'integer' },
-        referred_by             => { type => 'integer' },
         subscription_expires_on => { type => 'date' },
         delete_on               => { type => 'date' },
         confirmation_code       => { type => 'varchar', length => 100 },
@@ -163,12 +161,6 @@ __PACKAGE__->meta->setup
         {
             class             => 'Side7::User::Country',
             key_columns       => { country_id => 'id' },
-            relationship_type => 'many to one',
-        },
-        referred_by =>
-        {
-            class             => 'Side7::Account',
-            key_columns       => { referred_by => 'id' },
             relationship_type => 'many to one',
         },
         bday_visibility =>
@@ -439,8 +431,9 @@ sub get_account_hash_for_template
     my $account_hash = {};
 
     # General data
-    $account_hash->{'full_name'} = $self->full_name();
-    $account_hash->{'country'}   = $self->country->name();
+    $account_hash->{'full_name'}  = $self->full_name();
+    $account_hash->{'country'}    = $self->country->name();
+    $account_hash->{'country_id'} = $self->country_id();
 
     foreach my $key (
         qw(
@@ -460,6 +453,7 @@ sub get_account_hash_for_template
     # Date values
     $account_hash->{'birthday'}                = $self->get_formatted_birthday( admin_dates => $admin_dates );
     $account_hash->{'birthday_visibility'}     = $self->bday_visibility->visibility();
+    $account_hash->{'birthday_visibility_id'}  = $self->birthday_visibility();
     $account_hash->{'subscription_expires_on'} = $self->get_formatted_subscription_expires_on( admin_dates => $admin_dates );
     $account_hash->{'delete_on'}               = $self->get_formatted_delete_on( admin_dates => $admin_dates );
     $account_hash->{'created_at'}              = $self->get_formatted_created_at();

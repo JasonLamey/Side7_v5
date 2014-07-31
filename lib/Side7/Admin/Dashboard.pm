@@ -6,11 +6,14 @@ use warnings;
 use Data::Dumper;
 
 use Side7::Globals;
+use Side7::DB;
 use Side7::User;
 use Side7::User::Manager;
 use Side7::User::Status::Manager;
 use Side7::User::Type::Manager;
 use Side7::User::Role::Manager;
+use Side7::User::Country::Manager;
+use Side7::DateVisibility::Manager;
 
 =pod
 
@@ -97,7 +100,7 @@ sub get_main_menu
     my $enabled = 0;
 
     # Home
-    push ( @main_menu_options, { name => 'Home', link => '/admin', enabled => 1 } );
+    push ( @main_menu_options, { name => 'Admin Home', link => '/admin', enabled => 1 } );
 
     # Site News
     $enabled = ( $user->has_permission( 'can_post_site_news' ) ) ? 1 : 0;
@@ -339,19 +342,17 @@ Parameters:
 
 =back
 
-    my $sexes = Side7::Admin::Dashboard::get_user_sexes_for_select();
+    my $countries = Side7::Admin::Dashboard::get_countries_for_select();
 
 =cut
 
-sub get_user_sexes_for_select
+sub get_countries_for_select
 {
-    my $enums = {};
+    my $countries = Side7::User::Country::Manager->get_countries(
+                                                                  sort_by => 'name',
+                                                                );
 
-    my $sex_enums = Side7::DB::get_enum_values_for_form( fields => [ 'sex' ], table => 'accounts' );
-
-    $enums = ( $sex_enums ); # Merging returned enum hash refs into one hash ref.
-
-    return $enums;
+    return $countries;
 }
 
 
@@ -367,19 +368,17 @@ Parameters:
 
 =back
 
-    my $sexes = Side7::Admin::Dashboard::get_user_sexes_for_select();
+    my $visibilities = Side7::Admin::Dashboard::get_birthday_visibilities_for_select();
 
 =cut
 
-sub get_user_sexes_for_select
+sub get_birthday_visibilities_for_select
 {
-    my $enums = {};
+    my $visibilities = Side7::DateVisibility::Manager->get_date_visibilities(
+                                                                                sort_by => 'id',
+                                                                            );
 
-    my $sex_enums = Side7::DB::get_enum_values_for_form( fields => [ 'sex' ], table => 'accounts' );
-
-    $enums = ( $sex_enums ); # Merging returned enum hash refs into one hash ref.
-
-    return $enums;
+    return $visibilities;
 }
 
 

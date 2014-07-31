@@ -12,9 +12,9 @@
 
 <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<!--<script type="text/javascript">/* <![CDATA[ */
+<script type="text/javascript">/* <![CDATA[ */
     !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
-/* ]]> */</script>-->
+/* ]]> */</script>
 
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
@@ -110,7 +110,36 @@ $(document).ready(function(){
     }
 </style>
 
+[% IF flash.message %]
+    <!-- <div class="flash"> [% flash.message %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl( "[% flash.message %]", { life: 10000, theme: 'Blitzer', themeState: 'highlight' } );
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
+[% END %]
+[% IF flash.error %]
+    <!-- <div class="error"> [% flash.error %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl("[% flash.error %]", { header: 'Error', sticky: true, theme: 'Blitzer', themeState: 'error' });
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
+[% END %]
 </head>
+
 <body>
 <div id="page_content">
     <div id="section_content">

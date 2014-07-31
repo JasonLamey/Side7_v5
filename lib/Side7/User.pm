@@ -128,7 +128,17 @@ __PACKAGE__->meta->setup
             type       => 'one to many',
             class      => 'Side7::KudosCoin',
             column_map => { id => 'user_id' },
-        }
+        },
+    ],
+    foreign_keys =>
+    [
+        referred_by =>
+        {
+            class             => 'Side7::User',
+            key_columns       => { referred_by => 'id' },
+            relationship_type => 'many to one',
+        },
+
     ],
 );
 

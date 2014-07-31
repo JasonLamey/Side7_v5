@@ -1,9 +1,19 @@
 <h1>[% user.username %]</h1>
 
 <div>
+    <strong>User's Account Links:</strong> 
     <a href="/user/[% user.username %]" target="_blank">Profile</a>
     &middot;
     <a href="/user/[% user.username %]/gallery" target="_blank">Gallery</a>
+
+    &nbsp; || &nbsp;
+
+    <strong>Admin Links:</strong> 
+    [% IF permissions.can_modify_user_account %]
+    <a href="/admin/users/[% user.username %]/edit">Edit User</a>
+    [% ELSE %]
+    None
+    [% END %]
 </div>
 
 <div style="border: solid 1px #000; margin: 5px; padding: 5px;">

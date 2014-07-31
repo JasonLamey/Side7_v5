@@ -216,6 +216,7 @@ sub migrate_users
             username      => $row->{username},
             password      => $row->{password},
             email_address => $row->{email_address},
+            referred_by   => $row->{referred_by},
             created_at    => $row->{join_date},
             updated_at    => $row->{modified_date},
         );
@@ -291,7 +292,6 @@ sub migrate_users
             state                   => $row->{state},
             country_id              => $country_id,
             is_public               => $is_public,
-            referred_by             => $row->{referred_by},
             subscription_expires_on => $expire_on,
             created_at              => $row->{join_date},
             updated_at              => $row->{modified_date},
