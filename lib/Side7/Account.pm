@@ -296,7 +296,7 @@ sub get_formatted_subscription_expires_on
 
     $date_format = '%Y-%m-%d' if defined $admin_dates; # '2014-01-01' (yyyy-mm-dd)
 
-    if ( ! not defined $admin_dates )
+    if ( ! defined $admin_dates )
     {
         if ( $self->user_type->user_type ne 'Subscriber' )
         {
@@ -304,7 +304,7 @@ sub get_formatted_subscription_expires_on
         }
     }
 
-    my $date = $self->subscription_expires_on( format => $date_format ) // 'Invalid Date';
+    my $date = $self->subscription_expires_on( format => $date_format ) // undef;
 
     if ( defined $date )
     {

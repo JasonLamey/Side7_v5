@@ -1,0 +1,57 @@
+<script>
+$(document).ready(function() 
+    { 
+        $("#logs_table").tablesorter({ 
+            // sort on the username column (second column), order asc 
+            sortList: [[0,0]],
+            headers: {
+                2: { sorter: false },
+                4: { sorter: false },
+                5: { sorter: false },
+            },
+            widgets: ['zebra'],
+        }); 
+    } 
+);
+</script>
+
+<h2>Audit Logs</h2>
+
+[% PROCESS 'admin/_audit_logs_search_form.tt' %]
+
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
+
+<table width="100%" cellspacing="1" id="logs_table" class="tablesorter">
+<thead>
+    <tr>
+        <th>Timestamp</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Affected ID</th>
+        <th>Original Value</th>
+        <th>New Value</th>
+        <th>User ID</th>
+        <th>IP Address</th>
+    </tr>
+</thead>
+<tbody>
+    [% IF data.log_count == 0 || data.log_count == '' %]
+    <tr><td colspan="8" align="center"><strong>No Logs Found</strong></td></tr>
+    [% ELSE %]
+        [% FOR log IN data.logs %]
+    <tr>
+        <td align="right">[% log.timestamp %]</td>
+        <td>[% log.title %]</td>
+        <td>[% log.description %]</td>
+        <td align="center">[% log.affected_id %]</span></td>
+        <td>[% log.original_value %]</td>
+        <td>[% log.new_value %]</td>
+        <td align="center">[% log.user_id %]</td>
+        <td>[% log.ip_address %]</td>
+    </tr>
+        [% END %]
+    [% END %]
+</tbody>
+</table>
+
+[% PROCESS 'site/_pagination_menu_pages.tt' %]

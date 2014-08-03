@@ -1011,7 +1011,14 @@ post '/my/upload' => sub
         my $rating_qualifiers = undef;
         if ( defined params->{'rating_qualifiers'} )
         {
-            $rating_qualifiers = join( '', @{ params->{'rating_qualifiers'} } );
+            if ( ref( params->{'rating_qualifiers'} ) eq 'ARRAY' )
+            {
+                $rating_qualifiers = join( '', @{ params->{'rating_qualifiers'} } );
+            }
+            else
+            {
+                $rating_qualifiers = params->{'rating_qualifiers'};
+            }
         }
 
         my $file_stats = Side7::Utils::Image::get_image_stats( image => $upload_dir . $file->filename(), dimensions => 1 );
@@ -1142,6 +1149,7 @@ use Data::Dumper;
 
 use Side7::Globals;
 use Side7::AuditLog;
+use Side7::AuditLog::Manager;
 use Side7::Login;
 use Side7::User;
 use Side7::Admin::Dashboard;
@@ -1626,28 +1634,36 @@ post '/users/:username/edit' => sub
         $orig_user->save();
 
         # Update Audit Log
-        my $audit_msg = 'User Account Updated -- Successful<br>';
+        my $audit_msg = 'User Account Updated -- Successful<br>' .
+                        'Account for &gt;' . $username . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
+                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . '.<br>';
+        $audit_msg .= 'Fields changed:<br>';
+
+        my $old_values = '';
+        my $new_values = '';
         foreach my $key ( keys %user_changes )
         {
-            $audit_msg .= "&gt;$key&lt; - Old value: &gt;" . 
-                            ( $user_changes{$key}{'old'} || '' ) . "&lt; || New value: &gt;" .
-                            ( $user_changes{$key}{'new'} || '' ) . "&lt;<br>";
+            $audit_msg .= "&gt;$key&lt;, "; 
+            $old_values .= "&gt;$key&lt;: &gt;" . ( $user_changes{$key}{'old'} || '' ) . '&lt;<br>';
+            $new_values .= "&gt;$key&lt;: &gt;" . ( $user_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
         foreach my $key ( keys %account_changes )
         {
-            $audit_msg .= "&gt;$key&lt; - Old value: &gt;" . 
-                            ( $account_changes{$key}{'old'} || '' ) . "&lt; || New value: &gt;" . 
-                            ( $account_changes{$key}{'new'} || '' ) . "&lt;<br>";
+            $audit_msg .= "&gt;$key&lt;, "; 
+            $old_values .= "&gt;$key&lt;: &gt;" . ( $account_changes{$key}{'old'} || '' ) . '&lt;<br>';
+            $new_values .= "&gt;$key&lt;: &gt;" . ( $account_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
 
         my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
         my $audit_log = Side7::AuditLog->new(
-                                              title       => 'User Account Updated',
-                                              description => $audit_msg,
-                                              ip_address  => request->address() . $remote_host,
-                                              user_id     => session( 'user_id' ),
-                                              affected_id => params->{'user_id'},
-                                              timestamp   => DateTime->now(),
+                                              title          => 'User Account Updated',
+                                              description    => $audit_msg,
+                                              ip_address     => request->address() . $remote_host,
+                                              user_id        => session( 'user_id' ),
+                                              affected_id    => params->{'user_id'},
+                                              original_value => $old_values,
+                                              new_value      => $new_values,
+                                              timestamp      => DateTime->now(),
         );
 
         $audit_log->save();
@@ -1657,5 +1673,131 @@ post '/users/:username/edit' => sub
     flash message => 'User account for &gt;<b>' . $username . '</b>&lt; has been updated.';
     return redirect '/admin/users/' . $username . '/show';
 };
+
+# Admin Audit Logs View
+get '/audit_logs/?:page?' => sub
+{
+    my $page = params->{'page'} // 1;
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    if ( $admin_user->has_permission( 'can_view_audit_logs' ) == 0 )
+    {
+        flash error => 'You do not have permission to view Audit Logs.';
+        return redirect '/admin';
+    }
+
+    my $log_count = Side7::AuditLog::Manager->get_audit_logs_count();
+
+    my $audit_logs = Side7::AuditLog::Manager->get_audit_logs(
+                                                                query    => [],
+                                                                sort_by  => 'timestamp DESC',
+                                                                page     => $page,
+                                                                per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
+                                                             );
+    
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $log_count, page => $page } );
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    template 'admin/audit_logs', {
+                                        data          => {
+                                                            logs      => $audit_logs,
+                                                            log_count => $log_count,
+                                                         },
+                                        main_menu     => $menu_options,
+                                        link_base_uri => '/admin/audit_logs',
+                                        pagination    => $pagination,
+                                        permissions   => {
+                                                         },
+                                },
+                                { layout => 'admin' };
+};
+
+# Admin Audit Logs Search
+post '/audit_logs/search' => sub
+{
+    my $search_term = params->{'search_term'} // undef;
+    my $page        = params->{'page'}        // '1';
+
+    if
+    (
+        ( ! defined $search_term || $search_term eq '' )
+    )
+    {
+        return redirect '/admin/audit_logs/' . $page;
+    }
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::search_audit_logs(
+                                                            search_term => $search_term,
+                                                            page        => $page,
+                                                         );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'log_count'}, page => $page } );
+
+    my $search_url_base = '/admin/audit_logs/search/' . $search_term;
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/audit_logs', { 
+                                query         => { 
+                                                    search_term => $search_term,
+                                                 },
+                                main_menu           => $menu_options, 
+                                data                => $data, 
+                                page                => $page,
+                                pagination          => $pagination,
+                                link_base_uri       => '/admin/audit_logs/search',
+                                pagination_base_uri => $search_url_base,
+                                permissions         => {
+                                                       },
+                           },
+                           { layout => 'admin' };
+};
+
+# Admin Audit Log Dashboard Search Get Redirect for Pagination
+get '/audit_logs/search/:search_term?/?:page?' => sub
+{
+    my $search_term = params->{'search_term'} // undef;
+    my $page        = params->{'page'}        // '1';
+
+    if (
+        ( ! defined $search_term || $search_term eq '' )
+    )
+    {
+        return redirect '/admin/audit_logs/' . $page;
+    }
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    my $data = Side7::Admin::Dashboard::search_audit_logs(
+                                                            search_term => $search_term,
+                                                            page        => $page,
+                                                         );
+
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $data->{'log_count'}, page => $page } );
+
+    my $search_url_base = '/admin/audit_logs/search/' .  $search_term;
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/audit_logs', { 
+                                title         => 'Audit Logs',
+                                query         => { 
+                                                    search_term => $search_term,
+                                                 },
+                                main_menu           => $menu_options, 
+                                data                => $data, 
+                                page                => $page,
+                                pagination          => $pagination,
+                                link_base_uri       => '/admin/audit_logs',
+                                pagination_base_uri => $search_url_base,
+                                permissions         => {
+                                                       },
+                           },
+                           { layout => 'admin' };
+};
+
 
 true;

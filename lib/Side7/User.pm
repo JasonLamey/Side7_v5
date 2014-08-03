@@ -1467,7 +1467,7 @@ sub get_users_for_directory
         with_objects => [ 'account', 'user_preferences', 'images', 'images.rating' ],
         sort_by      => 'username ASC',
         page         => $page,
-        per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
+        per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
     );
 
     my $users;

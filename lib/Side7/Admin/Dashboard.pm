@@ -7,6 +7,7 @@ use Data::Dumper;
 
 use Side7::Globals;
 use Side7::DB;
+use Side7::AuditLog::Manager;
 use Side7::User;
 use Side7::User::Manager;
 use Side7::User::Status::Manager;
@@ -465,7 +466,7 @@ sub search_users
         with_objects => [ 'account' ],
         sort_by      => 'username ASC',
         page         => $page,
-        per_page     => $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'},
+        per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
     );
 
     my @results = ();
@@ -483,6 +484,110 @@ sub search_users
     $data{'statuses'}   = Side7::Admin::Dashboard::get_user_statuses_for_select();
     $data{'roles'}      = Side7::Admin::Dashboard::get_user_roles_for_select();
     $data{'types'}      = Side7::Admin::Dashboard::get_user_types_for_select();
+
+    return \%data;
+}
+
+
+=head2 search_audit_logs()
+
+Returns an hashref of audit logs that match the search criteria.
+
+Parameters:
+
+=over 4
+
+=item search_term: A string containing the text for which to search in the titel, description, user_id, and ip_address.
+
+=item page: The page of results to return.
+
+=back
+
+    my $data = Side7::Admin::Dashboard::search_audit_logs(
+                                                            search_term => $search_term,
+                                                            page        => $page,
+                                                         );
+
+=cut
+
+sub search_audit_logs
+{
+    my ( %args ) = @_;
+
+    my $search_term = delete $args{'search_term'} // undef;
+    my $page        = delete $args{'page'}        // 1;
+
+    my $query = '';
+
+    if ( defined $search_term && $search_term ne '' )
+    {
+        my $search = $search_term;
+        $search =~ s/([\@\$\#\%])/\\$1/g;
+        $query .= qq( 
+                    or => [
+                            'title'       => { like => "%$search%" },
+                            'description' => { like => "%$search%" },
+                            'user_id'     => { like => "%$search%" },
+                            'ip_address'  => { like => "%$search%" },
+                          ], );
+    }
+
+    my $log_count = Side7::AuditLog::Manager->get_audit_logs_count(
+        query =>
+            [
+                eval $query,
+            ],
+        with_objects => [ 'user' ],
+    );
+
+    my $logs = Side7::AuditLog::Manager->get_audit_logs
+    (
+        query => [
+                    eval $query,
+                 ],
+        with_objects => [ 'user' ],
+        sort_by      => 'timestamp DESC',
+        page         => $page,
+        per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
+    );
+
+    my @results = ();
+
+    foreach my $log ( @{ $logs } )
+    {
+        my %rowhash = ();
+        foreach my $key ( qw/ id timestamp title description affected_id original_value new_value user_id ip_address / )
+        {
+            if ( $key eq 'timestamp' )
+            {
+                $rowhash{$key} = $log->$key->strftime('%d %b %Y - %T');
+            }
+            elsif
+            (
+                $key eq 'title' 
+                || 
+                $key eq 'description' 
+                || 
+                $key eq 'user_id'
+                || 
+                $key eq 'ip_address'
+            )
+            {
+                $rowhash{$key} = Side7::Search::highlight_match( text => $log->$key(), look_for => $search_term );
+            }
+            else
+            {
+                $rowhash{$key} = $log->$key();
+            }
+        }
+
+        push( @results, \%rowhash );
+    }
+
+    my %data = ();
+
+    $data{'logs'}      = \@results;
+    $data{'log_count'} = $log_count;
 
     return \%data;
 }

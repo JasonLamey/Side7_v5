@@ -38,7 +38,7 @@ sub get_pagination
     my $total_count      = delete $args->{'total_count'}      // 1;
     my $page             = delete $args->{'page'}             // 1;
     my $pagination_limit = delete $args->{'pagination_limit'} // 
-                                    $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'};
+                                    $CONFIG->{'page'}->{'default'}->{'pagination_limit'};
 
     # In the event a blank but defined parameter is passed in.
     if ( $total_count eq '' )

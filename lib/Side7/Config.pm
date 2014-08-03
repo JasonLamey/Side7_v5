@@ -39,7 +39,7 @@ sub new
     $CONFIG->{'general'}->{'cached_file_uri'}        = '/cached_files/';
 
     # Page-related variables
-    $CONFIG->{'page'}->{'user_directory'}->{'pagination_limit'} = 50;
+    $CONFIG->{'page'}->{'default'}->{'pagination_limit'} = 50;
 
     # Image Related
     $CONFIG->{'image'}->{'default_thumb_path'} = '/images/defaults/:::SIZE:::/:::TYPE:::.jpg';

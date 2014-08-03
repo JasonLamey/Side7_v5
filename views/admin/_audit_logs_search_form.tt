@@ -1,0 +1,10 @@
+<div style="margin-bottom: 10px;">
+    <h3>Audit Log Search:</h3>
+    <form action="/admin/audit_logs/search" method="post">
+    <input type="hidden" name="page" value="1">
+    Search for logs (will search titles, descriptions, IP addresses and User IDs):<br />
+    <label for="search_term">Search For</label>
+    <input type="text" name="search_term" value="[% query.search_term %]" size="30" maxlength="45" placeholder="Username, Phrase, Etc.">
+    <input type="submit" value="Search">
+    </form>
+</div>

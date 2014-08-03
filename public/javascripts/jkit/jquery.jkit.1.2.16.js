@@ -735,14 +735,14 @@
 				// We only have to start the ajax in case this was the first command in the queue:
 				
 				if (s.loadminified){
-					var commandurl = 'jquery.jkit.commands/' + type + '.min.js';
+					var commandurl = '/javascripts/jkit/jquery.jkit.commands/' + type + '.min.js';
 				} else {
-					var commandurl = 'jquery.jkit.commands/' + type + '.js';
+					var commandurl = '/javascripts/jkit/jquery.jkit.commands/' + type + '.js';
 				}
 				
 				if (plugin.commands[type].length == 1){
 					$.ajax({
-						url: 'jquery.jkit.commands/' + type + '.js',
+						url: '/javascripts/jkit/jquery.jkit.commands/' + type + '.js',
 						success: function(data){
 							
 							// The script loaded succesfully! Store the queue in a temporary array and than eval the

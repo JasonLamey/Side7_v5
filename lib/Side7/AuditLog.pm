@@ -51,6 +51,15 @@ __PACKAGE__->meta->setup
         ip_address     => { type => 'varchar',  length => 255 },
     ],
     pk_columns => 'id',
+    foreign_keys =>
+    [
+        user =>
+        {
+            class             => 'Side7::User',
+            key_columns       => { user_id => 'id' },
+            relationship_type => 'many to one',
+        },
+    ],
 );
 
 =head1 METHODS
