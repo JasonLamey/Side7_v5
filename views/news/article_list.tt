@@ -1,0 +1,34 @@
+<div>
+
+    [% FOREACH item IN data.sticky_news %]
+    <div style="margin-bottom: 8px;">
+        <h2>[% item.title %]</h2><br>
+        [% IF item.blurb %][% item.blurb %]<br>[% END %]
+        <small>Posted: [% item.created_at %] - Posted by: [% item.user.username %]</small><br>
+        [% IF item.link_to_article %]
+        <a href="[% item.link_to_article %]">Read More...</a><br>
+        [% ELSIF item.body %]
+        <a href="/news/article/[% item.id %]">Read More...</a><br>
+        [% END %]
+    </div>
+    [% IF ! loop.last %]<hr class="faded">[% END %]
+    [% END %]
+
+    [% PROCESS 'site/_pagination_menu_pages.tt' %]
+
+    [% FOREACH item IN data.news %]
+    <div style="margin-bottom: 8px;">
+        <h2>[% item.title %]</h2>
+        [% IF item.blurb %][% item.blurb %]<br>[% END %]
+        <small>Posted: [% item.created_at %] - By: [% item.user.username %]</small><br>
+        [% IF item.link_to_article %]
+        <a href="[% item.link_to_article %]">Read More...</a><br>
+        [% ELSIF item.body %]
+        <a href="/news/article/[% item.id %]">Read More...</a><br>
+        [% END %]
+    </div>
+    [% IF ! loop.last %]<hr class="faded">[% END %]
+    [% END %]
+
+    [% PROCESS 'site/_pagination_menu_pages.tt' %]
+</div>

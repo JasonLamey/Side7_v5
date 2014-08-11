@@ -6,6 +6,7 @@ use warnings;
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
+use Side7::News::Manager;
 
 =pod
 
@@ -82,26 +83,153 @@ __PACKAGE__->meta->setup
 =head1 METHODS
 
 
-=head2 method_name()
+=head2 get_news_article_list()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns an arrayref of news article hashes, based on the page to be viewed.
 
 Parameters:
 
 =over 4
 
-=item parameter1: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
-
-=item parameter2: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
+=item page: The page number for which to return results.
 
 =back
 
-    my $result = My::Package->method_name();
+    my $news = Side7::News->get_news_article_list( page => $page );
 
 =cut
 
-sub method_name
+sub get_news_article_list
 {
+    my ( $self, %args ) = @_;
+
+    my $page = delete $args{'page'} // 1;
+
+    my $results = Side7::News::Manager->get_news(
+                                                    query => [
+                                                                is_static => 0,
+                                                             ],
+                                                    with_objects => [ 'user' ],
+                                                    sort_by  => 'created_at DESC',
+                                                    page     => $page,
+                                                    per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
+                                                );
+
+    my $news = [];
+    foreach my $result ( @$results )
+    {
+        push( @$news, $result->get_news_hash_for_template() );
+    }
+
+    my $stickies = Side7::News::Manager->get_news(
+                                                    query => [
+                                                                is_static => 1,
+                                                                not_static_after => { ge => DateTime->today() },
+                                                             ],
+                                                    with_objects => [ 'user' ],
+                                                    sort_by  => 'created_at DESC',
+                                                    limit    => 5,
+                                                 );
+
+    my $sticky_news = [];
+    foreach my $sticky ( @$stickies )
+    {
+        push( @$sticky_news, $sticky->get_news_hash_for_template() );
+    }
+
+    my $news_count = Side7::News::Manager->get_news_count(
+                                                            query => [
+                                                                        is_static => 0,
+                                                                     ],
+                                                         );
+
+    my $data = {};
+
+    $data->{'news_count'}  = $news_count;
+    $data->{'news'}        = $news;
+    $data->{'sticky_news'} = $sticky_news;
+   
+    return $data; 
+}
+
+
+=head1 get_news_hash_for_template()
+
+Takes a News object and returns a hash structure of formatted values for use in a template.
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $news_hash = $news->get_news_hash_for_template();
+
+=cut
+
+sub get_news_hash_for_template
+{
+    my ( $self ) = @_;
+
+    my $news_hash = {};
+    foreach my $field ( qw/ id title blurb body link_to_article priority / )
+    {
+        $news_hash->{$field} = $self->$field();
+    }
+
+    foreach my $field ( qw/ created_at updated_at / )
+    {
+        $news_hash->{$field} = $self->$field->strftime( '%d %b, %Y @ %I:%M %P' );
+    }
+
+    if ( defined $self->{'user'} )
+    {
+        $news_hash->{'user'} = $self->user->get_user_hash_for_template();
+    }
+
+    return $news_hash;
+}
+
+
+=head2 get_news_article()
+
+Returns a hashref of news article data based on news id.
+
+Parameters:
+
+=over 4
+
+=item news_id: The ID of the News item to return.
+
+=back
+
+    my $news_item = Side7::News->get_news_article( news_id => $news_id );
+
+=cut
+
+sub get_news_article
+{
+    my ( $self, %args ) = @_;
+
+    my $news_id = delete $args{'news_id'} // undef;
+
+    if ( ! defined $news_id )
+    {
+        return {};
+    }
+
+    my $news_item = Side7::News->new( id => $news_id );
+    my $loaded = $news_item->load( speculative => 1, with => [ 'user' ] );
+
+    my $news_hash = {};
+    if ( $loaded != 0 && ref( $news_item ) eq 'Side7::News' )
+    {
+        $news_hash = $news_item->get_news_hash_for_template();
+    }
+
+    return $news_hash;
 }
 
 

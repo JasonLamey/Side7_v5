@@ -20,6 +20,7 @@
         </div>
         <div>
             <a href="/">Main</a> &middot;
+            <a href="/news">News</a> &middot;
             <a href="/faq">F.A.Q.</a> &middot;
             <a href="/user_directory">User Directory</a>
         </div>

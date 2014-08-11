@@ -1,13 +1,16 @@
 <div class="page">
-    <div style="float: left; width: 20%; margin-right: 10px; padding: 5px; height: 100%;">
+    <div style="float: right; width: 25%; margin-left: 10px; padding: 5px; height: 350px;">
+        <div style="float: right; margin-top: 15px; font-size: 0.9em;"><a href="/news">See All</a></div>
         <h2>News</h2>
-        <p>This is where news goes.</p>
+        <div style="height: 350px; overflow: auto;">
+        [% PROCESS '_index_news.tt' %]
+        </div>
     </div>
-    <div style="padding: 5px;">
+    <div style="padding: 5px; margin-right: 27%;">
         <h2>Featured Artist</h2>
         <p>This is where the featured artist will be.</p>
     </div>
-    <div style="padding: 5px;">
+    <div style="padding: 5px; margin-right: 27%;">
         <h2>Recently Uploaded</h2>
         <p>This is where the most recent 20 uploads will be.</p>
     </div>

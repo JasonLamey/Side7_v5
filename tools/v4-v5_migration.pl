@@ -25,6 +25,7 @@ use Side7::KudosCoin;
 use Side7::Utils::Text;
 use Side7::FAQCategory;
 use Side7::FAQEntry;
+use Side7::News;
 
 use Getopt::Std;
 use Carp;
@@ -95,6 +96,7 @@ sub migrate
     sleep (3); # Dramatic pause
 
     db_connect();
+    migrate_news();
     migrate_users();
     migrate_user_preferences();
     migrate_account_credits();
@@ -1199,6 +1201,71 @@ sub migrate_faq_entries
 
     $sth->finish();
     say "\t=> Migrated FAQ Entry records: " . _commafy( $entry_count ) if defined $opt{V};
+}
+
+sub migrate_news
+{
+    if ( defined $opt{V} ) { say "=> Migrating Site News."; }
+
+    # Cleanup from any previous migrations occurred with News migration.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 News tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ news / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 news table;
+    if ( defined $opt{V} ) { say "\t=> Pulling News records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT news.*, news.id as news_id
+         FROM news
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $entry_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+
+        # Create Entry and save it.
+        my $entry = Side7::News->new(
+            id               => $row->{news_id},
+            title            => $row->{title},
+            blurb            => $row->{blurb},
+            body             => $row->{article},
+            link_to_article  => $row->{external_link},
+            is_static        => $row->{static},
+            not_static_after => $row->{expires},
+            priority         => $row->{priority},
+            user_id          => $row->{user_account_id},
+            created_at       => $row->{timestamp},
+            updated_at       => $row->{timestamp},
+        );
+        $entry->save if ! defined $opt{D};
+
+        $entry_count++;
+
+        print _progress_dot( total => $row_count, count => $entry_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated News records: " . _commafy( $entry_count ) if defined $opt{V};
 }
 
 sub time_elapsed

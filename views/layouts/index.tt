@@ -45,30 +45,7 @@
     }
     .metanav {
     }
-    .admin_menu {
-        width:200px;
-        position:absolute;
-        left:0;
-        top:40px;
-        bottom:40px;
-        height:auto;
-        display: block;
-        margin-right: 5px;
-    }
-    .admin_menu_option {
-        text-align: left;
-        padding: 3px;
-        border-bottom: solid 1px #000;
-    }
-    .admin_menu_option a {
-        font-weight: bold;
-    }
-    .admin_menu_option .disabled {
-        font-weight: normal;
-        color: #777;
-    }
     #section_content {
-        margin-left: 205px;
         padding: 5px;
         width: auto;
         height: auto;

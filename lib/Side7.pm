@@ -14,6 +14,7 @@ use Side7::Globals;
 use Side7::AuditLog;
 use Side7::Search;
 use Side7::Login;
+use Side7::News::Manager;
 use Side7::User;
 use Side7::User::ChangePassword;
 use Side7::User::AccountDelete;
@@ -80,7 +81,84 @@ hook 'before' => sub {
 
 get '/' => sub 
 {
-    template 'index';
+    my $stickies = Side7::News::Manager->get_news(
+                                                    query => [
+                                                                is_static        => 1,
+                                                                not_static_after => { ge => DateTime->today() },
+                                                             ],
+                                                    with_objects => [ 'user' ],
+                                                    sort_by      => 'created_at DESC',
+                                                    limit        => 5,
+                                                  );
+
+    my $results = Side7::News::Manager->get_news(
+                                                    query   => [
+                                                                    is_static => 0,
+                                                               ],
+                                                    with_objects => [ 'user' ],
+                                                    sort_by      => 'created_at DESC',
+                                                    limit        => 5,
+                                                );
+
+    # Get News Hashes
+    my $news = [];
+    foreach my $result ( @$results )
+    {
+        push( @$news, $result->get_news_hash_for_template() );
+    }
+
+    my $sticky_news = [];
+    foreach my $sticky ( @$stickies )
+    {
+        push( @$sticky_news, $sticky->get_news_hash_for_template() );
+    }
+
+    template 'index', {
+                        data => {
+                                    news        => $news,
+                                    sticky_news => $sticky_news,
+                                },
+                      }, { layout => 'index' };
+};
+
+# News Directory Page
+get '/news/?:page?' => sub
+{
+    my $page = params->{'page'} // 1;
+
+    my $news = Side7::News->get_news_article_list( page => $page );
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news->{'news_count'}, page => $page } );
+
+    template 'news/article_list', { 
+                                    data          => $news, 
+                                    page          => $page,
+                                    pagination    => $pagination,
+                                    link_base_uri => '/news',
+                                  };
+};
+
+# News Article Page
+get '/news/article/:news_id' => sub
+{
+    my $news_id = params->{'news_id'} // undef;
+
+    if ( ! defined $news_id )
+    {
+        flash error => 'Invalid News ID';
+        return redirect '/news';
+    }
+
+    my $news_item = Side7::News->get_news_article( news_id => $news_id );
+
+    if ( scalar( keys %$news_item ) == 0 )
+    {
+        flash error => 'Invalid News ID';
+        return redirect '/news';
+    }
+
+    template 'news/article', { 
+                                 data => $news_item, 
+                             };
 };
 
 # Call directory_view in a route handler
@@ -91,6 +169,13 @@ get qr{/pod_manual/(.*)} => sub {
     return directory_view(root_dir => 'pod_manual',
                           path     => $path,
                           system_path => 1);
+};
+
+# Font files for CSS.
+get qr{^/fonts/(.*)} => sub {
+    my ( $path ) = splat;
+
+    send_file 'public/fonts/' . $path;
 };
 
 # Cached files and images
