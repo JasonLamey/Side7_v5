@@ -1236,6 +1236,8 @@ use Side7::Globals;
 use Side7::AuditLog;
 use Side7::AuditLog::Manager;
 use Side7::Login;
+use Side7::News;
+use Side7::News::Manager;
 use Side7::User;
 use Side7::Admin::Dashboard;
 use Side7::Admin::Report;
@@ -1721,7 +1723,7 @@ post '/users/:username/edit' => sub
         # Update Audit Log
         my $audit_msg = 'User Account Updated -- Successful<br>' .
                         'Account for &gt;' . $username . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
-                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . '.<br>';
+                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
         $audit_msg .= 'Fields changed:<br>';
 
         my $old_values = '';
@@ -1729,14 +1731,14 @@ post '/users/:username/edit' => sub
         foreach my $key ( keys %user_changes )
         {
             $audit_msg .= "&gt;$key&lt;, "; 
-            $old_values .= "&gt;$key&lt;: &gt;" . ( $user_changes{$key}{'old'} || '' ) . '&lt;<br>';
-            $new_values .= "&gt;$key&lt;: &gt;" . ( $user_changes{$key}{'new'} || '' ) . '&lt;<br>';
+            $old_values .= "$key: &gt;" . ( $user_changes{$key}{'old'} || '' ) . '&lt;<br>';
+            $new_values .= "$key: &gt;" . ( $user_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
         foreach my $key ( keys %account_changes )
         {
             $audit_msg .= "&gt;$key&lt;, "; 
-            $old_values .= "&gt;$key&lt;: &gt;" . ( $account_changes{$key}{'old'} || '' ) . '&lt;<br>';
-            $new_values .= "&gt;$key&lt;: &gt;" . ( $account_changes{$key}{'new'} || '' ) . '&lt;<br>';
+            $old_values .= "$key: &gt;" . ( $account_changes{$key}{'old'} || '' ) . '&lt;<br>';
+            $new_values .= "$key: &gt;" . ( $account_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
 
         my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -1884,5 +1886,273 @@ get '/audit_logs/search/:search_term?/?:page?' => sub
                            { layout => 'admin' };
 };
 
+# Admin News Dashboard
+get '/news/?:page?' => sub
+{
+    my $page = params->{'page'} // 1;
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    my $news_count = Side7::News::Manager->get_news_count();
+
+    my $results = Side7::News::Manager->get_news(
+                                                       query        => [],
+                                                       with_objects => [ 'user' ],
+                                                       sort_by      => 'created_at DESC',
+                                                       page         => $page,
+                                                       per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
+                                                   );
+
+    my $news = ();
+    foreach my $result ( @$results )
+    {
+        my $news_hash = {};
+        foreach my $key ( qw/ id title blurb body link_to_article priority created_at updated_at / )
+        {
+            if ( $key eq 'body' )
+            {
+                $news_hash->{'body'} = Side7::Utils::Text::sanitize_text_for_html( $result->body() );
+            }
+            else
+            {
+                $news_hash->{$key} = $result->$key();
+            }
+        }
+        $news_hash->{'user'} = $result->user->get_user_hash_for_template();
+
+        push ( @$news, $news_hash );
+    }
+    
+    my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news_count, page => $page } );
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+    my $priorities = Side7::News->get_priority_names();
+
+    template 'admin/news', {
+                                        data          => {
+                                                            news       => $news,
+                                                            news_count => $news_count,
+                                                            priorities => $priorities,
+                                                         },
+                                        main_menu     => $menu_options,
+                                        link_base_uri => '/admin/news',
+                                        pagination    => $pagination,
+                                        permissions   => {
+                                                            can_post_site_news => $admin_user->has_permission( 'can_post_site_news' ),
+                                                         },
+                                },
+                                { layout => 'admin' };
+};
+
+# Admin News Dashboard Show Article Details
+get '/news/:news_id/show' => sub
+{
+    my $news_id = params->{'news_id'} // undef;
+
+    if ( ! defined $news_id )
+    {
+        flash error => "Invalid News ID provided. Cannot display the News item's details.";
+        return redirect '/admin/news';
+    }
+
+    my $news = Side7::News->new( id => $news_id );
+    my $loaded = $news->load( speculative => 1, with => [ 'user' ] );
+
+    if ( $loaded == 0 || ref( $news ) ne 'Side7::News' )
+    {
+        flash error => 'Invalid News ID provided. Cannot display the News item\'s details.';
+        return redirect '/admin/news';
+    }
+
+    my $news_hash = $news->get_news_hash_for_template();
+    my $priorities = Side7::News->get_priority_names();
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/news_details', {
+                                        news        => $news_hash,
+                                        data        => {
+                                                        priorities => $priorities,
+                                                       },
+                                        permissions => {
+                                                        can_post_site_news  => $admin_user->has_permission( 'can_post_site_news' ),
+                                                       },
+                                   },
+                                   { layout => 'admin_lightbox' };
+};
+
+# Admin News Dashboard Edit Article Details
+get '/news/:news_id/edit' => sub
+{
+    my $news_id = params->{'news_id'} // undef;
+
+    if ( ! defined $news_id )
+    {
+        flash error => "Invalid News ID provided. Cannot edit the News Item's details.";
+        return redirect '/admin/news';
+    }
+
+    my $news = Side7::News->new( id => $news_id );
+    my $loaded = $news->load( speculative => 1, with => [ 'user' ] );
+
+    if ( $loaded == 0 || ref( $news ) ne 'Side7::News' )
+    {
+        flash error => 'Invalid News ID provided. Cannot display the News item\'s details.';
+        return redirect '/admin/news';
+    }
+
+    my $news_hash = $news->get_news_hash_for_template( format_dates => 0 );
+    my $priorities = Side7::News->get_priority_names();
+
+    my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    template 'admin/news_edit_form', {
+                                        news        => $news_hash,
+                                        data        => {
+                                                        priorities => $priorities,
+                                                       },
+                                        permissions => {
+                                                        can_post_site_news  => $admin_user->has_permission( 'can_post_site_news' ),
+                                                       },
+                                   },
+                                   { layout => 'admin_lightbox' };
+};
+
+# Admin News Dashboard Edit News Submission
+post '/news/:news_id/edit' => sub
+{
+    my $params  = params;
+    my $news_id = params->{'news_id'} // undef;
+
+    my $return_to_form = sub
+    {
+        my $news = Side7::News->new( id => $news_id );
+        my $loaded = $news->load( speculative => 1, with => [ 'user' ] );
+
+        if ( $loaded == 0 || ref( $news ) ne 'Side7::News' )
+        {
+            flash error => 'Invalid News ID provided. Cannot display the News item\'s details.';
+            return redirect '/admin/news';
+        }
+
+        my $news_hash = $news->get_news_hash_for_template( format_dates => 0 );
+        my $priorities = Side7::News->get_priority_names();
+
+        my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
+
+        return template 'admin/news_edit_form', {
+                                                    news_id     => $news_id,
+                                                    news        => $news_hash,
+                                                    data        => {
+                                                                    priorities => $priorities,
+                                                                   },
+                                                    permissions => {
+                                                                    can_post_site_news  => $admin_user->has_permission( 'can_post_site_news' ),
+                                                                   },
+                                               },
+                                               { layout => 'admin_lightbox' };
+    };
+
+    # Validating params with rule file
+    my $data = validator( $params, 'admin_news_edit_form.pl' );
+
+    # Return to User Dashboard if errors.
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+
+        $return_to_form->();
+    }
+
+    # Save News.
+    my $orig_news = Side7::News->new( id => params->{'news_id'} );
+    my $loaded = $orig_news->load( speculative => 1, with_objects => [ 'user' ] );
+
+    if ( $loaded == 0 || ref( $orig_news ) ne 'Side7::News' )
+    {
+        # Return to form.
+        flash error => 'News Item for ID >' . $news_id . '< could not be loaded from the database for editing.';
+        $return_to_form->();
+    }
+
+    # News-specific
+    my %news_changes = ();
+    my $news_updated = 0;
+    foreach my $field ( qw/ title blurb body link_to_article priority is_static not_static_after user_id / )
+    {
+        if (
+            ( defined params->{$field} && ! defined $orig_news->$field() )
+            ||
+            ( ! defined params->{$field} && defined $orig_news->$field() )
+            ||
+            ( 
+                defined params->{$field} 
+                &&
+                defined $orig_news->$field()
+                &&
+                $orig_news->$field() ne params->{$field}
+            )
+        )
+        {
+            # Record change in hash.
+            $news_changes{$field}{'old'} = ( $orig_news->$field() || '' );
+            $news_changes{$field}{'new'} = ( params->{$field} || '' );
+
+            # Make change.
+            $orig_news->$field( ( params->{$field} || undef ) );
+            $news_updated = 1;
+        }
+    }
+
+    # Save changes
+    if ( $news_updated == 1 )
+    {
+        # Update user updated_at
+        $orig_news->updated_at( 'now' );
+
+        $orig_news->save();
+
+        # Update Audit Log
+        my $audit_msg = 'News Item Updated -- Successful<br>' .
+                        'Item &gt;' . $orig_news->title() . '&lt; ( News ID: ' . $news_id . ' )' . 
+                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+        $audit_msg .= 'Fields changed:<br>';
+
+        my $old_values = '';
+        my $new_values = '';
+        foreach my $key ( keys %news_changes )
+        {
+            $audit_msg .= "&gt;$key&lt;, "; 
+            $old_values .= "$key: &gt;" . ( $news_changes{$key}{'old'} || '' ) . '&lt;<br>';
+            $new_values .= "$key: &gt;" . ( $news_changes{$key}{'new'} || '' ) . '&lt;<br>';
+        }
+
+        my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+        my $audit_log = Side7::AuditLog->new(
+                                              title          => 'News Item Updated',
+                                              description    => $audit_msg,
+                                              ip_address     => request->address() . $remote_host,
+                                              user_id        => session( 'user_id' ),
+                                              affected_id    => params->{'user_id'},
+                                              original_value => $old_values,
+                                              new_value      => $new_values,
+                                              timestamp      => DateTime->now(),
+        );
+
+        $audit_log->save();
+
+    }
+
+    flash message => 'News Item &gt;<b>' . $orig_news->title() . '</b>&lt; has been updated.';
+    return redirect '/admin/news/' . $news_id . '/show';
+};
 
 true;

@@ -1,0 +1,56 @@
+[% USE date %]
+<script type="text/javascript">
+    $( document ).ready( function() {
+        $( '#not_static_after' ).datepicker( { 
+            changeMonth: true, 
+            changeYear: true, 
+            dateFormat: 'yy-mm-dd', 
+            showAnim: 'fadeIn',
+        } );
+    } );
+</script>
+
+<h1>Edit News Item</h1>
+
+<div>
+    <h3>News Item Data</h3>
+    <form action="/admin/news/[% news.id %]/edit" method="post" id="news_edit_form">
+    <input type="hidden" name="id" value="[% news.id %]">
+
+    <label for="title">Title:</label>
+    <input type="text" name="title" size="50" maxlength="255" value="[% news.title %]" data-jkit="[validate:required=true;error=Title is required.]"><br>
+    <br>
+    <label for="blurb">Short Blurb:</label><br>
+    <textarea name="blurb" cols="80" rows="3">[% news.blurb %]</textarea><br>
+    <br>
+    <label for="body">Article Body:</label><br>
+    <textarea name="body" cols="80" rows="10">[% news.body %]</textarea><br>
+    <br>
+    <label for="link_to_article">External Link To Article:</label> <input type="text" name="link_to_article" size="50" maxlength="255" value="[% news.link_to_article %]"><br>
+    <br>
+    <label for="is_static">Is Sticky:</label>
+    [% IF news.is_static == 1 %][% checked = ' checked="1"' %][% ELSE %][% checked = '' %][% END %]
+    <input type="checkbox" name="is_static" value="1"[% checked %]> &nbsp; 
+    <label for="not_static_after">No longer sticky after:</label>
+    [% IF news.not_static_after %][% not_static_date = date.format( news.not_static_after, '%Y-%m-%d' ) %][% ELSE %][% not_static_date = '' %][% END %]
+    <input type="date" id="not_static_after" name="not_static_after" value="[% not_static_date %]" size="30" maxlength="15"><br>
+    <br>
+    <label for="priority">Priority:</label>
+    <select name="priority">
+        <option value=''>Select Priority</option>
+    [% FOR key IN data.priorities.keys.sort %]
+        [% IF news.priority == key %][% selected = ' selected="selected"' %][% ELSE %][% selected = '' %][% END %]
+        <option value="[% key %]"[% selected %]>[% data.priorities.$key %]</option>
+    [% END %]
+    </select><br>
+    <br>
+
+    <input type="hidden" name="user_id" value="[% news.user.id %]">
+    <input type="hidden" name="created_at" value="[% news.created_at %]">
+    <input type="hidden" name="updated_at" value="[% news.updated_at %]">
+    <label>Posted By:</label> [% news.user.username %]<br>
+    <label>Created:</label> [% date.format( news.created_at, '%Y-%m-%d %H:%M' ) %]<br>
+    <label>Last Updated:</label> [% date.format( news.updated_at, '%Y-%m-%d %H:%M' ) %]<br>
+    <input type="submit" value="Save Changes">
+    </form>
+</div>

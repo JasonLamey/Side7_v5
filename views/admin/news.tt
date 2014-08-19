@@ -1,0 +1,80 @@
+[% USE date %]
+
+<script>
+$(document).ready(function() 
+    { 
+        $("#news_table").tablesorter({ 
+            // sort on the username column (second column), order asc 
+            sortList: [[6,1]],
+            headers: {
+                3: { sorter: false },
+                4: { sorter: false },
+                8: { sorter: false },
+            },
+            widgets: ['zebra'],
+        }); 
+    } 
+);
+</script>
+
+<h2>News</h2>
+
+[% PROCESS 'site/_pagination_menu_pages.tt' %]
+
+<div>
+<a href="/admin/news/post" data-jkit="[lightbox:width=900px;height=550px]">Post New News Item</a>
+</div>
+
+<table width="100%" cellspacing="1" id="news_table" class="tablesorter">
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Priority/<br>Sticky</th>
+        <th>Title</th>
+        <th>Blurb</th>
+        <th>Body</th>
+        <th>Posted By</th>
+        <th>Created</th>
+        <th>Updated</th>
+        <th>Tools</th>
+    </tr>
+</thead>
+<tbody>
+    [% IF data.news_count == 0 || data.news_count == '' %]
+    <tr><td colspan="9" align="center"><strong>No News Found</strong></td></tr>
+    [% ELSE %]
+        [% FOR news IN data.news %]
+    <tr>
+        [% key = news.priority %]
+        <td align="center">[% news.id %]</td>
+        <td align="center">[% data.priorities.$key %]/<br>
+                            [% IF news.is_static == 1 %]Sticky[% ELSE %]Not Sticky[% END %]</td>
+        <td>[% news.title %]</td>
+        <td>[% news.blurb %]</td>
+        <td>[% news.body.substr( 0,100 ) %]</td>
+        <td>[% news.user.username %]</td>
+        <td>[% date.format( news.created_at, '%Y-%m-%d %H:%M' ) %]</td>
+        <td>[% date.format( news.updated_at, '%Y-%m-%d %H:%M' ) %]</td>
+        <td align="center" style="white-space: nowrap;">
+                    <a href="/admin/news/[% news.id %]/show" data-jkit="[lightbox:width=900px;height=550px]">
+                    <img src="/images/icons/magnifier.gif" alt="News Details" title="News Details" align="absmiddle" border="0"> Details</a> | 
+                    [% IF permissions.can_post_site_news == 1 %]
+                    <a href="/admin/news/[% news.id %]/edit" data-jkit="[lightbox:width=900px;height=550px]">
+                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit</a> | 
+                    [% ELSE %]
+                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit | 
+                    [% END %]
+                    [% IF permissions.can_post_site_news == 1 %]
+                    <a href="/admin/news/[% news.id %]/delete" data-jkit="[lightbox:width=900px;height=550px]">
+                    <img src="/images/icons/page_delete.gif" alt="Delete News" title="Delete News" align="absmiddle" border="0"> Delete</a>
+                    [% ELSE %]
+                    <img src="/images/icons/page_delete.gif" alt="Delete News" title="Delete News" align="absmiddle" border="0"> Disable
+                    [% END %]
+        </td>
+    </tr>
+        [% END %]
+    [% END %]
+</tbody>
+</table>
+
+[% PROCESS 'site/_pagination_menu_pages.tt' %]

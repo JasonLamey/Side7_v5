@@ -171,7 +171,9 @@ Parameters:
 
 sub get_news_hash_for_template
 {
-    my ( $self ) = @_;
+    my ( $self, %args ) = @_;
+
+    my $format_dates = delete $args{'format_dates'} // 1;
 
     my $news_hash = {};
     foreach my $field ( qw/ id title blurb body link_to_article priority / )
@@ -181,7 +183,14 @@ sub get_news_hash_for_template
 
     foreach my $field ( qw/ created_at updated_at / )
     {
-        $news_hash->{$field} = $self->$field->strftime( '%d %b, %Y @ %I:%M %P' );
+        if ( $format_dates == 1 )
+        {
+            $news_hash->{$field} = $self->$field->strftime( '%d %b, %Y @ %I:%M %P' );
+        }
+        else
+        {
+            $news_hash->{$field} = $self->$field();
+        }
     }
 
     if ( defined $self->{'user'} )
@@ -230,6 +239,34 @@ sub get_news_article
     }
 
     return $news_hash;
+}
+
+
+=head2 get_priority_names()
+
+Returns an hashref of names for each priority value.
+
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $priorities = Side7::News->get_priority_names();
+
+=cut
+
+sub get_priority_names
+{
+    my $names = {
+                    1 => 'Normal',
+                    2 => 'Important',
+                    3 => 'Critical',
+                };
+
+    return $names;
 }
 
 

@@ -193,6 +193,15 @@ code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
+input, textarea, select {
+    font-family: "AlwinLight", sans-serif;
+    font-size: 11px;
+}
+
+th, td {
+    font-family: "AlwinLight", sans-serif;
+}
+
 #footer {
     clear: both;
     padding-top: 2em;
