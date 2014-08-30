@@ -344,10 +344,11 @@ sub get_gallery
         return undef;
     }
 
-    my $session = delete $args{'session'} // undef;
+    my $session        = delete $args{'session'}        // undef;
+    my $thumbnail_size = delete $args{'thumbnail_size'} // 'Small';
 
     # TODO: BUILD OUT ADDITIONAL, OPTIONAL ARGUMENTS TO CONTROL CONTENT.
-    my $gallery = Side7::UserContent::get_gallery( $self->id , { session => $session } );
+    my $gallery = Side7::UserContent::get_gallery( $self->id , { session => $session, size => $thumbnail_size } );
 
     return $gallery;
 }
@@ -1627,10 +1628,11 @@ Parameters:
 
 sub show_user_gallery
 {
-    my ( $args ) = @_;
+    my ( %args ) = @_;
 
-    my $username = delete $args->{'username'} // undef;
-    my $session  = delete $args->{'session'}  // undef;
+    my $username       = delete $args{'username'}       // undef;
+    my $session        = delete $args{'session'}        // undef;
+    my $thumbnail_size = delete $args{'thumbnail_size'} // 'Small';
 
     if ( ! defined $username || $username eq '' )
     {
@@ -1645,7 +1647,7 @@ sub show_user_gallery
         return undef; # TODO: Need to redirect to invalid user error page.
     }
 
-    my $gallery = $user->get_gallery( session => $session );
+    my $gallery = $user->get_gallery( session => $session, thumbnail_size => $thumbnail_size );
 
     return ( $user, $gallery );
 }

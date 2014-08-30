@@ -33,7 +33,7 @@ This package handles all the management for User Preferences.
     | pms_notifications          | tinyint(1)                                                      | NO   |     | 1           |                |
     | comment_notifications      | tinyint(1)                                                      | NO   |     | 1           |                |
     | show_online                | tinyint(1)                                                      | NO   |     | 1           |                |
-    | thumbnail_size             | enum('Small','Large')                                           | NO   |     | Small       |                |
+    | thumbnail_size             | enum('Small','Medium','Large')                                  | NO   |     | Small       |                |
     | content_display_type       | enum('List','Grid')                                             | NO   |     | List        |                |
     | show_m_thumbs              | tinyint(1)                                                      | NO   |     | 0           |                |
     | show_adult_content         | tinyint(1)                                                      | NO   |     | 0           |                |
@@ -87,7 +87,7 @@ __PACKAGE__->meta->setup
         show_online                => { type => 'boolean',  not_null => 1, default => 1 },
         thumbnail_size             => { 
                                         type     => 'enum',  
-                                        values   => [ 'Small', 'Large' ],  
+                                        values   => [ 'Small', 'Medium', 'Large' ],  
                                         not_null => 1,
                                         default  => 'Small',
                                       }, 

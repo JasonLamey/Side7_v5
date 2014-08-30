@@ -480,6 +480,7 @@ sub show_image
     my $size             = delete $args{'size'}             // 'original';
     my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
+    $LOGGER->debug( 'In show_image' );
     return {} if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
@@ -494,6 +495,7 @@ sub show_image
                                     'properties',
                                 ]
     );
+    $LOGGER->debug( 'show_image loaded image from image_id' );
 
     # Image Not Found
     if (
@@ -518,6 +520,7 @@ sub show_image
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
 
     # Filepath
+    $LOGGER->debug( 'IMAGE SIZE REQUESTED: >' . $size . '<' );
     my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
     if ( defined $error && $error ne '' )
     {

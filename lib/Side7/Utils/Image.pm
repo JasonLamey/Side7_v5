@@ -107,12 +107,12 @@ sub create_cached_image
     }
 
     # Set initial output size geometry.
-    my $output_size = ( lc( $size ) eq 'original' ) ? $width . 'x' . $height : $IMAGEMAGICK_SIZE_LIMITS{$size};
+    my $output_size = ( lc( $size ) eq 'original' ) ? $width . 'x' . $height : $IMAGEMAGICK_SIZE_LIMITS{ lc( $size ) };
 
     # Ensure we're not enlarging small images.  That would look nasty.
     if ( lc( $size ) ne 'original' )
     {
-        my ( $limit_width, $limit_height ) = split( /x/, $IMAGEMAGICK_SIZE_LIMITS{$size} );
+        my ( $limit_width, $limit_height ) = split( /x/, $IMAGEMAGICK_SIZE_LIMITS{ lc( $size ) } );
 
         if (
             $limit_width > $width

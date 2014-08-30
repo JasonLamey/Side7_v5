@@ -84,6 +84,8 @@ sub get_gallery
     my $size    = delete $args->{'size'}    // 'small';
     my $session = delete $args->{'session'} // undef;
 
+    $size = lc( $size );
+
     if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
     {
         $LOGGER->warn( 'Invalid User ID >' . $user_id . '< when attempting to fetch gallery contents.' );

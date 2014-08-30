@@ -1,23 +1,61 @@
+<script src="/javascripts/freewall/freewall.js"></script>
+[% vars.content_display_type = 'Grid' %]
 <h1>[% user.username %]'s Gallery</h1>
 [% IF NOT gallery %]
 <div>Nothing to show. Poke this user to get them to upload!</div>
 [% ELSE %]
 <p><a href="/user/[% user.username %]">[% user.username %]'s Profile</a></p>
-<ol type="1">
+<div id="user_content_set">
+[% IF vars.content_display_type == 'List' %]
+    [% wall_type = 'fitWidth' %]
     [% FOREACH content IN gallery %]
-    <li>
-    [% IF content.filepath %]
-    <a href='[% content.uri %]'><img src='[% content.filepath %]' alt='' title='' border='0' /></a>
-    [% ELSE %]
-    [ [% content.filepath_error %] ]
+    <div class="user_content_item_list">
+        [% IF content.filepath %]
+        <a href='[% content.uri %]'><img src='[% content.filepath %]' alt='' title='' border='0' /></a>
+        [% ELSE %]
+        [ [% content.filepath_error %] ]
+        [% END %]
+        <a href="/[% content.content_type %]/[% content.id %]">
+        [% IF content.title %]
+        [% content.title %]
+        [% ELSE %]
+        Untitled
+        [% END %]
+        </a> - [% content.rating_text %] / [% content.category_text %] / [% content.stage_text %] - Uploaded [% content.created_at %]
+    </div>
     [% END %]
-    <a href="/[% content.content_type %]/[% content.id %]">
-    [% IF content.title %]
-    [% content.title %]
-    [% ELSE %]
-    Untitled
+[% ELSE %]
+    [% wall_type = 'fitWidth' %]
+    [% FOREACH content IN gallery %]
+    <div class="user_content_item_grid">
+        [% IF content.filepath %]
+        <a href='[% content.uri %]'><img src='[% content.filepath %]' alt='' title='' border='0' /></a>
+        [% ELSE %]
+        [ [% content.filepath_error %] ]
+        [% END %]
+    </div>
     [% END %]
-    </a> - [% content.rating_text %] / [% content.category_text %] / [% content.stage_text %] - Uploaded [% content.created_at %]</li>
-    [% END %]
-</ol>
 [% END %]
+</div>
+[% END %]
+<script>
+    $( function() {
+        var user_wall = new freewall( "#user_content_set" );
+        [% IF vars.content_display_type == 'List' %]
+            user_wall.fitWidth();
+        [% ELSE %]
+            user_wall.reset({
+                selector: '.user_content_item_grid',
+                animate: true,
+                fixSize: true,
+                delay: 30,
+                onResize: function() {
+                    user_wall.fitWidth();
+                }
+            });
+            user_wall.fitWidth();
+            // for scroll bar appear;
+            $(window).trigger("resize");
+        [% END %]
+    } );
+</script>

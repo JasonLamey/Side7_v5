@@ -582,11 +582,10 @@ get '/gallery/:username/?' => sub
 get '/user/:username/gallery/?' => sub
 {
     my ( $user, $gallery ) = Side7::User::show_user_gallery( 
-        { 
-            username => params->{'username'},
-            session  => session,
-        }
-    );
+                                                            username       => params->{'username'},
+                                                            session        => session,
+                                                            thumbnail_size => vars->{'thumbnail_size'},
+                                                           );
 
     if ( ! defined $user )
     {
@@ -601,11 +600,11 @@ get '/image/:image_id/?' => sub
 {
     my $image_hash = Side7::UserContent::Image::show_image( 
                                                             image_id => params->{'image_id'}, 
-                                                            size             => 'large',
+                                                            size             => vars->{'thumbnail_size'},
                                                             request          => request,
                                                             session          => session,
                                                             filter_profanity => vars->{'filter_profanity'},
-    );
+                                                          );
 
     if ( defined $image_hash )
     {
