@@ -236,3 +236,8 @@ hr.faded {
       rgb(255,255,255) 100%
   );
 }
+
+textarea.user_input_textarea {
+    width: 625px;
+    height: 200px;
+}

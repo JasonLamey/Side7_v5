@@ -9,6 +9,14 @@
         } );
     } );
 </script>
+<script>
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
+        });
+    });
+</script>
 
 <h1>Edit News Item</h1>
 
@@ -21,10 +29,10 @@
     <input type="text" name="title" size="50" maxlength="255" value="[% news.title %]" data-jkit="[validate:required=true;error=Title is required.]"><br>
     <br>
     <label for="blurb">Short Blurb:</label><br>
-    <textarea name="blurb" cols="80" rows="3">[% news.blurb %]</textarea><br>
+    <textarea class="user_input_textarea" name="blurb" cols="80" rows="3">[% news.blurb %]</textarea><br>
     <br>
     <label for="body">Article Body:</label><br>
-    <textarea name="body" cols="80" rows="10">[% news.body %]</textarea><br>
+    <textarea class="user_input_textarea" name="body" cols="80" rows="10">[% news.body %]</textarea><br>
     <br>
     <label for="link_to_article">External Link To Article:</label> <input type="text" name="link_to_article" size="50" maxlength="255" value="[% news.link_to_article %]"><br>
     <br>

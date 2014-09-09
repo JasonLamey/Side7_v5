@@ -21,6 +21,15 @@
         $( '#user_edit_tabs' ).jKit( 'tabs', { 'animation': 'fade' } );
     } );
 </script>
+<script>
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
+        });
+    });
+</script>
+
 
 <h1>Edit Account For [% user.username %]</h1>
 
@@ -118,7 +127,7 @@
             <label for="skype">Skype:</label> <input type="text" name="skype" size="30" maxlength="45" value="[% user.account.skype %]"><br>
             <br>
             <label>Biography:</label><br>
-            <textarea name="biography" cols="80" rows="10">[% user.account.biography %]</textarea>
+            <textarea name="biography" cols="80" rows="10" class="user_input_textarea">[% user.account.biography %]</textarea>
             <br>
             <label>Created:</label> [% user.account.created_at %]<br>
             <label>Last Updated:</label> [% user.account.updated_at %]<br>
