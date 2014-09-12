@@ -936,6 +936,21 @@ post '/my/cleardelete' => sub
     return redirect '/my/account';
 };
 
+# User Profile Landing Page
+get '/my/profile/?' => sub
+{
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my ( $user_hash ) = $user->get_user_hash_for_template();
+
+    if ( ! defined $user_hash )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    template 'my/profile', { user => $user_hash };
+};
+
 # User Gallery Landing Page
 get '/my/gallery/?' => sub
 {
@@ -963,6 +978,149 @@ get '/my/kudos/?' => sub
     }
 
     template 'my/kudos', { user => $user_hash };
+};
+
+# User Preferences Settings Page
+get '/my/preferences/?' => sub
+{
+    my $user_preferences = Side7::User::Preference->new( user_id => session( 'user_id' ) );
+    my $loaded = $user_preferences->load( speculative => 1 );
+
+    if (
+        $loaded == 0
+        ||
+        ! defined $user_preferences
+        ||
+        ref( $user_preferences ) ne 'Side7::User::Preference'
+    )
+    {
+        flash error => 'Unable to retrieve your User Preferences from the system. Using default values.';
+        $user_preferences = Side7::User::Preference->get_default_values( user_id => session( 'user_id' ) );
+    }
+
+    my $enums = Side7::User::Preference->get_enum_values();
+
+    template 'my/preferences', { user_preferences => $user_preferences, enums => $enums };
+};
+
+# User Preferences Update
+post '/my/preferences' => sub
+{
+
+    # Retrieve the user for the changed account.  We do this to have the Username and ID for the affected user in the
+    # event a Mod or Admin changes preferences.
+    my $affected_user = Side7::User::get_user_by_id( params->{'user_id'} );
+
+    # Validate that we got Preferences back. This ensures that we received something back by checking
+    # With the 5 select fields that must have a non-boolean value.  All other preferences use a boolean
+    # value, and so can be 0 or undef.  If any of the non-boolean values are undef, we'll grab the default
+    # values for all of the prefs and just save that.
+    my $orig_preferences = undef;
+    if (
+        ( ! defined params->{'default_comment_visibility'} || params->{'default_comment_visibility'} eq '' )
+        ||
+        ( ! defined params->{'default_comment_type'}       || params->{'default_comment_type'} eq '' )
+        ||
+        ( ! defined params->{'thumbnail_size'}             || params->{'thumbnail_size'} eq '' )
+        ||
+        ( ! defined params->{'content_display_type'}       || params->{'content_display_type'} eq '' )
+        ||
+        ( ! defined params->{'display_full_sized_images'}  || params->{'display_full_sized_images'} eq '' )
+    )
+    {
+        $orig_preferences = Side7::User::Preference->get_default_values( user_id => session( 'user_id' ) );
+    }
+
+    # Grab the original prefs before we update them.
+    my $values_updated  = 0;
+    my $new_preferences = undef;
+
+    my @fields = ( qw/ display_signature show_management_thumbs default_comment_visibility
+                       default_comment_type allow_watching allow_favoriting allow_sharing
+                       allow_email_through_forms allow_pms pms_notifications comment_notifications
+                       show_online thumbnail_size content_display_type show_m_thumbs show_adult_content
+                       display_full_sized_images filter_profanity / );
+
+    my $field_changes = undef;
+    my $old_values    = undef;
+    my $new_values    = undef;
+
+    $orig_preferences = Side7::User::Preference->new( user_id => session( 'user_id' ) );
+    my $loaded = $orig_preferences->load( speculative => 1 );
+    if (
+        $loaded == 0
+        ||
+        ! defined $orig_preferences
+        ||
+        ref( $orig_preferences ) ne 'Side7::User::Preference'
+    )
+    {
+        $values_updated = 1;
+        $orig_preferences = Side7::User::Preference->get_default_values( user_id => session( 'user_id' ) );
+        $new_preferences = $orig_preferences->clone();
+        $field_changes = 'Created new User Preferences record with default values.';
+        foreach my $key ( @fields )
+        {
+            $new_values .= "$key: &gt;" . ( $new_preferences->$key() || '' ) . '&lt;<br>';
+        }
+    }
+    else
+    {
+        $new_preferences = $orig_preferences->clone();
+        foreach my $key ( @fields )
+        {
+            if ( 
+                ( ! defined $orig_preferences->$key() && defined params->{$key} )
+                ||
+                ( defined $orig_preferences->$key() && ! defined params->{$key} )
+                ||
+                $orig_preferences->$key() ne params->{$key}
+            )
+            {
+                if ( ! defined params->{$key} || params->{$key} eq '' )
+                {
+                    params->{$key} = 0;
+                }
+                $values_updated = 1;
+                $new_preferences->$key( params->{$key} );
+                $field_changes .= "&gt;$key&lt;, ";
+                $old_values    .= "$key: &gt;" . ( $orig_preferences->$key() || '' ) . '&lt;<br>';
+                $new_values    .= "$key: &gt;" . ( $new_preferences->$key()  || '' ) . '&lt;<br>';
+            }
+        }
+    }
+
+    # Save Input
+    if ( $values_updated == 1 )
+    {
+        $new_preferences->updated_at( DateTime->now() );
+        $new_preferences->save();
+    }
+
+    # Record Audit Log
+    my $audit_msg = 'User Preferences Updated -- Successful<br>' .
+                    'Preferences for &gt;' . $affected_user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
+                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    $audit_msg .= 'Fields changed:<br>' . $field_changes;
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'User Preferences Updated',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => params->{'user_id'},
+                                          original_value => $old_values,
+                                          new_value      => $new_values,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return to template
+    flash message => 'Your Preferences have been saved.';
+
+    my $enums = Side7::User::Preference->get_enum_values();
+    template 'my/preferences', { user_preferences => $new_preferences, enums => $enums };
 };
 
 # User Gallery Landing Page

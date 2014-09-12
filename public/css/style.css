@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'AlwinLight';
-    src: url('http://192.168.2.201:3000/fonts/alwyn-light-webfont.eot');
-    src: url('http://192.168.2.201:3000/fonts/alwyn-light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('http://192.168.2.201:3000/fonts/alwyn-light-webfont.woff') format('woff'),
-         url('http://192.168.2.201:3000/fonts/alwyn-light-webfont.ttf') format('truetype'),
-         url('http://192.168.2.201:3000/fonts/alwyn-light-webfont.svg#alwynlight') format('svg');
+    src: url('/fonts/alwyn-light-webfont.eot');
+    src: url('/fonts/alwyn-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/alwyn-light-webfont.woff') format('woff'),
+         url('/fonts/alwyn-light-webfont.ttf') format('truetype'),
+         url('/fonts/alwyn-light-webfont.svg#alwynlight') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -198,6 +198,32 @@ input, textarea, select {
     font-size: 11px;
 }
 
+label, legend {
+    font-weight: bold;
+    font-family: "AlwinLight", sans-serif;
+    font-size: 10pt;
+}
+
+label {
+    float: left;
+    width: 300px;
+    text-align: right;
+    margin-right: 5px;
+}
+
+legend {
+    font-size: 12pt;
+    border-left: solid 2px #99c;
+    border-right: solid 2px #99c;
+    padding: 0 5px;
+}
+
+fieldset {
+    border: solid 2px #99c;
+    margin-top: 0.5em;
+    margin-bottom: 0.2em;
+}
+
 th, td {
     font-family: "AlwinLight", sans-serif;
 }
@@ -240,4 +266,17 @@ hr.faded {
 textarea.user_input_textarea {
     width: 625px;
     height: 200px;
+}
+
+.info_tooltip {
+    max-width: 350px;
+    font-size: 9pt;
+    background-color: #ccf;
+    border: solid 1px $aaf;
+    color: #000;
+}
+
+.small_text
+{
+    font-size: 8pt;
 }

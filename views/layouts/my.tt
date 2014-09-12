@@ -90,6 +90,12 @@
     }
 </style>
 
+<script type="text/javascript">
+$(document).ready(function(){
+    $('body').jKit();
+});
+</script>
+
 </head>
 <body>
 <div id="page_content">

@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
+use parent 'Clone';
 
 =pod
 
@@ -123,6 +124,87 @@ __PACKAGE__->meta->setup
 );
 
 =head1 METHODS
+
+
+=head2 get_enum_values()
+
+Returns a hash ref of arrays of enum values for each related field for the User's Preferences.
+
+Parameters: None.
+
+    my $enums = Side7::User::Preference->get_enum_values();
+
+=cut
+
+sub get_enum_values
+{
+    my $self = shift;
+
+    my $enums = {};
+
+    my $pref_enums = Side7::DB::get_enum_values_for_form( fields => [ 
+                                                                        'default_comment_visibility',
+                                                                        'default_comment_type',
+                                                                        'thumbnail_size',
+                                                                        'content_display_type',
+                                                                        'display_full_sized_images',
+                                                                    ], 
+                                                          table  => 'user_preferences',
+                                                        );
+
+    $enums = ( $pref_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
+=head2 get_default_values()
+
+Returns an object with the default values for User Prefences set. The returned object DOES NOT include a User ID if it's not passed in.
+
+Parameters:
+
+=over 4
+
+=item user_id: The User ID to include in the object, if supplied.
+
+=back
+
+    my $user_preferences = Side7::User::Preference->get_default_values();
+
+=cut 
+
+sub get_default_values
+{
+    my ( $self, %args ) = @_;
+
+    my $user_id = delete $args{'user_id'} // undef;
+
+    my $user_preferences = Side7::User::Preference->new(
+                                                        display_signature          => 0,
+                                                        show_management_thumbs     => 1,
+                                                        default_comment_visibility => 'Show',
+                                                        default_comment_type       => 'All',
+                                                        allow_watching             => 1,
+                                                        allow_favoriting           => 1,
+                                                        allow_sharing              => 1,
+                                                        allow_email_through_forms  => 1,
+                                                        allow_pms                  => 1,
+                                                        pms_notifications          => 1,
+                                                        comment_notifications      => 1,
+                                                        show_online                => 1,
+                                                        thumbnail_size             => 'Small',
+                                                        content_display_type       => 'List',
+                                                        show_m_thumbs              => 0,
+                                                        show_adult_content         => 0,
+                                                        display_full_sized_images  => 'Same Window',
+                                                        filter_profanity           => 1,
+                                                       );
+
+    $user_preferences->user_id( $user_id ) if defined $user_id;
+
+    return $user_preferences;
+}
 
 
 =head2 method_name()
