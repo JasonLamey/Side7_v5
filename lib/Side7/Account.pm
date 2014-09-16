@@ -473,6 +473,95 @@ sub get_account_hash_for_template
 }
 
 
+=head2 get_enum_values()
+
+Returns a hash ref of arrays of enum values for each related field for the User's Account.
+
+Parameters: None.
+
+    my $enums = Side7::Account->get_enum_values();
+
+=cut
+
+sub get_enum_values
+{
+    my $self = shift;
+
+    my $enums = {};
+
+    my $account_enums = Side7::DB::get_enum_values_for_form( fields => [
+                                                                        'sex',
+                                                                    ],
+                                                          table  => 'accounts',
+                                                        );
+
+    $enums = ( $account_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
+
+=head1 get_is_public_hash()
+
+Returns a hashref of values from the is_public field in the account.
+
+Parameters: None.
+
+    my $is_public_hash = $account->get_is_public_hash();
+
+=cut
+
+sub get_is_public_hash
+{
+    my $self = shift;
+
+    my $is_public = {};
+
+    foreach my $value_pair ( split( /;/, $self->is_public() ) )
+    {
+        my ( $name, $value ) = split( /:/, $value_pair );
+        $is_public->{$name} = $value // 0;
+    }
+
+    return $is_public;
+}
+
+
+=head1 serialize_is_public_hash()
+
+Takes an is_public hashref and parses it into a serialized string.
+
+Parameters:
+
+=over 4
+
+=item is_public: The hashref of is_public names and values, and serializes it into a storable value.
+
+=back
+
+    my $is_public = Side7::Account->serialize_is_public_hash( $is_public_hash );
+
+=cut
+
+sub serialize_is_public_hash
+{
+    my ( $self, $is_public_hash ) = @_;
+
+    return 'aim:1;skype:1;yahoo:1;gtalk:1;email:1;state:1;country:1' if ! defined $is_public_hash;
+
+    my $serialized = '';
+    my @value_pairs = ();
+    foreach my $name ( keys %$is_public_hash )
+    {
+        push( @value_pairs,  $name . ':' . $is_public_hash->{$name} . ";" );
+    }
+
+    $serialized = join( ';', @value_pairs );
+
+    return $serialized;
+}
+
+
 =head1 FUNCTIONS
 
 

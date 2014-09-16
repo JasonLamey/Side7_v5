@@ -193,6 +193,10 @@ code, tt {
     font-family: 'Andale Mono', Monaco, 'Liberation Mono', 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', monospace;
 }
 
+form {
+    font-family: "AlwinLight", sans-serif;
+} 
+
 input, textarea, select {
     font-family: "AlwinLight", sans-serif;
     font-size: 11px;
@@ -201,7 +205,6 @@ input, textarea, select {
 label, legend {
     font-weight: bold;
     font-family: "AlwinLight", sans-serif;
-    font-size: 10pt;
 }
 
 label {
@@ -209,6 +212,8 @@ label {
     width: 300px;
     text-align: right;
     margin-right: 5px;
+    line-height: 1em;
+    font-size: 10pt;
 }
 
 legend {

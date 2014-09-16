@@ -18,6 +18,7 @@ use Side7::News::Manager;
 use Side7::User;
 use Side7::User::ChangePassword;
 use Side7::User::AccountDelete;
+use Side7::DateVisibility::Manager;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::RatingQualifier;
@@ -948,7 +949,43 @@ get '/my/profile/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/profile', { user => $user_hash };
+    my $is_public_hash      = $user->account->get_is_public_hash();
+    my $enums               = Side7::Account->get_enum_values();
+    my $date_visibilities   = Side7::DateVisibility::Manager->get_date_visibilities( query => [], sort_by => 'id' );
+    my $countries           = Side7::User::Country::Manager->get_countries( query => [], sort_by => 'name' );
+    my $public_visibilities = [ { name => 'Public', value => 1 }, { name => 'Private', value => 0 } ];
+
+    template 'my/profile', {
+                             user                => $user, 
+                             enums               => $enums, 
+                             date_visibilities   => $date_visibilities, 
+                             countries           => $countries,
+                             public_visibilities => $public_visibilities, 
+                             is_public_hash      => $is_public_hash,
+                           };
+};
+
+# User Profile Submission Page
+post '/my/profile' => sub
+{
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    # Validate Input
+    # Serialize is_public values
+    my $is_public_hash = {};
+    my $is_public = '';
+    foreach my $is_public_setting ( qw/ aim yahoo skype gtalk email state country / ) # TODO Cleaner way of listing?
+    {
+        $is_public_hash{$is_public_setting} = params->{$is_public_setting.'_visibility'} // 1; # Defaults to Public
+        $is_public = Side7::Account->serialize_is_public_hash( $is_public_hash );
+    }
+
+    # Save Updated Items
+
+    # Audit Log
+
+    # Return
+
 };
 
 # User Gallery Landing Page
