@@ -208,12 +208,14 @@ label, legend {
 }
 
 label {
-    float: left;
+    /* float: left; */
     width: 300px;
     text-align: right;
+    vertical-align: text-bottom;
     margin-right: 5px;
-    line-height: 1em;
     font-size: 10pt;
+    padding: 0;
+    display: inline-block;
 }
 
 legend {
@@ -227,6 +229,15 @@ fieldset {
     border: solid 2px #99c;
     margin-top: 0.5em;
     margin-bottom: 0.2em;
+}
+
+.form_field {
+    height: 1.8em;
+    vertical-align: center;
+}
+
+.form_field input, .form_field select, .form_field textarea {
+    vertical-align: center;
 }
 
 th, td {

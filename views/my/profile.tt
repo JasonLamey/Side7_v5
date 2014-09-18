@@ -11,14 +11,16 @@
 
 <h2>My Profile</h2>
 
-<form action='/my/preferences' method='post'>
-<input type="hidden" name="user_id" value="[% user_preferences.user_id %]">
+<form action='/my/profile' method='post'>
+<input type="hidden" name="user_id" value="[% user.id %]">
     <fieldset>
         <legend>Personal Information</legend>
+        <div class="form_field">
         <label for="other_aliases">Other Online Handles You Are Known By:</label>
         <input type="text" name="other_aliases" value="[% user.account.other_aliases %]" size="50" maxlength="255">
-        <br>
+        </div>
 
+        <div class="form_field">
         <label for="sex">What Sex Do You Identify As:</label>
         <select name="sex">
         [% FOREACH sex_option IN enums.sex %]
@@ -30,11 +32,17 @@
             <option value="[% sex_option %]"[% sex_selected %]>[% sex_option %]</option>
         [% END %]
         </select>
-        <br>
+        </div>
 
+        <div class="form_field">
+        [% IF NOT user.account.birthday || user.account.birthday == '0000-00-00' %]
+        <label for="birthday">Your Birthday:</label> <span style="color: red; font-weight: bold;">NO BIRTHDAY SPECIFIED!</span>
+        [% ELSE %]
         <label for="birthday">Your Birthday:</label> [% date.format( user.account.birthday, '%B %d, %Y' ) %]
-        <br>
+        [% END %]
+        </div>
 
+        <div class="form_field">
         <label for="birthday_visibility">How to Display Your Birthday:</label>
         <select name="birthday_visibility">
         [% FOREACH visibility IN date_visibilities %]
@@ -46,10 +54,17 @@
             <option value="[% visibility.id %]"[% bv_selected %]>[% visibility.visibility %]</option>
         [% END %]
         </select>
-        <br>
+        </div>
 
         <label for="state">In What State or Province Do You Live:</label>
         <input type="text" name="state" value="[% user.account.state %]" size="50" maxlength="255">
+        &nbsp; <strong>Visibility:</strong>
+        <select name="state_visibility">
+        [% FOREACH option IN public_visibilities %]
+            [% op_selected = '' %][% IF is_public_hash.state == option.value %][% op_selected = ' selected="selected"' %][% END %]
+            <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+        [% END %]
+        </select> 
         <br>
 
         <label for="country_id">In What Country Do You Live:</label>
@@ -63,6 +78,13 @@
             <option value="[% country_option.id %]"[% co_selected %]>[% country_option.name %] ([% country_option.code %])</option>
         [% END %]
         </select>
+        &nbsp; <strong>Visibility:</strong>
+        <select name="country_visibility">
+        [% FOREACH option IN public_visibilities %]
+            [% op_selected = '' %][% IF is_public_hash.country == option.value %][% op_selected = ' selected="selected"' %][% END %]
+            <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+        [% END %]
+        </select> 
         <br>
 
     </fieldset>
@@ -96,34 +118,58 @@
             <legend>Instant Messengers</legend>
                 <label for="aim">AIM:</label>
                 <input type="text" name="aim" value="[% user.account.aim %]" size="50" maxlength="255">
+                &nbsp; <strong>Visibility:</strong>
+                <select name="aim_visibility">
+                [% FOREACH option IN public_visibilities %]
+                    [% op_selected = '' %][% IF is_public_hash.aim == option.value %][% op_selected = ' selected="selected"' %][% END %]
+                    <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+                [% END %]
+                </select> 
                 <br>
 
                 <label for="yahoo">Yahoo! IM:</label>
                 <input type="text" name="yahoo" value="[% user.account.yahoo %]" size="50" maxlength="255">
+                &nbsp; <strong>Visibility:</strong>
+                <select name="yahoo_visibility">
+                [% FOREACH option IN public_visibilities %]
+                    [% op_selected = '' %][% IF is_public_hash.yahoo == option.value %][% op_selected = ' selected="selected"' %][% END %]
+                    <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+                [% END %]
+                </select> 
                 <br>
 
                 <label for="gtalk">GTalk / Google Hangouts:</label>
                 <input type="text" name="gtalk" value="[% user.account.gtalk %]" size="50" maxlength="255">
+                &nbsp; <strong>Visibility:</strong>
+                <select name="gtalk_visibility">
+                [% FOREACH option IN public_visibilities %]
+                    [% op_selected = '' %][% IF is_public_hash.gtalk == option.value %][% op_selected = ' selected="selected"' %][% END %]
+                    <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+                [% END %]
+                </select> 
                 <br>
 
                 <label for="skype">Skype:</label>
                 <input type="text" name="skype" value="[% user.account.skype %]" size="50" maxlength="255">
+                &nbsp; <strong>Visibility:</strong>
+                <select name="skype_visibility">
+                [% FOREACH option IN public_visibilities %]
+                    [% op_selected = '' %][% IF is_public_hash.skype == option.value %][% op_selected = ' selected="selected"' %][% END %]
+                    <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
+                [% END %]
+                </select> 
                 <br>
         </fieldset>
-    </fieldset>
 
-    <fieldset>
-        <legend>Public Visibility Settings</legend>
-        [% FOREACH setting IN [ 'AIM', 'Yahoo', 'GTalk', 'Skype', 'Email', 'State', 'Country' ] %]
-        <strong>[% setting %]:</strong> [% setting_l = setting FILTER lower %]
-        <select name="[% setting_l %]_visibility">
+        <br>
+        <label for="email_visibility">E-mail Address Visibility:</label>
+        <select name="email_visibility">
         [% FOREACH option IN public_visibilities %]
-            [% IF is_public_hash.$setting_l == option.value %][% op_selected = ' selected="selected"' %]
-            [% ELSE %][% op_selected = '' %][% END %]
+            [% op_selected = '' %][% IF is_public_hash.email == option.value %][% op_selected = ' selected="selected"' %][% END %]
             <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
         [% END %]
-        </select> &nbsp; 
-        [% END %]
+        </select> 
+        <br>
     </fieldset>
 
     <fieldset>

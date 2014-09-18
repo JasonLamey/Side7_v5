@@ -5,6 +5,7 @@ use warnings;
 
 #use Side7::User;
 use base 'Side7::DB::Object';
+use parent 'Clone';
 
 use Side7::Globals;
 
@@ -520,6 +521,11 @@ sub get_is_public_hash
     foreach my $value_pair ( split( /;/, $self->is_public() ) )
     {
         my ( $name, $value ) = split( /:/, $value_pair );
+        if ( ! defined $name || $name eq '' )
+        {
+            $LOGGER->warn( 'Name not defined when getting is_public_hash.' );
+            next;
+        }
         $is_public->{$name} = $value // 0;
     }
 
@@ -553,7 +559,7 @@ sub serialize_is_public_hash
     my @value_pairs = ();
     foreach my $name ( keys %$is_public_hash )
     {
-        push( @value_pairs,  $name . ':' . $is_public_hash->{$name} . ";" );
+        push( @value_pairs,  $name . ':' . $is_public_hash->{$name} );
     }
 
     $serialized = join( ';', @value_pairs );

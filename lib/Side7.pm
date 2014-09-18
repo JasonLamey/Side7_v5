@@ -968,24 +968,110 @@ get '/my/profile/?' => sub
 # User Profile Submission Page
 post '/my/profile' => sub
 {
-    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my $user = Side7::User::get_user_by_id( params->{'user_id'} );
+    my $original_account = $user->account->clone();
 
     # Validate Input
-    # Serialize is_public values
+    ## Create is_public hashref
     my $is_public_hash = {};
     my $is_public = '';
     foreach my $is_public_setting ( qw/ aim yahoo skype gtalk email state country / ) # TODO Cleaner way of listing?
     {
-        $is_public_hash{$is_public_setting} = params->{$is_public_setting.'_visibility'} // 1; # Defaults to Public
-        $is_public = Side7::Account->serialize_is_public_hash( $is_public_hash );
+        $is_public_hash->{$is_public_setting} = params->{$is_public_setting.'_visibility'} // 1; # Defaults to Public
     }
 
+    ## Ensure certain selectable values are defined.
+    params->{'sex'}                 //= 'Unspecified';
+    params->{'birthday_visibility'} //= 1;
+
     # Save Updated Items
+    my $original_values = '';
+    my $updated_values  = '';
+    my $changed_fields  = '';
+    foreach my $profile_item ( 
+                                qw/ 
+                                    other_aliases sex birthday_visibility country_id state
+                                    webpage_name webpage_url blog_name blog_url
+                                    aim yahoo gtalk skype biography
+                                /
+                             )
+    {
+        if (
+            ( ! defined params->{$profile_item} && defined $original_account->$profile_item() )
+            ||
+            ( defined params->{$profile_item} && ! defined $original_account->$profile_item() )
+            ||
+            params->{$profile_item} ne $original_account->$profile_item()
+        )
+        {
+            $user->account->$profile_item( params->{$profile_item} );
+            $changed_fields  .= '&gt;' . $profile_item . '&lt;, ';
+            $original_values .= $profile_item . ': &gt;' . $original_account->$profile_item() . '&lt;<br>';
+            $updated_values  .= $profile_item . ': &gt;' . params->{$profile_item} . '&lt;<br>';
+        }
+    }
+
+    my $original_is_public_hash = $user->account->get_is_public_hash();
+    my $changed = 0;
+    foreach my $is_public_key ( keys %$original_is_public_hash )
+    {
+        if (
+            $original_is_public_hash->{$is_public_key} ne $is_public_hash->{$is_public_key}
+        )
+        {
+            $changed = 1;
+            $changed_fields  .= '&gt;' . $is_public_key . '_visibility&lt;, ';
+            $original_values .= $is_public_key . '_visibility: &gt;' . $original_is_public_hash->{$is_public_key} . '&lt;<br>';
+            $updated_values  .= $is_public_key . '_visibility: &gt;' . $is_public_hash->{$is_public_key} . '&lt;<br>';
+        }
+        if ( $changed == 1 )
+        {
+            $is_public = Side7::Account->serialize_is_public_hash( $is_public_hash );
+            $user->account->is_public( $is_public );
+        }
+    }
+
+    if ( $changed_fields ne '' )
+    {
+        $user->account->updated_at( DateTime->now() );
+        $user->account->save();
+    }
 
     # Audit Log
+    my $audit_msg = 'User Profile Updated -- Successful<br>' .
+                    'Profile for &gt;' . $user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
+                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    $audit_msg .= 'Fields changed:<br>' . $changed_fields;
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'User Preferences Updated',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => params->{'user_id'},
+                                          original_value => $original_values,
+                                          new_value      => $updated_values,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
 
     # Return
+    my $is_public_hash      = $user->account->get_is_public_hash();
+    my $enums               = Side7::Account->get_enum_values();
+    my $date_visibilities   = Side7::DateVisibility::Manager->get_date_visibilities( query => [], sort_by => 'id' );
+    my $countries           = Side7::User::Country::Manager->get_countries( query => [], sort_by => 'name' );
+    my $public_visibilities = [ { name => 'Public', value => 1 }, { name => 'Private', value => 0 } ];
 
+    flash message => 'Your Profile has been updated successfully!';
+    template 'my/profile', {
+                             user                => $user, 
+                             enums               => $enums, 
+                             date_visibilities   => $date_visibilities, 
+                             countries           => $countries,
+                             public_visibilities => $public_visibilities, 
+                             is_public_hash      => $is_public_hash,
+                           };
 };
 
 # User Gallery Landing Page
