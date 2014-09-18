@@ -9,6 +9,7 @@ use Dancer::Plugin::NYTProf;
 
 use DateTime;
 use Data::Dumper;
+use Const::Fast;
 
 use Side7::Globals;
 use Side7::AuditLog;
@@ -30,6 +31,7 @@ use Side7::FAQCategory::Manager;
 use Side7::FAQEntry;
 
 our $VERSION = '0.1';
+const my $AGE_18_IN_MONTHS => 216;
 
 hook 'before_template_render' => sub {
    my $tokens = shift;
@@ -1106,6 +1108,7 @@ get '/my/kudos/?' => sub
 # User Preferences Settings Page
 get '/my/preferences/?' => sub
 {
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
     my $user_preferences = Side7::User::Preference->new( user_id => session( 'user_id' ) );
     my $loaded = $user_preferences->load( speculative => 1 );
 
@@ -1121,9 +1124,30 @@ get '/my/preferences/?' => sub
         $user_preferences = Side7::User::Preference->get_default_values( user_id => session( 'user_id' ) );
     }
 
+    my $is_adult = 0;
+    my $today = DateTime->today();
+    if ( 
+        ! defined $user->account->birthday()
+        ||
+        $user->account->birthday() eq '0000-00-00'
+    )
+    {
+        # Legacy account with no birthday. Give no option to set Adult Content On.
+        $is_adult = 0;
+    } 
+    else
+    {
+        my $duration = $today->subtract_datetime( $user->account->birthday() );
+        if ( $duration->{'months'} >= $AGE_18_IN_MONTHS )
+        {
+            # Birthday is 18 years ago or more.
+            $is_adult = 1;
+        }
+    }
+
     my $enums = Side7::User::Preference->get_enum_values();
 
-    template 'my/preferences', { user_preferences => $user_preferences, enums => $enums };
+    template 'my/preferences', { user_preferences => $user_preferences, enums => $enums, is_adult => $is_adult };
 };
 
 # User Preferences Update

@@ -68,6 +68,7 @@
         <input type="checkbox" name="show_m_thumbs" value="1"[% srmt_checked %]>
         <br>
 
+        [% IF is_adult == 1 %]
         [% IF user_preferences.show_adult_content == 1 %]
             [% sac_checked = ' checked="checked"' %]
         [% ELSE %]
@@ -78,6 +79,7 @@
         </label>
         <input type="checkbox" name="show_adult_content" value="1"[% sac_checked %]>
         <br>
+        [% END %]
 
         <label for="display_full_sized_images">Where to Display Content in its Original Format
             <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Choose how to display content when viewing it in its original format.]"> :
