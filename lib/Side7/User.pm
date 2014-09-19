@@ -1193,65 +1193,31 @@ sub show_home
 
     my $user_hash = $user->get_user_hash_for_template();
 
-
     # Content Counts By Category
     $user_hash->{'content_data'} = Side7::Report->get_user_content_breakdown_by_category( $user->id() );
 
-    if ( defined $user->{'account'} && defined $user->account->user_role->name() )
-    {
-        # Disk Quota
-        my $disk_usage = Side7::Utils::File::get_disk_usage( filepath => $user->get_content_directory() ) // 0;
-        my $disk_quota = 0;
+    my $disk_stats = Side7::Report->get_user_disk_usage_stats( $user );
 
-        if ( $user->account->user_role->has_perk( 'disk_quota_unlimited' ) )
-        {
-            $disk_quota = 1073741824; # 1GB in bytes
-        }
-        elsif
-        ( 
-            defined $user->{'user_owned_perks'}
-        )
-        {
-            foreach my $perk ( @{ $user->user_owned_perks } )
-            {
-                if ( 
-                        $perk->perk->name() eq 'disk_quota_500'
-                        &&
-                        $perk->perk->suspended != 1
-                        &&
-                        $perk->perk->revoked != 1
-                )
-                {
-                    $disk_quota = 524288000; # 500MB in bytes
-                }
-            }
-        }
-        else
-        {
-            $disk_quota = 209715200; # 200MB in bytes
-        }
+    ( $user_hash->{'disk_quota'}, $user_hash->{'disk_quota_units'} )
+                            = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                            bytes       => $disk_stats->{'disk_quota'},
+                                                            force_units => 'MB',
+                            );
 
-        ( $user_hash->{'disk_quota'}, $user_hash->{'disk_quota_units'} )
-                                = Side7::Utils::File::get_formatted_filesize_from_bytes(
-                                                                bytes       => $disk_quota,
-                                                                force_units => 'MB',
-                                );
+    ( $user_hash->{'disk_used'}, undef )
+            = Side7::Utils::File::get_formatted_filesize_from_bytes( 
+                                                            bytes       => $disk_stats->{'disk_usage'}, 
+                                                            force_units => 'MB',
+            );
 
-        ( $user_hash->{'disk_used'}, undef )
-                = Side7::Utils::File::get_formatted_filesize_from_bytes( 
-                                                                bytes       => $disk_usage, 
-                                                                force_units => 'MB',
-                );
+    $user_hash->{'disk_used'} = POSIX::ceil( $user_hash->{'disk_used'} );
 
-        $user_hash->{'disk_used'} = POSIX::ceil( $user_hash->{'disk_used'} );
-
-        $user_hash->{'disk_band1_start'} = 0;
-        $user_hash->{'disk_band1_end'}   = int( $user_hash->{'disk_quota'} * .60 );
-        $user_hash->{'disk_band2_start'} = $user_hash->{'disk_band1_end'};
-        $user_hash->{'disk_band2_end'}   = int( $user_hash->{'disk_quota'} * .80 );
-        $user_hash->{'disk_band3_start'} = $user_hash->{'disk_band2_end'};
-        $user_hash->{'disk_band3_end'}   = $user_hash->{'disk_quota'};
-    }
+    $user_hash->{'disk_band1_start'} = 0;
+    $user_hash->{'disk_band1_end'}   = int( $user_hash->{'disk_quota'} * .60 );
+    $user_hash->{'disk_band2_start'} = $user_hash->{'disk_band1_end'};
+    $user_hash->{'disk_band2_end'}   = int( $user_hash->{'disk_quota'} * .80 );
+    $user_hash->{'disk_band3_start'} = $user_hash->{'disk_band2_end'};
+    $user_hash->{'disk_band3_end'}   = $user_hash->{'disk_quota'};
 
     return $user_hash;
 }
@@ -1342,6 +1308,81 @@ sub show_kudos
     }
 
     my $user_hash = $user->get_user_hash_for_template();
+
+    return $user_hash;
+}
+
+
+=head2 show_gallery
+
+Displays the User's Gallery Management page.
+
+Parameters:
+
+=over 4
+
+=item username: The username to use for looking up the User object to get the appropriate hash for use with the template.
+
+=back
+
+    my $user_hash = Side7::User::show_gallery( username => $username )
+
+=cut
+
+sub show_gallery
+{
+    my ( %args ) = @_;
+
+    my $username = delete $args{'username'};
+
+    return undef if ( ! defined $username || $username eq '' );
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1, with => [
+                                                            'account'
+                                                        ],
+    );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
+        return undef;
+    }
+
+    # User Not Found
+    if ( ! defined $user )
+    {
+        return undef;
+    }
+
+    my $user_hash = $user->get_user_hash_for_template();
+
+
+    # Content Counts By Category
+    $user_hash->{'content_data'} = Side7::Report->get_user_content_breakdown_by_category( $user->id() );
+
+    my $disk_stats = Side7::Report->get_user_disk_usage_stats( $user );
+
+    ( $user_hash->{'disk_quota'}, $user_hash->{'disk_quota_units'} )
+                            = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                            bytes       => $disk_stats->{'disk_quota'},
+                                                            force_units => 'MB',
+                            );
+
+    ( $user_hash->{'disk_used'}, undef )
+            = Side7::Utils::File::get_formatted_filesize_from_bytes( 
+                                                            bytes       => $disk_stats->{'disk_usage'}, 
+                                                            force_units => 'MB',
+            );
+
+    $user_hash->{'disk_used'} = POSIX::ceil( $user_hash->{'disk_used'} );
+
+    $user_hash->{'disk_band1_start'} = 0;
+    $user_hash->{'disk_band1_end'}   = int( $user_hash->{'disk_quota'} * .60 );
+    $user_hash->{'disk_band2_start'} = $user_hash->{'disk_band1_end'};
+    $user_hash->{'disk_band2_end'}   = int( $user_hash->{'disk_quota'} * .80 );
+    $user_hash->{'disk_band3_start'} = $user_hash->{'disk_band2_end'};
+    $user_hash->{'disk_band3_end'}   = $user_hash->{'disk_quota'};
 
     return $user_hash;
 }

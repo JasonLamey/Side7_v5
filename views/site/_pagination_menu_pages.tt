@@ -1,5 +1,5 @@
 [% base = link_base_uri %][% IF pagination_base_uri %][% base = pagination_base_uri %][% END %]
-[% IF initial %][% initial_link = '/$initial' %][% ELSE %][% initial_link = '' %][% END %]
+[% IF initial %][% initial_link = "/$initial" %][% ELSE %][% initial_link = '' %][% END %]
 
 <div style="text-align: center;">
     <div style="margin: 0 auto;">

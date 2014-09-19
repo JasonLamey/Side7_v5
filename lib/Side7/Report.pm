@@ -84,7 +84,7 @@ sub get_user_content_breakdown_by_category
                                 group_by => 'category',
                           );
 
-    $LOGGER->debug( "SQL: $sql" );
+    #$LOGGER->debug( "SQL: $sql" );
 
     my $sth = $dbh->prepare( $sql );
     $sth->execute();
@@ -113,15 +113,96 @@ sub get_user_content_breakdown_by_category
     }
 
     # Get Music Breakdown
+    push( @content_types, "'Music'" );
+    push( @data, {
+                    value                => 15,
+                    drilldown_name       => 'Music Categories',
+                    drilldown_categories => "'Rock','Electronic','Jazz','Vocal'",
+                    drilldown_values     => '2,6,4,3',
+                 }
+    );
 
     # Get Literature Breakdown
+    push( @content_types, "'Literature'" );
+    push( @data, {
+                    value                => 25,
+                    drilldown_name       => 'Literature Categories',
+                    drilldown_categories => "'Science Fiction','Horror','Non-fiction'",
+                    drilldown_values     => '14,7,4',
+                 }
+    );
 
     $user_content{'categories'} = join( ',', @content_types );
     $user_content{'data'} = \@data;
 
-    $LOGGER->debug( 'USER_CONTENT: ' . Dumper( \%user_content ) );
+    #$LOGGER->debug( 'USER_CONTENT: ' . Dumper( \%user_content ) );
 
     return \%user_content;
+}
+
+
+=head2 get_user_disk_usage_stats()
+
+Return a hashref of disk quota and usage values for use with Highcharts gauges. Returned values are in bytes.
+
+Parameters: 
+
+=over 4
+
+=item user: The User object for which to obtain disk usage data.
+
+=back
+
+    my $disk_usage_data = Side7::Report->get_user_disk_usage_stats( $user );
+
+=cut
+
+sub get_user_disk_usage_stats
+{
+    my ( $self, $user ) = @_;
+
+    my $disk_stats = {};
+
+    my $disk_usage = 0;
+    my $disk_quota = 0; 
+    if ( defined $user->{'account'} && defined $user->account->user_role->name() )
+    {
+        # Disk Quota
+        $disk_usage = Side7::Utils::File::get_disk_usage( filepath => $user->get_content_directory() ) // 0;
+
+        if ( $user->account->user_role->has_perk( 'disk_quota_unlimited' ) )
+        {
+            $disk_quota = 1073741824; # 1GB in bytes
+        }
+        elsif
+        (
+            defined $user->{'user_owned_perks'}
+        )
+        {
+            foreach my $perk ( @{ $user->user_owned_perks } )
+            {
+                if (
+                        $perk->perk->name() eq 'disk_quota_500'
+                        &&
+                        $perk->perk->suspended != 1 
+                        &&
+                        $perk->perk->revoked != 1 
+                )
+                {
+                    $disk_quota = 524288000; # 500MB in bytes
+                }
+            }
+        }
+        else
+        {
+            $disk_quota = 209715200; # 200MB in bytes
+        }
+    }
+
+    $disk_stats->{'disk_quota'} = $disk_quota;
+    $disk_stats->{'disk_usage'} = $disk_usage;
+
+    return $disk_stats;
 }
 
 

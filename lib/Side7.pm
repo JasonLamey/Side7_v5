@@ -1059,7 +1059,7 @@ post '/my/profile' => sub
     $audit_log->save();
 
     # Return
-    my $is_public_hash      = $user->account->get_is_public_hash();
+    my $new_is_public_hash  = $user->account->get_is_public_hash();
     my $enums               = Side7::Account->get_enum_values();
     my $date_visibilities   = Side7::DateVisibility::Manager->get_date_visibilities( query => [], sort_by => 'id' );
     my $countries           = Side7::User::Country::Manager->get_countries( query => [], sort_by => 'name' );
@@ -1072,7 +1072,7 @@ post '/my/profile' => sub
                              date_visibilities   => $date_visibilities, 
                              countries           => $countries,
                              public_visibilities => $public_visibilities, 
-                             is_public_hash      => $is_public_hash,
+                             is_public_hash      => $new_is_public_hash,
                            };
 };
 
@@ -1080,13 +1080,16 @@ post '/my/profile' => sub
 get '/my/gallery/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
-    my ( $user_hash ) = $user->get_user_hash_for_template();
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
+
+    # Fetch Gallery Stats
+    my ( $user_hash ) = Side7::User::show_gallery( username => session( 'username' ) );
+
 
     template 'my/gallery', { user => $user_hash };
 };

@@ -44,7 +44,6 @@
         top:0;
         left:0;
         right:0;
-        font-family: Verdana, sans-serif;
     }
     .column_wrap {position:relative;}
     #page_header {

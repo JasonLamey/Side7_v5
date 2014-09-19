@@ -50,7 +50,7 @@ Parameters:
 sub get_formatted_filesize_from_bytes
 {
     my ( %args ) = @_;
-    my $size_in_bytes = delete $args{'bytes'} // 0;
+    my $size_in_bytes = delete $args{'bytes'}       // 0;
     my $force_units   = delete $args{'force_units'} // undef;
 
     my @units = ( qw( B KB MB GB TB PB ) );
