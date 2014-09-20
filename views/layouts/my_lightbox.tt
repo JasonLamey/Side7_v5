@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>Side7 - My Dashboard
+[% IF title %]
+ - [% title %]
+[% END %]
+</title>
+<link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
+
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<!-- jQuery -->
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">/* <![CDATA[ */
+    !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
+/* ]]> */</script>
+<!-- jQuery UI -->
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<!-- jkit -->
+<link rel="stylesheet" href="/css/jkit.new.css" />
+<script type="text/javascript" src="/javascripts/jkit/jquery.jkit.1.2.16.min.js"></script>
+<!-- tablesorter -->
+<link rel="stylesheet" href="/javascripts/tablesorter/themes/blue/style.css" />
+<script src="/javascripts/tablesorter/jquery.tablesorter.min.js"></script>
+<!-- SCEditor -->
+<link rel="stylesheet" href="/javascripts/sceditor/minified/themes/default.min.css" type="text/css" media="all" />
+<script type="text/javascript" src="/javascripts/sceditor/minified/jquery.sceditor.bbcode.min.js"></script>
+
+[% IF ( flash.message || flash.error ) %]
+<!-- jgrowl -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
+[% END %]
+
+<style>
+    #page_content {
+        display: block;
+        position:absolute;
+        bottom:0;
+        top:0;
+        left:0;
+        right:0;
+    }
+    .column_wrap {position:relative;}
+    #page_header {
+        width: auto;
+        padding: 3px 5px;
+        margin: 0;
+    }
+    #header_search {
+        float: right;
+        width: 200px;
+        text-align: right;
+    }
+    .metanav {
+    }
+    .home_menu {
+        width:200px;
+        position:absolute;
+        left:0;
+        top:40px;
+        bottom:40px;
+        height:auto;
+        display: block;
+        margin-right: 5px;
+    }
+    .home_menu_option {
+        text-align: left; 
+        padding: 3px; 
+        border-bottom: solid 1px #000;
+    }
+    .home_menu_option a {
+        font-weight: bold;
+    }
+    .home_menu_option .disabled {
+        font-weight: normal;
+        color: #777;
+    }
+    #section_content {
+        margin-left: 205px;
+        padding: 5px;
+        width: auto;
+        height: auto;
+        border: solid 1px #666;
+    }
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('body').jKit();
+});
+</script>
+
+</head>
+<body>
+<div id="page_content">
+    <div id="section_content">
+    [% content %]
+    </div>
+    <div id="footer">
+    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
+    </div>
+</div>
+</body>
+</html>

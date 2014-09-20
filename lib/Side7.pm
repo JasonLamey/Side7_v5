@@ -1108,6 +1108,23 @@ get '/my/kudos/?' => sub
     template 'my/kudos', { user => $user_hash };
 };
 
+# User Album Pages
+## Create New Album Form
+## Submit New Album Action
+
+## Existing Album Listing
+get '/my/albums/?' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    template 'my/albums', { user => $user, albums => $albums }, { layout => 'my_lightbox' };
+};
+
+## Modify Album Form
+## Submit Edited Album Action
+## Manage Album Content Form
+## Submit Album Content Action
+
 # User Preferences Settings Page
 get '/my/preferences/?' => sub
 {
