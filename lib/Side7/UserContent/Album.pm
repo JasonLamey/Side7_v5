@@ -4,6 +4,9 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
+use parent 'Clone';
+
+use Data::Dumper;
 
 use Side7::Globals;
 
@@ -98,26 +101,99 @@ __PACKAGE__->meta->setup
 =head1 METHODS
 
 
-=head2 method_name()
+=head2 get_content_count()
 
-TODO: Define what this method does, describing both input and output values and types.
+Returns an integer of the total number of objects associated with the album.
+
+Parameters: None.
+
+    my $count = $album->get_content_count();
+
+=cut
+
+sub get_content_count
+{
+    my ( $self ) = @_;
+
+    # TODO: THERE HAS TO BE A CLEANER WAY OF DOING THIS
+    my $images = $self->images();
+    my $image_count = scalar( @$images ) // 0;
+
+    # TODO Fix literature_count once UserContent::Literature is made.
+    my $literature_count = 0;
+
+    # TODO Fix music_count once UserContent::Music is made.
+    my $music_count = 0;
+
+    return ( $image_count + $literature_count + $music_count );
+}
+
+
+=head2 get_content()
+
+Returns an arrayref of the objects associated with the album, sorted by created_at desc by default.
 
 Parameters:
 
 =over 4
 
-=item parameter1: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
+=item sort_by: The field_name by which to sort the array, default is 'created_at'.
 
-=item parameter2: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
+=item sort_order: The direction to sort in, either 'asc' or 'desc'.  Default is 'desc'.
 
 =back
 
-    my $result = My::Package->method_name();
+    my $content = $album->get_content( sort_by => 'title', sort_order => 'asc' );
 
 =cut
 
-sub method_name
+sub get_content
 {
+    my ( $self, %args ) = @_;
+
+    my $sort_by    = delete $args{'sort_by'}    // 'created_at';
+    my $sort_order = delete $args{'sort_order'} // 'desc';
+
+    # TODO: THERE HAS TO BE A CLEANER WAY OF DOING THIS
+    my $images = $self->images();
+
+    # TODO Fix literature once UserContent::Literature is made.
+    my $literature = [];
+
+    # TODO Fix music once UserContent::Music is made.
+    my $music = [];
+
+    my @content = ();
+    if ( lc($sort_order) eq 'asc' )
+    {
+        @content = sort { 
+                            if ( $a->$sort_by() =~ m/^\d+$/ && $b->$sort_by() =~ m/^\d+$/ )
+                            {
+                                return $a->$sort_by() <=> $b->$sort_by() 
+                            }
+                            else
+                            {
+                                return lc( $a->$sort_by() ) cmp lc( $b->$sort_by() )
+                            }
+                        }
+                        ( @$images, @$literature, @$music );
+    }
+    else
+    {
+        @content = sort { 
+                            if ( $a->$sort_by() =~ m/^\d+$/ && $b->$sort_by() =~ m/^\d+$/ )
+                            {
+                                return $b->$sort_by() <=> $a->$sort_by() 
+                            }
+                            else
+                            {
+                                return lc( $b->$sort_by() ) cmp lc( $a->$sort_by() )
+                            }
+                        }
+                        ( @$images, @$literature, @$music );
+    }
+
+    return \@content;
 }
 
 

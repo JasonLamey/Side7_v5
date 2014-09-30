@@ -1,0 +1,30 @@
+[% USE date %]
+
+<h1>Album Content</h1>
+<a href="/my/albums">Albums</a> &raquo; '[% album.name %]' &raquo; Manage Album Content<br>
+[% IF album.system != 1 %]
+<a href="/my/albums/[% album.id %]/edit">Edit Album Details</a>
+[% END %]<br>
+
+<h2>Content In This Album</h2>
+<span class="small_text">Check the items in this area you wish to <em>remove</em> from the Album.</span>
+<form action="/my/albums/[% album.id %]/manage" method="post">
+<div style="height: 140px; overflow: auto;">
+<ol>
+    [% FOREACH item IN album_content %]
+    <li><input type="checkbox" name="content_remove" value="[% item.content_type FILTER lower %]-[% item.id %]"> [% item.content_type %] - [% item.title %] ([% item.id %])</li>
+    [% END %]
+</ol>
+</div>
+
+<h2>Content Not In This Album</h2>
+<span class="small_text">Check the items in this area you wish to <em>add</em> from the Album.</span>
+<div style="height: 140px; overflow: auto;">
+<ol>
+    [% FOREACH item IN unassociated_content %]
+    <li><input type="checkbox" name="content_add" value="[% item.content_type FILTER lower %]-[% item.id %]"> [% item.content_type %] - [% item.title %] ([% item.id %])</li>
+    [% END %]
+</ol>
+</div>
+<input type="submit" value="Update Content">
+</form>

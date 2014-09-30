@@ -1,0 +1,31 @@
+[% USE date %]
+<script>
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
+        });
+    }); 
+</script>
+
+[% is_disabled = '' %][% IF album.system == 1 %][% is_disabled = " readonly" %][% END %]
+
+<h1>Edit Album Details</h1>
+<a href="/my/albums">Albums</a> &raquo; '[% album.name %]' &raquo; Edit Album Details<br>
+<a href="/my/albums/[% album.id %]/manage">Manage Album Content</a><br>
+
+<form method="post" action="/my/albums/[% album.id %]/save">
+    <input type="hidden" name="system" value="[% album.system %]">
+    <label for="name">Album Name:</label>
+    <input type="text" maxlength="255" size="30" value="[% album.name %]" name="name"[% is_disabled %]>
+    <br>
+
+    <label for="description">Album Description:</label><br>
+    <div style="margin-left: 300px;">
+    <textarea name="description" rows="15" cols="90"[% is_disabled %]>[% album.description %]</textarea>
+    </div>
+    <br>
+
+    <input type="submit" value="Save Album">
+</form>
+<strong>Last updated on:</strong> [% date.format( album.updated_at, '%Y-%m-%d %H:%M' ) %]

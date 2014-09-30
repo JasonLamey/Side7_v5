@@ -46,6 +46,7 @@ This package represents an Image object as uploaded by a User.
     is_archived       :int(1)           not null
     copyright_year    :int(4)
     checksum          :varchar(120)
+    content_type      :varchar(5)       not null, 'Image'
     created_at        :datetime         not null
     updated_at        :datetime         not null
 
@@ -87,6 +88,7 @@ __PACKAGE__->meta->setup
         is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 }, 
         copyright_year    => { type => 'integer', length => 4 }, 
         checksum          => { type => 'varchar', length => 120 },
+        content_type      => { type => 'varchar', length => 5, default => 'Image' },
         created_at        => { type => 'datetime',               not_null => 1, default => 'now()' }, 
         updated_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
     ],

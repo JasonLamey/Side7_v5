@@ -1,0 +1,22 @@
+[% USE date %]
+<h1>My Albums</h1>
+<a href="/my/albums">Albums</a><br>
+<a href="/my/albums/new">Create a new Album</a><br>
+
+[% album_type = '' %]
+[% FOREACH album IN albums %]
+    [% IF album_type != album.system %]
+        [% IF album.system == 1 %]<h2>System Albums</h2>[% ELSE %]<h2>Custom Albums</h2>[% END %]
+        [% album_type = album.system %]
+    [% END %]
+    [% album_controls = '' %]
+    [% edit_link = '<a href="/my/albums/' _ album.id _ '/edit">Edit</a>' %]
+    [% delete_link = '<a href="/my/albums/' _ album.id _ '/delete">Delete</a>' %]
+    [% IF album.system == 0 %][% album_controls = " | $edit_link | $delete_link" %][% END %]
+<div style="margin-top: 5px;">
+    <div style="float: right; margin-left: 10px;"><a href="/my/albums/[% album.id %]/manage">Manage Content</a>[% album_controls %]</div>
+    <div style="float: right; margin-left: 10px;"><strong>Created:</strong> [% date.format( album.created_at, '%b %d, %Y' ) %] / <strong>Updated:</strong> [% date.format( album.updated_at, '%b %d, %Y' ) %]</div>
+    <div style="float: right; margin-left: 10px;"><strong>Items:</strong> [% album.content_count %]</div>
+    <span style="font-weight: bold; font-size: 11pt;">[% album.name %]</span> 
+</div>
+[% END %]

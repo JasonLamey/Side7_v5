@@ -15,6 +15,8 @@ use Side7::Globals;
 use Side7::User::Manager;
 use Side7::UserContent;
 use Side7::UserContent::Image;
+use Side7::UserContent::Album;
+use Side7::UserContent::Album::Manager;
 use Side7::User::Role;
 use Side7::User::Permission;
 use Side7::User::UserOwnedPermission;
@@ -109,6 +111,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::User::UserOwnedPerk',
+            column_map => { id => 'user_id' },
+        },
+        albums =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Album',
             column_map => { id => 'user_id' },
         },
         images =>
@@ -350,6 +358,75 @@ sub get_gallery
     my $gallery = Side7::UserContent::get_gallery( $self->id , { session => $session } );
 
     return $gallery;
+}
+
+
+=head2 get_albums()
+
+Returns an arrayref of Album objects that belong to the User.
+
+Parameters: None.
+
+    my $albums = $user->get_albums();
+
+=cut
+
+sub get_albums
+{
+    my ( $self ) = @_;
+
+    my $albums = Side7::UserContent::Album::Manager->get_albums(
+                                                                query => [
+                                                                            user_id => $self->id,
+                                                                         ],
+                                                                sort_by => 'system DESC,name ASC',
+                                                               ) // [];
+
+    foreach my $album ( @$albums )
+    {
+        $album->{'content_count'} = $album->get_content_count();
+    }
+
+    return $albums;
+}
+
+
+=head2 get_all_content()
+
+Returns an arrayref of UserContent objects associated with the User.
+
+Parameters: None.
+
+    my $content = $user->get_all_content();
+
+=cut
+
+sub get_all_content
+{
+    my ( $self, %args ) = @_;
+
+    my $sort_by = $args{'sort_by'} // 'created_by desc';
+
+    my @results;
+
+    # Images
+    my $images = Side7::UserContent::Image::Manager->get_images
+    (   
+        query =>
+        [
+            user_id => [ $self->id() ],
+        ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by => $sort_by,
+    );  
+
+    push( @results, @$images );
+
+    # TODO: Literature
+
+    # TODO: Music
+
+    return \@results;
 }
 
 

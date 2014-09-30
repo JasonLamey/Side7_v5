@@ -35,18 +35,38 @@ use Time::HiRes qw( gettimeofday tv_interval );
 use DateTime;
 use Digest::MD5;
 use IO::File;
+use Cwd;
+use Try::Tiny;
 
 use vars qw(
-    $VERSION %opt $has_opts $DB4 $DB5 %ID_TRANSLATIONS
+    $VERSION %opt $has_opts $DB4 $DB5 %ID_TRANSLATIONS $CWD %packages
 );
 
 $|++; 
 
 $VERSION = 1.30;
 
+%packages = (
+                news            => 'migrate_news',
+                users           => 'migrate_users',
+                user_prefs      => 'migrate_user_preferences',
+                acct_creds      => 'migrate_account_credits',
+                images          => 'migrate_images',
+                image_views     => 'migrate_image_views',
+                image_props     => 'migrate_image_properties',
+                image_comments  => 'migrate_image_comments',
+                image_c_threads => 'migrate_image_comment_threads',
+                albums          => 'migrate_albums',
+                album_images    => 'migrate_album_images',
+                rigs            => 'migrate_related_image_groups',
+                rig_images      => 'migrate_related_image_group_images',
+                faq_cats        => 'migrate_faq_categories',
+                faq_entries     => 'migrate_faq_entries',
+            );
+
 init();
 
-my $start;
+my $start = [];
 
 if ( $opt{t} )
 {
@@ -65,16 +85,19 @@ exit 0;
 
 sub init
 {
-    # VALID OPTIONS = 'vHDVetL'
-    # [v]ersion, [H]elp, [D]ry-run, [V]erbose, [e]nvironment, [t]ime execution, [L]arge tables
-    Getopt::Std::getopts( 'vHtDVe:L', \%opt ) or HELP_MESSAGE();
+    # VALID OPTIONS = 'vHhDVetlLp'
+    # [v]ersion, [Hh]elp, [D]ry-run, [V]erbose, [e]nvironment, [t]ime execution, [l]arge tables included, [L]arge tables ONLY, [p]ackage(s) to run
+    Getopt::Std::getopts( 'vHhtDVe:lLp:', \%opt ) || HELP_MESSAGE();
 
-    HELP_MESSAGE()    if defined $opt{H};
+    if ( defined $opt{H} || defined $opt{h} )
+    {
+        HELP_MESSAGE();
+    }
     VERSION_MESSAGE() if defined $opt{v};
 
     # Are any options set?
     $has_opts = 0;
-    foreach my $key( qw( v H D V t e L ) )
+    foreach my $key( qw( v H h D V t e L l p ) )
     {
         if ( defined $opt{$key} )
         {
@@ -82,6 +105,8 @@ sub init
             last;
         }
     }
+
+    $CWD = Cwd::getcwd();
 }
 
 sub migrate
@@ -92,25 +117,62 @@ sub migrate
     say '';
     say 'This is a dry run. Nothing will be written to DB5.' if defined $opt{D};
     say '';
+    say 'Current Working Directory is: >' . $CWD . '<' if defined $opt{V};
+    say '' if defined $opt{V};
 
     sleep (3); # Dramatic pause
 
     db_connect();
-    migrate_news();
-    migrate_users();
-    migrate_user_preferences();
-    migrate_account_credits();
-    migrate_images();
-    migrate_image_views();
-    migrate_image_properties();
-    migrate_image_comments();
-    migrate_image_comment_threads();
-    migrate_albums();
-    migrate_album_images();
-    migrate_related_image_groups();
-    migrate_related_image_group_images();
-    migrate_faq_categories();
-    migrate_faq_entries();
+
+    if ( defined $opt{p} )
+    {
+        # Migrate only specified parts of the data.
+        if ( $opt{p} eq '' )
+        {
+            HELP_MESSAGE();
+        }
+        say '=> Migrating individual packages:';
+        $opt{l} = 1; # Do this to ensure we can import large tables.
+        foreach my $key ( split( /,\s*/, $opt{p} ) )
+        {
+            say "=> Migrating >" . $key . '<' if defined $opt{V};
+            if ( ! defined $packages{$key} )
+            {
+                say "=> ERROR: Invalid package name: >" . $key . '<';
+                next;
+            }
+            eval lc( $packages{$key} );
+        }
+    }
+    elsif ( defined $opt{L} )
+    {
+        # Large tables only
+        migrate_image_views();
+        migrate_image_properties();
+    }
+    else
+    {
+        # Potentially all tables
+        migrate_news();
+        migrate_users();
+        migrate_user_preferences();
+        migrate_account_credits();
+        migrate_images();
+        if ( defined $opt{l} )
+        {
+            migrate_image_views();
+            migrate_image_properties();
+        }
+        migrate_image_comments();
+        migrate_image_comment_threads();
+        migrate_albums();
+        migrate_album_images();
+        migrate_related_image_groups();
+        migrate_related_image_group_images();
+        migrate_faq_categories();
+        migrate_faq_entries();
+    }
+
     db_disconnect();
 }
 
@@ -423,6 +485,9 @@ sub migrate_images
 
     my $image_count = 0;
 
+    my $bad_files_log = $CWD . '/migration_bad_checksum_files.log';
+    my $bfl = IO::File->new("> $bad_files_log");
+
     print "\t=> Inserting records into v5 DB " if defined $opt{V};
     while ( my $row = $sth->fetchrow_hashref() )
     {
@@ -469,7 +534,10 @@ sub migrate_images
         }
         else
         {
-            warn "Can't open >" . $content_directory . $row->{'filename'} . "< for checksum: $!";
+            if ( defined $bfl )
+            {
+                print $bfl "Can't open >" . $content_directory . $row->{'filename'} . "< (ID: $row->{'image_id'}) for checksum: $!\n";
+            }
         }
 
         # Create image and save it.
@@ -498,6 +566,10 @@ sub migrate_images
 
         print _progress_dot( total => $row_count, count => $image_count, interval => $interval ) if defined $opt{V};
     }
+    if ( defined $bfl )
+    {
+        $bfl->close();
+    }
     print "\n" if defined $opt{V};
 
     $sth->finish();
@@ -508,7 +580,7 @@ sub migrate_image_views
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Views."; }
 
-    if ( ! defined $opt{L} )
+    if ( ! defined $opt{l} && ! defined $opt{L} )
     {
         say "\t=> Skipping large table migration.";
         return;
@@ -571,7 +643,7 @@ sub migrate_image_properties
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Properties."; }
 
-    if ( ! defined $opt{L} ) 
+    if ( ! defined $opt{l} && ! defined $opt{L} ) 
     { 
         say "\t=> Skipping large table migration.";
         return;
@@ -655,7 +727,7 @@ sub migrate_image_comments
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Comments."; }
 
-#    if ( ! defined $opt{L} ) 
+#    if ( ! defined $opt{l} && ! defined $opt{L} ) 
 #    { 
 #        say "\t=> Skipping large table migration.";
 #        return;
@@ -727,7 +799,7 @@ sub migrate_image_comment_threads
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Comment Threads."; }
 
-#    if ( ! defined $opt{L} ) 
+#    if ( ! defined $opt{l} && ! defined $opt{L} ) 
 #    { 
 #        say "\t=> Skipping large table migration.";
 #        return;
@@ -1016,7 +1088,7 @@ sub migrate_related_image_groups
         my $album = Side7::UserContent::Album->new(
             user_id           => $row->{user_account_id},
             name              => $row->{name},
-            description       => undef,
+            description       => '',
             system            => 0,
             created_at        => DateTime->now(),
             updated_at        => DateTime->now(),
@@ -1278,14 +1350,40 @@ sub time_elapsed
 
 sub HELP_MESSAGE
 {
-    say "usage: $0 [-vHDVtL] [-e <environment>]";
+    say '';
+    say "usage: $0 [-vHDVtlL] [-e <environment>] [-p <package(s)>";
     say '-v             Reports the script version.';
-    say '-H             Displays this help message.';
+    say '-Hh            Displays this help message.';
     say '-D             Runs in dry-run mode, saving no data to the database.';
     say '-V             Runs in verbose mode.';
     say '-e <environ>   Establishes which environment to run the script; defaults to \'development\'';
     say '-t             Reports elapsed execution time';
-    say '-L             Includes large tables in the migration (>500k rows).';
+    say '-l             Includes large tables in the migration (>500k rows).';
+    say '-L             Import large tables ONLY in the migration (>500k rows).';
+    say '-p <package>   Name specific packages to import, comma-separated with no white-space. Defaults to none.';
+    say '';
+    say 'Valid package names:';
+    my $count = 1;
+    my $output = '';
+    foreach my $key ( sort keys %packages )
+    {
+        if ( $count == 1 )
+        {
+            $output = "\t\t";
+        }
+        $output .= $key . ', ';
+        if ( $count == 6 )
+        {
+            say $output;
+            $output = '';
+            $count  = 1;
+        }
+        else
+        {
+            $count++;
+        }
+    }
+    say '';
     exit 0;
 }
 

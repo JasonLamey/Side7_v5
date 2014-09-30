@@ -1,0 +1,11 @@
+<h1>Confirm Deletion</h1>
+
+<div>You have requested to delete the album '<strong>[% album.name %]</strong>'.
+Deleting this album will <strong>not</strong> delete the Content associated with it.</div>
+<br>
+
+<div style="font-size: 12pt;"><strong>Are you sure you want to delete the Album '[% album.name %]'?</strong></div>
+<br>
+
+<div style="text-align: center;"><a href="/my/albums" style="font-weight: bold;">Cancel</a> &nbsp; | &nbsp;
+    <a href="/my/albums/[% album.id %]/delete_confirmed">Yes, Delete it</a></div>

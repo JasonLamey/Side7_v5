@@ -32,7 +32,6 @@
 [% IF ( flash.message || flash.error ) %]
 <!-- jgrowl -->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
-<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
 [% END %]
 
@@ -81,7 +80,6 @@
         color: #777;
     }
     #section_content {
-        margin-left: 205px;
         padding: 5px;
         width: auto;
         height: auto;
@@ -94,6 +92,35 @@ $(document).ready(function(){
     $('body').jKit();
 });
 </script>
+
+[% IF flash.message %]
+    <!-- <div class="flash"> [% flash.message %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl( "[% flash.message %]", { life: 10000, theme: 'Blitzer', themeState: 'highlight' } );
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
+[% END %]
+[% IF flash.error %]
+    <!-- <div class="error"> [% flash.error %] </div> -->
+    <script>
+        ( function($)
+            {
+                $( function()
+                    {
+                        $.jGrowl("[% flash.error %]", { header: 'Error', sticky: true, theme: 'Blitzer', themeState: 'error' });
+                    }
+                );
+            }
+        )(jQuery);
+    </script>
+[% END %]
 
 </head>
 <body>

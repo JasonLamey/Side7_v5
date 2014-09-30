@@ -10,6 +10,7 @@ use Dancer::Plugin::NYTProf;
 use DateTime;
 use Data::Dumper;
 use Const::Fast;
+use List::MoreUtils qw{none};
 
 use Side7::Globals;
 use Side7::AuditLog;
@@ -23,6 +24,7 @@ use Side7::DateVisibility::Manager;
 use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::RatingQualifier;
+use Side7::UserContent::AlbumImageMap;
 use Side7::Utils::Crypt;
 use Side7::Utils::Pagination;
 use Side7::Utils::Image;
@@ -1090,7 +1092,6 @@ get '/my/gallery/?' => sub
     # Fetch Gallery Stats
     my ( $user_hash ) = Side7::User::show_gallery( username => session( 'username' ) );
 
-
     template 'my/gallery', { user => $user_hash };
 };
 
@@ -1110,20 +1111,471 @@ get '/my/kudos/?' => sub
 
 # User Album Pages
 ## Create New Album Form
+get '/my/albums/new/?' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    template 'my/album_new', { user => $user }, { layout => 'my_lightbox' };
+};
+
 ## Submit New Album Action
+post '/my/albums/new' => sub
+{
+    my $album_name        = params->{'name'}        // undef;
+    my $album_description = params->{'description'} // undef;
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    # Simple validation
+    if ( ! defined $album_name )
+    {
+        flash error => 'ERROR: You need to define a Name for this Album.';
+        return template 'my/album_new', { user => $user, album => params }, { layout => 'my_lightbox' };
+    }
+
+    my $new_album = Side7::UserContent::Album->new( 
+                                                    user_id     => $user->id(), 
+                                                    name        => $album_name, 
+                                                    description => $album_description,
+                                                    system      => 0,
+                                                    created_at  => DateTime->now(),
+                                                    updated_at  => DateTime->now(),
+                                                  );
+    $new_album->save();
+
+    # Audit Log
+    my $audit_msg = 'Custom Album Created -- Successful<br>' .
+                    'Album owned by &gt;' . $user->username() . '&lt; ( User ID: ' . $user->id() . ' )' . 
+                    ' created by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Custom Album Updated',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $new_album->id(),
+                                          original_value => undef,
+                                          new_value      => 'name: &gt;' . $new_album->name() . '%lt;<br>description: &gt;' . $new_album->description() . '&lt;',
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+    
+    flash message => 'Your new Album "<strong>' . $new_album->name() . '</strong>" was successfully created!';
+    redirect '/my/albums/' . $new_album->id() . '/manage';
+};
+
+# Delete Album Confirm
+get '/my/albums/:album_id/delete/?' => sub
+{
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to delete either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $album->user_id() )
+    {
+        flash error => 'The Album you tried to delete does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    template 'my/album_delete_confirm', { album => $album }, { layout => 'my_lightbox' };
+};
+
+# Delete Album Action
+get '/my/albums/:album_id/delete_confirmed/?' => sub
+{
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to delete either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $album->user_id() )
+    {
+        flash error => 'The Album you tried to delete does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    my $original_album = $album->clone();
+    my $affected_user  = Side7::User::get_user_by_id( $original_album->user_id() );
+
+    # Remove Album Mappings
+    $album->images( [] );
+    # TODO: Delete music
+    # $album->music( [] );
+    # TODO: Delete literature
+    # $album->literature( [] );
+    $album->save();
+
+    # Remove Album Record
+    $album->delete();
+
+    # Audit Log
+    my $audit_msg = 'Custom Album Deleted -- Successful<br>';
+    $audit_msg   .= 'The Album >' . $original_album->name() . '< ( Album ID: ' . $original_album->id() . ' ) owned by<br>';
+    $audit_msg   .= 'User >' . $affected_user->username() . '< ( User ID: ' . $affected_user->id() . ' ) has been deleted<br>';
+    $audit_msg   .= 'by User >' . $user->username() . '< ( User ID: ' . $user->id() . ' ).<br>';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Custom Album Deleted',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $original_album->id(),
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+    # Return
+
+    flash message => 'Your Album <strong>' . $original_album->name() . '</strong> was deleted.';
+    redirect '/my/albums';
+};
+
 
 ## Existing Album Listing
 get '/my/albums/?' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
+    my $albums = $user->get_albums();
+
     template 'my/albums', { user => $user, albums => $albums }, { layout => 'my_lightbox' };
 };
 
 ## Modify Album Form
+get '/my/albums/:album_id/edit' => sub
+{
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to access either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $album->user_id() )
+    {
+        flash error => 'The Album you tried to access does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    template 'my/album_edit', { album => $album }, { layout => 'my_lightbox' };
+};
+
 ## Submit Edited Album Action
+post '/my/albums/:album_id/save' => sub
+{
+    my $params = params;
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $original_album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $original_album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $original_album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to access either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $original_album->user_id() )
+    {
+        flash error => 'The Album you tried to access does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    my $affected_user = Side7::User::get_user_by_id( $original_album->user_id() );
+
+    my $updated_album = $original_album->clone();
+
+    # Validate form values
+    my $data = validator( $params, 'album_edit_form.pl' );
+
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+        return template '/my/album_edit', { album => $params }, { layout => 'my_lightbox' };
+    }
+
+    # Save album information
+    my $updated_fields  = '';
+    my $original_values = '';
+    my $updated_values  = '';
+    my $updated         = 0;
+    foreach my $key ( qw/ name description / )
+    {
+        if
+        ( 
+            ! defined params->{$key} && defined $original_album->$key()
+            ||
+            defined params->{$key} && ! defined $original_album->$key()
+            ||
+            params->{$key} ne $original_album->$key()
+        )
+        {
+            $updated_album->$key( params->{$key} );
+            $updated = 1;
+            $updated_fields  .= '>' . $key . '<, ';
+            $original_values .= "$key: >" . $original_album->$key() . "<\n";
+            $updated_values  .= "$key: >" . params->{$key} . "<\n";
+        }
+    }
+
+    if ( $updated == 1 )
+    {
+        $updated_album->updated_at( DateTime->now() );
+        $updated_album->save();
+    }
+
+    # Audit Log
+    my $audit_msg = 'Custom Album Updated -- Successful<br>' .
+                    'Album owned by &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' )' . 
+                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    $audit_msg .= 'Fields changed:<br>' . $updated_fields;
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Custom Album Updated',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => params->{'album_id'},
+                                          original_value => $original_values,
+                                          new_value      => $updated_values,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return
+    my $albums = $affected_user->get_albums();
+
+    flash message => 'Your Album, <strong>' . $updated_album->name() . '</strong>, has been successfully updated!';
+    template 'my/albums', { user => $affected_user, albums => $albums }, { layout => 'my_lightbox' };
+};
+
 ## Manage Album Content Form
+get '/my/albums/:album_id/manage' => sub
+{
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to access either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $album->user_id() )
+    {
+        flash error => 'The Album you tried to access does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    my $album_content = $album->get_content( sort_by => 'title', sort_order => 'asc' );
+    my $all_content   = $user->get_all_content( sort_by => 'title asc' );
+
+    my $unassociated_content = [];
+    foreach my $content_item ( @$all_content )
+    {
+        if 
+        (
+            List::MoreUtils::none { 
+                                    $_->content_type() eq $content_item->content_type()
+                                    &&
+                                    $_->title() eq $content_item->title()
+                                    &&
+                                    $_->created_at() eq $content_item->created_at()
+                                  }
+            @$album_content
+        )
+        {
+            push( @$unassociated_content, $content_item );
+        }
+    }
+
+    template 'my/album_content', { 
+                                    album                => $album,
+                                    album_content        => $album_content,
+                                    unassociated_content => $unassociated_content,
+                                 },
+                                 { layout => 'my_lightbox' };
+};
+
 ## Submit Album Content Action
+post '/my/albums/:album_id/manage' => sub
+{
+    my $params            = params;
+    my $content_to_add    = [];
+    my $content_to_remove = [];
+
+    if ( ref ( params->{'content_add'} ) eq 'ARRAY' )
+    {
+        push( @$content_to_add, @{ params->{'content_add'} } );
+    }
+    else
+    {
+        push( @$content_to_add, params->{'content_add'} ) if params->{'content_add'};
+    }
+    if ( ref ( params->{'content_remove'} ) eq 'ARRAY' )
+    {
+        push( @$content_to_remove, @{ params->{'content_remove'} } );
+    }
+    else
+    {
+        push( @$content_to_remove, params->{'content_remove'} ) if params->{'content_remove'};
+    }
+
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
+    my $loaded = $album->load( speculative => 1 );
+
+    if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
+    {
+        flash error => 'The Album you tried to access either could not be found or does not exist.';
+        return redirect '/my/albums';
+    }
+
+    if ( session( 'user_id' ) != $album->user_id() )
+    {
+        flash error => 'The Album you tried to access does not belong to your Account.';
+        return redirect '/my/albums';
+    }
+
+    my $affected_user = Side7::User::get_user_by_id( $album->user_id() );
+
+    my $audit_msg = 'Managing Album Contents - Results:<br>';
+    $audit_msg   .= 'Album >' . $album->name() . '< ( Album ID: ' . $album->id() . ' )<br>';
+    $audit_msg   .= 'belonging to User >' . $affected_user->username() . '< ( User ID: ' . $affected_user->id() . ' )<br>';
+
+    my $flash_error = '';
+
+    # Fulfill any Remove requests
+    # As we go through each request, we will ensure that the content being operated on
+    # actually belongs to the User.
+    foreach my $content ( @$content_to_remove )
+    {
+        my ( $content_type, $content_id ) = split( /-/, $content );
+        if ( $content_type eq 'music' )
+        {
+            # TODO: set up music rules
+        }
+        elsif ( $content_type eq 'literature' )
+        {
+            # TODO: set up literature rules
+        }
+        else
+        {
+            # Image removal
+            my $map = Side7::UserContent::AlbumImageMap->new( album_id => $album->id(), image_id => $content_id );
+            my $loaded = $map->load( speculative => 1 );
+
+            if ( $loaded == 0 )
+            {
+                flash error => 'Could not find the Image being referenced for removal from this Album.';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+ 
+            my $deleted = $map->delete();
+            if ( ! $deleted )
+            {
+                $LOGGER->warn( 'Could not remove Image ID >' . $content_id . '< from Album >' . $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
+                $audit_msg .= '<strong>Could not remove Image ID &gt;' . $content_id . '&lt; from Album: ' . $map->error() . '</strong><br>';
+
+                $flash_error .= 'Could not remove an Image being referenced from this Album.<br>';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+            else
+            {
+                $audit_msg .= 'Removed Image ID &gt;' . $content_id . '&lt; from Album<br>';
+            }
+        }
+    }
+
+    # Fulfill any Add requests
+    # As we go through each request, we will ensure that the content being operated on
+    # actually belongs to the User.
+    foreach my $content ( @$content_to_add )
+    {
+        my ( $content_type, $content_id ) = split( /-/, $content );
+        $LOGGER->debug( 'CONTENT_TYPE: >' . $content_type . '< / CONTENT_ID: >' . $content_id . '<' );
+
+        if ( $content_type eq 'music' )
+        {
+            # TODO: set up music rules
+        }
+        elsif ( $content_type eq 'literature' )
+        {
+            # TODO: set up literature rules
+        }
+        else
+        {
+            # Image adding
+            my $map = Side7::UserContent::AlbumImageMap->new( album_id => $album->id(), image_id => $content_id, created_at => DateTime->now(), updated_at => DateTime->now() );
+            my $saved = $map->save();
+
+            if ( ! $saved )
+            {
+                $LOGGER->warn( 'Could not add Image ID >' . $content_id . '< to Album >' . $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
+                $audit_msg .= '<strong>Could not add Image ID &gt;' . $content_id . '&lt; to Album: ' . $map->error() . '</strong><br>';
+
+                $flash_error .= 'Could not add an Image to this Album.<br>';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+            else
+            {
+                $audit_msg .= 'Added Image ID &gt;' . $content_id . '&lt; to Album<br>';
+            }
+        }
+    }
+
+    $album->updated_at( DateTime->now() );
+    $album->save();
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'User Album Contents Updated',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => params->{'album_id'},
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    flash message => 'Content for <strong>' . $album->name() . '</strong> successfully updated!';
+    return redirect '/my/albums/' . params->{'album_id'} . '/manage';
+};
 
 # User Preferences Settings Page
 get '/my/preferences/?' => sub
