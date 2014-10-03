@@ -55,19 +55,28 @@ $(document).ready(function(){
         width: auto;
         padding: 3px 5px;
         margin: 0;
+        height: 60px;
+        background-color: #F2B9B8;
     }
     #header_search {
         float: right;
         width: 200px;
         text-align: right;
     }
+    #header_avatar {
+        float: left;
+        margin-right: 5px;
+    }   
     .metanav {
+        height: 55px;
+        vertical-align: middle;
+        margin-top: 3px;
     }
     .admin_menu {
         width:200px;
         position:absolute;
         left:0;
-        top:40px;
+        top:63px;
         bottom:40px;
         height:auto;
         display: block;

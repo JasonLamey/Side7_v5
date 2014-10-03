@@ -11,14 +11,17 @@ use Side7::Globals;
 
 =pod
 
+
 =head1 NAME
 
 Side7::Account
+
 
 =head1 DESCRIPTION
 
 This class represents the account records for a user. The account holds all non-login
 information, and is the model to which all other models are related.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -50,13 +53,15 @@ information, and is the model to which all other models are related.
 	is_public               :integer
 	subscription_expires_on :date
 	delete_on               :date
-	delete_on               :string(100)      default(NULL)
+	avatar_type             :string(255)      default(NULL)
+	avatar_id               :integer          default(NULL)
 	created_at              :datetime         not null
 	updated_at              :datetime         not null
 
 =cut
 
 =pod
+
 
 =head1 RELATIONSHIPS
 
@@ -85,6 +90,14 @@ One-to-one relationship. FK = birthday_visibility
 =item Side7::User::Country
 
 One-to-one relationship. FK = country_id
+
+=item Side7::User::Avatar::UserAvatar
+
+One-to-many relationship, FK = avatar_id
+
+=item Side7::User::Avatar::SystemAvatar
+
+One-to-many relationship, FK = avatar_id
 
 =back
 
@@ -126,6 +139,12 @@ __PACKAGE__->meta->setup
         subscription_expires_on => { type => 'date' },
         delete_on               => { type => 'date' },
         confirmation_code       => { type => 'varchar', length => 100 },
+        avatar_type             => {
+                                     type    => 'enum',
+                                     values  => [ qw/None System Image Gravatar/ ],
+                                     default => 'None',
+                                   },
+        avatar_id               => { type => 'integer' },
         created_at              => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at              => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
@@ -169,6 +188,18 @@ __PACKAGE__->meta->setup
             class             => 'Side7::DateVisibility',
             key_columns       => { birthday_visibility => 'id' },
             relationship_type => 'many to one',
+        },
+        user_avatars =>
+        {
+            class             => 'Side7::User::Avatar::UserAvatar',
+            key_columns       => { avatar_id => 'id' },
+            relationship_type => 'one to one',
+        },
+        system_avatar =>
+        {
+            class             => 'Side7::User::Avatar::SystemAvatar',
+            key_columns       => { avatar_id => 'id' },
+            relationship_type => 'one to one',
         },
     ],
 );
@@ -492,7 +523,8 @@ sub get_enum_values
 
     my $account_enums = Side7::DB::get_enum_values_for_form( fields => [
                                                                         'sex',
-                                                                    ],
+                                                                        'avatar_type',
+                                                                       ],
                                                           table  => 'accounts',
                                                         );
 

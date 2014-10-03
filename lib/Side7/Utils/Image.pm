@@ -228,6 +228,117 @@ sub get_image_stats
 }
 
 
+=head2 create_cached_avatar()
+
+Creates an image file in one of the cached_file directories, depending upon the image_id, user_id, and image size.
+Returns C<$success> as a boolean, and an error if C<$success> is false.
+
+Parameters:
+
+=over 4
+
+=item image: Image object.
+
+=item size: The size at which to create the image. Valid values are 'tiny', 'small', 'medium', 'large', 'original'. No default.
+
+=item path: The file path in which to create the image. If not included, a new file path will be created.
+
+=back
+
+    my ( $success, $error ) = Side7::Utils::Image::create_cached_image( image => $image, size => $size, path => $path );
+
+=cut
+
+sub create_cached_avatar
+{
+    my ( %args ) = @_;
+
+    my $image      = delete $args{'image'}          // undef;
+    my $size       = delete $args{'size'}           // undef;
+    my $path       = delete $args{'path'}           // undef;
+    my $orig_image = delete $args{'original_image'} // undef;
+
+    if ( ! defined $image )
+    {
+        $LOGGER->warn( 'Invalid Image object passed to create_cached_avatar.' );
+        return( 0, 'Invalid Image for creating Avatar.' );
+    }
+
+    if ( ! defined $size || $size eq '' )
+    {
+        $LOGGER->warn( 'Invalid size passed to create_cached_avatar.' );
+        return( 0, 'Invalid size for creating Avatar.' );
+    }
+
+    if ( ! defined $path || $path eq '' )
+    {
+        my ( $filepath, $error ) = $image->get_cached_avatar_path( size => $size );
+
+        if ( ! defined $filepath || $filepath eq '' )
+        {
+            $LOGGER->warn( 'Invalid original Avatar path during create_cached_avatar: ' . $error );
+            return( 0, 'Invalid path for creating Avatar.' );
+        }
+        $path = $filepath;
+    }
+
+    my $user_avatar_path = '';
+    my $input            = '';
+    if ( ! defined $orig_image || $orig_image eq '' )
+    {
+        $user_avatar_path = $image->user->get_avatar_directory();
+        $input = $user_avatar_path . $image->filename;
+    }
+    else
+    {
+        $input = $orig_image;
+    }
+
+    my $original_image = Image::Magick->new();
+
+    my ( $width, $height, $filesize, $format ) = $original_image->Ping( $input );
+
+    if ( ! defined $format )
+    {
+        $LOGGER->warn( 'Cached file creation FAILED while getting properties of input file >' . $input . '<' );
+        return( 0, 'A problem occurred while trying to create Avatar file.' );
+    }
+
+    # Set initial output size geometry.
+    my $output_size = ( lc( $size ) eq 'original' ) ? $width . 'x' . $height : $CONFIG->{'avatar'}->{'size'}->{ lc($size) };
+
+    # If the cached file doesn't exist, let's create it.
+    if ( ! -f $path )
+    {
+        my $result = $original_image->Read($input);
+        if ( $result )
+        {
+            $LOGGER->warn( 'Cached file creation FAILED while reading in >' . $input . '<: ' . $result );
+            return( 0, 'A problem occurred while trying to create Avatar file.' );
+        }
+
+        if ( lc( $size ) ne 'original' )
+        {
+            $result = $original_image->Scale( geometry => $output_size );
+            if ( $result )
+            {
+                $LOGGER->warn( 'Cached file creation FAILED while Thumbnailizing >' . $input . '<: ' . $result );
+                return( 0, 'A problem occurred while trying to create Avatar file.' );
+            }
+        }
+
+        $result = $original_image->Write( $path );
+        if ( $result )
+        {
+            $LOGGER->warn( 'Cached file creation FAILED while saving image >' . $path . '<: ' . $result );
+            return( 0, 'A problem occurred while trying to create Avatar file.' );
+        }
+    }
+
+    return( 1, undef );
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

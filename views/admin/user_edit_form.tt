@@ -21,15 +21,8 @@
         $( '#user_edit_tabs' ).jKit( 'tabs', { 'animation': 'fade' } );
     } );
 </script>
-<script>
-    $(function() {
-        $("textarea").sceditor({
-            plugins: "bbcode",
-            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
-        });
-    });
-</script>
 
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
 
 <h1>Edit Account For [% user.username %]</h1>
 

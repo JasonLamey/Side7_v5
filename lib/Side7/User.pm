@@ -25,6 +25,9 @@ use Side7::User::Perk;
 use Side7::User::UserOwnedPerk;
 use Side7::User::UserOwnedPerk::Manager;
 use Side7::User::Preference;
+use Side7::User::Avatar;
+use Side7::User::Avatar::UserAvatar;
+use Side7::User::Avatar::UserAvatar::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 use Side7::Utils::Text;
@@ -135,6 +138,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::KudosCoin',
+            column_map => { id => 'user_id' },
+        },
+        user_avatars =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::Avatar::UserAvatar',
             column_map => { id => 'user_id' },
         },
     ],
@@ -293,6 +302,34 @@ sub get_content_directory
 
     my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} . 
             substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+
+    return $content_directory;
+}
+
+
+=head2 get_avatar_directory()
+
+Returns a string for the User's avatar directory on the filesystem.
+
+    my $user_avatar_directory = $user->get_avatar_directory();
+
+=cut
+
+sub get_avatar_directory
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return undef;
+    }
+
+    my $content_directory = $self->get_content_directory() . 'avatars/';
+
+    if ( ! -d $content_directory )
+    {
+    }
 
     return $content_directory;
 }
@@ -505,6 +542,83 @@ sub get_formatted_updated_at
     }
 
     return $date;
+}
+
+
+=head2 get_avatar()
+
+Returns the URI of the Avatar to be displayed for the User.
+
+Parameters:
+
+=over 4
+
+=item size: The image size of the Avatar. Accepts 'tiny', 'small', 'medium', 'large', 'original'.  Default: 'small'
+
+=back
+
+    my $avatar = $user->get_avatar( size => 'large' );
+
+=cut
+
+sub get_avatar
+{
+    my ( $self, %args ) = @_;
+
+    my $size = delete $args{'size'} // 'small';
+
+    return Side7::User::Avatar->get_avatar( user => $self, size => lc( $size ) );
+}
+
+
+=head2 get_all_avatars()
+
+Returns an arrayref of hashes of all Avatars belonging to the User. 
+
+Parameters:
+
+=over 4
+
+=item size: The image size of the Avatar. Accepts 'tiny', 'small', 'medium', 'large', 'original'.  Default: 'small'
+
+=back
+
+    my $user_avatars = $user->get_all_avatars( size => 'large' );
+
+=cut
+
+sub get_all_avatars
+{
+    my ( $self, %args ) = @_;
+
+    my $size = delete $args{'size'} // 'small';
+
+    my @avatars = ();
+
+    foreach my $avatar ( $self->user_avatars() )
+    {
+        my $filepath = Side7::User::Avatar::UserAvatar->get_avatar_uri( avatar_id => $avatar->id(), size => $size );
+
+        if ( ! -f $filepath )
+        {
+            $LOGGER->warn( 'Avatar file >' . $filepath . '< does not exist when fetching all avatars.' );
+            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size );
+        }
+
+        $filepath =~ s/^\/data//;
+
+        push( @avatars, { 
+                            avatar_id  => $avatar->id(),
+                            filename   => $avatar->filename(),
+                            title      => $avatar->title(),
+                            created_at => $avatar->created_at(),
+                            updated_at => $avatar->updated_at(),
+                            uri        => $filepath,
+                        }
+        );
+    }
+
+    return \@avatars;
 }
 
 

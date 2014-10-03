@@ -1,13 +1,6 @@
 [% USE date %]
 
-<script>
-    $(function() {
-        $("textarea").sceditor({
-            plugins: "bbcode",
-            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
-        });
-    });
-</script>
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
 
 <h2>My Profile</h2>
 

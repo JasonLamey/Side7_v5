@@ -1,12 +1,4 @@
-<script>
-    $(function() {
-        $("textarea").sceditor({
-            plugins: "bbcode",
-            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
-        });
-    });
-</script>
-
+[% PROCESS 'site/js_snippets/sceditor_prime.tt' %]
         [% form_title = '' %]
         [% file_types = '' %]
         [% file_label = '' %]

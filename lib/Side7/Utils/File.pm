@@ -156,6 +156,52 @@ sub create_user_directory
         return ( 0, 'User directory still does not exist after successful creation return.' );
     }
 
+    # Make user subdirectories
+    foreach my $subdir ( qw/ avatars user_bio_images character_bio_images / )
+    {
+        my $user_subdir = $user_dir . '/' . $subdir;
+        if ( ! -d $user_subdir )
+        {
+            File::Path::make_path( $user_subdir, { error => \my $error } );
+            if ( @{ $error } )
+            {
+                foreach my $diag ( @{ $error } )
+                {
+                    my ( $file, $message ) = %{ $diag };
+                    if ( $file eq '' )
+                    {
+                        $error_message .= 'Sub-Directory creation error: ' . $message . '; ';
+                    }
+                    else
+                    {
+                        $error_message .= 'Problem creating User sub-directory >' . $file . '<: ' . $message . '; ';
+                    }
+                }
+                my $audit_msg = 'ERROR: User sub-directory >' . $user_subdir . '< was not created: ' . $error_message;
+                my $audit_log = Side7::AuditLog->new(
+                                                        title       => 'Directory Creation Error',
+                                                        description => $audit_msg,
+                                                        ip_address  => '',
+                                                        timestamp   => DateTime->now(),
+                );
+                $audit_log->save();
+                return ( 0, $error_message );
+            }
+        }
+
+        if ( ! -d $user_subdir )
+        {
+            my $error = 'ERROR: User sub-directory >' . $user_subdir . '< does not exist even after successful creation return.';
+            my $audit_log = Side7::AuditLog->new(
+                                                    title       => 'Directory Creation Error',
+                                                    description => $error,
+                                                    ip_address  => '',
+                                                    timestamp   => DateTime->now(),
+            );
+            return ( 0, 'User directory still does not exist after successful creation return.' );
+        }
+    }
+
     return ( 1, undef );
 }
 
@@ -171,7 +217,7 @@ Parameters:
 
 =item user_id: The User ID of the user to whom the directory is attributed.
 
-=item content_type: The User Content type for this stored file type. Valid types are 'images', 'literature', 'music', and 'videos'.
+=item content_type: The User Content type for this stored file type. Valid types are 'avatars', 'images', 'literature', 'music', and 'videos'.
 
 =item content_size: The User Content size (dimensions) for this stored file type. Valid types are 'tiny', 'small', 'medium', 'large', and 'original'.
 
@@ -245,7 +291,10 @@ sub create_user_cached_file_directory
     # CACHED_FILE STRUCTURE:
     # /cached_files/user_content/CONTENT_TYPE/[ADDL_BREAKDOWN]/[USER_ID BREAKDOWN/content_id.ext
     #
-    # So, for images:
+    # So, for avatars:
+    # /cached_files/user_content/avatars/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
+    #
+    # For images:
     # /cached_files/user_content/images/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
     # For literature:
@@ -265,7 +314,7 @@ sub create_user_cached_file_directory
     my $tier2 = substr( $user_id, 0, 3 );
 
     my $cached_file_dir = '';
-    if ( lc( $content_type ) eq 'images' )
+    if ( lc( $content_type ) eq 'avatars' || lc( $content_type ) eq 'images' )
     {
         $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 
                             'user_content' . 

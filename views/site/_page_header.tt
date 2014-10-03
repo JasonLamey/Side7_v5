@@ -5,24 +5,30 @@
                 <input type="submit" value="Go" />
             </form>
         </div>
+        [% IF session.logged_in %]
+        <div id="header_avatar"><img src="[% header_avatar %]" alt="[% session.username %]" title="[% session.username %]"></div>
+        [% END %]
         <div class="metanav">
-            [% IF not session.logged_in %]
-            <a href="[% login_url %]">Log In</a> | <a href="[% signup_url %]">Sign Up</a>
-            [% ELSE %]
-            [% session.username %]: <a href="/my/home">Home</a>
-            &middot;
-            <a href="/user/[% session.username %]">Profile</a>
-            &middot;
-            <a href="/user/[% session.username %]/gallery">Gallery</a>
-            &middot;
-            <a href="[% logout_url %]">Log Out</a>
-            [% END %]
-        </div>
-        <div>
-            <a href="/">Main</a> &middot;
-            <a href="/news">News</a> &middot;
-            <a href="/faq">F.A.Q.</a> &middot;
-            <a href="/user_directory">User Directory</a>
+            <div>
+                [% IF not session.logged_in %]
+                <a href="[% login_url %]">Log In</a> | <a href="[% signup_url %]">Sign Up</a>
+                [% ELSE %]
+                [% session.username %]:
+                <a href="/my/home">Home</a>
+                &middot;
+                <a href="/user/[% session.username %]">Profile</a>
+                &middot;
+                <a href="/user/[% session.username %]/gallery">Gallery</a>
+                &middot;
+                <a href="[% logout_url %]">Log Out</a>
+                [% END %]
+            </div>
+            <div>
+                <a href="/">Main</a> &middot;
+                <a href="/news">News</a> &middot;
+                <a href="/faq">F.A.Q.</a> &middot;
+                <a href="/user_directory">User Directory</a>
+            </div>
         </div>
     </div>
 [% IF flash.message %]

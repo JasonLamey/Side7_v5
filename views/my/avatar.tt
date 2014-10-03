@@ -1,0 +1,85 @@
+
+<script>
+    function check_avatar_type( avatar_type )
+    {
+        var types = [ 'None', 'Gravatar', 'Image', 'System' ];
+        for ( index = 0; index < types.length; index++ )
+        {
+            var id_name = 'avatar_type_' + types[index].toLowerCase();
+            if ( avatar_type == types[index] )
+            {
+                document.getElementById(id_name).checked = true;
+            }
+            else
+            {
+                document.getElementById(id_name).checked = false;
+            }
+        } 
+    }
+</script>
+<h1>My Avatar</h1>
+
+<h3>Your Current Avatar</h3>
+<img src="[% avatar %]" alt='[% user.username %]' title='[% user.username %]'><br>
+
+<h2>Upload A New Avatar</h2>
+<form action="/my/avatar/upload" method="post" enctype="multipart/form-data">
+<label for="filename">Upload an image to use as your Avatar: </label> <input type="file" name="filename" required="required"><br>
+<span class="small_text">(<strong>Note:</strong> Using an image that is <strong>larger than 200px x 200px</strong> works best,
+    as your Avatar will be resized automatically.)</span><br>
+<label for="title">Avatar Name:</label> <input type="text" name="title" maxlength="255" size="30"> <input type="submit" value="Upload"><br>
+</form><br>
+
+<h2>Or Use One Of These Options</h2>
+<form action="/my/avatar/select" method="post">
+<label>No Custom Avatar</label> <input type="radio" id="avatar_type_none" name="avatar_type" value="None"[% IF user.account.avatar_type == 'None' %] checked[% END %]><br>
+<br>
+<label>Use <a href="http://gravatar.com" target="_blank">Gravatar</a></label> <input type="radio" id="avatar_type_gravatar" name="avatar_type" value="Gravatar"[% IF user.account.avatar_type == 'Gravatar' %] checked[% END %]><br>
+<br>
+
+<label>Choose one you've already uploaded:</label> <input type="radio" name="avatar_type" id="avatar_type_image" value="Image"[% IF user.account.avatar_type == 'Image' %] checked[% END %]><br>
+
+<div style="clear: both; margin-top: 5px;">
+[% IF ! user_avatars || user_avatars.size == 0 %]
+<strong>No Avatars to Show</strong><br>
+[% ELSE %]
+    [% FOREACH uavatar IN user_avatars %]
+        [% IF uavatar.title %][% alt_text = uavatar.title %][% ELSE %][% alt_text = uavatar.filename %][% END %]
+        [% IF user.account.avatar_type == 'Image' && uavatar.avatar_id == user.account.avatar_id %][% checked = ' checked' %][% ELSE %][% checked = '' %][% END %]
+<div style="float: left; margin-right: 5px; margin-bottom: 5px; text-align: center; height: 134px;">
+    <div style="height: 110px;">
+        <img src="[% uavatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]">
+    </div>
+    <div style="height: 20px; text-align: center; clear: both;">
+        <input type="radio" name="avatar_id" value="u-[% uavatar.avatar_id %]"[% checked %] onClick="check_avatar_type( 'Image' );"> <img src="/images/icons/tick.gif" alt='Use' title='Use'> |
+        <input type="checkbox" name="delete-[% uavatar.avatar_id %]"> <img src="/images/icons/cross.gif" alt='Delete' title='Delete'>
+    </div>
+</div>
+    [% END %]
+<div class="small_text" style="clear: both;">* All Avatars are automatically resized depending upon where they are used.</div><br>
+[% END %]
+</div>
+
+<div style="clear: both; margin-top: 5px;">
+<label>Choose one from our selection:</label> <input type="radio" id="avatar_type_system" name="avatar_type" value="System"[% IF user.account.avatar_type == 'System' %] checked[% END %]><br>
+[% IF ! system_avatars || system_avatars.size == 0 %]
+<strong>No Avatars to Show</strong><br>
+[% ELSE %]
+    [% FOREACH savatar IN system_avatars %]
+        [% IF savatar.title %][% alt_text = savatar.title %][% ELSE %][% alt_text = savatar.filename %][% END %]
+        [% IF user.account.avatar_type == 'System' && savatar.avatar_id == user.account.avatar_id %][% checked = ' checked' %][% ELSE %][% checked = '' %][% END %]
+<div style="float: left; margin-right: 5px; margin-bottom: 5px; text-align: center; height: 134px;">
+    <div style="height: 110px;">
+        <img src="[% savatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]"><br>
+    </div>
+    <div style="height: 20px; text-align: center; clear: both;">
+        <input type="radio" name="avatar_id" value="s-[% savatar.avatar_id %]"[% checked %] onClick="check_avatar_type( 'System' );"> <img src="/images/icons/tick.gif" alt='Use' title='Use'>
+    </div>
+</div>
+    [% END %]
+<div class="small_text" style="clear: both">* All Avatars are automatically resized depending upon where they are used.</div><br>
+[% END %]
+</div>
+
+<br>
+<input type="submit" value="Select Avatar"></form>

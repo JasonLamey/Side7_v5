@@ -1,12 +1,6 @@
 [% USE date %]
-<script>
-    $(function() {
-        $("textarea").sceditor({
-            plugins: "bbcode",
-            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css"
-        });
-    }); 
-</script>
+
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
 
 [% is_disabled = '' %][% IF album.system == 1 %][% is_disabled = " readonly" %][% END %]
 

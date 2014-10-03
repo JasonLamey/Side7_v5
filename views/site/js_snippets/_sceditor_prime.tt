@@ -1,0 +1,10 @@
+<script>
+    $(function() {
+        $("textarea").sceditor({
+            plugins: "bbcode",
+            style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css",
+            emoticonsRoot: '/images/',
+            toolbarExclude: 'youtube,ltr,rtl,print',
+        });
+    }); 
+</script>

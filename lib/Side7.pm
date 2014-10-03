@@ -20,6 +20,7 @@ use Side7::News::Manager;
 use Side7::User;
 use Side7::User::ChangePassword;
 use Side7::User::AccountDelete;
+use Side7::User::Avatar::SystemAvatar::Manager;
 use Side7::DateVisibility::Manager;
 use Side7::Account;
 use Side7::UserContent::Image;
@@ -35,18 +36,26 @@ use Side7::FAQEntry;
 our $VERSION = '0.1';
 const my $AGE_18_IN_MONTHS => 216;
 
-hook 'before_template_render' => sub {
-   my $tokens = shift;
+hook 'before_template_render' => sub
+{
+    my $tokens = shift;
        
-   $tokens->{'css_url'}    = request->base . 'css/style.css';
-   $tokens->{'login_url'}  = uri_for( '/login'  );
-   $tokens->{'logout_url'} = uri_for( '/logout' );
-   $tokens->{'signup_url'} = uri_for( '/signup' );
-   $tokens->{'user_home_url'} = uri_for( '/my/home' );
+    $tokens->{'css_url'}    = request->base . 'css/style.css';
+    $tokens->{'login_url'}  = uri_for( '/login'  );
+    $tokens->{'logout_url'} = uri_for( '/logout' );
+    $tokens->{'signup_url'} = uri_for( '/signup' );
+    $tokens->{'user_home_url'} = uri_for( '/my/home' );
+
+    if ( defined session( 'logged_in' ) )
+    {
+        my $visitor = 
+            Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => [ 'account' ] );
+        $tokens->{'header_avatar'} = $visitor->get_avatar( size => 'tiny' );
+    }
 };
 
-hook 'before' => sub {
-
+hook 'before' => sub
+{
     # Setting Visitor-relavent user preferences.
     my $visitor = undef;
     if ( defined session( 'logged_in' ) ) {
@@ -673,6 +682,7 @@ get '/my/home/?' => sub
 # User Account Management Landing Page
 get '/my/account/?' => sub
 {
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
     my ( $user_hash ) = Side7::User::show_account( username => session( 'username' ) );
 
     if ( ! defined $user_hash )
@@ -681,7 +691,242 @@ get '/my/account/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/account', { user => $user_hash };
+    my $avatar = $user->get_avatar( size => 'medium' );
+
+    template 'my/account', { user => $user_hash, avatar => $avatar };
+};
+
+# User Avatar Modification Page
+get '/my/avatar/?' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NO-FOUND
+    }
+
+    my $avatar         = $user->get_avatar( size => 'medium' );
+    my $system_avatars = Side7::User::Avatar::SystemAvatar->get_all_system_avatars( size => 'small' );
+    my $user_avatars   = $user->get_all_avatars( size => 'small' );
+
+    template 'my/avatar', { 
+                            user           => $user, 
+                            avatar         => $avatar, 
+                            system_avatars => $system_avatars, 
+                            user_avatars   => $user_avatars,
+                          };
+};
+
+# User Avatar Upload
+post '/my/avatar/upload/?' => sub
+{
+    # Validating upload
+    my $err_message = '';
+    if ( ! defined params->{'filename'} )
+    {
+        $err_message .= "You have errors that need to be corrected:<br />";
+        $err_message .= 'You must provide a file to be uploaded.<br>';
+
+        flash error => $err_message;
+        return redirect '/my/avatar';
+    }
+
+    # Get User & Content Path
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+    my ( $success, $error ) = Side7::Utils::File::create_user_directory( session( 'user_id' ) );
+    if ( defined $error )
+    {
+        flash error => $error;
+        return redirect '/my/avatar';
+    }
+
+    my $upload_dir = $user->get_avatar_directory();
+
+    # If filename exists, bail with an error message.
+    if
+    (
+        -f $upload_dir . params->{'filename'}
+    )
+    {
+        my $err_message = 'You already have an avatar with the filename <b>&apos;' . params->{'filename'} . '&apos;</b>.<br />';
+
+        flash error => $err_message;
+        return redirect '/my/avatar';
+    }
+
+    # Upload the file
+    my $file = request->upload( 'filename' );
+
+    # Copy file to the User's directory
+    $file->copy_to( $upload_dir . $file->filename() );
+
+    my $remote_host   = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_message = '';
+    my $new_values    = '';
+
+    # Insert the content record into the database.
+    my $file_stats = Side7::Utils::Image::get_image_stats( image => $upload_dir . $file->filename(), dimensions => 1 );
+    if ( defined $file_stats->{'error'} )
+    {
+        $LOGGER->warn( 'ERROR GETTING IMAGE STATS: ' . $file_stats->{'error'} );
+        flash error => 'Invalid file format has been uploaded as an image.';
+        return redirect '/my/avatar';
+    }
+
+    my $now = DateTime->now();
+
+    my $avatar = Side7::User::Avatar::UserAvatar->new(
+                                                        user_id           => $user->id(),
+                                                        filename          => params->{'filename'},
+                                                        title             => params->{'title'},
+                                                        created_at        => $now,
+                                                        updated_at        => $now,
+                                                     );
+
+    $avatar->save();
+
+    # Set Avatar to the newly uploaded one.
+    $user->account->avatar_id( $avatar->id() );
+    $user->account->avatar_type( 'Image' );
+    $user->account->updated_at( $now );
+    $user->account->save();
+
+    # Record Audit Message
+    $audit_message  = 'User ' . session( 'username' ) . ' ( User ID: ' . session( 'user_id' ) . ' ) uploaded a new Avatar';
+    $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
+    $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
+    $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
+    $new_values    .= 'Updated_at: &gt;' . $now . '&lt;<br />';
+
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'New User Avatar Uploaded',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          new_value   => $new_values,
+                                          timestamp   => DateTime->now(),
+    );
+
+    $audit_log->save();
+
+    my $avatar_name = ( defined params->{'title'} ) ? params->{'title'} : params->{'filename'};
+    flash message => 'Hooray! Your Avatar <b>' . $avatar_name . '</b> has been uploaded successfully.';
+    redirect '/my/avatar';
+};
+
+# Select A New Avatar Action
+post '/my/avatar/select/?' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    my $avatar_type = params->{'avatar_type'} // undef;
+    my $avatar_id   = params->{'avatar_id'}   // undef;
+
+    # Simple validation that we have the two required fields
+    if ( ! defined $avatar_type || $avatar_type eq '' )
+    {
+        flash error => 'Something when wrong! We could not update your Avatar!';
+        $LOGGER->warn( 'Undefined avatar_type when selecting Avatar.' );
+        return redirect '/my/avatar';
+    }
+
+    if
+    ( 
+        defined $avatar_type
+        &&
+        (
+            lc( $avatar_type ) eq 'system'
+            ||
+            lc( $avatar_type ) eq 'image'
+        )
+        &&
+        (
+            ! defined $avatar_id
+            ||
+            $avatar_id eq ''
+        )
+    )
+    {
+        flash error => 'Something when wrong! We could not update your Avatar!';
+        $LOGGER->warn( 'Undefined avatar_id when selecting an Image or System Avatar.' );
+        return redirect '/my/avatar';
+    }
+
+    # If avatar_type is not "System" or "Image", ignore the avatar_id
+    # Otherwise, double-check the leading character on the avatar_id matches the avatar_type
+    # Leading character has precedence over avatar_type, just in case the javascript 
+    # failed to change the type automatically.
+
+    my $audit_message  = 'User ' . session( 'username' ) . ' ( User ID: ' . session( 'user_id' ) . ' ) selected a new Avatar';
+    my $old_values  = '';
+    if ( lc( $avatar_type ) eq 'system' || lc( $avatar_type ) eq 'image' )
+    {
+        $old_values  = 'avatar_id: &gt;' . $user->account->avatar_id() . '&lt;<br>';
+    }
+    $old_values    .= 'avatar_type: &gt;' . $user->account->avatar_type() . '&lt;<br>';
+    my $new_values = '';
+
+    if
+    (
+        lc( $avatar_type ) eq 'system'
+        ||
+        lc( $avatar_type ) eq 'image'
+    )
+    {
+        my %initials = ( u => 'Image', s => 'System' );
+        my ( $type_initial, $new_avatar_id ) = split( /-/, $avatar_id );
+        if ( $avatar_type ne $initials{$type_initial} )
+        {
+            $avatar_type = $initials{$type_initial};
+        }
+        
+        # If it's a User Avatar, retrieve avatar from DB, ensure it belongs to the User.
+        if ( lc( $avatar_type ) eq 'image' )
+        {
+            my $avatar = Side7::User::Avatar::UserAvatar->new( id => $new_avatar_id )->load( speculative => 1 );
+            if ( ! defined $avatar || ref( $avatar ) ne 'Side7::User::Avatar::UserAvatar' )
+            {
+                flash error => 'The Avatar you are trying to use could not be retrieved.';
+                return redirect '/my/avatar';
+            }
+            if ( $avatar->user_id() != $user->id() )
+            {
+                flash error => 'The Avatar you are trying to use does not belong to your Account.';
+                return redirect '/my/avatar';
+            }
+        }
+
+        $user->account->avatar_id( $new_avatar_id );
+        $new_values .= 'avatar_id: &gt;' . $new_avatar_id . '&lt;<br>';
+    }
+
+    if ( $avatar_type ne $user->account->avatar_type() )
+    {
+        $new_values .= 'avatar_type: &gt;' . $avatar_type . '&lt;<br>';
+        $user->account->avatar_type( $avatar_type );
+    }
+
+    # Update the User.
+    $user->account->save();
+
+    # Audit Log
+    my $remote_host   = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'New User Avatar Selected',
+                                          description    => $audit_message,
+                                          ip_address     => request->address() . $remote_host,
+                                          original_value => $old_values,
+                                          new_value      => $new_values,
+                                          affected_id    => $user->id(),
+                                          timestamp      => DateTime->now(),
+    );
+
+    $audit_log->save();
+
+    # Return
+    flash message => 'Your Avatar has been successfully updated!';
+    redirect '/my/avatar';
 };
 
 # User Change Password Step 1
@@ -1526,7 +1771,6 @@ post '/my/albums/:album_id/manage' => sub
     foreach my $content ( @$content_to_add )
     {
         my ( $content_type, $content_id ) = split( /-/, $content );
-        $LOGGER->debug( 'CONTENT_TYPE: >' . $content_type . '< / CONTENT_ID: >' . $content_id . '<' );
 
         if ( $content_type eq 'music' )
         {
@@ -1858,8 +2102,9 @@ post '/my/upload' => sub
     # Copy file to the User's directory
     $file->copy_to( $upload_dir . $file->filename() );
 
-    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $remote_host   = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_message = '';
+    my $new_values    = '';
 
     # Insert the content record into the database.
     # TODO: REFACTOR THIS CRAP.
@@ -1912,21 +2157,21 @@ post '/my/upload' => sub
 
         $image->save();
 
-        $audit_message = 'User ' . session( 'username' ) . ' (ID: ' . session( 'user_id' ) . ') uploaded new Content:<br />';
+        $audit_message  = 'User ' . session( 'username' ) . ' (ID: ' . session( 'user_id' ) . ') uploaded new Content:<br />';
         $audit_message .= 'Content Type: image<br />';
-        $audit_message .= 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
-        $audit_message .= 'Filesize: &gt;' . $file->size() . '&lt;<br />';
-        $audit_message .= 'Dimensions: &gt;' . $file_stats->{'dimensions'} . '&lt;<br />';
-        $audit_message .= 'Category_id: &gt;' . params->{'category_id'} . '&lt;<br />';
-        $audit_message .= 'Rating_id: &gt;' . params->{'rating_id'} . '&lt;<br />';
-        $audit_message .= 'Rating_qualifiers: &gt;' . ( $rating_qualifiers // '' ) . '&lt;<br />';
-        $audit_message .= 'Stage_id: &gt;' . params->{'stage_id'} . '&lt;<br />';
-        $audit_message .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
-        $audit_message .= 'Description: &gt;' . ( params->{'description'} // '' ) . '&lt;<br />';
-        $audit_message .= 'Copyright_year: &gt;' . $copyright_year . '&lt;<br />';
-        $audit_message .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
-        $audit_message .= 'Created_at: &gt;' . $now . '&lt;<br />';
-        $audit_message .= 'Updated_at: &gt;' . $now . '&lt;<br />';
+        $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
+        $new_values    .= 'Filesize: &gt;' . $file->size() . '&lt;<br />';
+        $new_values    .= 'Dimensions: &gt;' . $file_stats->{'dimensions'} . '&lt;<br />';
+        $new_values    .= 'Category_id: &gt;' . params->{'category_id'} . '&lt;<br />';
+        $new_values    .= 'Rating_id: &gt;' . params->{'rating_id'} . '&lt;<br />';
+        $new_values    .= 'Rating_qualifiers: &gt;' . ( $rating_qualifiers // '' ) . '&lt;<br />';
+        $new_values    .= 'Stage_id: &gt;' . params->{'stage_id'} . '&lt;<br />';
+        $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
+        $new_values    .= 'Description: &gt;' . ( params->{'description'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Copyright_year: &gt;' . $copyright_year . '&lt;<br />';
+        $new_values    .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
+        $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
+        $new_values    .= 'Updated_at: &gt;' . $now . '&lt;<br />';
     }
     elsif ( lc( params->{'upload_type'} ) eq 'music' )
     {
@@ -1949,6 +2194,7 @@ post '/my/upload' => sub
                                           title       => 'New User Content Uploaded',
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,
+                                          new_value   => $new_values,
                                           timestamp   => DateTime->now(),
     );
 

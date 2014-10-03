@@ -43,6 +43,18 @@ sub new
 
     # Image Related
     $CONFIG->{'image'}->{'default_thumb_path'} = '/images/defaults/:::SIZE:::/:::TYPE:::.jpg';
+    $CONFIG->{'image'}->{'size'}->{'tiny'}     = '50x50';
+    $CONFIG->{'image'}->{'size'}->{'small'}    = '100x100';
+    $CONFIG->{'image'}->{'size'}->{'medium'}   = '300x300';
+    $CONFIG->{'image'}->{'size'}->{'large'}    = '800x800';
+
+    # Avatar Related
+    $CONFIG->{'avatar'}->{'size'}->{'tiny'}     = '50x50';
+    $CONFIG->{'avatar'}->{'size'}->{'small'}    = '100x100';
+    $CONFIG->{'avatar'}->{'size'}->{'medium'}   = '150x150';
+    $CONFIG->{'avatar'}->{'size'}->{'large'}    = '200x200';
+    $CONFIG->{'system_avatar'}->{'cached_file_path'}   = '/data/cached_files/system_avatars/';
+    $CONFIG->{'system_avatar'}->{'original_file_path'} = $CONFIG->{'app_dir'} . '/public/images/avatars/';
 
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';

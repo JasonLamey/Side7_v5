@@ -37,13 +37,22 @@
         width: auto;
         padding: 3px 5px;
         margin: 0;
+        height: 60px;
+        background-color: #AEAEBF;
     }
     #header_search {
         float: right;
         width: 200px;
         text-align: right;
     }
+    #header_avatar {
+        float: left;
+        margin-right: 5px;
+    }
     .metanav {
+        margin-top: 3px;
+        height: 55px;
+        vertical-align: middle;
     }
     #section_content {
         padding: 5px;
