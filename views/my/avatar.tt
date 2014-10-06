@@ -37,6 +37,8 @@
 <label>Use <a href="http://gravatar.com" target="_blank">Gravatar</a></label> <input type="radio" id="avatar_type_gravatar" name="avatar_type" value="Gravatar"[% IF user.account.avatar_type == 'Gravatar' %] checked[% END %]><br>
 <br>
 
+<hr class="faded">
+
 <label>Choose one you've already uploaded:</label> <input type="radio" name="avatar_type" id="avatar_type_image" value="Image"[% IF user.account.avatar_type == 'Image' %] checked[% END %]><br>
 
 <div style="clear: both; margin-top: 5px;">
@@ -60,8 +62,11 @@
 [% END %]
 </div>
 
-<div style="clear: both; margin-top: 5px;">
+<hr class="faded">
+
 <label>Choose one from our selection:</label> <input type="radio" id="avatar_type_system" name="avatar_type" value="System"[% IF user.account.avatar_type == 'System' %] checked[% END %]><br>
+
+<div style="clear: both; margin-top: 5px;">
 [% IF ! system_avatars || system_avatars.size == 0 %]
 <strong>No Avatars to Show</strong><br>
 [% ELSE %]

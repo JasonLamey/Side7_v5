@@ -1,4 +1,4 @@
-[% PROCESS 'site/js_snippets/sceditor_prime.tt' %]
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
         [% form_title = '' %]
         [% file_types = '' %]
         [% file_label = '' %]

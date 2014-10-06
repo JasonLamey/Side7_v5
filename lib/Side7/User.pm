@@ -28,9 +28,11 @@ use Side7::User::Preference;
 use Side7::User::Avatar;
 use Side7::User::Avatar::UserAvatar;
 use Side7::User::Avatar::UserAvatar::Manager;
+use Side7::ActivityLog::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
 use Side7::Utils::Text;
+use Side7::Utils::DateTime;
 use Side7::Report;
 
 =pod
@@ -933,6 +935,48 @@ sub is_valid_password
     #$LOGGER->debug( "Password compare: db - >$user->{'password'}<; di - >$digest<; md - >$md5_hex<; cr - >$crypt<; db - >$db_pass<" );
 
     return ( 0, 'Invalid credentials provided. Check that you have typed your username and/or password correctly.' );
+}
+
+
+=head2 get_activity_logs()
+
+Fetches an arrayref of C<ActivityLog> objects, and returns an arrayref of hashes containing the pertinent C<ActivityLog> data to feed
+to the templates.
+
+Parameters:
+
+=over 4
+
+=item limit: Number of logs to return; defaults to 20;
+
+=back
+
+    my $activity_logs = $user->get_activity_logs();
+
+=cut
+
+sub get_activity_logs
+{
+    my ( $self, %args ) = @_;
+
+    my $limit = delete $args{'limit'} // 20;
+
+    my $logs = Side7::ActivityLog::Manager->get_activity_logs( limit => $limit, sort_by => 'created_at desc' );
+
+    my $activity_logs = [];
+    foreach my $log ( @$logs )
+    {
+        push( @$activity_logs, {
+                                    id           => $log->id(),
+                                    user_id      => $log->user_id(),
+                                    activity     => $log->activity(),
+                                    created_at   => $log->created_at(),
+                                    elapsed_time => Side7::Utils::DateTime->get_english_elapsed_time( seconds => $log->created_at()->epoch() ),
+                               }
+        );
+    }
+
+    return $activity_logs;
 }
 
 

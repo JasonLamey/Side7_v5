@@ -660,6 +660,10 @@ hook 'before' => sub
                 return redirect '/'; # Not an authorized page.
             }
 
+            my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+            var activity_log => $user->get_activity_logs();
+
             set layout => 'my';
         }
     }
@@ -668,6 +672,7 @@ hook 'before' => sub
 # User Home Page
 get '/my/home/?' => sub
 {
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
     my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
 
     if ( ! defined $user_hash )
@@ -676,7 +681,7 @@ get '/my/home/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/home', { user => $user_hash };
+    template 'my/home', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Account Management Landing Page
@@ -693,7 +698,7 @@ get '/my/account/?' => sub
 
     my $avatar = $user->get_avatar( size => 'medium' );
 
-    template 'my/account', { user => $user_hash, avatar => $avatar };
+    template 'my/account', { user => $user_hash, avatar => $avatar, activity_log => vars->{'activity_log'} };
 };
 
 # User Avatar Modification Page
@@ -716,6 +721,7 @@ get '/my/avatar/?' => sub
                             avatar         => $avatar, 
                             system_avatars => $system_avatars, 
                             user_avatars   => $user_avatars,
+                            activity_log   => vars->{'activity_log'},
                           };
 };
 
@@ -1009,7 +1015,7 @@ post '/my/changepassword/?' => sub
     $audit_log->save();
 
     # Display page with instructions to the User
-    return template 'my/password_change_next_step', { user => $user_hash };
+    return template 'my/password_change_next_step', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Change Password Step 2
@@ -1049,7 +1055,7 @@ get '/my/confirm_password_change/?:confirmation_code?' => sub
     );
     $audit_log->save();
 
-    template 'my/password_change_confirmed';
+    template 'my/password_change_confirmed', { activity_log => vars->{'activity_log'} };
 };
 
 # User Change Password Post-redirect to Get
@@ -1107,7 +1113,7 @@ post '/my/setdelete/?' => sub
     $audit_log->save();
 
     # Display page with instructions to the User
-    return template 'my/set_delete_flag_next_step', { user => $user_hash };
+    return template 'my/set_delete_flag_next_step', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Set Delete Flag Step 2
@@ -1146,7 +1152,7 @@ get '/my/confirm_set_delete_flag/?:confirmation_code?' => sub
     );
     $audit_log->save();
 
-    template 'my/set_delete_flag_confirmed', { delete_on => $change_result->{'delete_on'} };
+    template 'my/set_delete_flag_confirmed', { delete_on => $change_result->{'delete_on'}, activity_log => vars->{'activity_log'} };
 };
 
 # User Set Delete Flag Post-redirect to Get
@@ -1167,7 +1173,7 @@ post '/my/cleardelete' => sub
     )
     {
         flash error => $change_result->{'error'};
-        return template 'my/account';
+        return template 'my/account', { activity_log => vars->{'activity_log'} };
     }
 
     my $audit_message = 'Delete Flag Removal - <b>Successful</b>';
@@ -1211,6 +1217,7 @@ get '/my/profile/?' => sub
                              countries           => $countries,
                              public_visibilities => $public_visibilities, 
                              is_public_hash      => $is_public_hash,
+                             activity_log        => vars->{'activity_log'},
                            };
 };
 
@@ -1320,6 +1327,7 @@ post '/my/profile' => sub
                              countries           => $countries,
                              public_visibilities => $public_visibilities, 
                              is_public_hash      => $new_is_public_hash,
+                             activity_log        => vars->{'activity_log'},
                            };
 };
 
@@ -1337,7 +1345,7 @@ get '/my/gallery/?' => sub
     # Fetch Gallery Stats
     my ( $user_hash ) = Side7::User::show_gallery( username => session( 'username' ) );
 
-    template 'my/gallery', { user => $user_hash };
+    template 'my/gallery', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Kudos Landing Page
@@ -1351,7 +1359,7 @@ get '/my/kudos/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/kudos', { user => $user_hash };
+    template 'my/kudos', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Album Pages
@@ -1863,7 +1871,12 @@ get '/my/preferences/?' => sub
 
     my $enums = Side7::User::Preference->get_enum_values();
 
-    template 'my/preferences', { user_preferences => $user_preferences, enums => $enums, is_adult => $is_adult };
+    template 'my/preferences', { 
+                                user_preferences => $user_preferences, 
+                                enums            => $enums, 
+                                is_adult         => $is_adult, 
+                                activity_log     => vars->{'activity_log'},
+                               };
 };
 
 # User Preferences Update
@@ -1983,7 +1996,7 @@ post '/my/preferences' => sub
     flash message => 'Your Preferences have been saved.';
 
     my $enums = Side7::User::Preference->get_enum_values();
-    template 'my/preferences', { user_preferences => $new_preferences, enums => $enums };
+    template 'my/preferences', { user_preferences => $new_preferences, enums => $enums, activity_log => vars->{'activity_log'} };
 };
 
 # User Gallery Landing Page
@@ -1998,7 +2011,7 @@ get '/my/gallery/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/gallery', { user => $user_hash };
+    template 'my/gallery', { user => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Content Upload Page
@@ -2018,12 +2031,13 @@ get '/my/upload/?:upload_type?/?' => sub
     my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
 
     template 'my/upload', { 
-                            upload_type => params->{'upload_type'}, 
-                            enums       => $enums,
-                            categories  => $categories,
-                            ratings     => $ratings,
-                            qualifiers  => $qualifiers,
-                            stages      => $stages,
+                            upload_type   => params->{'upload_type'}, 
+                            enums         => $enums,
+                            categories    => $categories,
+                            ratings       => $ratings,
+                            qualifiers    => $qualifiers,
+                            stages        => $stages, 
+                            activity_log  => vars->{'activity_log'},
                           };
 };
 
@@ -2106,6 +2120,8 @@ post '/my/upload' => sub
     my $audit_message = '';
     my $new_values    = '';
 
+    my $new_content = undef;
+
     # Insert the content record into the database.
     # TODO: REFACTOR THIS CRAP.
     if ( lc( params->{'upload_type'} ) eq 'image' )
@@ -2138,24 +2154,24 @@ post '/my/upload' => sub
 
         my $now = DateTime->now();
 
-        my $image = Side7::UserContent::Image->new(
-                                                    user_id           => $user->id(),
-                                                    filename          => params->{'filename'},
-                                                    filesize          => $file->size(),
-                                                    dimensions        => $file_stats->{'dimensions'},
-                                                    category_id       => params->{'category_id'},
-                                                    rating_id         => params->{'rating_id'},
-                                                    rating_qualifiers => $rating_qualifiers,
-                                                    stage_id          => params->{'stage_id'},
-                                                    title             => params->{'title'},
-                                                    description       => params->{'description'},
-                                                    copyright_year    => $copyright_year,
-                                                    privacy           => params->{'privacy'},
-                                                    created_at        => $now,
-                                                    updated_at        => $now,
-                                                  );
+        $new_content = Side7::UserContent::Image->new(
+                                                        user_id           => $user->id(),
+                                                        filename          => params->{'filename'},
+                                                        filesize          => $file->size(),
+                                                        dimensions        => $file_stats->{'dimensions'},
+                                                        category_id       => params->{'category_id'},
+                                                        rating_id         => params->{'rating_id'},
+                                                        rating_qualifiers => $rating_qualifiers,
+                                                        stage_id          => params->{'stage_id'},
+                                                        title             => params->{'title'},
+                                                        description       => params->{'description'},
+                                                        copyright_year    => $copyright_year,
+                                                        privacy           => params->{'privacy'},
+                                                        created_at        => $now,
+                                                        updated_at        => $now,
+                                                     );
 
-        $image->save();
+        $new_content->save();
 
         $audit_message  = 'User ' . session( 'username' ) . ' (ID: ' . session( 'user_id' ) . ') uploaded new Content:<br />';
         $audit_message .= 'Content Type: image<br />';
@@ -2168,18 +2184,18 @@ post '/my/upload' => sub
         $new_values    .= 'Stage_id: &gt;' . params->{'stage_id'} . '&lt;<br />';
         $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
         $new_values    .= 'Description: &gt;' . ( params->{'description'} // '' ) . '&lt;<br />';
-        $new_values    .= 'Copyright_year: &gt;' . $copyright_year . '&lt;<br />';
+        $new_values    .= 'Copyright_year: &gt;' . ( $copyright_year // '' ) . '&lt;<br />';
         $new_values    .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
         $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
         $new_values    .= 'Updated_at: &gt;' . $now . '&lt;<br />';
     }
     elsif ( lc( params->{'upload_type'} ) eq 'music' )
     {
-        # TODO: Create Music object.
+        # TODO: Create Music object. Make sure to use the $new_content object.
     }
     elsif ( lc( params->{'upload_type'} ) eq 'literature' )
     {
-        # TODO: Create Literature object.
+        # TODO: Create Literature object. Make sure to use the $new_content object.
     }
     else
     {
@@ -2200,9 +2216,17 @@ post '/my/upload' => sub
 
     $audit_log->save();
 
-    flash message => 'Hooray! Your file <b>' . $file->filename() . '</b> has been uploaded successfully.';
+    my $activity_log = Side7::ActivityLog->new(
+                                                user_id    => session( 'user_id' ),
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                              '</a> posted new <a href="/' . lc( params->{'upload_type'} ) . '/' . $new_content->id .
+                                                              '">' . lc( params->{'upload_type'} ) . ' content</a>.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log->save();
 
-    template 'my/gallery';
+    flash message => 'Hooray! Your file <b>' . $file->filename() . '</b> has been uploaded successfully.';
+    redirect '/my/gallery';
 };
 
 # User Permissions Explanation Page ( Might be temporary )
@@ -2219,7 +2243,7 @@ get '/my/permissions/?' => sub
     my $permissions = $user->get_all_permissions();
     my $user_hash = {};
 
-    template 'my/permissions', { user => $user_hash, permissions => $permissions };
+    template 'my/permissions', { user => $user_hash, permissions => $permissions, activity_log => vars->{'activity_log'} };
 };
 
 # User Perks Landing Page ( Might be temporary )
@@ -2236,7 +2260,7 @@ get '/my/perks/?' => sub
     my $perks = $user->get_all_perks();
     my $user_hash = {};
 
-    template 'my/perks', { user => $user_hash, perks => $perks };
+    template 'my/perks', { user => $user_hash, perks => $perks, activity_log => vars->{'activity_log'} };
 };
 
 #############################

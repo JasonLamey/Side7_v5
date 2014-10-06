@@ -1,0 +1,7 @@
+[% FOREACH activity IN activity_log %]
+    <div class="activity_log_entry">[% activity.activity %]<br>
+    <div class="activity_log_elapsed">[% activity.elapsed_time %]</div></div>
+    [% IF ! loop.last %]
+    <hr class="faded">
+    [% END %]
+[% END %]

@@ -258,7 +258,7 @@ hr.faded {
   float: none; 
   width: 100%; 
   height: 1px;
-  margin: 1.4em 0;
+  margin: 0.8em 0;
   border: none; 
   background: #ddd;
   background-image: -webkit-gradient(

@@ -71,7 +71,7 @@
         width:200px;
         position:absolute;
         left:0;
-        top:63px;
+        top:67px;
         bottom:40px;
         height:auto;
         display: block;
@@ -91,10 +91,30 @@
     }
     #section_content {
         margin-left: 205px;
+        margin-right: 205px;
         padding: 5px;
         width: auto;
         height: auto;
-        border: solid 1px #666;
+        /* border: solid 1px #666; */
+    }
+    #activity_log {
+        width: 200px;
+        padding-top: 5px;
+        padding-right: 3px;
+        position: absolute;
+        right: 0;
+        top: 67px;
+        height: 300px;
+        overflow: auto;
+        font-size: 9pt;
+    }
+    .activity_log_entries {
+        padding: 2px;
+    }
+    .activity_log_elapsed {
+        font-size: 8pt;
+        color: #888;
+        text-align: right;
     }
 </style>
 
@@ -110,6 +130,9 @@ $(document).ready(function(){
 [% PROCESS 'site/_page_header.tt' %]
     <div class="home_menu">
     [% PROCESS 'my/_home_menu.tt' %]
+    </div>
+    <div id="activity_log">
+    [% PROCESS 'my/_activity_log.tt' %]
     </div>
     <div id="section_content">
     [% content %]

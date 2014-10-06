@@ -12,6 +12,7 @@
         category_id    => is_required("A Category is required."),
         rating_id      => is_required("A Rating is required."),
         stage_id       => is_required("A Stage is required."),
+        privacy        => is_required("You must set a Privacy setting."),
         agree_to_rules => is_required("You must check that you have read and agree to the site rules."),
 
         rating_qualifiers => is_required_if
