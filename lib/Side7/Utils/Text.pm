@@ -165,6 +165,63 @@ sub filter_profanity
 }
 
 
+=head2 get_pronoun()
+
+Returns a string containing the appropriate pronoun based on the User's
+stated sex and the part of speech. This is an attempt to present the User base 
+with gender-neutral pronoun options.
+
+Parameters:
+
+=over 4
+
+=item sex: The listed sex from the User's account. Default: 'male', as is literarily custom.
+
+=item part_of_speech: The role of the pronoun. Accepts: 'subject', 'object', 'poss_determiner', 'poss_pronoun', 'reflexive'. Default: 'poss_pronoun'.
+
+=back
+
+    my $pronoun = Side7::Utils::Text::get_pronoun( sex => $sex, part_of_speech => $speech );
+
+=cut
+
+sub get_pronoun
+{
+    my ( %args ) = @_;
+
+    my $sex            = delete $args{'sex'}            // 'male';
+    my $part_of_speech = delete $args{'part_of_speech'} // 'poss_pronoun';
+
+    $sex = 'other' if ( lc( $sex ) ne 'male' && lc( $sex ) ne 'female' );
+
+    my %pronouns = (
+                    male   => {
+                                subject         => 'he',
+                                object          => 'him',
+                                poss_determiner => 'his',
+                                poss_pronoun    => 'his',
+                                reflexive       => 'himself',
+                              },
+                    female => {
+                                subject         => 'she',
+                                object          => 'her',
+                                poss_determiner => 'her',
+                                poss_pronoun    => 'hers',
+                                reflexive       => 'herself',
+                              },
+                    other  => {
+                                subject         => 've',
+                                object          => 'ver',
+                                poss_determiner => 'vis',
+                                poss_pronoun    => 'vis',
+                                reflexive       => 'verself',
+                              },
+                   );
+
+    return $pronouns{ lc( $sex ) }{ lc( $part_of_speech ) };
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

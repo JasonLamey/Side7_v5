@@ -844,6 +844,19 @@ post '/my/avatar/upload/?' => sub
 
     $audit_log->save();
 
+    my $activity_log = Side7::ActivityLog->new(
+                                                user_id    => session( 'user_id' ),
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                              '</a> updated ' . 
+                                                              Side7::Utils::Text::get_pronoun( 
+                                                                                                sex            => $user->account->sex(),
+                                                                                                part_of_speech => 'poss_pronoun',
+                                                                                             )
+                                                              . ' avatar.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log->save();
+
     my $avatar_name = ( defined params->{'title'} ) ? params->{'title'} : params->{'filename'};
     flash message => 'Hooray! Your Avatar <b>' . $avatar_name . '</b> has been uploaded successfully.';
     redirect '/my/avatar';
@@ -957,6 +970,19 @@ post '/my/avatar/select/?' => sub
     );
 
     $audit_log->save();
+
+    my $activity_log = Side7::ActivityLog->new(
+                                                user_id    => session( 'user_id' ),
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                              '</a> updated ' . 
+                                                              Side7::Utils::Text::get_pronoun( 
+                                                                                                sex            => $user->account->sex(),
+                                                                                                part_of_speech => 'poss_pronoun',
+                                                                                             )
+                                                              . ' avatar.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log->save();
 
     # Return
     flash message => 'Your Avatar has been successfully updated!';
@@ -1341,6 +1367,19 @@ post '/my/profile' => sub
                                           timestamp      => DateTime->now(),
     );
     $audit_log->save();
+
+    my $activity_log = Side7::ActivityLog->new(
+                                                user_id    => session( 'user_id' ),
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                              '</a> updated ' . 
+                                                              Side7::Utils::Text::get_pronoun( 
+                                                                                                sex            => $user->account->sex(),
+                                                                                                part_of_speech => 'poss_pronoun',
+                                                                                             )
+                                                              . ' profile.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log->save();
 
     # Return
     my $new_is_public_hash  = $user->account->get_is_public_hash();
