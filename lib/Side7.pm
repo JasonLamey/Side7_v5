@@ -50,7 +50,7 @@ hook 'before_template_render' => sub
     {
         my $visitor = 
             Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => [ 'account' ] );
-        $tokens->{'header_avatar'} = $visitor->get_avatar( size => 'tiny' );
+        $tokens->{'header_avatar'} = $visitor->get_avatar( { size => 'tiny' } );
     }
 };
 
@@ -577,9 +577,37 @@ get '/user/:username' => sub
                                                 filter_profanity => vars->{'filter_profanity'},
                                              );
 
+    my $user = Side7::User::get_user_by_username( params->{'username'} );
+
+    my $friend_link = undef;
+    if ( defined session( 'logged_in' ) )
+    {
+        my $visitor = Side7::User::get_user_by_id( session( 'user_id' ) );
+        if ( defined $visitor && ref( $visitor ) eq 'Side7::User' )
+        {
+            my $is_linked = $visitor->is_friend_linked( user_id => $user->id );
+            if ( $is_linked == 1 )
+            {
+                $friend_link = 'friend';
+            }
+            elsif ( $is_linked == 2 )
+            {
+                $friend_link = 'pending';
+            }
+            else
+            {
+                $friend_link = 'friend_link';
+            }
+        }
+    }
+
     if ( defined $user_hash )
     {
-        template 'user/show_user_profile', { user => $user_hash };
+        template 'user/show_user_profile', { 
+                                                user        => $user,
+                                                user_hash   => $user_hash,
+                                                friend_link => $friend_link,
+                                           };
     }
     else
     {
@@ -696,7 +724,7 @@ get '/my/account/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    my $avatar = $user->get_avatar( size => 'medium' );
+    my $avatar = $user->get_avatar( { size => 'medium' } );
 
     template 'my/account', { user => $user_hash, avatar => $avatar, activity_log => vars->{'activity_log'} };
 };
@@ -712,7 +740,7 @@ get '/my/avatar/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NO-FOUND
     }
 
-    my $avatar         = $user->get_avatar( size => 'medium' );
+    my $avatar         = $user->get_avatar( { size => 'medium' } );
     my $system_avatars = Side7::User::Avatar::SystemAvatar->get_all_system_avatars( size => 'small' );
     my $user_avatars   = $user->get_all_avatars( size => 'small' );
 
@@ -800,7 +828,7 @@ post '/my/avatar/upload/?' => sub
     $user->account->save();
 
     # Record Audit Message
-    $audit_message  = 'User ' . session( 'username' ) . ' ( User ID: ' . session( 'user_id' ) . ' ) uploaded a new Avatar';
+    $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>%lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded a new Avatar';
     $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
     $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
     $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
@@ -864,7 +892,7 @@ post '/my/avatar/select/?' => sub
     # Leading character has precedence over avatar_type, just in case the javascript 
     # failed to change the type automatically.
 
-    my $audit_message  = 'User ' . session( 'username' ) . ' ( User ID: ' . session( 'user_id' ) . ' ) selected a new Avatar';
+    my $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) selected a new Avatar';
     my $old_values  = '';
     if ( lc( $avatar_type ) eq 'system' || lc( $avatar_type ) eq 'image' )
     {
@@ -1001,7 +1029,7 @@ post '/my/changepassword/?' => sub
         body    => $email_body,
     };
 
-    my $audit_message = 'Password Change Request Sent - ';
+    my $audit_message = 'Password Change Request Sent<br>';
     $audit_message   .= 'User: &gt;<b>' . session( 'username' ) . '</b>&lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -1041,17 +1069,19 @@ get '/my/confirm_password_change/?:confirmation_code?' => sub
     }
 
     my $audit_message = 'Password Change confirmation - <b>Successful</b> - ';
-    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt; - ';
-    $audit_message   .= 'Original value: &gt;<b>' . $change_result->{'original_password'} . '</b>%lt; - ';
-    $audit_message   .= 'New value: &gt;<b>' . $change_result->{'new_password'} . '</b>%lt;';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt;';
+    my $old_value    .= '&gt;' . $change_result->{'original_password'} . '&lt;';
+    my $new_value    .= '&gt;' . $change_result->{'new_password'} . '&lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
-                                          title       => 'Password Change Confirmation',
-                                          description => $audit_message,
-                                          ip_address  => request->address() . $remote_host,
-                                          user_id     => session( 'user_id' ),
-                                          affected_id => session( 'user_id' ),
-                                          timestamp   => DateTime->now(),
+                                          title          => 'Password Change Confirmation',
+                                          description    => $audit_message,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          original_value => $old_value,
+                                          new_value      => $new_value,
+                                          affected_id    => session( 'user_id' ),
+                                          timestamp      => DateTime->now(),
     );
     $audit_log->save();
 
@@ -1099,7 +1129,7 @@ post '/my/setdelete/?' => sub
         body    => $email_body,
     };
 
-    my $audit_message = 'Set Account Delete Flag Request Sent - ';
+    my $audit_message = 'Set Account Delete Flag Request Sent<br>';
     $audit_message   .= 'User: &gt;<b>' . session( 'username' ) . '</b>&lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -1138,9 +1168,9 @@ get '/my/confirm_set_delete_flag/?:confirmation_code?' => sub
                                     { confirmation_code => params->{'confirmation_code'} };
     }
 
-    my $audit_message = 'Set Delete Flag confirmation - <b>Successful</b> - ';
-    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt; - ';
-    $audit_message   .= 'Delete On: &gt;<b>' . $change_result->{'delete_on'} . '</b>%lt;';
+    my $audit_message = 'Set Delete Flag confirmation - <b>Successful</b><br>';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'confirmation_code'} . '</b>&lt;<br>';
+    $audit_message   .= 'Delete On: &gt;<b>' . $change_result->{'delete_on'} . '</b>&lt;';
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
                                           title       => 'Set Delete Flag Confirmation',
@@ -1294,9 +1324,9 @@ post '/my/profile' => sub
     }
 
     # Audit Log
-    my $audit_msg = 'User Profile Updated -- Successful<br>' .
-                    'Profile for &gt;' . $user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
-                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    my $audit_msg = 'User Profile Updated - <b>Successful</b><br>' .
+                    'Profile for &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' . 
+                    'updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $changed_fields;
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -1329,6 +1359,349 @@ post '/my/profile' => sub
                              is_public_hash      => $new_is_public_hash,
                              activity_log        => vars->{'activity_log'},
                            };
+};
+
+# User View Friends
+get '/my/friends/?' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $approved_friends = $user->get_friends_by_status( status => 'Approved' );
+
+    my $pending_requests = $user->get_pending_friend_requests();
+
+    template 'my/friends', {
+                            user             => $user,
+                            friends          => $approved_friends,
+                            pending_requests => $pending_requests,
+                            activity_log     => vars->{'activity_log'},
+                           };
+};
+
+# User Send Friend Request
+get '/friend_link/:username' => sub
+{
+    my $rd_url = Side7::Login::sanitize_redirect_url( 
+        { 
+            rd_url   => params->{'rd_url'}, 
+            referer  => request->referer,
+            uri_base => request->uri_base
+        } 
+    );
+
+    my $user      = Side7::User::get_user_by_id( session( 'user_id' ) );
+    my $recipient = Side7::User::get_user_by_username( params->{'username'} );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'You must be logged in to send a Friend Link request.';
+        return redirect $rd_url;
+    }
+
+    if ( ! defined $recipient || ref( $recipient ) ne 'Side7::User' )
+    {
+        flash error => 'Cannot send a Friend Link request to a non-existent User.';
+        return redirect $rd_url;
+    }
+
+    # Check to ensure that the User is allowed to send a Friend Request
+    my $send_permission = $user->can_send_friend_request_to_user( user_id => $recipient->id );
+
+    if ( $send_permission->{'can_send'} != 1 )
+    {
+        flash error => 'Unable to send a Friend Link Request to <b>' . $recipient->username . '</b>.<br>' . $send_permission->{'error'};
+        return redirect $rd_url;
+    }
+
+    my $friend_request = Side7::User::Friend->new(
+                                                    user_id    => session( 'user_id' ),
+                                                    friend_id  => $recipient->id,
+                                                    status     => 'Pending',
+                                                    created_at => DateTime->now(),
+                                                    updated_at => DateTime->now(),
+                                                 );
+    $friend_request->save();
+
+    # Audit Log
+    my $audit_msg = 'Friend Link Request Sent - <b>Successful</b><br>';
+    $audit_msg   .= 'User &gt;<b>' . $user->username . '</b>&lt; ( User ID: ' . $user->id . ' ) has sent a<br>';
+    $audit_msg   .= 'friend link request to User &gt;' . $recipient->username . '&lt; ( User ID: ' . $recipient->id . ' ).';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Friend Link Request Sent',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $recipient->id,
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return
+    flash message => 'Sent your Friend Link request to <b>' . $recipient->username . '</b>!';
+    return redirect $rd_url;
+};
+
+# User Friend Request Responses
+## Accept  ( Friend request accepted )
+get '/my/friends/:user_id/accept' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
+
+    my $pending_request = $pending_requests->[0];
+
+    if ( ! defined $pending_request || $pending_request->user_id ne params->{'user_id'} )
+    {
+        flash error => 'The pending friend request you indicated either does not belong to your account, or does not exist.';
+        return redirect '/my/friends';
+    }
+
+    # Reset the status on pending request.
+    $pending_request->status( 'Approved' );
+    $pending_request->updated_at( DateTime->now() );
+    $pending_request->save();
+
+    # Create reciprocal link
+    my $reciprocal_link = Side7::User::Friend->new(
+                                                    user_id    => $user->id,
+                                                    friend_id  => params->{'user_id'},
+                                                    status     => 'Approved',
+                                                    created_at => DateTime->now(),
+                                                    updated_at => DateTime->now(),
+    );
+    $reciprocal_link->save();
+
+    # TODO: Send notification to Request Sender that request was approved
+
+    # Audit Log
+    my $audit_msg = 'Friend Request Approved - <b>Successful</b><br>';
+    $audit_msg .= 'User &gt;<b>' . $user->username . '</b>&lt; ( User ID: ' . $user->id . ' ) approved<br>';
+    $audit_msg .= 'a friend request from &gt;' . $pending_request->user->username . '&lt; ( User ID: ' . $pending_request->user_id . ').<br>';
+    $audit_msg .= 'Reciprocal link established.';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Friend Request Approved',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $pending_request->id(),
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Activity Logs
+    my $activity_log1 = Side7::ActivityLog->new(
+                                                user_id    => session( 'user_id' ),
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                              '</a> became friends with <a href="/user/' . $pending_request->user->username . '">' . 
+                                                              $pending_request->user->username . '</a>.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log1->save();
+    my $activity_log2 = Side7::ActivityLog->new(
+                                                user_id    => $pending_request->user_id,
+                                                activity   => '<a href="/user/' . $pending_request->user->username  . '">' . 
+                                                              $pending_request->user->username . '</a> became friends with <a href="/user/' . 
+                                                              session( 'username' ) . '">' . session( 'username' ) . '</a>.',
+                                                created_at => DateTime->now(),
+    );
+    $activity_log2->save();
+
+    # Return
+    flash message => 'Friend request from <b>' . $pending_request->user->username . '</b> Approved!';
+    redirect '/my/friends';
+};
+
+## Ignore ( Sender not notitifed, future friend requests possible. )
+get '/my/friends/:user_id/ignore' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
+
+    my $pending_request = $pending_requests->[0];
+
+    if ( ! defined $pending_request || $pending_request->user_id ne params->{'user_id'} )
+    {
+        flash error => 'The pending friend request you indicated either does not belong to your account, or does not exist.';
+        return redirect '/my/friends';
+    }
+
+    # Reset the status on pending request.
+    $pending_request->status( 'Ignored' );
+    $pending_request->updated_at( DateTime->now() );
+    $pending_request->save();
+
+    # Audit Log
+    my $audit_msg = 'Friend Request Ignored - <b>Successful</b><br>';
+    $audit_msg .= 'User &gt;<b>' . $user->username . '</b>&lt; ( User ID: ' . $user->id . ' ) ignored<br>';
+    $audit_msg .= 'a friend request from &gt;' . $pending_request->user->username . '&lt; ( User ID: ' . $pending_request->user_id . ').<br>';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Friend Request Ignored',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $pending_request->id(),
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return
+    flash message => 'Friend request from <b>' . $pending_request->user->username . '</b> Ignored!';
+    redirect '/my/friends';
+};
+
+## Deny ( Sender notified, Future friend requests blocked )
+get '/my/friends/:user_id/deny' => sub
+{
+    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
+
+    my $pending_request = $pending_requests->[0];
+
+    if ( ! defined $pending_request || $pending_request->user_id ne params->{'user_id'} )
+    {
+        flash error => 'The pending friend request you indicated either does not belong to your account, or does not exist.';
+        return redirect '/my/friends';
+    }
+
+    # Reset the status on pending request.
+    $pending_request->status( 'Denied' );
+    $pending_request->updated_at( DateTime->now() );
+    $pending_request->save();
+
+    # TODO: Notify the Friend Request Sender that their request was denied, and that they will not be able to make
+    #       additional requests in the future.
+
+    # Audit Log
+    my $audit_msg = 'Friend Request Denied - <b>Successful</b><br>';
+    $audit_msg .= 'User &gt;<b>' . $user->username . '</b>&lt; ( User ID: ' . $user->id . ' ) denied<br>';
+    $audit_msg .= 'a friend request from &gt;' . $pending_request->user->username . '&lt; ( User ID: ' . $pending_request->user_id . ').<br>';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Friend Request Denied',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $pending_request->id(),
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return
+    flash message => 'Friend request from <b>' . $pending_request->user->username . '</b> Denied!';
+    redirect '/my/friends';
+};
+
+# User Remove Friend Link
+get '/my/friends/:username/dissolve' => sub
+{
+    my $rd_url = Side7::Login::sanitize_redirect_url( 
+        { 
+            rd_url   => params->{'rd_url'}, 
+            referer  => request->referer,
+            uri_base => request->uri_base
+        } 
+    );
+
+    my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
+    my $target = Side7::User::get_user_by_username( params->{'username'} );
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    if ( ! defined $target || ref( $target ) ne 'Side7::User' )
+    {
+        flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    my $friends = $user->get_friends_by_id( user_ids => [ $target->id ] );
+
+    my $friend = $friends->[0];
+
+    if ( ! defined $friend || $friend->friend_id ne $target->id )
+    {
+        flash error => 'The friend link you indicated either does not belong to your account, or does not exist.';
+        return redirect '/my/friends';
+    }
+
+    # Delete the link to the friend.
+    $friend->delete();
+
+    # Delete reciprocal link
+    my $reciprocal_friends = $target->get_friends_by_id( user_ids => [ session( 'user_id' ) ] );
+    my $reciprocal_friend = $reciprocal_friends->[0];
+
+    if ( defined $reciprocal_friend && $reciprocal_friend->friend_id == session( 'user_id' ) )
+    {
+        $reciprocal_friend->delete();
+    }
+
+    # Audit Log
+    my $audit_msg = 'Friend Link Dissolved - <b>Successful</b><br>';
+    $audit_msg .= 'User &gt;<b>' . $user->username . '</b>&lt; ( User ID: ' . $user->id . ' ) dissolved<br>';
+    $audit_msg .= 'their friend link with &gt;' . $target->username . '&lt; ( User ID: ' . $target->id . ').<br>';
+
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'Friend Link Dessolved',
+                                          description    => $audit_msg,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          affected_id    => $friend->id(),
+                                          original_value => undef,
+                                          new_value      => undef,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    # Return
+    flash message => 'Friend Link with <b>' . $target->username . '</b> Dissolved!';
+    redirect $rd_url;
 };
 
 # User Gallery Landing Page
@@ -1396,9 +1769,9 @@ post '/my/albums/new' => sub
     $new_album->save();
 
     # Audit Log
-    my $audit_msg = 'Custom Album Created -- Successful<br>' .
-                    'Album owned by &gt;' . $user->username() . '&lt; ( User ID: ' . $user->id() . ' )' . 
-                    ' created by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    my $audit_msg = 'Custom Album Created - <b>Successful</b><br>' .
+                    'Album owned by &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' )<br>' . 
+                    'created by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -1408,7 +1781,7 @@ post '/my/albums/new' => sub
                                           user_id        => session( 'user_id' ),
                                           affected_id    => $new_album->id(),
                                           original_value => undef,
-                                          new_value      => 'name: &gt;' . $new_album->name() . '%lt;<br>description: &gt;' . $new_album->description() . '&lt;',
+                                          new_value      => 'name: &gt;' . $new_album->name() . '&lt;<br>description: &gt;' . $new_album->description() . '&lt;',
                                           timestamp      => DateTime->now(),
     );
     $audit_log->save();
@@ -1475,10 +1848,10 @@ get '/my/albums/:album_id/delete_confirmed/?' => sub
     $album->delete();
 
     # Audit Log
-    my $audit_msg = 'Custom Album Deleted -- Successful<br>';
-    $audit_msg   .= 'The Album >' . $original_album->name() . '< ( Album ID: ' . $original_album->id() . ' ) owned by<br>';
-    $audit_msg   .= 'User >' . $affected_user->username() . '< ( User ID: ' . $affected_user->id() . ' ) has been deleted<br>';
-    $audit_msg   .= 'by User >' . $user->username() . '< ( User ID: ' . $user->id() . ' ).<br>';
+    my $audit_msg = 'Custom Album Deleted - <b>Successful</b><br>';
+    $audit_msg   .= 'The Album &gt;' . $original_album->name() . '&lt; ( Album ID: ' . $original_album->id() . ' ) owned by<br>';
+    $audit_msg   .= 'User &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' ) has been deleted<br>';
+    $audit_msg   .= 'by User &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' ).<br>';
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -1607,9 +1980,9 @@ post '/my/albums/:album_id/save' => sub
     }
 
     # Audit Log
-    my $audit_msg = 'Custom Album Updated -- Successful<br>' .
+    my $audit_msg = 'Custom Album Updated - <b>Successful</b><br>' .
                     'Album owned by &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' )' . 
-                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+                    ' updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $updated_fields;
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -1725,9 +2098,9 @@ post '/my/albums/:album_id/manage' => sub
 
     my $affected_user = Side7::User::get_user_by_id( $album->user_id() );
 
-    my $audit_msg = 'Managing Album Contents - Results:<br>';
-    $audit_msg   .= 'Album >' . $album->name() . '< ( Album ID: ' . $album->id() . ' )<br>';
-    $audit_msg   .= 'belonging to User >' . $affected_user->username() . '< ( User ID: ' . $affected_user->id() . ' )<br>';
+    my $audit_msg = 'Managing Album Contents - <b>Results</b>:<br>';
+    $audit_msg   .= 'Album &gt;' . $album->name() . '&lt; ( Album ID: ' . $album->id() . ' )<br>';
+    $audit_msg   .= 'belonging to User &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' )<br>';
 
     my $flash_error = '';
 
@@ -1974,9 +2347,9 @@ post '/my/preferences' => sub
     }
 
     # Record Audit Log
-    my $audit_msg = 'User Preferences Updated -- Successful<br>' .
-                    'Preferences for &gt;' . $affected_user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
-                    ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    my $audit_msg = 'User Preferences Updated - <b>Successful</b><br>' .
+                    'Preferences for &gt;' . $affected_user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' . 
+                    'updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $field_changes;
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -2173,7 +2546,7 @@ post '/my/upload' => sub
 
         $new_content->save();
 
-        $audit_message  = 'User ' . session( 'username' ) . ' (ID: ' . session( 'user_id' ) . ') uploaded new Content:<br />';
+        $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded new Content:<br />';
         $audit_message .= 'Content Type: image<br />';
         $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
         $new_values    .= 'Filesize: &gt;' . $file->size() . '&lt;<br />';
@@ -2314,8 +2687,8 @@ hook 'before' => sub
 
             if ( $authorized != 1 )
             {
-                my $error = 'User >' . session( 'username' ) . 
-                                '< attempted but is not authorized to view >' . request->path_info . '<';
+                my $error = 'User &gt;<b>' . session( 'username' ) . 
+                                '</b>&lt; attempted but is not authorized to view >' . request->path_info . '<';
                 $LOGGER->info( $error );
 
                 my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -2768,9 +3141,9 @@ post '/users/:username/edit' => sub
         $orig_user->save();
 
         # Update Audit Log
-        my $audit_msg = 'User Account Updated -- Successful<br>' .
+        my $audit_msg = 'User Account Updated - <b>Successful</b><br>' .
                         'Account for &gt;' . $username . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
-                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+                        ' updated by &gt;</b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
         $audit_msg .= 'Fields changed:<br>';
 
         my $old_values = '';
@@ -3168,9 +3541,9 @@ post '/news/:news_id/edit' => sub
         $orig_news->save();
 
         # Update Audit Log
-        my $audit_msg = 'News Item Updated -- Successful<br>' .
-                        'Item &gt;' . $orig_news->title() . '&lt; ( News ID: ' . $news_id . ' )' . 
-                        ' updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+        my $audit_msg = 'News Item Updated - <b>Successful</b><br>' .
+                        'Item &gt;' . $orig_news->title() . '&lt; ( News ID: ' . $news_id . ' )<br>' . 
+                        'updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
         $audit_msg .= 'Fields changed:<br>';
 
         my $old_values = '';

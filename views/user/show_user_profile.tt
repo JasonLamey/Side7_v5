@@ -1,5 +1,16 @@
+[% USE date %]
 <h1>User Profile for [% user.username %]</h1>
-<p><a href="/user/[% user.username %]/gallery">See [% user.username %]'s Gallery</a></p>
+<p><a href="/user/[% user.username %]/gallery">See [% user.username %]'s Gallery</a>
+[% IF friend_link && session.user_id != user.id %]
+    [% IF friend_link == 'friend' %]
+<br><a href="/my/friends/[% user.username %]/dissolve">Remove Friend Link</a>
+    [% ELSIF friend_link == 'pending' %]
+<br><em>Friend Link Request pending</em>
+    [% ELSE %]
+<br><a href="/friend_link/[% user.username %]">Send Friend Link Request</a>
+    [% END %]
+[% END %]
+</p>
 <ol>
     <li>Full Name: [% user.account.full_name %]</li>
     <li>Created At: [% user.created_at %]</li>

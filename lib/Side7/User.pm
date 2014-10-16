@@ -28,6 +28,7 @@ use Side7::User::Preference;
 use Side7::User::Avatar;
 use Side7::User::Avatar::UserAvatar;
 use Side7::User::Avatar::UserAvatar::Manager;
+use Side7::User::Friend::Manager;
 use Side7::ActivityLog::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::File;
@@ -147,6 +148,18 @@ __PACKAGE__->meta->setup
             type       => 'one to many',
             class      => 'Side7::User::Avatar::UserAvatar',
             column_map => { id => 'user_id' },
+        },
+        friends =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::Friend',
+            column_map => { id => 'user_id' },
+        },
+        friend_ofs =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::Friend',
+            column_map => { id => 'friend_id' },
         },
     ],
     foreign_keys =>
@@ -549,7 +562,9 @@ sub get_formatted_updated_at
 
 =head2 get_avatar()
 
-Returns the URI of the Avatar to be displayed for the User.
+Returns the URI of the Avatar to be displayed for the User. Because get_avatar can and is called
+from templates, nnd Template::Toolkit passes in named arguments as a hashref, arguments to get_avatar
+must be in a hashref.
 
 Parameters:
 
@@ -559,15 +574,15 @@ Parameters:
 
 =back
 
-    my $avatar = $user->get_avatar( size => 'large' );
+    my $avatar = $user->get_avatar( { size => 'large' } );
 
 =cut
 
 sub get_avatar
 {
-    my ( $self, %args ) = @_;
+    my ( $self, $args ) = @_;
 
-    my $size = delete $args{'size'} // 'small';
+    my $size = delete $args->{'size'} // 'small';
 
     return Side7::User::Avatar->get_avatar( user => $self, size => lc( $size ) );
 }
@@ -961,7 +976,31 @@ sub get_activity_logs
 
     my $limit = delete $args{'limit'} // 20;
 
-    my $logs = Side7::ActivityLog::Manager->get_activity_logs( limit => $limit, sort_by => 'created_at desc' );
+    my @approved_friends = ();
+    foreach my $raw_friend ( @{ $self->friends() } )
+    {
+        if ( $raw_friend->status() eq 'Approved' )
+        {
+            push( @approved_friends, $raw_friend->friend_id() );
+        }
+    }
+
+    if ( scalar( @approved_friends ) == 0 )
+    {
+        return [];
+    }
+
+    my $friends = join( ',', @approved_friends );
+
+    my $query = 'user_id => [ ' . $friends . ' ],';
+
+    my $logs = Side7::ActivityLog::Manager->get_activity_logs(
+                                                               query => [
+                                                                            eval $query,
+                                                                        ],
+                                                               limit   => $limit, 
+                                                               sort_by => 'created_at desc'
+                                                             );
 
     my $activity_logs = [];
     foreach my $log ( @$logs )
@@ -977,6 +1016,263 @@ sub get_activity_logs
     }
 
     return $activity_logs;
+}
+
+
+=head2 get_friends_by_status()
+
+Returns an arrayref of Friend objects based on the passed in Friend Request status.
+
+Parameters:
+
+=over 4
+
+=item status: Accepts 'Pending', 'Accepted', 'Ignored', 'Denied'.  Default: 'Accepted'
+
+=back
+
+    my $friends = $user->get_friends_by_status( status => $status );
+
+=cut
+
+sub get_friends_by_status
+{
+    my ( $self, %args ) = @_;
+
+    my $status = delete $args{'status'} // 'Accepted';
+
+    my $friends = [];
+
+    $friends = Side7::User::Friend::Manager->get_friends(
+                                                            query => [
+                                                                        user_id => $self->id(),
+                                                                        status  => $status,
+                                                                     ],
+                                                            with_objects => [ 'friend' ],
+                                                        );
+
+    return $friends;
+}
+
+
+=head2 get_friends_by_id()
+
+Returns an arrayref of Friend objects based on the passed in Friend Request status.
+
+Parameters:
+
+=over 4
+
+=item ids: arrayref of user_ids for which to search.
+
+=back
+
+    my $user_ids = [ 1, 4, 6, 8 ];
+    my $friends = $user->get_friends_by_id( user_ids => $user_ids );
+
+=cut
+
+sub get_friends_by_id
+{
+    my ( $self, %args ) = @_;
+
+    my $user_ids = delete $args{'user_ids'} // [];
+
+    $LOGGER->warn( 'USER_IDS RECEIVED: ' . Dumper( $user_ids ) );
+
+    return [] if ! defined $user_ids || scalar( @{ $user_ids } ) == 0;
+
+    my $friends = [];
+
+    $friends = Side7::User::Friend::Manager->get_friends(
+                                                            query => [
+                                                                        user_id   => $self->id(),
+                                                                        status    => 'Approved',
+                                                                        friend_id => $user_ids,
+                                                                     ],
+                                                            with_objects => [ 'friend' ],
+                                                        );
+
+    return $friends;
+}
+
+
+=head2 get_pending_friend_requests()
+
+Returns and arrayref of Friend Request objects for the User.
+
+Parameters: none
+
+    my $friend_requests = $user->get_pending_friend_requests();
+
+=cut
+
+sub get_pending_friend_requests
+{
+    my ( $self, %args ) = @_;
+
+    my $user_id = delete $args{'user_id'} // undef;
+
+    my $friend_requests = [];
+    my $query = "friend_id => " . $self->id . ", status => 'Pending',";
+
+    $query .= " user_id => $user_id" if defined $user_id && $user_id =~ m/^\d+$/;
+
+    $friend_requests = Side7::User::Friend::Manager->get_friends(
+                                                                    query => [
+                                                                                eval $query
+                                                                             ],
+                                                                    with_objects => [ 'user' ],
+                                                                );
+    return $friend_requests;
+}
+
+
+=head2 can_send_friend_request_to_user()
+
+This method checks the system to ensure the conditions are right for allowing a User to
+send a friend link request to another User. The conditions include: 
+* Does the recipient allow friending?
+* Is the User already linked with the recipient?  
+* Does this User already have a pending friend link request?
+* Has the recipient previously denied a previous friend link request from this User?
+Returns a hashref containing a boolean to indicate send permission, and an error message value.  The error
+value will be undef if there is no error.
+
+Parameters:
+
+=over 4
+
+=item user_id: The User ID to check against.
+
+=back
+
+    my $can_send = $user->can_send_friend_request_to_user( user_id => $user_id );
+
+=cut
+
+sub can_send_friend_request_to_user
+{
+    my ( $self, %args ) = @_;
+
+    my $user_id = delete $args{'user_id'} // undef;
+
+    if ( ! defined $user_id || $user_id =~ m/\D+/ )
+    {
+        $LOGGER->warn( 'Invalid recipient User ID ( >' . $user_id . '< ) provided.' );
+        return { can_send => 0, error => 'Can not send a Friend Link request if you do not indicate to whom to send it.' };
+    }
+
+    my $recipient = Side7::User::get_user_by_id( $user_id );
+
+    if ( ! defined $recipient || ref( $recipient ) ne 'Side7::User' )
+    {
+        $LOGGER->warn( 'Invalid recipient User ID ( >' . $user_id . '< ) provided.' );
+        return { can_send => 0, error => 'Not sure to whom you are trying to send a Friend Link request.' };
+    }
+
+    # Does recipient allow friending? TODO
+
+    # Are the recipient and User already linked?
+    my $existing_friends = $self->get_friends_by_id( user_ids => [ $user_id ] );
+    if ( 
+        defined $existing_friends->[0]
+        &&
+        $existing_friends->[0]->friend_id == $user_id
+    )
+    {
+        return { can_send => 0, error => 'You are already Friend Linked with <b>' . $recipient->username . '</b>!' };
+    }
+
+    # Does the User already have a pending request with this recipient?
+    my $pending_requests = $recipient->get_pending_friend_requests( user_id => $self->id );
+    if (
+        defined $pending_requests->[0]
+        &&
+        $pending_requests->[0]->user_id == $self->id
+    )
+    {
+        return { can_send => 0, error => 'You already have a pending Friend Link request with <b>' . $recipient->username . '</b>!' };
+    }
+
+    # Has the recipient denied a previous friend link request from this User?
+    my $denied_requests = $recipient->get_friends_by_status( status => 'Denied' );
+    foreach my $request ( @{ $denied_requests } )
+    {
+        if ( $request->user_id == $self->id )
+        {
+            return { can_send => 0, error => 'Unfortunately, <b>' . $recipient->username . '</b> has already denied a Friend Link request from you. You cannot re-send a request to this User.' };
+        }
+    }
+
+    return { can_send => 1, error => undef };
+}
+
+
+=head2 is_friend_linked
+
+Returns a boolean value indicating if the User is currently friend-linked to the User indicated.
+
+Parameters:
+
+=over 4
+
+=item user_id: The ID of the User to check against.
+
+=back
+
+    my $is_friend_linked = $user->is_friend_linked( user_id => $user_id );
+
+=cut
+
+sub is_friend_linked
+{
+    my ( $self, %args ) = @_;
+
+    my $user_id = delete $args{'user_id'} // undef;
+
+    if ( ! defined $user_id )
+    {
+        return 0;
+    }
+
+    # Does an Existing Pending Friend Link Request exist
+    my $friend = Side7::User::Friend->new(
+                                            user_id   => $self->id,
+                                            friend_id => $user_id,
+                                            status    => 'Pending',
+                                         );
+
+    my $loaded = $friend->load( speculative => 1 );
+
+    if ( 
+        defined $friend 
+        && 
+        ref( $friend ) eq 'Side7::User::Friend' 
+        && 
+        $loaded != 0
+    )
+    {
+        # Pending Request exists
+        return 2;
+    }
+
+    # Does an Approved Friend Link exist
+    $friend = Side7::User::Friend->new(
+                                            user_id   => $self->id,
+                                            friend_id => $user_id,
+                                            status    => 'Approved',
+                                      );
+
+    $loaded = $friend->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        # No link exists, return 0.
+        return 0;
+    }
+
+    return 1;
 }
 
 

@@ -24,7 +24,7 @@
         password              => is_long_between( 8, 45, 'Your Password should have between 4 and 45 characters.' ),
         password_confirmation => is_equal("password", "Passwords don't match"),
 
-        birthday => is_like( qr/^\d{2}\/\d{2}\/\d{4}$/, "Invalid birthday format. Please use 'MM/DD/YYYY'." ),
+        birthday => is_like( qr/^\d{4}-\d{2}-\d{2}$/, "Invalid birthday format. Please use 'YYYY-MM-DD'." ),
 
         referred_by => sub
         {

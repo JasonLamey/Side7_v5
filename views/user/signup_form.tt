@@ -1,4 +1,17 @@
+<script type="text/javascript">
+    $( document ).ready( function() {
+        $( '#birthday' ).datepicker( { 
+            changeMonth: true, 
+            changeYear: true, 
+            dateFormat: 'yy-mm-dd', 
+            yearRange: '-100:c',
+            showAnim: 'fadeIn',
+        } );
+    } );
+</script>
+
 <h1>Sign Up!</h1>
+<p>It's fast. It's free. And signing up gives you access to participation, favoriting, and sharing.</p>
 <script>
 EnableSubmit = function(val)
 {
@@ -22,7 +35,7 @@ EnableSubmit = function(val)
     <input type="text" name="email_address" size="30" maxlength="45" value="[% email_address %]" />
     <br />
     <label for="birthday" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Birthday (required): </label>
-    <input type="text" name="birthday" size="30" maxlength="10" value="[% birthday %]" /> <i>( MM/DD/YYYY )</i>
+    <input type="text" id="birthday" name="birthday" size="30" maxlength="10" value="[% birthday %]" /> <i>( YYYY-MM-DD )</i>
     <br />
     <label for="password" style="text-align: right; width: 200px; float: left; font-weight: bold; margin-right: 5px;">Password (required): </label>
     <input type="password" name="password" size="30" maxlength="45" />

@@ -2,5 +2,6 @@
         <div class="home_menu_option"><a href="/my/account">My Account</a></div>
         <div class="home_menu_option"><a href="/my/profile">My Profile</a></div>
         <div class="home_menu_option"><a href="/my/gallery">My Gallery</a></div>
+        <div class="home_menu_option"><a href="/my/friends">My Friends</a></div>
         <div class="home_menu_option"><a href="/my/kudos">My Kudos Coins</a></div>
         <div class="home_menu_option"><a href="/my/preferences">My Preferences</a></div>

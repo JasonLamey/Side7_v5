@@ -1,0 +1,35 @@
+<h1>Friends</h1>
+
+<div>
+<h2>Pending Friend Requests</h2>
+[% IF pending_requests.size == 0 %]
+    <div style="text-align: center; font-weight: bold;">No pending friends requests at this time.</div>
+[% ELSE %]
+    [% FOREACH request IN pending_requests %]
+    <div style="height: 55px; vertical-align: middle; display: table-cell; padding: 3px; width: 300px; float: left; margin-right: 5px; font-size: 12pt; font-weight: bold; background-color: #4c4c4c; color: #fff; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;">
+        <a href="/user/[% request.user.username %]" style="color: #fff;"><img src="[% request.user.get_avatar( size => 'tiny' ) %]" border="0" style="vertical-align: middle;"> [% request.user.username %]</a>
+        <div style="position: relative; float: right; width: 60px; margin-left: 3px; vertical-align: middle; text-align: right;">
+          <a href="/my/friends/[% request.user.id %]/accept"><img src="/images/icons/accept.gif" style="vertical-align: middle;" border="0" alt="Accept Friend Request" title="Accept Friend Request"></a>
+          <a href="/my/friends/[% request.user.id %]/ignore"><img src="/images/icons/exclamation.gif" style="vertical-align: middle;" border="0" alt="Ignore Friend Request" title="Ignore Friend Request"></a>
+          <a href="/my/friends/[% request.user.id %]/deny"><img src="/images/icons/delete.gif" style="vertical-align: middle;" border="0" alt="Deny Friend Request" title="Deny Friend Request"></a>
+        </div>
+    </div>
+    [% END %]
+[% END %]
+</div>
+
+<div style="clear: both; margin-top: 20px;">
+<h2>My Friends</h2>
+[% IF friends.size == 0 %]
+    <div style="text-align: center; font-weight: bold;">You haven't added anyone to your friends list!<br>Get to it!</div>
+[% ELSE %]
+    [% FOREACH friend IN friends %]
+    <div style="height: 55px; vertical-align: middle; display: table-cell; padding: 3px; width: 300px; float: left; margin-right: 5px; font-size: 12pt; font-weight: bold; background-color: #4c4c4c; color: #fff; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;">
+        <a href="/user/[% friend.friend.username %]" style="color: #fff;"><img src="[% friend.friend.get_avatar( size => 'tiny' ) %]" border="0" style="vertical-align: middle;"> [% friend.friend.username %]</a>
+        <div style="position: relative; float: right; width: 60px; margin-left: 3px; vertical-align: middle; text-align: right;">
+          <a href="/my/friends/[% friend.friend.id %]/dissolve"><img src="/images/icons/cancel.gif" style="vertical-align: middle;" border="0" alt="Dissolve Friend Link" title="Dissolve Friend Link"></a>
+        </div>
+    </div>
+    [% END %]
+[% END %]
+</div>
