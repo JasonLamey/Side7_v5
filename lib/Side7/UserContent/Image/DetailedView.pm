@@ -10,20 +10,25 @@ use DateTime;
 use Side7::Globals;
 use Side7::UserContent::Image::DetailedView::Manager;
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Image::DetailedView
 
+
 =head1 DESCRIPTION
 
 This package represents detailed information on every view a User Content receives.
 
+
 =head1 SCHEMA INFORMATION
 
     Table name: image_detailed_views
-     
+
     | id         | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
     | image_id   | bigint(20) unsigned | NO   |     | NULL    |                |
     | user_id    | bigint(20) unsigned | YES  |     | NULL    |                |
@@ -31,6 +36,7 @@ This package represents detailed information on every view a User Content receiv
     | user_agent | varchar(255)        | YES  |     | NULL    |                |
     | referer    | text                | YES  |     | NULL    |                |
     | date       | date                | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -53,14 +59,14 @@ References the User object via the user_id foreign key.
 __PACKAGE__->meta->setup
 (
     table   => 'image_detailed_views',
-    columns => [ 
+    columns => [
         id         => { type => 'integer',                not_null => 1 },
-        image_id   => { type => 'integer', length => 45,  not_null => 1 }, 
-        user_id    => { type => 'integer', length => 45 }, 
-        ip_address => { type => 'varchar', length => 255 }, 
-        user_agent => { type => 'varchar', length => 255 }, 
-        referer    => { type => 'varchar', length => 255 }, 
-        date       => { type => 'date',                   not_null => 1 }, 
+        image_id   => { type => 'integer', length => 45,  not_null => 1 },
+        user_id    => { type => 'integer', length => 45 },
+        ip_address => { type => 'varchar', length => 255 },
+        user_agent => { type => 'varchar', length => 255 },
+        referer    => { type => 'varchar', length => 255 },
+        date       => { type => 'date',                   not_null => 1 },
     ],
     pk_columns => 'id',
     unique_key => [ [ 'image_id', 'date' ], [ 'image_id' ], [ 'date' ] ],

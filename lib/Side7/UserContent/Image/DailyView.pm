@@ -10,24 +10,30 @@ use DateTime;
 use Side7::Globals;
 use Side7::UserContent::Image::DailyView::Manager;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Image::DailyView
 
+
 =head1 DESCRIPTION
 
 This package represents daily total image view counts.
 
+
 =head1 SCHEMA INFORMATION
 
     Table name: image_daily_views
-     
+
     | id         | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
     | image_id   | bigint(20) unsigned | NO   |     | NULL    |                |
     | views      | bigint(20) unsigned | NO   | MUL | NULL    |                |
     | date       | date                | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -46,11 +52,11 @@ References the Image object via the image_id foreign key.
 __PACKAGE__->meta->setup
 (
     table   => 'image_daily_views',
-    columns => [ 
+    columns => [
         id       => { type => 'integer',                not_null => 1 },
-        image_id => { type => 'integer', length => 45,  not_null => 1 }, 
-        views    => { type => 'integer', length => 255, not_null => 1 }, 
-        date     => { type => 'date',                   not_null => 1 }, 
+        image_id => { type => 'integer', length => 45,  not_null => 1 },
+        views    => { type => 'integer', length => 255, not_null => 1 },
+        date     => { type => 'date',                   not_null => 1 },
     ],
     pk_columns => 'id',
     unique_key => [ [ 'image_id', 'date' ], [ 'image_id' ], [ 'date' ] ],
@@ -101,7 +107,7 @@ sub get_total_views_count
 
     return if ! defined $image_id;
 
-    my $total_views = Side7::DB::build_select(
+    my $total_views = Side7::DB::build_my_select(
         select  => 'SUM(views) as total_views',
         tables  => [ 'image_daily_views' ],
         columns => { image_daily_views => [ 'image_id', 'views' ] },
@@ -134,7 +140,7 @@ sub update_daily_views
 
     my $daily_view = Side7::UserContent::Image::DailyView->new( image_id => $image_id, date => $datetime->ymd() );
     my $loaded = $daily_view->load( speculative => 1, for_update => 1,  );
-    
+
     if ( $loaded != 0 )
     {
         $daily_view->views( $daily_view->views + 1 );

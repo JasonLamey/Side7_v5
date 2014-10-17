@@ -96,14 +96,14 @@ sub get_db
 }
 
 
-=head2 build_select()
+=head2 build_my_select()
 
-    my $results_hashref = Side7::DB::build_select();
+    my $results_hashref = Side7::DB::build_my_select();
 
 Returns a hashref of selected results from the DB, based on the parameters passed in.
 Refer to the L<Rose::DB::Object::QueryBuilder CPAN page|http://search.cpan.org/dist/Rose-DB-Object/lib/Rose/DB/Object/QueryBuilder.pm> for more info.
 
-    my $result = Side7::DB::build_select(
+    my $result = Side7::DB::build_my_select(
                                             select  => 'OLD_PASSWORD(?) as db_pass',
                                             tables  => [ 'users' ],
                                             columns => { users => [ 'db_pass' ] },
@@ -115,7 +115,7 @@ Refer to the L<Rose::DB::Object::QueryBuilder CPAN page|http://search.cpan.org/d
 
 =cut
 
-sub build_select
+sub build_my_select
 {
     my ( %args ) = @_;
 
@@ -147,7 +147,7 @@ sub build_select
         return;
     }
 
-    $DB //= $Side7::Globals::DB;
+    my $DB //= $Side7::Globals::DB;
 
     my $dbh = $DB->dbh;
 
@@ -215,7 +215,7 @@ sub get_enum_values_for_form
     return {} if ! defined $table;
     return {} if scalar( @{ $fields } ) == 0;
 
-    $DB //= $Side7::Globals::DB;
+    my $DB //= $Side7::Globals::DB;
 
     my $dbh = $DB->dbh;
 

@@ -5,26 +5,34 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Image::Property
 
+
 =head1 DESCRIPTION
 
 This package represents Image properties, image data that is less uniform across Images.
 
+
 =head1 SCHEMA INFORMATION
 
     Table name: image_properties
-     
+
     | id         | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
     | image_id   | bigint(20) unsigned | NO   |     | NULL    |                |
     | name       | varchar(255)        | NO   | MUL | NULL    |                |
     | value      | varchar(255)        | NO   | MUL | NULL    |                |
     | created_at | datetime            | NO   |     | NULL    |                |
     | updated_at | datetime            | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -43,12 +51,12 @@ Many to One relationship, FK: image_id
 __PACKAGE__->meta->setup
 (
     table   => 'image_properties',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        image_id      => { type => 'integer', not_null => 1 }, 
-        name          => { type => 'varchar', length => 255, not_null => 1 }, 
-        value         => { type => 'varchar', length => 255, not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        image_id      => { type => 'integer', not_null => 1 },
+        name          => { type => 'varchar', length => 255, not_null => 1 },
+        value         => { type => 'varchar', length => 255, not_null => 1 },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
