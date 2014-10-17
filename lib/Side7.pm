@@ -1,4 +1,8 @@
 package Side7;
+
+use strict;
+use warnings;
+
 use Dancer ':syntax';
 use Dancer::Plugin::FlashMessage;
 use Dancer::Plugin::ValidateTiny;
