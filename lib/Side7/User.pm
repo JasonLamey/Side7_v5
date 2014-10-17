@@ -992,13 +992,9 @@ sub get_activity_logs
         return [];
     }
 
-    my $friends = join( ',', @approved_friends );
-
-    my $query = 'user_id => [ ' . $friends . ' ],';
-
     my $logs = Side7::ActivityLog::Manager->get_activity_logs(
                                                                query => [
-                                                                            eval{ $query },
+                                                                            user_id => \@approved_friends,
                                                                         ],
                                                                limit   => $limit,
                                                                sort_by => 'created_at desc'
