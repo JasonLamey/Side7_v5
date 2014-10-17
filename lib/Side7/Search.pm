@@ -15,6 +15,8 @@ use Side7::User::Manager;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::Manager;
 
+use version; our $VERSION = qv( '0.1.6' );
+
 =pod
 
 
@@ -75,8 +77,8 @@ Parameters:
 
 =back
 
-    my $results = $search->get_results( 
-                                        look_for         => $search_string, 
+    my $results = $search->get_results(
+                                        look_for         => $search_string,
                                         page             => $page,
                                         size             => $size,
                                         filter_profanity => $filter_profanity,
@@ -116,18 +118,18 @@ sub get_results
     }
 
     # Users
-    my $users = Side7::Search::search_users( 
-                                            look_for         => $look_for, 
-                                            page             => $page, 
-                                            size             => $size, 
+    my $users = Side7::Search::search_users(
+                                            look_for         => $look_for,
+                                            page             => $page,
+                                            size             => $size,
                                             filter_profanity => $filter_profanity,
                                            );
     my @sorted_users = sort { lc( $a->{'username'} ) cmp lc( $b->{'username'} ) } @{ $users };
 
     # Images
-    my $images = Side7::Search::search_images( 
-                                                look_for         => $look_for, 
-                                                page             => $page, 
+    my $images = Side7::Search::search_images(
+                                                look_for         => $look_for,
+                                                page             => $page,
                                                 size             => $size,
                                                 filter_profanity => $filter_profanity,
                                              );
@@ -139,8 +141,8 @@ sub get_results
 
     # Videos
 
-    my @sorted_results = sort { 
-                                $b->{'created_at_epoch'} cmp $a->{'created_at_epoch'} 
+    my @sorted_results = sort {
+                                $b->{'created_at_epoch'} cmp $a->{'created_at_epoch'}
                                 ||
                                 $a->{'title'} cmp $b->{'title'}
                               } @results;
@@ -208,9 +210,9 @@ sub get_history
         return [];
     }
 
-    my $results = $searches->[0]->{'results'};
+    my $results = $searches->[0]->{'results'} // '';
 
-    my $history = eval $results if ( defined $results && $results ne '' );
+    my $history = eval{ $results } // [];
 
     # Update the count on the history record.
     if ( defined $results && $results ne '' )
@@ -232,28 +234,28 @@ sub get_history
         }
         catch
         {
-            $LOGGER->warn( 
-                            'Search count update FAILED for search ID: >' . 
-                            $searches->[0]->{'id'} . 
-                            '<, term: >' . 
-                            $searches->[0]->{'search_term'} . 
+            $LOGGER->warn(
+                            'Search count update FAILED for search ID: >' .
+                            $searches->[0]->{'id'} .
+                            '<, term: >' .
+                            $searches->[0]->{'search_term'} .
                             '<: ' . $_
                          );
         };
-        
+
         if ( $updated != 1 )
         {
-            $LOGGER->warn( 
-                            'Search count not updated for search ID: >' . 
-                            $searches->[0]->{'id'} . 
-                            '<, term: >' . 
-                            $searches->[0]->{'search_term'} . 
+            $LOGGER->warn(
+                            'Search count not updated for search ID: >' .
+                            $searches->[0]->{'id'} .
+                            '<, term: >' .
+                            $searches->[0]->{'search_term'} .
                             '<'
                          );
         }
     }
 
-    return $history // [];
+    return $history;
 }
 
 
@@ -305,7 +307,7 @@ sub search_users
         {
             if ( defined $user_hash->{$key} )
             {
-                $user_hash->{'highlighted_' . $key} = 
+                $user_hash->{'highlighted_' . $key} =
                             Side7::Search::highlight_match( look_for => $look_for, text => $user_hash->{$key} );
             }
         }
@@ -342,7 +344,7 @@ Parameters:
 sub search_images
 {
     my ( %args ) = @_;
-   
+
     my $look_for         = delete $args{'look_for'}         // undef;
     my $page             = delete $args{'page'}             // 1;
     my $size             = delete $args{'size'}             // 'small';
@@ -352,7 +354,7 @@ sub search_images
     (
         query =>
         [
-            or => 
+            or =>
             [
                 title       => { like => "%$look_for%" },
                 description => { like => "%$look_for%" },
@@ -374,7 +376,7 @@ sub search_images
         {
             if ( defined $image_hash->{$key} )
             {
-                $image_hash->{'highlighted_' . $key} = 
+                $image_hash->{'highlighted_' . $key} =
                             Side7::Search::highlight_match( look_for => $look_for, text => $image_hash->{$key} );
             }
         }

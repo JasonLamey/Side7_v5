@@ -9,6 +9,8 @@ use parent 'Clone';
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.19' );
+
 =pod
 
 
@@ -26,7 +28,7 @@ information, and is the model to which all other models are related.
 =head1 SCHEMA INFORMATION
 
 	Table name: accounts
-	
+
 	id                      :integer          not null, primary key
 	user_id                 :integer          not null
 	first_name              :string(45)
@@ -106,7 +108,7 @@ One-to-many relationship, FK = avatar_id
 __PACKAGE__->meta->setup
 (
     table   => 'accounts',
-    columns => 
+    columns =>
     [
         id                      => { type => 'serial', not_null => 1 },
         user_id                 => { type => 'integer', not_null => 1 },
@@ -118,10 +120,10 @@ __PACKAGE__->meta->setup
         reinstate_on            => { type => 'date' },
         other_aliases           => { type => 'varchar', length => 255 },
         biography               => { type => 'text' },
-        sex                     => { 
-                                    type    => 'enum', 
-                                    values  => [qw/Male Female Trans* Neither Other Unspecified/], 
-                                    default => 'Unspecified' 
+        sex                     => {
+                                    type    => 'enum',
+                                    values  => [qw/Male Female Trans* Neither Other Unspecified/],
+                                    default => 'Unspecified'
         },
         birthday                => { type => 'date', not_null => 1 },
         birthday_visibility     => { type => 'integer', length => 1, not_null => 1, default => 1 },
@@ -231,15 +233,15 @@ sub full_name
 {
     my $self = shift;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $separator = (
-                        defined $self->{'first_name'} 
-                        && 
-                        $self->{'first_name'} ne '' 
-                        && 
-                        defined $self->{'last_name'} 
-                        && 
+                        defined $self->{'first_name'}
+                        &&
+                        $self->{'first_name'} ne ''
+                        &&
+                        defined $self->{'last_name'}
+                        &&
                         $self->{'last_name'} ne ''
     ) ? ' ' : '';
 
@@ -265,7 +267,7 @@ sub get_formatted_birthday
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
     my $admin_dates = delete $args{'admin_dates'} // undef;
@@ -274,8 +276,8 @@ sub get_formatted_birthday
 
     if ( ! defined $admin_dates )
     {
-        if ( 
-            $self->birthday_visibility == 3 
+        if (
+            $self->birthday_visibility == 3
             ||
             ! defined $self->birthday
             ||
@@ -321,7 +323,7 @@ sub get_formatted_subscription_expires_on
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%d %B, %Y'; # '01 January, 2014'
     my $admin_dates = delete $args{'admin_dates'} // undef;
@@ -363,7 +365,7 @@ sub get_formatted_delete_on
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
     my $admin_dates = delete $args{'admin_dates'} // undef;
@@ -397,7 +399,7 @@ sub get_formatted_created_at
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 
@@ -428,7 +430,7 @@ sub get_formatted_updated_at
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y'; # 'Monday, 01 January, 2014'
 

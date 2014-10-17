@@ -36,6 +36,8 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
+use version; our $VERSION = qv( '0.1.35' );
+
 =pod
 
 =head1 NAME
@@ -50,7 +52,7 @@ the user class is only used for login, log out, sign up, subscription and termin
 =head1 SCHEMA INFORMATION
 
 	Table name: users
-	
+
 	id              :integer          not null, primary key
 	username        :string(45)
 	email_address   :string(255)
@@ -82,13 +84,13 @@ One-to-many relationship. FK = image_id
 __PACKAGE__->meta->setup
 (
     table   => 'users',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        username      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        email_address => { type => 'varchar', length => 255, not_null => 1 }, 
-        password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        referred_by   => { type => 'varchar', length => 45 }, 
-        created_at    => { type => 'timestamp', not_null => 1, default => 'now()' }, 
+        username      => { type => 'varchar', length => 45,  not_null => 1 },
+        email_address => { type => 'varchar', length => 255, not_null => 1 },
+        password      => { type => 'varchar', length => 45,  not_null => 1 },
+        referred_by   => { type => 'varchar', length => 45 },
+        created_at    => { type => 'timestamp', not_null => 1, default => 'now()' },
         updated_at    => { type => 'timestamp', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -180,7 +182,7 @@ __PACKAGE__->meta->setup
 
 =head2 get_user_hash_for_template()
 
-Takes User object and converts it and its associated Account object (if embedded) into an easily accessible hash to pass to the 
+Takes User object and converts it and its associated Account object (if embedded) into an easily accessible hash to pass to the
 templates.  Additionally, it formats the associated dates properly for output.
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -220,7 +222,7 @@ sub get_user_hash_for_template
     if ( defined $self->{'account'} )
     {
         my $account = $self->account();
-        $user_hash->{'account'} = $account->get_account_hash_for_template( 
+        $user_hash->{'account'} = $account->get_account_hash_for_template(
                                                                             filter_profanity => $filter_profanity,
                                                                             admin_dates      => $admin_dates,
                                                                          );
@@ -247,8 +249,8 @@ sub get_user_hash_for_template
             $running_balance -= $prev_amount;   # Subtracting the previous amount from the current balance.
             $prev_amount = $record->{'amount'}; # Set a new previous amount.
 
-            push ( $user_hash->{'kudos_coins'}->{'ledger'}, { 
-                                                                timestamp   => $timestamp, 
+            push ( $user_hash->{'kudos_coins'}->{'ledger'}, {
+                                                                timestamp   => $timestamp,
                                                                 amount      => $record->{'amount'},
                                                                 description => $record->{'description'},
                                                                 balance     => $running_balance,
@@ -312,10 +314,10 @@ sub get_content_directory
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
-    my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} . 
+    my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} .
             substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
 
     return $content_directory;
@@ -337,7 +339,7 @@ sub get_avatar_directory
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     my $content_directory = $self->get_content_directory() . 'avatars/';
@@ -366,7 +368,7 @@ sub get_content_uri
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     my $content_uri = $CONFIG->{'general'}->{'base_gallery_uri'} .
@@ -401,7 +403,7 @@ sub get_gallery
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     my $session = delete $args{'session'} // undef;
@@ -463,14 +465,14 @@ sub get_all_content
 
     # Images
     my $images = Side7::UserContent::Image::Manager->get_images
-    (   
+    (
         query =>
         [
             user_id => [ $self->id() ],
         ],
         with_objects => [ 'rating', 'category', 'stage' ],
         sort_by => $sort_by,
-    );  
+    );
 
     push( @results, @$images );
 
@@ -505,7 +507,7 @@ sub get_formatted_created_at
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
@@ -544,7 +546,7 @@ sub get_formatted_updated_at
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     my $date_format = delete $args{'date_format'} // '%A, %d %B, %Y';
@@ -590,7 +592,7 @@ sub get_avatar
 
 =head2 get_all_avatars()
 
-Returns an arrayref of hashes of all Avatars belonging to the User. 
+Returns an arrayref of hashes of all Avatars belonging to the User.
 
 Parameters:
 
@@ -624,7 +626,7 @@ sub get_all_avatars
 
         $filepath =~ s/^\/data//;
 
-        push( @avatars, { 
+        push( @avatars, {
                             avatar_id  => $avatar->id(),
                             filename   => $avatar->filename(),
                             title      => $avatar->title(),
@@ -663,7 +665,7 @@ sub has_permission
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
     return 0 if ! defined $permission_name;
@@ -674,20 +676,20 @@ sub has_permission
 
     if ( $loaded == 0 )
     {
-        $LOGGER->error( 
-                        'Could not load Permission >' . $permission_name . 
+        $LOGGER->error(
+                        'Could not load Permission >' . $permission_name .
                         '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
         );
         return 0;
     }
-   
-    # Get the User's Role. 
+
+    # Get the User's Role.
     my $role = Side7::User::Role->new( id => $self->account->user_role_id );
     $loaded = $role->load( speculative => 1 );
 
     if ( $loaded == 0 )
     {
-        $LOGGER->error( 
+        $LOGGER->error(
                         'Could not load User Role >' . $self->account->user_role_id .
                         '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
         );
@@ -698,8 +700,8 @@ sub has_permission
     my $role_has_permission = $role->has_permission( $permission_name );
 
     # See if the User has the permission owned, and also ensure it's not revoked or suspended.
-    my $user_owned_permission = Side7::User::UserOwnedPermission->new( 
-                                                                        user_id       => $self->id, 
+    my $user_owned_permission = Side7::User::UserOwnedPermission->new(
+                                                                        user_id       => $self->id,
                                                                         permission_id => $permission->id
                                                                      );
     my $uop_loaded = $user_owned_permission->load( speculative => 1 );
@@ -721,7 +723,7 @@ sub has_permission
     }
 
     # If the role has the permission, or the User has purchased the permission, return true.
-    if ( 
+    if (
         $role_has_permission == 1
         ||
         $uop_loaded != 0
@@ -750,16 +752,16 @@ sub get_all_permissions
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
-    # Get the User's Role. 
+    # Get the User's Role.
     my $role = Side7::User::Role->new( id => $self->account->user_role_id );
     my $loaded = $role->load( speculative => 1 );
 
     if ( $loaded == 0 )
     {
-        $LOGGER->error( 
+        $LOGGER->error(
                         'Could not load User Role >' . $self->account->user_role_id .
                         '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
         );
@@ -771,10 +773,10 @@ sub get_all_permissions
     my @permissions = ();
     foreach my $permission ( @{ $role_based_permissions } )
     {
-        push ( 
-                @permissions, { 
-                                id           => $permission->id, 
-                                name         => $permission->name, 
+        push (
+                @permissions, {
+                                id           => $permission->id,
+                                name         => $permission->name,
                                 description  => $permission->description,
                                 purchaseable => $permission->purchaseable,
                             }
@@ -782,8 +784,8 @@ sub get_all_permissions
     }
 
 
-    my $user_owned_permissions 
-            = Side7::User::UserOwnedPermission::Manager->get_user_owned_permissions( 
+    my $user_owned_permissions
+            = Side7::User::UserOwnedPermission::Manager->get_user_owned_permissions(
                 query =>
                 [
                     user_id => [ $self->id ],
@@ -793,10 +795,10 @@ sub get_all_permissions
 
     foreach my $permission ( @{ $user_owned_permissions } )
     {
-        push ( 
-                @permissions, { 
-                                id           => $permission->permission->id, 
-                                name         => $permission->permission->name, 
+        push (
+                @permissions, {
+                                id           => $permission->permission->id,
+                                name         => $permission->permission->name,
                                 description  => $permission->permission->description,
                                 purchaseable => $permission->permission->purchaseable,
                                 suspended    => $permission->suspended,
@@ -824,16 +826,16 @@ sub get_all_perks
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
-        return undef;
+        return;
     }
 
-    # Get the User's Role. 
+    # Get the User's Role.
     my $role = Side7::User::Role->new( id => $self->account->user_role_id );
     my $loaded = $role->load( speculative => 1 );
 
     if ( $loaded == 0 )
     {
-        $LOGGER->error( 
+        $LOGGER->error(
                         'Could not load User Role >' . $self->account->user_role_id .
                         '< for User >' . $self->username . '<, ID >' . $self->id . '<.'
         );
@@ -845,10 +847,10 @@ sub get_all_perks
     my @perks = ();
     foreach my $perk ( @{ $role_based_perks } )
     {
-        push ( 
-                @perks, { 
-                            id           => $perk->id, 
-                            name         => $perk->name, 
+        push (
+                @perks, {
+                            id           => $perk->id,
+                            name         => $perk->name,
                             description  => $perk->description,
                             purchaseable => $perk->purchaseable,
                         }
@@ -856,8 +858,8 @@ sub get_all_perks
     }
 
 
-    my $user_owned_perks 
-            = Side7::User::UserOwnedPerk::Manager->get_user_owned_perks( 
+    my $user_owned_perks
+            = Side7::User::UserOwnedPerk::Manager->get_user_owned_perks(
                 query =>
                 [
                     user_id => [ $self->id ],
@@ -867,10 +869,10 @@ sub get_all_perks
 
     foreach my $perk ( @{ $user_owned_perks } )
     {
-        push ( 
-                @perks, { 
-                          id           => $perk->perk->id, 
-                          name         => $perk->perk->name, 
+        push (
+                @perks, {
+                          id           => $perk->perk->id,
+                          name         => $perk->perk->name,
                           description  => $perk->perk->description,
                           purchaseable => $perk->perk->purchaseable,
                           suspended    => $perk->suspended,
@@ -996,9 +998,9 @@ sub get_activity_logs
 
     my $logs = Side7::ActivityLog::Manager->get_activity_logs(
                                                                query => [
-                                                                            eval $query,
+                                                                            eval{ $query },
                                                                         ],
-                                                               limit   => $limit, 
+                                                               limit   => $limit,
                                                                sort_by => 'created_at desc'
                                                              );
 
@@ -1120,7 +1122,7 @@ sub get_pending_friend_requests
 
     $friend_requests = Side7::User::Friend::Manager->get_friends(
                                                                     query => [
-                                                                                eval $query
+                                                                                eval { $query },
                                                                              ],
                                                                     with_objects => [ 'user' ],
                                                                 );
@@ -1131,9 +1133,9 @@ sub get_pending_friend_requests
 =head2 can_send_friend_request_to_user()
 
 This method checks the system to ensure the conditions are right for allowing a User to
-send a friend link request to another User. The conditions include: 
+send a friend link request to another User. The conditions include:
 * Does the recipient allow friending?
-* Is the User already linked with the recipient?  
+* Is the User already linked with the recipient?
 * Does this User already have a pending friend link request?
 * Has the recipient previously denied a previous friend link request from this User?
 Returns a hashref containing a boolean to indicate send permission, and an error message value.  The error
@@ -1175,7 +1177,7 @@ sub can_send_friend_request_to_user
 
     # Are the recipient and User already linked?
     my $existing_friends = $self->get_friends_by_id( user_ids => [ $user_id ] );
-    if ( 
+    if (
         defined $existing_friends->[0]
         &&
         $existing_friends->[0]->friend_id == $user_id
@@ -1245,11 +1247,11 @@ sub is_friend_linked
 
     my $loaded = $friend->load( speculative => 1 );
 
-    if ( 
-        defined $friend 
-        && 
-        ref( $friend ) eq 'Side7::User::Friend' 
-        && 
+    if (
+        defined $friend
+        &&
+        ref( $friend ) eq 'Side7::User::Friend'
+        &&
         $loaded != 0
     )
     {
@@ -1329,12 +1331,12 @@ sub process_signup
     # Error out if username or e-mail address already exists.
     if ( defined $username && $username ne '' )
 	{
-	    my $user_check = Side7::User->new( username => $username );
-	    my $loaded = $user_check->load( speculative => 1 );
-	    if ( $loaded != 0 )
-	    {
-	        push @form_errors, 'A user with the Username >' . $username . '< already exists.';
-	    }
+        my $user_check = Side7::User->new( username => $username );
+        my $loaded = $user_check->load( speculative => 1 );
+        if ( $loaded != 0 )
+        {
+            push @form_errors, 'A user with the Username >' . $username . '< already exists.';
+        }
     }
     else
     {
@@ -1361,7 +1363,7 @@ sub process_signup
     }
 
     # Save new account to database.
-    
+
     my $user = Side7::User->new(
         username      => $username,
         password      => Side7::Utils::Crypt::sha1_hex_encode( $password ),
@@ -1453,7 +1455,7 @@ sub confirm_new_user
                 amount      => $CONFIG->{'kudos_coins'}->{'award'}->{'referral'},
                 description => 'Referral Award for referring <strong>' . $account->user->username() . '</strong>',
                 purchased   => 0,
-            ); 
+            );
             if ( ! $success )
             {
                 $LOGGER->error( 'Could not award >' . $referrer->username() . '< Kudos Coins for referring >' .
@@ -1497,7 +1499,7 @@ sub confirm_password_change
     {
         $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
         $change_results{'confirmed'} = 0;
-        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code .
                                         '< is invalid. Please check your code and try again.';
         return \%change_results;
     }
@@ -1509,7 +1511,7 @@ sub confirm_password_change
     {
         $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
         $change_results{'confirmed'} = 0;
-        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code .
                                         '< is invalid. Please check your code and try again.';
         return \%change_results;
     }
@@ -1557,7 +1559,7 @@ sub confirm_set_delete_flag
     {
         $LOGGER->error( 'Invalid confirmation code >' . $confirmation_code . '< passed in.' );
         $change_results{'confirmed'} = 0;
-        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code .
                                         '< is invalid. Please check your code and try again.';
         return \%change_results;
     }
@@ -1569,7 +1571,7 @@ sub confirm_set_delete_flag
     {
         $LOGGER->error( 'No matching User account for confirmation code >' . $confirmation_code . '< was found.' );
         $change_results{'confirmed'} = 0;
-        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code . 
+        $change_results{'error'}     = 'The confirmation code >' . $confirmation_code .
                                         '< is invalid. Please check your code and try again.';
         return \%change_results;
     }
@@ -1653,7 +1655,7 @@ sub show_profile
     my $username         = delete $args{'username'};
     my $filter_profanity = delete $args{'filter_profanity'} // 1;
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
@@ -1661,13 +1663,13 @@ sub show_profile
     if ( $loaded == 0 )
     {
         $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
+        return;
     }
 
     # User Not Found
     if ( ! defined $user )
     {
-        return undef;
+        return;
     }
 
     # User Found
@@ -1699,13 +1701,13 @@ sub show_home
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [
-                                                            'kudos_coins?', 
-                                                            'user_owned_perks?', 
-                                                            'user_owned_permissions?', 
+                                                            'kudos_coins?',
+                                                            'user_owned_perks?',
+                                                            'user_owned_permissions?',
                                                             'account'
                                                         ],
     );
@@ -1713,13 +1715,13 @@ sub show_home
     if ( $loaded == 0 )
     {
         $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
+        return;
     }
 
     # User Not Found
     if ( ! defined $user )
     {
-        return undef;
+        return;
     }
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -1736,8 +1738,8 @@ sub show_home
                             );
 
     ( $user_hash->{'disk_used'}, undef )
-            = Side7::Utils::File::get_formatted_filesize_from_bytes( 
-                                                            bytes       => $disk_stats->{'disk_usage'}, 
+            = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                            bytes       => $disk_stats->{'disk_usage'},
                                                             force_units => 'MB',
             );
 
@@ -1776,7 +1778,7 @@ sub show_account
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account' ] );
@@ -1784,13 +1786,13 @@ sub show_account
     if ( $loaded == 0 )
     {
         $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
+        return;
     }
 
     # User Not Found
     if ( ! defined $user )
     {
-        return undef;
+        return;
     }
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -1821,7 +1823,7 @@ sub show_kudos
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'kudos_coins' ] );
@@ -1829,13 +1831,13 @@ sub show_kudos
     if ( $loaded == 0 )
     {
         $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
+        return;
     }
 
     # User Not Found
     if ( ! defined $user )
     {
-        return undef;
+        return;
     }
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -1866,7 +1868,7 @@ sub show_gallery
 
     my $username = delete $args{'username'};
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [
@@ -1877,13 +1879,13 @@ sub show_gallery
     if ( $loaded == 0 )
     {
         $LOGGER->warn( 'Could not find user >' . $username . '< in database.' );
-        return undef;
+        return;
     }
 
     # User Not Found
     if ( ! defined $user )
     {
-        return undef;
+        return;
     }
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -1901,8 +1903,8 @@ sub show_gallery
                             );
 
     ( $user_hash->{'disk_used'}, undef )
-            = Side7::Utils::File::get_formatted_filesize_from_bytes( 
-                                                            bytes       => $disk_stats->{'disk_usage'}, 
+            = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                            bytes       => $disk_stats->{'disk_usage'},
                                                             force_units => 'MB',
             );
 
@@ -1939,7 +1941,7 @@ sub get_user_by_id
 {
     my ( $user_id ) = @_;
 
-    return undef if ( ! defined $user_id || $user_id !~ /^\d+$/ );
+    return if ( ! defined $user_id || $user_id !~ /^\d+$/ );
 
     my $user = Side7::User->new( id => $user_id );
     my $loaded = $user->load( speculative => 1, with => [ 'account', 'user_preferences' ] );
@@ -1949,7 +1951,7 @@ sub get_user_by_id
         return $user;
     }
 
-    return undef;
+    return;
 }
 
 
@@ -1973,7 +1975,7 @@ sub get_user_by_username
 {
     my ( $username ) = @_;
 
-    return undef if ( ! defined $username || $username eq '' );
+    return if ( ! defined $username || $username eq '' );
 
     my $user = Side7::User->new( username => $username );
     my $loaded = $user->load( speculative => 1, with => [ 'account', 'user_preferences' ] );
@@ -1983,7 +1985,7 @@ sub get_user_by_username
         return $user;
     }
 
-    return undef;
+    return;
 }
 
 
@@ -2029,11 +2031,11 @@ sub get_users_for_directory
             [
                 username => { $op => "$initial_string" },
             ],
-    ); 
+    );
 
     my $iterator = Side7::User::Manager->get_users_iterator(
-        query => 
-            [ 
+        query =>
+            [
                 username => { $op => "$initial_string" },
             ],
         with_objects => [ 'account', 'user_preferences', 'images', 'images.rating' ],
@@ -2104,17 +2106,17 @@ sub get_users_for_directory
                     }
                 }
 
-                push( @images, { 
-                                filepath       => $filepath, 
-                                filepath_error => $error, 
+                push( @images, {
+                                filepath       => $filepath,
+                                filepath_error => $error,
                                 uri            => "/image/$image->{'id'}",
                                 title          => Side7::Utils::Text::sanitize_text_for_html( $image->title ),
                                }
                 );
             }
         }
- 
-        push @$users, 
+
+        push @$users,
             {
                 user_hash     => $user->get_user_hash_for_template(),
                 image_count   => $user->get_image_count(),
@@ -2214,7 +2216,7 @@ sub show_user_gallery
 
     if ( ! defined $user )
     {
-        return undef; # TODO: Need to redirect to invalid user error page.
+        return; # TODO: Need to redirect to invalid user error page.
     }
 
     my $gallery = $user->get_gallery( session => $session );

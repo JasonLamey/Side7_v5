@@ -7,6 +7,8 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 
@@ -25,7 +27,7 @@ hours, the request is automatically deleted.
 =head1 SCHEMA INFORMATION
 
     Table name: user_set_delete_flag_requests
-     
+
     | id                | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
     | confirmation_code | varchar(60)         | NO   | UNI | NULL    |                |
     | user_id           | bigint(20) unsigned | NO   | MUL | NULL    |                |
@@ -50,11 +52,11 @@ One to one relationship, using User_id as a foreign key.
 __PACKAGE__->meta->setup
 (
     table   => 'user_set_delete_flag_requests',
-    columns => [ 
+    columns => [
         id                => { type => 'serial', not_null => 1 },
-        confirmation_code => { type => 'varchar', length => 60,  not_null => 1 }, 
-        user_id           => { type => 'integer', not_null => 1 }, 
-        created_at        => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        confirmation_code => { type => 'varchar', length => 60,  not_null => 1 },
+        user_id           => { type => 'integer', not_null => 1 },
+        created_at        => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at        => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

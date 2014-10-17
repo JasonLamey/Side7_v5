@@ -8,6 +8,8 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Side7::Account;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 # == Schema Information
 #
 # Table name: date_visibilities
@@ -19,9 +21,9 @@ use Side7::Account;
 __PACKAGE__->meta->setup
 (
     table   => 'date_visibilities',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        visibility    => { type => 'varchar', length => 45,  not_null => 1 }, 
+        visibility    => { type => 'varchar', length => 45,  not_null => 1 },
     ],
     pk_columns => 'id',
     unique_key => 'visibility',
@@ -38,21 +40,25 @@ __PACKAGE__->meta->setup
 
 =pod
 
+
 =head1 NAME
 
 Side7::DateVisibility
+
 
 =head1 DESCRIPTION
 
 This class represents a visibility settings for a date, specifically birthdates.
 Possible settings are Full, Hide Year, and Hidden
 
+
 =head1 METHODS
+
 
 =head2 new()
 
-    my $user = Side7::DateVisibility->new( 
-        visibilty => $visibility, 
+    my $user = Side7::DateVisibility->new(
+        visibilty => $visibility,
     );
 
 =over
@@ -73,7 +79,6 @@ Possible settings are Full, Hide Year, and Hidden
 #    return $self;
 #}
 
-=pod
 
 =head1 COPYRIGHT
 

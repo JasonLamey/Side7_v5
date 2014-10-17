@@ -6,6 +6,10 @@ use warnings;
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use parent 'Clone';
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.5' );
+
 =pod
 
 =head1 NAME
@@ -61,23 +65,23 @@ Many to one relationship, with user_id being the FK
 __PACKAGE__->meta->setup
 (
     table   => 'user_preferences',
-    columns => [ 
+    columns => [
         id                         => { type => 'serial',   not_null => 1 },
         user_id                    => { type => 'integer',  not_null => 1 },
         display_signature          => { type => 'boolean',  not_null => 1, default => 0 },
         show_management_thumbs     => { type => 'boolean',  not_null => 1, default => 1 },
-        default_comment_visibility => { 
-                                        type     => 'enum',  
-                                        values   => [ 'Show', 'Hide' ],  
+        default_comment_visibility => {
+                                        type     => 'enum',
+                                        values   => [ 'Show', 'Hide' ],
                                         not_null => 1,
                                         default  => 'Show',
-                                      }, 
-        default_comment_type       => { 
+                                      },
+        default_comment_type       => {
                                         type     => 'enum',
                                         values   => [ 'Any', 'Commentary Only', 'Light Critique', 'Heavy Critique' ],
                                         not_null => 1,
                                         default  => 'Any',
-                                      }, 
+                                      },
         allow_watching             => { type => 'boolean',  not_null => 1, default => 1 },
         allow_favoriting           => { type => 'boolean',  not_null => 1, default => 1 },
         allow_sharing              => { type => 'boolean',  not_null => 1, default => 1 },
@@ -86,28 +90,28 @@ __PACKAGE__->meta->setup
         pms_notifications          => { type => 'boolean',  not_null => 1, default => 1 },
         comment_notifications      => { type => 'boolean',  not_null => 1, default => 1 },
         show_online                => { type => 'boolean',  not_null => 1, default => 1 },
-        thumbnail_size             => { 
-                                        type     => 'enum',  
-                                        values   => [ 'Small', 'Large' ],  
+        thumbnail_size             => {
+                                        type     => 'enum',
+                                        values   => [ 'Small', 'Large' ],
                                         not_null => 1,
                                         default  => 'Small',
-                                      }, 
-        content_display_type       => { 
-                                        type     => 'enum',  
-                                        values   => [ 'List', 'Grid' ],  
+                                      },
+        content_display_type       => {
+                                        type     => 'enum',
+                                        values   => [ 'List', 'Grid' ],
                                         not_null => 1,
                                         default  => 'List',
-                                      }, 
+                                      },
         show_m_thumbs              => { type => 'boolean',  not_null => 1, default => 0 },
         show_adult_content         => { type => 'boolean',  not_null => 1, default => 0 },
-        display_full_sized_images  => { 
-                                        type     => 'enum',  
-                                        values   => [ 'Same Window', 'New Window' ],  
+        display_full_sized_images  => {
+                                        type     => 'enum',
+                                        values   => [ 'Same Window', 'New Window' ],
                                         not_null => 1,
                                         default  => 'Same Window',
-                                      }, 
+                                      },
         filter_profanity           => { type => 'boolean',  not_null => 1, default => 1 },
-        created_at                 => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        created_at                 => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at                 => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -142,13 +146,13 @@ sub get_enum_values
 
     my $enums = {};
 
-    my $pref_enums = Side7::DB::get_enum_values_for_form( fields => [ 
+    my $pref_enums = Side7::DB::get_enum_values_for_form( fields => [
                                                                         'default_comment_visibility',
                                                                         'default_comment_type',
                                                                         'thumbnail_size',
                                                                         'content_display_type',
                                                                         'display_full_sized_images',
-                                                                    ], 
+                                                                    ],
                                                           table  => 'user_preferences',
                                                         );
 
@@ -172,7 +176,7 @@ Parameters:
 
     my $user_preferences = Side7::User::Preference->get_default_values();
 
-=cut 
+=cut
 
 sub get_default_values
 {

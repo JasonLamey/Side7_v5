@@ -8,15 +8,20 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::Category::Manager;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Category
 
+
 =head1 DESCRIPTION
 
 This package represents User Content categories for content to be tagged with.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -28,6 +33,7 @@ This package represents User Content categories for content to be tagged with.
     | content_type | varchar(255)    | NO   |     | NULL    |                |
     | created_at   | datetime        | NO   |     | NULL    |                |
     | updated_at   | datetime        | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -46,12 +52,12 @@ Called by Image, using C<category_id> as the FK in Image linking to the C<id> fi
 __PACKAGE__->meta->setup
 (
     table   => 'categories',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', length => 5,   not_null => 1 },
-        category      => { type => 'varchar', length => 255, not_null => 1 }, 
-        priority      => { type => 'integer', length => 5,   not_null => 1 }, 
-        content_type  => { type => 'varchar', length => 255, not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        category      => { type => 'varchar', length => 255, not_null => 1 },
+        priority      => { type => 'integer', length => 5,   not_null => 1 },
+        content_type  => { type => 'varchar', length => 255, not_null => 1 },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

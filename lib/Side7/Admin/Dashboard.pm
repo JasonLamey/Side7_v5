@@ -16,6 +16,8 @@ use Side7::User::Role::Manager;
 use Side7::User::Country::Manager;
 use Side7::DateVisibility::Manager;
 
+use version; our $VERSION = qv( '0.1.6' );
+
 =pod
 
 
@@ -118,7 +120,7 @@ sub get_main_menu
     # Users
     $enabled = ( $user->has_permission( 'can_view_account_details' ) ) ? 1 : 0;
     push ( @main_menu_options, { name => 'Manage Users', link => '/admin/users', enabled => $enabled } );
-    
+
     # View Audit Logs
     $enabled = ( $user->has_permission( 'can_view_audit_logs' ) ) ? 1 : 0;
     push ( @main_menu_options, { name => 'View Audit Logs', link => '/admin/audit_logs', enabled => $enabled } );
@@ -203,7 +205,7 @@ sub show_user_dashboard
 
     my $initials = Side7::User::get_username_initials();
 
-    my ( $users, $user_count ) = Side7::User::get_users_for_directory( 
+    my ( $users, $user_count ) = Side7::User::get_users_for_directory(
                                                                             initial          => $initial,
                                                                             page             => $page,
                                                                             no_images        => 1,
@@ -215,7 +217,7 @@ sub show_user_dashboard
     my $types    = Side7::Admin::Dashboard::get_user_types_for_select();
 
     return {
-                users      => $users, 
+                users      => $users,
                 user_count => $user_count,
                 initials   => $initials,
                 statuses   => $statuses,
@@ -429,7 +431,7 @@ sub search_users
     {
         my $search = $search_term;
         $search =~ s/([\@\$\#\%])/\\$1/g;
-        $query .= qq( 
+        $query .= qq(
                     or => [
                             'username'           => { like => "%$search%" },
                             'email_address'      => { like => "%$search%" },
@@ -453,7 +455,7 @@ sub search_users
     my $user_count = Side7::User::Manager->get_users_count(
         query =>
             [
-                eval $query,
+                eval { $query },
             ],
         with_objects => [ 'account' ],
     );
@@ -461,7 +463,7 @@ sub search_users
     my $users = Side7::User::Manager->get_users
     (
         query => [
-                    eval $query,
+                    eval { $query },
                  ],
         with_objects => [ 'account' ],
         sort_by      => 'username ASC',
@@ -523,7 +525,7 @@ sub search_audit_logs
     {
         my $search = $search_term;
         $search =~ s/([\@\$\#\%])/\\$1/g;
-        $query .= qq( 
+        $query .= qq(
                     or => [
                             'title'       => { like => "%$search%" },
                             'description' => { like => "%$search%" },
@@ -535,7 +537,7 @@ sub search_audit_logs
     my $log_count = Side7::AuditLog::Manager->get_audit_logs_count(
         query =>
             [
-                eval $query,
+                eval { $query },
             ],
         with_objects => [ 'user' ],
     );
@@ -543,7 +545,7 @@ sub search_audit_logs
     my $logs = Side7::AuditLog::Manager->get_audit_logs
     (
         query => [
-                    eval $query,
+                    eval { $query },
                  ],
         with_objects => [ 'user' ],
         sort_by      => 'timestamp DESC',
@@ -564,12 +566,12 @@ sub search_audit_logs
             }
             elsif
             (
-                $key eq 'title' 
-                || 
-                $key eq 'description' 
-                || 
+                $key eq 'title'
+                ||
+                $key eq 'description'
+                ||
                 $key eq 'user_id'
-                || 
+                ||
                 $key eq 'ip_address'
             )
             {

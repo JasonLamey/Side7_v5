@@ -3,11 +3,15 @@ package Side7::Config;
 use strict;
 use warnings;
 
+use version; our $VERSION = qv( '0.1.10' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::Config
+
 
 =head1 DESCRIPTION
 
@@ -17,6 +21,7 @@ This package provides configuration data for the application.
 
 
 =head1 FUNCTIONS
+
 
 =head2 new
 

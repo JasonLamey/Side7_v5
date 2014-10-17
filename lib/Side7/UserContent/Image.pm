@@ -17,15 +17,20 @@ use Side7::Utils::File;
 use Side7::Utils::Text;
 use Side7::Utils::Image;
 
+use version; our $VERSION = qv( '0.1.18' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Image
 
+
 =head1 DESCRIPTION
 
 This package represents an Image object as uploaded by a User.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -68,28 +73,28 @@ Many to one relationship with Side7::User, using user_id as a foreign key.
 __PACKAGE__->meta->setup
 (
     table   => 'images',
-    columns => [ 
+    columns => [
         id                => { type => 'serial', primary_key => 1, not_null => 1 },
-        user_id           => { type => 'integer', length => 8,   not_null => 1 }, 
-        filename          => { type => 'varchar', length => 255, not_null => 1 }, 
-        title             => { type => 'varchar', length => 255, not_null => 1 }, 
-        filesize          => { type => 'integer', length => 20,  not_null => 1 }, 
-        dimensions        => { type => 'varchar', length => 15,  not_null => 1 }, 
-        category_id       => { type => 'integer', length => 8,   not_null => 1 }, 
-        rating_id         => { type => 'integer', length => 8,   not_null => 1 }, 
+        user_id           => { type => 'integer', length => 8,   not_null => 1 },
+        filename          => { type => 'varchar', length => 255, not_null => 1 },
+        title             => { type => 'varchar', length => 255, not_null => 1 },
+        filesize          => { type => 'integer', length => 20,  not_null => 1 },
+        dimensions        => { type => 'varchar', length => 15,  not_null => 1 },
+        category_id       => { type => 'integer', length => 8,   not_null => 1 },
+        rating_id         => { type => 'integer', length => 8,   not_null => 1 },
         rating_qualifiers => { type => 'varchar', length => 10 },
-        stage_id          => { type => 'integer', length => 5,   not_null => 1 }, 
-        description       => { type => 'text',                                  default => 'null' }, 
-        privacy           => { 
+        stage_id          => { type => 'integer', length => 5,   not_null => 1 },
+        description       => { type => 'text',                                  default => 'null' },
+        privacy           => {
                                type    => 'enum',
                                values  => [ 'Public', 'Friends Only', 'Private' ],
                                default => 'Public'
         },
-        is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 }, 
-        copyright_year    => { type => 'integer', length => 4 }, 
+        is_archived       => { type => 'integer', length => 1,   not_null => 1, default => 0 },
+        copyright_year    => { type => 'integer', length => 4 },
         checksum          => { type => 'varchar', length => 120 },
         content_type      => { type => 'varchar', length => 5, default => 'Image' },
-        created_at        => { type => 'datetime',               not_null => 1, default => 'now()' }, 
+        created_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
         updated_at        => { type => 'datetime',               not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -151,7 +156,9 @@ __PACKAGE__->meta->setup
     ],
 );
 
+
 =head1 METHODS
+
 
 =head2 get_cached_image_path()
 
@@ -173,20 +180,20 @@ sub get_cached_image_path
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $size = delete $args{'size'} // 'original';
 
     my ( $success, $error, $image_path ) =
-            Side7::Utils::File::create_user_cached_file_directory( 
-                                                                    user_id      => $self->user_id, 
-                                                                    content_type => 'images', 
+            Side7::Utils::File::create_user_cached_file_directory(
+                                                                    user_id      => $self->user_id,
+                                                                    content_type => 'images',
                                                                     content_size => $size
                                                                  );
 
     if ( ! $success )
     {
-        return ( 
+        return (
                     Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
                     $error
                );
@@ -201,7 +208,7 @@ sub get_cached_image_path
     if ( ! defined $format )
     {
         $LOGGER->warn( 'Getting image path FAILED while getting properties of input file >' . $user_gallery_path . $self->filename . '<' );
-        return( 
+        return(
                 Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
                 'A problem occurred while trying to get Image file.'
               );
@@ -222,7 +229,7 @@ sub get_cached_image_path
     }
     else
     {
-        return( 
+        return(
                 Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
                 'Invalid image file type.'
               );
@@ -261,9 +268,9 @@ sub get_image_hash_for_template
     my $image_hash = {};
 
     # Image values
-    foreach my $key ( 
-        qw( id user_id filename title dimensions category_id rating_id 
-            rating_qualifiers stage_id privacy is_archived 
+    foreach my $key (
+        qw( id user_id filename title dimensions category_id rating_id
+            rating_qualifiers stage_id privacy is_archived
             copyright_year )
     )
     {
@@ -365,12 +372,12 @@ sub create_cached_file
     }
 
     my ( $success, $error ) = Side7::Utils::Image::create_cached_image( image => $self, size => $size, path => $path );
-   
+
     if ( ! defined $success )
     {
         $LOGGER->warn( "Could not create cached image file for >$self->filename<, ID: >$self->id<: $error" );
         return ( 0, 'Could not create cached image.' );
-    } 
+    }
 
     return ( $success, undef );
 }
@@ -485,10 +492,10 @@ sub show_image
     return {} if ( ! defined $image_id || $image_id =~ m/\D+/ || $image_id eq '' );
 
     my $image = Side7::UserContent::Image->new( id => $image_id );
-    my $loaded = $image->load( 
-                                speculative => 1, 
-                                with => 
-                                [ 
+    my $loaded = $image->load(
+                                speculative => 1,
+                                with =>
+                                [
                                     'user',
                                     'rating',
                                     'category',
@@ -512,9 +519,9 @@ sub show_image
     my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity ) // {};
 
     # Fetch Image Comments
-    my $image_comments = 
-        Side7::UserContent::CommentThread::get_all_comments_for_content( 
-                                                                        content_type => 'image', 
+    my $image_comments =
+        Side7::UserContent::CommentThread::get_all_comments_for_content(
+                                                                        content_type => 'image',
                                                                         content_id   => $image_id
                                                                        ) // [];
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;
@@ -536,8 +543,8 @@ sub show_image
             {
                 $LOGGER->warn( $error );
                 $image_hash->{'filepath_error'} = $error;
-                $image_hash->{'filepath'}       = Side7::UserContent::get_default_thumbnail_path( 
-                                                                                                    type => 'default_image', 
+                $image_hash->{'filepath'}       = Side7::UserContent::get_default_thumbnail_path(
+                                                                                                    type => 'default_image',
                                                                                                     size => $size,
                                                                                                 );
             }
@@ -563,7 +570,7 @@ sub show_image
     }
 
     ### Insert new Detailed View record, including date, IP info, user agent info, and referrer info.
-    my $detailed_updated = Side7::UserContent::Image::DetailedView::add_detailed_view( 
+    my $detailed_updated = Side7::UserContent::Image::DetailedView::add_detailed_view(
                             image_id => $image_id,
                             request  => $request,
                             session  => $session,
@@ -575,7 +582,7 @@ sub show_image
     }
 
     # Get total views
-    $image_hash->{'total_views'} = 
+    $image_hash->{'total_views'} =
         Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id ) // 0;
 
     return $image_hash;

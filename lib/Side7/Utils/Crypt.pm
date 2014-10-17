@@ -9,11 +9,15 @@ use Digest::MD5;
 use Side7::Globals;
 use Side7::DB;
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::Utils::Crypt
+
 
 =head1 DESCRIPTION
 
@@ -37,7 +41,7 @@ sub sha1_hex_encode
 {
     my ( $string ) = @_;
 
-    return undef if ! defined $string;
+    return if ! defined $string;
 
     my $sha1 = Digest::SHA1->new;
     $sha1->add( $string );
@@ -59,7 +63,7 @@ sub md5_hex_encode
 {
     my ( $string ) = @_;
 
-    return undef if ! defined $string;
+    return if ! defined $string;
 
     my $md5 = Digest::MD5->new;
     $md5->add( $string );
@@ -81,7 +85,7 @@ sub old_side7_crypt
 {
     my ( $string ) = @_;
 
-    return undef if ! defined $string;
+    return if ! defined $string;
 
     return crypt($string, 'S7');
 }
@@ -99,7 +103,7 @@ sub old_mysql_password
 {
     my ( $string ) = @_;
 
-    return undef if ! defined $string;
+    return if ! defined $string;
 
     my $result = Side7::DB::build_select(
         select  => 'OLD_PASSWORD(?) as db_pass',

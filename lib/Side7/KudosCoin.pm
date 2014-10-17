@@ -9,6 +9,8 @@ use Try::Tiny;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.4' );
+
 =pod
 
 =head1 NAME
@@ -23,7 +25,7 @@ of Side 7 Kudos Coins.
 =head1 SCHEMA INFORMATION
 
     Table name: kudos_coin_ledger
-     
+
     | id          | bigint(20) unsigned | NO   | PRI | NULL    |       |
     | user_id     | bigint(20) unsigned | NO   | MUL | NULL    |       |
     | timestamp   | datetime            | NO   |     | NULL    |       |
@@ -48,13 +50,13 @@ Many to one relationship, with user_id being the FK to users.id
 __PACKAGE__->meta->setup
 (
     table   => 'kudos_coin_ledger',
-    columns => [ 
+    columns => [
         id            => { type => 'serial',  not_null => 1 },
-        user_id       => { type => 'integer', not_null => 1 }, 
-        timestamp     => { type => 'datetime', not_null => 1, default => 'now()' }, 
-        amount        => { type => 'integer', not_null => 1 }, 
-        description   => { type => 'text',    not_null => 1 }, 
-        purchased     => { type => 'boolean', not_null => 1, default => 0 }, 
+        user_id       => { type => 'integer', not_null => 1 },
+        timestamp     => { type => 'datetime', not_null => 1, default => 'now()' },
+        amount        => { type => 'integer', not_null => 1 },
+        description   => { type => 'text',    not_null => 1 },
+        purchased     => { type => 'boolean', not_null => 1, default => 0 },
     ],
     pk_columns => 'id',
     unique_key => [ [ 'user_id' ], [ 'timestamp' ], [ 'user_id', 'timestamp' ], ],
@@ -112,11 +114,11 @@ sub get_current_balance
 
     my $sth = $DB->dbh->prepare( $sql );
     $sth->execute( @{ $bind } );
- 
+
     my $row = $sth->fetchrow_hashref();
 
     $sth->finish();
-   
+
     return $row->{'total'} // 0;
 }
 
@@ -139,8 +141,8 @@ Parameters:
 
 =back
 
-    my $success = Side7::KudosCoins->give_kudos_coins( 
-                                                        user_id     => $user_id, 
+    my $success = Side7::KudosCoins->give_kudos_coins(
+                                                        user_id     => $user_id,
                                                         amount      => $amount,
                                                         description => $description,
                                                         purchased   => $purchased,
@@ -193,7 +195,7 @@ sub give_kudos_coins
         #$LOGGER->error( 'Could not give Kudos Coins to User #>' . $user_id . '<: ' . $_ );
         #return ( 0, 'There was an error adding Kudos Coins. This has been reported.' );
     #}
-   
+
     return ( 1, undef );
 }
 
@@ -218,7 +220,7 @@ sub get_formatted_timestamp
 {
     my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $date_format = delete $args{'date_format'} // '%a, %c';
 

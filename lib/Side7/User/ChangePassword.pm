@@ -7,6 +7,8 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 =head1 NAME
@@ -22,7 +24,7 @@ This library handles the saving, looking up, and removal of interim password cha
 =head1 SCHEMA INFORMATION
 
     Table name: user_password_changes
-     
+
     | id                | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
     | confirmation_code | varchar(60)         | NO   | UNI | NULL    |                |
     | user_id           | bigint(20) unsigned | NO   | MUL | NULL    |                |
@@ -48,12 +50,12 @@ One-to-one relationship with Side7::User, using user_id as the FK.
 __PACKAGE__->meta->setup
 (
     table   => 'user_password_changes',
-    columns => [ 
+    columns => [
         id                => { type => 'serial', not_null => 1 },
-        confirmation_code => { type => 'varchar', length => 60,  not_null => 1 }, 
-        user_id           => { type => 'integer', not_null => 1 }, 
-        new_password      => { type => 'varchar', length => 45,  not_null => 1 }, 
-        created_at        => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        confirmation_code => { type => 'varchar', length => 60,  not_null => 1 },
+        user_id           => { type => 'integer', not_null => 1 },
+        new_password      => { type => 'varchar', length => 45,  not_null => 1 },
+        created_at        => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at        => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

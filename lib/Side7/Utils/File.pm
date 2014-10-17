@@ -11,6 +11,8 @@ use List::Util;
 use Side7::Globals;
 use Side7::AuditLog;
 
+use version; our $VERSION = qv( '0.1.10' );
+
 
 =head1 NAME
 
@@ -40,8 +42,8 @@ Parameters:
 
 =back
 
-    $filesize = Side7::Utils::File::get_formatted_filesize_from_bytes( 
-                                                                        bytes       => $filesize_in_bytes, 
+    $filesize = Side7::Utils::File::get_formatted_filesize_from_bytes(
+                                                                        bytes       => $filesize_in_bytes,
                                                                         force_units => $unit
                                                                      );
 
@@ -223,9 +225,9 @@ Parameters:
 
 =back
 
-    my ( $success, $error, $cached_file_path ) = 
-                Side7::Utils::File::create_user_cached_file_directory( 
-                                                                        user_id      => $user_id, 
+    my ( $success, $error, $cached_file_path ) =
+                Side7::Utils::File::create_user_cached_file_directory(
+                                                                        user_id      => $user_id,
                                                                         content_type => $content_type,
                                                                         content_size => $content_size,
                                                                      );
@@ -242,8 +244,8 @@ sub create_user_cached_file_directory
 
     if ( ! defined $user_id || ! defined $content_type )
     {
-        $LOGGER->warn( sprintf( 
-                                "Missing necessary values for creating cached_file directory: %s %s", 
+        $LOGGER->warn( sprintf(
+                                "Missing necessary values for creating cached_file directory: %s %s",
                                 ( defined $user_id )      ? '' : 'user_id',
                                 ( defined $content_type ) ? '' : 'content_type'
                               )
@@ -258,9 +260,9 @@ sub create_user_cached_file_directory
         return( 0, 'Cannot confirm cached file directory. Invalid User information.', undef );
     }
 
-    if ( 
-            defined $content_type 
-            && 
+    if (
+            defined $content_type
+            &&
             $content_type eq 'images'
             &&
             ( ! defined $content_size || $content_size eq '' )
@@ -270,7 +272,7 @@ sub create_user_cached_file_directory
         return( 0, 'Cannot confirm cached file directory. Invalid User Content information.', undef );
     }
 
-    if ( 
+    if (
         defined $content_size
         &&
         lc( $content_size ) ne 'tiny'
@@ -316,26 +318,26 @@ sub create_user_cached_file_directory
     my $cached_file_dir = '';
     if ( lc( $content_type ) eq 'avatars' || lc( $content_type ) eq 'images' )
     {
-        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 
-                            'user_content' . 
-                            '/' . 
-                            $content_type . 
-                            '/' . 
+        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} .
+                            'user_content' .
+                            '/' .
+                            $content_type .
+                            '/' .
                             $content_size .
-                            '/' . 
+                            '/' .
                             $tier1 . '/' . $tier2 . '/' . $user_id;
     }
-    elsif ( 
+    elsif (
             lc( $content_type ) eq 'literature'
             ||
             lc( $content_type ) eq 'music'
           )
     {
-        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} . 
-                            'user_content' . 
-                            '/' . 
-                            $content_type . 
-                            '/' . 
+        $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} .
+                            'user_content' .
+                            '/' .
+                            $content_type .
+                            '/' .
                             $tier1 . '/' . $tier2 . '/' . $user_id;
     }
     else

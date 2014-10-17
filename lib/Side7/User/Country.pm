@@ -6,6 +6,10 @@ use warnings;
 use base 'Side7::DB::Object';
 use Mojo::Base 'Mojolicious::Controller';
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 # == Schema Information
 #
 # Table name: countries
@@ -18,10 +22,10 @@ use Mojo::Base 'Mojolicious::Controller';
 __PACKAGE__->meta->setup
 (
     table   => 'countries',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        name          => { type => 'varchar', length => 45,  not_null => 1 }, 
-        code          => { type => 'varchar', length => 3,   not_null => 1 }, 
+        name          => { type => 'varchar', length => 45,  not_null => 1 },
+        code          => { type => 'varchar', length => 3,   not_null => 1 },
     ],
     pk_columns => 'id',
     unique_key => [ 'name', 'code' ],
@@ -41,9 +45,9 @@ This class represents a country associated to an account.
 
 =head2 new()
 
-    my $country = Side7::User::Country->new( 
-        name      => $name, 
-        code      => $code, 
+    my $country = Side7::User::Country->new(
+        name      => $name,
+        code      => $code,
     );
 
 =over

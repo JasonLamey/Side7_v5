@@ -7,15 +7,20 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.4' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::User::Role
 
+
 =head1 DESCRIPTION
 
 This package handles all the access and management for User Roles.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -49,11 +54,11 @@ Many to many relationship, with id being the FK through user_roles_perks_map
 __PACKAGE__->meta->setup
 (
     table   => 'user_roles',
-    columns => [ 
+    columns => [
         id            => { type => 'serial',   not_null => 1 },
-        name          => { type => 'varchar',  length => 255,  not_null => 1 }, 
-        priority      => { type => 'integer',  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        name          => { type => 'varchar',  length => 255,  not_null => 1 },
+        priority      => { type => 'integer',  not_null => 1 },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

@@ -5,6 +5,10 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 =head1 NAME
@@ -25,7 +29,7 @@ Storage of all search requests for quick-retrieval if necessary, as well as repo
     | user_id      | bigint(20) unsigned | YES  | MUL | NULL    |                |
     | ip_address   | varchar(255)        | YES  | MUL | NULL    |                |
     | results      | longtext            | YES  |     | NULL    |                |
-    | search_count | int(10) unsigned    | NO   |     | 1       |                | 
+    | search_count | int(10) unsigned    | NO   |     | 1       |                |
 
 =cut
 
@@ -34,12 +38,12 @@ Storage of all search requests for quick-retrieval if necessary, as well as repo
 __PACKAGE__->meta->setup
 (
     table   => 'search_history',
-    columns => [ 
+    columns => [
         id            => { type => 'serial',   not_null => 1 },
-        search_term   => { type => 'varchar', length => 255, not_null => 1 }, 
-        timestamp     => { type => 'datetime', not_null => 1, default => 'now()' }, 
-        user_id       => { type => 'integer' }, 
-        ip_address    => { type => 'varchar', length => 255 }, 
+        search_term   => { type => 'varchar', length => 255, not_null => 1 },
+        timestamp     => { type => 'datetime', not_null => 1, default => 'now()' },
+        user_id       => { type => 'integer' },
+        ip_address    => { type => 'varchar', length => 255 },
         results       => { type => 'text' },
         search_count  => { type => 'integer',  not_null => 1, default => 1 },
     ],

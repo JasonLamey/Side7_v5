@@ -12,6 +12,8 @@ use Side7::User::Avatar::UserAvatar;
 use Side7::User::Avatar::UserAvatar::Manager;
 use Side7::User::Avatar::SystemAvatar;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 
@@ -88,7 +90,7 @@ sub get_avatar
     elsif ( $avatar_type eq 'Gravatar' )
     {
         my ( $gravatar_size, undef ) = split( /x/, $CONFIG->{'avatar'}->{'size'}->{$size} );
-        my %options = ( 
+        my %options = (
                         size   => $gravatar_size,
                         rating => 'r',
                       );

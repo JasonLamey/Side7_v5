@@ -10,16 +10,21 @@ use Side7::Globals;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::Manager;
 
+use version; our $VERSION = qv( '0.1.9' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent
 
+
 =head1 DESCRIPTION
 
 This package represents a User's uplaoded Content. It provides the methods
 and functions for manipulating the content of the displayed gallery, such as sort order, category views, etc.
+
 
 =head1 RELATIONSHIPS
 
@@ -65,9 +70,9 @@ Parameters:
 
 =back
 
-    my $gallery = Side7::UserContent::get_gallery( 
-        $user_id, 
-        { 
+    my $gallery = Side7::UserContent::get_gallery(
+        $user_id,
+        {
             session => $session,
             sort_by => 'created_at DESC',
             TODO: DEFINE ADDITIONAL OPTIONAL ARGUMENTS
@@ -84,7 +89,7 @@ sub get_gallery
     my $size    = delete $args->{'size'}    // 'small';
     my $session = delete $args->{'session'} // undef;
 
-    if ( ! defined $user_id || $user_id !~ m/^\d+$/) 
+    if ( ! defined $user_id || $user_id !~ m/^\d+$/)
     {
         $LOGGER->warn( 'Invalid User ID >' . $user_id . '< when attempting to fetch gallery contents.' );
         return [];
@@ -109,7 +114,7 @@ sub get_gallery
         $image_hash->{'content_type'} = 'image';
 
         my ( $filepath, $error );
- 
+
         if ( $image->block_thumbnail( session => $session ) == 1 )
         {
             $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
@@ -181,11 +186,11 @@ sub get_default_thumbnail_path
 {
     my ( %args ) = @_;
 
-    my $type = delete $args{'type'} // return undef;
+    my $type = delete $args{'type'} // return;
     my $size = delete $args{'size'} // 'original';
 
     my $path = $CONFIG->{'image'}->{'default_thumb_path'};
-   
+
     $path =~ s/:::SIZE:::/$size/g;
     $path =~ s/:::TYPE:::/$type/g;
 

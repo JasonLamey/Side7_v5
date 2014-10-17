@@ -9,6 +9,8 @@ use Data::Dumper;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
 
 
@@ -138,8 +140,8 @@ sub get_user_account_stats
                                 dbh     => $dbh,
                                 select  => 'COUNT( 1 ) AS num_users, user_type',
                                 tables  => [ 'users', 'accounts', 'user_types' ],
-                                classes => { 
-                                                users      => 'Side7::User', 
+                                classes => {
+                                                users      => 'Side7::User',
                                                 accounts   => 'Side7::Account',
                                                 user_types => 'Side7::User::Type',
                                            },
@@ -160,7 +162,7 @@ sub get_user_account_stats
     }
 
     $user_stats{'total_by_type'} = \@user_type_counts;
- 
+
     # Counts by User Status
     my @user_status_counts = ();
     my $status_sql = build_select(
@@ -168,8 +170,8 @@ sub get_user_account_stats
                                 dbh     => $dbh,
                                 select  => 'COUNT( 1 ) AS num_users, user_status',
                                 tables  => [ 'users', 'accounts', 'user_statuses' ],
-                                classes => { 
-                                                users         => 'Side7::User', 
+                                classes => {
+                                                users         => 'Side7::User',
                                                 accounts      => 'Side7::Account',
                                                 user_statuses => 'Side7::User::Status',
                                            },
@@ -190,7 +192,7 @@ sub get_user_account_stats
     }
 
     $user_stats{'total_by_status'} = \@user_status_counts;
- 
+
     # Counts by User Role
     my @user_role_counts = ();
     my $role_sql = build_select(
@@ -198,8 +200,8 @@ sub get_user_account_stats
                                 dbh     => $dbh,
                                 select  => 'COUNT( 1 ) AS num_users, name',
                                 tables  => [ 'users', 'accounts', 'user_roles' ],
-                                classes => { 
-                                                users      => 'Side7::User', 
+                                classes => {
+                                                users      => 'Side7::User',
                                                 accounts   => 'Side7::Account',
                                                 user_roles => 'Side7::User::Role',
                                            },

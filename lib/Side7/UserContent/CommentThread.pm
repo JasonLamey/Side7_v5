@@ -8,15 +8,21 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::CommentThread::Manager;
 
+use version; our $VERSION = qv( '0.1.1' );
+
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::CommentThread
 
+
 =head1 DESCRIPTION
 
 This package represents comment threads on User uploaded content.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -28,6 +34,7 @@ This package represents comment threads on User uploaded content.
     | thread_status | enum('open','closed')                 | NO   |     | open    |                |
     | created_at    | datetime                              | NO   |     | NULL    |                |
     | updated_at    | datetime                              | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -46,21 +53,21 @@ Many-to-one.  Foreign key is content_id, which links to images.id.
 __PACKAGE__->meta->setup
 (
     table   => 'comment_threads',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        content_id    => { type => 'integer', not_null => 1 }, 
-        content_type  => { 
-                            type     => 'enum', 
-                            values   => [ 'image', 'words', 'music', 'video' ], 
+        content_id    => { type => 'integer', not_null => 1 },
+        content_type  => {
+                            type     => 'enum',
+                            values   => [ 'image', 'words', 'music', 'video' ],
                             not_null => 1,
-                         }, 
-        thread_status => { 
-                            type     => 'enum', 
-                            values   => [ 'open', 'closed' ],  
+                         },
+        thread_status => {
+                            type     => 'enum',
+                            values   => [ 'open', 'closed' ],
                             default  => 'open',
                             not_null => 1,
-                         }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+                         },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -81,7 +88,7 @@ __PACKAGE__->meta->setup
     [
         comments =>
         {
-            type       => 'one to many', 
+            type       => 'one to many',
             class      => 'Side7::UserContent::Comment',
             column_map => { id => 'comment_thread_id' },
         },
@@ -126,7 +133,7 @@ sub get_all_comments_for_content
 
     return [] if ( ! defined $content_type && ! defined $content_id );
 
-    if ( 
+    if (
         $content_type ne 'image'
         &&
         $content_type ne 'words'

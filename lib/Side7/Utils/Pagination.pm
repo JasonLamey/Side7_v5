@@ -5,6 +5,8 @@ use warnings;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 
 =head1 NAME
 
@@ -20,10 +22,10 @@ Supplies tools and functionality for generating necessary data for pagination me
 
 =head2 get_pagination()
 
-    $pagination = Side7::Utils::Pagination::get_pagination( { 
-                                    total_count => $total, 
+    $pagination = Side7::Utils::Pagination::get_pagination( {
+                                    total_count => $total,
                                     page => $page,
-                                    pagination_limit => $pagination_limit 
+                                    pagination_limit => $pagination_limit
                             } );
 
 Returns a hashref of pagination variables, including previous page number, next page number, total count,
@@ -37,7 +39,7 @@ sub get_pagination
 
     my $total_count      = delete $args->{'total_count'}      // 1;
     my $page             = delete $args->{'page'}             // 1;
-    my $pagination_limit = delete $args->{'pagination_limit'} // 
+    my $pagination_limit = delete $args->{'pagination_limit'} //
                                     $CONFIG->{'page'}->{'default'}->{'pagination_limit'};
 
     # In the event a blank but defined parameter is passed in.

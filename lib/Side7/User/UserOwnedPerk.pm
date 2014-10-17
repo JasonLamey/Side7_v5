@@ -5,15 +5,22 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::User::UserOwnedPerk
 
+
 =head1 DESCRIPTION
 
 This package handles all the access and management for User Owned Perks (perks purchased, or revoked).
+
 
 =head1 SCHEMA INFORMATION
 
@@ -51,15 +58,15 @@ Many to one relationship, with perk_id being the FK
 __PACKAGE__->meta->setup
 (
     table   => 'user_owned_perks',
-    columns => [ 
+    columns => [
         id                    => { type => 'serial',   not_null => 1 },
         perk_id               => { type => 'integer',  not_null => 1 },
         user_id               => { type => 'integer',  not_null => 1 },
-        suspended             => { type => 'boolean',  default => 0 }, 
-        reinstate_on          => { type => 'date' }, 
-        revoked               => { type => 'boolean',  default => 0 }, 
-        administrative_reason => { type => 'text' }, 
-        created_at            => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        suspended             => { type => 'boolean',  default => 0 },
+        reinstate_on          => { type => 'date' },
+        revoked               => { type => 'boolean',  default => 0 },
+        administrative_reason => { type => 'text' },
+        created_at            => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at            => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 
@@ -26,7 +28,7 @@ This package provides functionality into recording and reading activity log entr
     | user_id    | bigint(20) unsigned | NO   | MUL | NULL    |                |
     | activity   | varchar(255)        | NO   |     | NULL    |                |
     | created_at | datetime            | NO   |     | NULL    |                |
-     
+
 =cut
 
 # TODO: Define the appropriate package meta config for the DB Object.
@@ -34,7 +36,7 @@ This package provides functionality into recording and reading activity log entr
 __PACKAGE__->meta->setup
 (
     table   => 'activity_logs',
-    columns => [ 
+    columns => [
         id         => { type => 'serial',   not_null => 1 },
         user_id    => { type => 'integer' },
         activity   => { type => 'varchar',  not_null => 1, length => 255 },

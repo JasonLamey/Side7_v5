@@ -7,6 +7,8 @@ use Side7::DB;
 
 use base qw(Rose::DB::Object);
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 =head1 NAME
@@ -24,7 +26,7 @@ sub init_db
 {
     Side7::DB->new;
 }
- 
+
 =pod
 
 =head1 COPYRIGHT

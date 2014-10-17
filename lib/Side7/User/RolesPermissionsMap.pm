@@ -5,15 +5,22 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::User::RolesPermissionsMap
 
+
 =head1 DESCRIPTION
 
 This package handles all the mapping of permissions to user roles.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -47,10 +54,10 @@ Many to many relationship, with permission_id being the FK through permissions
 __PACKAGE__->meta->setup
 (
     table   => 'user_roles_permissions_map',
-    columns => [ 
+    columns => [
         user_role_id  => { type => 'integer',  not_null => 1 },
-        permission_id => { type => 'integer',  not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        permission_id => { type => 'integer',  not_null => 1 },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     unique_key => [ 'user_role_id', 'permission_id' ],

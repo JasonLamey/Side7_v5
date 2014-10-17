@@ -8,15 +8,20 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::Rating::Manager;
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Rating
 
+
 =head1 DESCRIPTION
 
 This package represents the possible ratings User Content can have.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -48,17 +53,17 @@ TODO: Define the relationship type, and list the foreign key (FK).
 __PACKAGE__->meta->setup
 (
     table   => 'ratings',
-    columns => [ 
+    columns => [
         id                 => { type => 'integer', not_null => 1 },
-        rating             => { type => 'varchar', length => 255, not_null => 1 }, 
-        requires_qualifier => { type => 'tinyint', length => 1,   not_null => 1 }, 
-        priority           => { type => 'integer', length => 5,   not_null => 1 }, 
-        content_type       => { 
+        rating             => { type => 'varchar', length => 255, not_null => 1 },
+        requires_qualifier => { type => 'tinyint', length => 1,   not_null => 1 },
+        priority           => { type => 'integer', length => 5,   not_null => 1 },
+        content_type       => {
                                 type    => 'enum',
                                 values  => [ qw/Image Literature Music Video/ ],
                                 default => 'Image',
-        }, 
-        created_at         => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        },
+        created_at         => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at         => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -104,9 +109,9 @@ sub get_ratings_for_form
     my @results = ();
     foreach my $rating ( @{ $ratings } )
     {
-        push( @results, { 
-                            id                 => $rating->id(), 
-                            rating             => $rating->rating(), 
+        push( @results, {
+                            id                 => $rating->id(),
+                            rating             => $rating->rating(),
                             requires_qualifier => $rating->requires_qualifier()
                         }
         );

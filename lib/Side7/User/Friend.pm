@@ -7,6 +7,8 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 
@@ -30,7 +32,7 @@ This package manages friend relationships between Users.
     | status     | enum('Pending','Approved','Denied','Ignored') | NO   | MUL | Pending |                |
     | created_at | datetime                                      | NO   |     | NULL    |                |
     | updated_at | datetime                                      | NO   |     | NULL    |                |
-     
+
 
 =head1 RELATIONSHIPS
 
@@ -53,17 +55,17 @@ Many-to-one relationship via friend_id as the FK (aliasing user_id)
 __PACKAGE__->meta->setup
 (
     table   => 'friends',
-    columns => [ 
+    columns => [
         id            => { type => 'serial', not_null => 1 },
         user_id       => { type => 'integer', not_null => 1 },
         friend_id     => { type => 'integer', not_null => 1 },
         status        => {
-                            type     => 'enum', 
+                            type     => 'enum',
                             values   => [ qw/ Pending Approved Denied Ignored / ],
                             not_null => 1,
                             default  => 'Pending',
-                         }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+                         },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

@@ -8,6 +8,8 @@ use Regexp::Common qw/profanity profanity_us/;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.7' );
+
 
 =head1 NAME
 
@@ -24,7 +26,7 @@ Supplies tools and functionality for parsing text in various and sundry ways.
 
 =head2 parse_bbcode_markup()
 
-Returns a string that has the BBCode-like markup in the passed in string parsed into HTML.  
+Returns a string that has the BBCode-like markup in the passed in string parsed into HTML.
 C<%args> is a hash of arguments that can be passed to Parse::BBCode to customize its output.
 
 Parameters:
@@ -45,7 +47,7 @@ sub parse_bbcode_markup
 {
     my ( $incoming_text, $args ) = @_;
 
-    return undef if ! defined $incoming_text;
+    return if ! defined $incoming_text;
 
     my $smileys = (defined $args->{'smilies'}) ? 1 : 0;
 
@@ -84,7 +86,7 @@ sub true_false_to_int
 
     return 0 if ! defined $text;
 
-    if ( 
+    if (
             lc( $text ) eq 'true'
             ||
             $text eq '1'
@@ -123,7 +125,7 @@ sub sanitize_text_for_html
 {
     my ( $text ) = @_;
 
-    return undef if ! defined $text;
+    return if ! defined $text;
 
     $text =~ s/"/&quot;/g;
     $text =~ s/'/&apos;/g;
@@ -168,7 +170,7 @@ sub filter_profanity
 =head2 get_pronoun()
 
 Returns a string containing the appropriate pronoun based on the User's
-stated sex and the part of speech. This is an attempt to present the User base 
+stated sex and the part of speech. This is an attempt to present the User base
 with gender-neutral pronoun options.
 
 Parameters:

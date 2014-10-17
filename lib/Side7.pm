@@ -37,13 +37,13 @@ use Side7::FAQCategory;
 use Side7::FAQCategory::Manager;
 use Side7::FAQEntry;
 
-our $VERSION = '0.1';
+use version; our $VERSION = qv( '0.1.40' );
 const my $AGE_18_IN_MONTHS => 216;
 
 hook 'before_template_render' => sub
 {
     my $tokens = shift;
-       
+
     $tokens->{'css_url'}    = request->base . 'css/style.css';
     $tokens->{'login_url'}  = uri_for( '/login'  );
     $tokens->{'logout_url'} = uri_for( '/logout' );
@@ -52,7 +52,7 @@ hook 'before_template_render' => sub
 
     if ( defined session( 'logged_in' ) )
     {
-        my $visitor = 
+        my $visitor =
             Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => [ 'account' ] );
         $tokens->{'header_avatar'} = $visitor->get_avatar( { size => 'tiny' } );
     }
@@ -63,9 +63,9 @@ hook 'before' => sub
     # Setting Visitor-relavent user preferences.
     my $visitor = undef;
     if ( defined session( 'logged_in' ) ) {
-        $visitor = 
+        $visitor =
             Side7::User->new( id => session( 'user_id' ) )->load( speculative => 1, with => [ 'user_preferences' ] );
-        foreach my $key ( 
+        foreach my $key (
                             qw/ display_signature show_management_thumbs show_m_thumbs show_adult_content
                                 filter_profanity thumbnail_size content_display_type display_full_sized_images /
                         )
@@ -97,7 +97,7 @@ hook 'before' => sub
     set layout => 'main';
 };
 
-get '/' => sub 
+get '/' => sub
 {
     my $stickies = Side7::News::Manager->get_news(
                                                     query => [
@@ -147,8 +147,8 @@ get '/news/?:page?' => sub
     my $news = Side7::News->get_news_article_list( page => $page );
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news->{'news_count'}, page => $page } );
 
-    template 'news/article_list', { 
-                                    data          => $news, 
+    template 'news/article_list', {
+                                    data          => $news,
                                     page          => $page,
                                     pagination    => $pagination,
                                     link_base_uri => '/news',
@@ -174,8 +174,8 @@ get '/news/article/:news_id' => sub
         return redirect '/news';
     }
 
-    template 'news/article', { 
-                                 data => $news_item, 
+    template 'news/article', {
+                                 data => $news_item,
                              };
 };
 
@@ -212,12 +212,12 @@ get '/login' => sub
 {
     params->{'rd_url'} //= vars->{'rd_url'} // undef;
 
-    my $rd_url = Side7::Login::sanitize_redirect_url( 
-        { 
-            rd_url   => params->{'rd_url'}, 
+    my $rd_url = Side7::Login::sanitize_redirect_url(
+        {
+            rd_url   => params->{'rd_url'},
             referer  => request->referer,
-            uri_base => request->uri_base
-        } 
+            uri_base => request->uri_base,
+        }
     );
 
     template 'login/login_form', { rd_url => $rd_url };
@@ -238,7 +238,7 @@ post '/login' => sub
 
     my ( $logged_in_url, $user, $audit_message ) = Side7::Login::user_login(
         {
-            username => params->{'username'}, 
+            username => params->{'username'},
             password => params->{'password'},
             rd_url   => params->{'rd_url'}
         }
@@ -302,7 +302,7 @@ get '/signup' => sub
 post '/signup' => sub
 {
     my $params = params;
- 
+
     # Validating params with rule file
     my $data = validator( $params, 'signup_form.pl' );
 
@@ -318,8 +318,8 @@ post '/signup' => sub
         }
         $err_message =~ s/<br \/>$//;
         flash error => $err_message;
-        return template 'user/signup_form', { 
-            username      => params->{'username'}, 
+        return template 'user/signup_form', {
+            username      => params->{'username'},
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
             referred_by   => params->{'referred_by'},
@@ -352,17 +352,17 @@ post '/signup' => sub
 
         $err_message =~ s/<br \/>$//;
         flash error => $err_message;
-        return template 'user/signup_form', { 
-            username      => params->{'username'}, 
+        return template 'user/signup_form', {
+            username      => params->{'username'},
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
             referred_by   => params->{'referred_by'},
         };
     }
 
-    my $email_body = template 'email/new_user_welcome', { 
-        user              => $user, 
-        confirmation_link => $confirmation_link 
+    my $email_body = template 'email/new_user_welcome', {
+        user              => $user,
+        confirmation_link => $confirmation_link
     }, { layout => 'email' };
 
     email {
@@ -389,7 +389,7 @@ post '/signup' => sub
 
     flash message => 'Welcome to Side 7, ' . $user->username . '!';
     return redirect '/'; # TODO: This should redirect the user to a welcome/what-to-do-next page.
-    
+
 };
 
 # New User Confirmation
@@ -438,7 +438,7 @@ post '/confirm_user' => sub
 #get '/progress_bar' => sub {
 #    long_running 'progress_bar', 5, sub {
 #        my $state = shift;
-# 
+#
 #        $state->{timer} =
 #        AnyEvent->timer(after => 1, interval => 1, cb => sub {
 #            if (++$state->{cnt} == 5) {
@@ -449,7 +449,7 @@ post '/confirm_user' => sub
 #            }
 #        });
 #    };
-# 
+#
 #    template 'progressbar', { name => 'progress_bar' };
 #};
 
@@ -466,14 +466,14 @@ post '/search/?' => sub
     my $search = Side7::Search->new();
 
     my ( $search_results, $search_error ) = $search->get_results(
-                                                                    look_for         => params->{'look_for'}, 
+                                                                    look_for         => params->{'look_for'},
                                                                     page             => $page,
                                                                     filter_profanity => vars->{'filter_profanity'},
                                                                 );
 
-    template 'search/search_form', { 
-                                    look_for     => params->{'look_for'}, 
-                                    results      => $search_results, 
+    template 'search/search_form', {
+                                    look_for     => params->{'look_for'},
+                                    results      => $search_results,
                                     search_error => $search_error,
                                    };
 };
@@ -561,13 +561,13 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $user_count, page => $page } );
 
     template 'user/user_directory', {
-                                        data          => { 
+                                        data          => {
                                                             initials   => $initials,
-                                                            users      => $users, 
+                                                            users      => $users,
                                                             user_count => $user_count,
                                                          },
-                                        initial       => $initial, 
-                                        page          => $page, 
+                                        initial       => $initial,
+                                        page          => $page,
                                         pagination    => $pagination,
                                         link_base_uri => '/user_directory',
                                     };
@@ -576,8 +576,8 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 # User profile page.
 get '/user/:username' => sub
 {
-    my $user_hash = Side7::User::show_profile( 
-                                                username => params->{'username'}, 
+    my $user_hash = Side7::User::show_profile(
+                                                username => params->{'username'},
                                                 filter_profanity => vars->{'filter_profanity'},
                                              );
 
@@ -607,7 +607,7 @@ get '/user/:username' => sub
 
     if ( defined $user_hash )
     {
-        template 'user/show_user_profile', { 
+        template 'user/show_user_profile', {
                                                 user        => $user,
                                                 user_hash   => $user_hash,
                                                 friend_link => $friend_link,
@@ -627,8 +627,8 @@ get '/gallery/:username/?' => sub
 
 get '/user/:username/gallery/?' => sub
 {
-    my ( $user, $gallery ) = Side7::User::show_user_gallery( 
-        { 
+    my ( $user, $gallery ) = Side7::User::show_user_gallery(
+        {
             username => params->{'username'},
             session  => session,
         }
@@ -645,8 +645,8 @@ get '/user/:username/gallery/?' => sub
 # Image display page.
 get '/image/:image_id/?' => sub
 {
-    my $image_hash = Side7::UserContent::Image::show_image( 
-                                                            image_id => params->{'image_id'}, 
+    my $image_hash = Side7::UserContent::Image::show_image(
+                                                            image_id => params->{'image_id'},
                                                             size             => 'large',
                                                             request          => request,
                                                             session          => session,
@@ -680,8 +680,8 @@ hook 'before' => sub
         }
         else
         {
-            my $authorized = Side7::Login::user_authorization( 
-                                                                session_username => session( 'username' ), 
+            my $authorized = Side7::Login::user_authorization(
+                                                                session_username => session( 'username' ),
                                                                 username         => params->{'username'},
                                                              );
 
@@ -748,10 +748,10 @@ get '/my/avatar/?' => sub
     my $system_avatars = Side7::User::Avatar::SystemAvatar->get_all_system_avatars( size => 'small' );
     my $user_avatars   = $user->get_all_avatars( size => 'small' );
 
-    template 'my/avatar', { 
-                            user           => $user, 
-                            avatar         => $avatar, 
-                            system_avatars => $system_avatars, 
+    template 'my/avatar', {
+                            user           => $user,
+                            avatar         => $avatar,
+                            system_avatars => $system_avatars,
                             user_avatars   => $user_avatars,
                             activity_log   => vars->{'activity_log'},
                           };
@@ -850,9 +850,9 @@ post '/my/avatar/upload/?' => sub
 
     my $activity_log = Side7::ActivityLog->new(
                                                 user_id    => session( 'user_id' ),
-                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
-                                                              '</a> updated ' . 
-                                                              Side7::Utils::Text::get_pronoun( 
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) .
+                                                              '</a> updated ' .
+                                                              Side7::Utils::Text::get_pronoun(
                                                                                                 sex            => $user->account->sex(),
                                                                                                 part_of_speech => 'poss_pronoun',
                                                                                              )
@@ -883,7 +883,7 @@ post '/my/avatar/select/?' => sub
     }
 
     if
-    ( 
+    (
         defined $avatar_type
         &&
         (
@@ -906,7 +906,7 @@ post '/my/avatar/select/?' => sub
 
     # If avatar_type is not "System" or "Image", ignore the avatar_id
     # Otherwise, double-check the leading character on the avatar_id matches the avatar_type
-    # Leading character has precedence over avatar_type, just in case the javascript 
+    # Leading character has precedence over avatar_type, just in case the javascript
     # failed to change the type automatically.
 
     my $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) selected a new Avatar';
@@ -931,7 +931,7 @@ post '/my/avatar/select/?' => sub
         {
             $avatar_type = $initials{$type_initial};
         }
-        
+
         # If it's a User Avatar, retrieve avatar from DB, ensure it belongs to the User.
         if ( lc( $avatar_type ) eq 'image' )
         {
@@ -977,9 +977,9 @@ post '/my/avatar/select/?' => sub
 
     my $activity_log = Side7::ActivityLog->new(
                                                 user_id    => session( 'user_id' ),
-                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
-                                                              '</a> updated ' . 
-                                                              Side7::Utils::Text::get_pronoun( 
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) .
+                                                              '</a> updated ' .
+                                                              Side7::Utils::Text::get_pronoun(
                                                                                                 sex            => $user->account->sex(),
                                                                                                 part_of_speech => 'poss_pronoun',
                                                                                              )
@@ -997,7 +997,7 @@ post '/my/avatar/select/?' => sub
 post '/my/changepassword/?' => sub
 {
     my $params = params;
- 
+
     # Validating params with rule file
     my $data = validator( $params, 'change_password_form.pl' );
 
@@ -1047,9 +1047,9 @@ post '/my/changepassword/?' => sub
     $password_change->save();
 
     # Send e-mail to User with a confirmation link
-    my $email_body = template 'email/password_change_confirmation', { 
-        user              => $user, 
-        confirmation_link => $confirmation_link 
+    my $email_body = template 'email/password_change_confirmation', {
+        user              => $user,
+        confirmation_link => $confirmation_link
     }, { layout => 'email' };
 
     email {
@@ -1128,7 +1128,7 @@ post '/my/confirm_password_change' => sub
 post '/my/setdelete/?' => sub
 {
     my $params = params;
- 
+
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
     my $user_hash = $user->get_user_hash_for_template();
@@ -1147,9 +1147,9 @@ post '/my/setdelete/?' => sub
     $set_delete->save();
 
     # Send e-mail to User with a confirmation link
-    my $email_body = template 'email/set_account_delete_flag_confirmation', { 
-        user              => $user, 
-        confirmation_link => $confirmation_link 
+    my $email_body = template 'email/set_account_delete_flag_confirmation', {
+        user              => $user,
+        confirmation_link => $confirmation_link
     }, { layout => 'email' };
 
     email {
@@ -1271,11 +1271,11 @@ get '/my/profile/?' => sub
     my $public_visibilities = [ { name => 'Public', value => 1 }, { name => 'Private', value => 0 } ];
 
     template 'my/profile', {
-                             user                => $user, 
-                             enums               => $enums, 
-                             date_visibilities   => $date_visibilities, 
+                             user                => $user,
+                             enums               => $enums,
+                             date_visibilities   => $date_visibilities,
                              countries           => $countries,
-                             public_visibilities => $public_visibilities, 
+                             public_visibilities => $public_visibilities,
                              is_public_hash      => $is_public_hash,
                              activity_log        => vars->{'activity_log'},
                            };
@@ -1304,8 +1304,8 @@ post '/my/profile' => sub
     my $original_values = '';
     my $updated_values  = '';
     my $changed_fields  = '';
-    foreach my $profile_item ( 
-                                qw/ 
+    foreach my $profile_item (
+                                qw/
                                     other_aliases sex birthday_visibility country_id state
                                     webpage_name webpage_url blog_name blog_url
                                     aim yahoo gtalk skype biography
@@ -1355,7 +1355,7 @@ post '/my/profile' => sub
 
     # Audit Log
     my $audit_msg = 'User Profile Updated - <b>Successful</b><br>' .
-                    'Profile for &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' . 
+                    'Profile for &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' .
                     'updated by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $changed_fields;
 
@@ -1374,9 +1374,9 @@ post '/my/profile' => sub
 
     my $activity_log = Side7::ActivityLog->new(
                                                 user_id    => session( 'user_id' ),
-                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
-                                                              '</a> updated ' . 
-                                                              Side7::Utils::Text::get_pronoun( 
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) .
+                                                              '</a> updated ' .
+                                                              Side7::Utils::Text::get_pronoun(
                                                                                                 sex            => $user->account->sex(),
                                                                                                 part_of_speech => 'poss_pronoun',
                                                                                              )
@@ -1394,11 +1394,11 @@ post '/my/profile' => sub
 
     flash message => 'Your Profile has been updated successfully!';
     template 'my/profile', {
-                             user                => $user, 
-                             enums               => $enums, 
-                             date_visibilities   => $date_visibilities, 
+                             user                => $user,
+                             enums               => $enums,
+                             date_visibilities   => $date_visibilities,
                              countries           => $countries,
-                             public_visibilities => $public_visibilities, 
+                             public_visibilities => $public_visibilities,
                              is_public_hash      => $new_is_public_hash,
                              activity_log        => vars->{'activity_log'},
                            };
@@ -1430,12 +1430,12 @@ get '/my/friends/?' => sub
 # User Send Friend Request
 get '/friend_link/:username' => sub
 {
-    my $rd_url = Side7::Login::sanitize_redirect_url( 
-        { 
-            rd_url   => params->{'rd_url'}, 
+    my $rd_url = Side7::Login::sanitize_redirect_url(
+        {
+            rd_url   => params->{'rd_url'},
             referer  => request->referer,
             uri_base => request->uri_base
-        } 
+        }
     );
 
     my $user      = Side7::User::get_user_by_id( session( 'user_id' ) );
@@ -1555,16 +1555,16 @@ get '/my/friends/:user_id/accept' => sub
     # Activity Logs
     my $activity_log1 = Side7::ActivityLog->new(
                                                 user_id    => session( 'user_id' ),
-                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
-                                                              '</a> became friends with <a href="/user/' . $pending_request->user->username . '">' . 
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) .
+                                                              '</a> became friends with <a href="/user/' . $pending_request->user->username . '">' .
                                                               $pending_request->user->username . '</a>.',
                                                 created_at => DateTime->now(),
     );
     $activity_log1->save();
     my $activity_log2 = Side7::ActivityLog->new(
                                                 user_id    => $pending_request->user_id,
-                                                activity   => '<a href="/user/' . $pending_request->user->username  . '">' . 
-                                                              $pending_request->user->username . '</a> became friends with <a href="/user/' . 
+                                                activity   => '<a href="/user/' . $pending_request->user->username  . '">' .
+                                                              $pending_request->user->username . '</a> became friends with <a href="/user/' .
                                                               session( 'username' ) . '">' . session( 'username' ) . '</a>.',
                                                 created_at => DateTime->now(),
     );
@@ -1679,12 +1679,12 @@ get '/my/friends/:user_id/deny' => sub
 # User Remove Friend Link
 get '/my/friends/:username/dissolve' => sub
 {
-    my $rd_url = Side7::Login::sanitize_redirect_url( 
-        { 
-            rd_url   => params->{'rd_url'}, 
+    my $rd_url = Side7::Login::sanitize_redirect_url(
+        {
+            rd_url   => params->{'rd_url'},
             referer  => request->referer,
             uri_base => request->uri_base
-        } 
+        }
     );
 
     my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
@@ -1801,9 +1801,9 @@ post '/my/albums/new' => sub
         return template 'my/album_new', { user => $user, album => params }, { layout => 'my_lightbox' };
     }
 
-    my $new_album = Side7::UserContent::Album->new( 
-                                                    user_id     => $user->id(), 
-                                                    name        => $album_name, 
+    my $new_album = Side7::UserContent::Album->new(
+                                                    user_id     => $user->id(),
+                                                    name        => $album_name,
                                                     description => $album_description,
                                                     system      => 0,
                                                     created_at  => DateTime->now(),
@@ -1813,7 +1813,7 @@ post '/my/albums/new' => sub
 
     # Audit Log
     my $audit_msg = 'Custom Album Created - <b>Successful</b><br>' .
-                    'Album owned by &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' )<br>' . 
+                    'Album owned by &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' )<br>' .
                     'created by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
@@ -1828,7 +1828,7 @@ post '/my/albums/new' => sub
                                           timestamp      => DateTime->now(),
     );
     $audit_log->save();
-    
+
     flash message => 'Your new Album "<strong>' . $new_album->name() . '</strong>" was successfully created!';
     redirect '/my/albums/' . $new_album->id() . '/manage';
 };
@@ -2000,7 +2000,7 @@ post '/my/albums/:album_id/save' => sub
     foreach my $key ( qw/ name description / )
     {
         if
-        ( 
+        (
             ! defined params->{$key} && defined $original_album->$key()
             ||
             defined params->{$key} && ! defined $original_album->$key()
@@ -2024,7 +2024,7 @@ post '/my/albums/:album_id/save' => sub
 
     # Audit Log
     my $audit_msg = 'Custom Album Updated - <b>Successful</b><br>' .
-                    'Album owned by &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' )' . 
+                    'Album owned by &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() . ' )' .
                     ' updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $updated_fields;
 
@@ -2074,9 +2074,9 @@ get '/my/albums/:album_id/manage' => sub
     my $unassociated_content = [];
     foreach my $content_item ( @$all_content )
     {
-        if 
+        if
         (
-            List::MoreUtils::none { 
+            List::MoreUtils::none {
                                     $_->content_type() eq $content_item->content_type()
                                     &&
                                     $_->title() eq $content_item->title()
@@ -2090,7 +2090,7 @@ get '/my/albums/:album_id/manage' => sub
         }
     }
 
-    template 'my/album_content', { 
+    template 'my/album_content', {
                                     album                => $album,
                                     album_content        => $album_content,
                                     unassociated_content => $unassociated_content,
@@ -2172,7 +2172,7 @@ post '/my/albums/:album_id/manage' => sub
                 flash error => 'Could not find the Image being referenced for removal from this Album.';
                 return redirect '/my/albums/' . $album->id() . '/manage';
             }
- 
+
             my $deleted = $map->delete();
             if ( ! $deleted )
             {
@@ -2266,7 +2266,7 @@ get '/my/preferences/?' => sub
 
     my $is_adult = 0;
     my $today = DateTime->today();
-    if ( 
+    if (
         ! defined $user->account->birthday()
         ||
         $user->account->birthday() eq '0000-00-00'
@@ -2274,7 +2274,7 @@ get '/my/preferences/?' => sub
     {
         # Legacy account with no birthday. Give no option to set Adult Content On.
         $is_adult = 0;
-    } 
+    }
     else
     {
         my $duration = $today->subtract_datetime( $user->account->birthday() );
@@ -2287,10 +2287,10 @@ get '/my/preferences/?' => sub
 
     my $enums = Side7::User::Preference->get_enum_values();
 
-    template 'my/preferences', { 
-                                user_preferences => $user_preferences, 
-                                enums            => $enums, 
-                                is_adult         => $is_adult, 
+    template 'my/preferences', {
+                                user_preferences => $user_preferences,
+                                enums            => $enums,
+                                is_adult         => $is_adult,
                                 activity_log     => vars->{'activity_log'},
                                };
 };
@@ -2361,7 +2361,7 @@ post '/my/preferences' => sub
         $new_preferences = $orig_preferences->clone();
         foreach my $key ( @fields )
         {
-            if ( 
+            if (
                 ( ! defined $orig_preferences->$key() && defined params->{$key} )
                 ||
                 ( defined $orig_preferences->$key() && ! defined params->{$key} )
@@ -2391,7 +2391,7 @@ post '/my/preferences' => sub
 
     # Record Audit Log
     my $audit_msg = 'User Preferences Updated - <b>Successful</b><br>' .
-                    'Preferences for &gt;' . $affected_user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' . 
+                    'Preferences for &gt;' . $affected_user->username() . '&lt; ( User ID: ' . params->{'user_id'} . ' )<br>' .
                     'updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
     $audit_msg .= 'Fields changed:<br>' . $field_changes;
 
@@ -2446,13 +2446,13 @@ get '/my/upload/?:upload_type?/?' => sub
     my $stages            = Side7::UserContent::Stage->get_stages_for_form( content_type => params->{'upload_type'} );
     my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
 
-    template 'my/upload', { 
-                            upload_type   => params->{'upload_type'}, 
+    template 'my/upload', {
+                            upload_type   => params->{'upload_type'},
                             enums         => $enums,
                             categories    => $categories,
                             ratings       => $ratings,
                             qualifiers    => $qualifiers,
-                            stages        => $stages, 
+                            stages        => $stages,
                             activity_log  => vars->{'activity_log'},
                           };
 };
@@ -2470,7 +2470,7 @@ post '/my/upload' => sub
         my $stages            = Side7::UserContent::Stage->get_stages_for_form( content_type => params->{'upload_type'} );
         my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
         return template 'my/upload', {
-                            upload_type       => params->{'upload_type'}, 
+                            upload_type       => params->{'upload_type'},
                             overwrite_dupe    => params->{'overwrite_dupe'},
                             category_id       => params->{'category_id'},
                             rating_id         => params->{'rating_id'},
@@ -2634,7 +2634,7 @@ post '/my/upload' => sub
 
     my $activity_log = Side7::ActivityLog->new(
                                                 user_id    => session( 'user_id' ),
-                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) . 
+                                                activity   => '<a href="/user/' . session( 'username' ) . '">' . session( 'username' ) .
                                                               '</a> posted new <a href="/' . lc( params->{'upload_type'} ) . '/' . $new_content->id .
                                                               '">' . lc( params->{'upload_type'} ) . ' content</a>.',
                                                 created_at => DateTime->now(),
@@ -2722,15 +2722,15 @@ hook 'before' => sub
         }
         else
         {
-            my $authorized = Side7::Login::user_authorization( 
-                                                                session_username => session( 'username' ), 
+            my $authorized = Side7::Login::user_authorization(
+                                                                session_username => session( 'username' ),
                                                                 username         => undef,
                                                                 requires_mod     => 1,
                                                              );
 
             if ( $authorized != 1 )
             {
-                my $error = 'User &gt;<b>' . session( 'username' ) . 
+                my $error = 'User &gt;<b>' . session( 'username' ) .
                                 '</b>&lt; attempted but is not authorized to view >' . request->path_info . '<';
                 $LOGGER->info( $error );
 
@@ -2781,7 +2781,7 @@ get qr{/users/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
 
     my $data = Side7::Admin::Dashboard::show_user_dashboard(
-                                                            initial => $initial, 
+                                                            initial => $initial,
                                                             page    => $page,
                                                            );
 
@@ -2789,10 +2789,10 @@ get qr{/users/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    template 'admin/user', { 
-                                main_menu     => $menu_options, 
-                                data          => $data, 
-                                initial       => $initial, 
+    template 'admin/user', {
+                                main_menu     => $menu_options,
+                                data          => $data,
+                                initial       => $initial,
                                 page          => $page,
                                 pagination    => $pagination,
                                 link_base_uri => '/admin/users',
@@ -2849,17 +2849,17 @@ post '/users/search' => sub
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    template 'admin/user', { 
+    template 'admin/user', {
                                 title         => 'Users',
-                                query         => { 
+                                query         => {
                                                     search_term => $search_term,
                                                     status      => $status,
                                                     type        => $type,
                                                     role        => $role,
                                                  },
-                                main_menu           => $menu_options, 
-                                data                => $data, 
-                                initial             => $initial, 
+                                main_menu           => $menu_options,
+                                data                => $data,
+                                initial             => $initial,
                                 page                => $page,
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/users',
@@ -2916,17 +2916,17 @@ get '/users/search/:search_term?/:status?/:type?/:role?/:intial/:page' => sub
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    template 'admin/user', { 
+    template 'admin/user', {
                                 title         => 'Users',
-                                query         => { 
+                                query         => {
                                                     search_term => $search_term,
                                                     status      => $status,
                                                     type        => $type,
                                                     role        => $role,
                                                  },
-                                main_menu           => $menu_options, 
-                                data                => $data, 
-                                initial             => $initial, 
+                                main_menu           => $menu_options,
+                                data                => $data,
+                                initial             => $initial,
                                 page                => $page,
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/users',
@@ -2983,7 +2983,7 @@ get '/users/:username/edit' => sub
 
     my $user = Side7::User::get_user_by_username( $username );
 
-    my $user_hash = $user->get_user_hash_for_template( 
+    my $user_hash = $user->get_user_hash_for_template(
                                                         filter_profanity => 0,
                                                         admin_dates      => 1,
                                                      );
@@ -3033,7 +3033,7 @@ post '/users/:username/edit' => sub
     {
         my $user = Side7::User::get_user_by_username( $username );
 
-        my $user_hash = $user->get_user_hash_for_template( 
+        my $user_hash = $user->get_user_hash_for_template(
                                                             filter_profanity => 0,
                                                             admin_dates      => 1,
                                                          );
@@ -3118,8 +3118,8 @@ post '/users/:username/edit' => sub
             ||
             ( ! defined params->{$field} && defined $orig_user->$field() )
             ||
-            ( 
-                defined params->{$field} 
+            (
+                defined params->{$field}
                 &&
                 defined $orig_user->$field()
                 &&
@@ -3140,8 +3140,8 @@ post '/users/:username/edit' => sub
     # Account-specific
     my %account_changes = ();
     my $account_updated = 0;
-    foreach my $field ( qw/ first_name last_name biography sex birthday birthday_visibility webpage_name 
-                            webpage_url blog_name blog_url aim yahoo gtalk skype state country_id 
+    foreach my $field ( qw/ first_name last_name biography sex birthday birthday_visibility webpage_name
+                            webpage_url blog_name blog_url aim yahoo gtalk skype state country_id
                             subscription_expires_on delete_on / )
     {
         if (
@@ -3149,7 +3149,7 @@ post '/users/:username/edit' => sub
             ||
             ( ! defined params->{$field} && defined $orig_user->account->$field() )
             ||
-            ( 
+            (
                 defined params->{$field}
                 &&
                 defined $orig_user->account->$field()
@@ -3185,7 +3185,7 @@ post '/users/:username/edit' => sub
 
         # Update Audit Log
         my $audit_msg = 'User Account Updated - <b>Successful</b><br>' .
-                        'Account for &gt;' . $username . '&lt; ( User ID: ' . params->{'user_id'} . ' )' . 
+                        'Account for &gt;' . $username . '&lt; ( User ID: ' . params->{'user_id'} . ' )' .
                         ' updated by &gt;</b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
         $audit_msg .= 'Fields changed:<br>';
 
@@ -3193,13 +3193,13 @@ post '/users/:username/edit' => sub
         my $new_values = '';
         foreach my $key ( keys %user_changes )
         {
-            $audit_msg .= "&gt;$key&lt;, "; 
+            $audit_msg .= "&gt;$key&lt;, ";
             $old_values .= "$key: &gt;" . ( $user_changes{$key}{'old'} || '' ) . '&lt;<br>';
             $new_values .= "$key: &gt;" . ( $user_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
         foreach my $key ( keys %account_changes )
         {
-            $audit_msg .= "&gt;$key&lt;, "; 
+            $audit_msg .= "&gt;$key&lt;, ";
             $old_values .= "$key: &gt;" . ( $account_changes{$key}{'old'} || '' ) . '&lt;<br>';
             $new_values .= "$key: &gt;" . ( $account_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }
@@ -3244,7 +3244,7 @@ get '/audit_logs/?:page?' => sub
                                                                 page     => $page,
                                                                 per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
                                                              );
-    
+
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $log_count, page => $page } );
 
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
@@ -3290,12 +3290,12 @@ post '/audit_logs/search' => sub
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    template 'admin/audit_logs', { 
-                                query         => { 
+    template 'admin/audit_logs', {
+                                query         => {
                                                     search_term => $search_term,
                                                  },
-                                main_menu           => $menu_options, 
-                                data                => $data, 
+                                main_menu           => $menu_options,
+                                data                => $data,
                                 page                => $page,
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/audit_logs/search',
@@ -3332,13 +3332,13 @@ get '/audit_logs/search/:search_term?/?:page?' => sub
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    template 'admin/audit_logs', { 
+    template 'admin/audit_logs', {
                                 title         => 'Audit Logs',
-                                query         => { 
+                                query         => {
                                                     search_term => $search_term,
                                                  },
-                                main_menu           => $menu_options, 
-                                data                => $data, 
+                                main_menu           => $menu_options,
+                                data                => $data,
                                 page                => $page,
                                 pagination          => $pagination,
                                 link_base_uri       => '/admin/audit_logs',
@@ -3384,7 +3384,7 @@ get '/news/?:page?' => sub
 
         push ( @$news, $news_hash );
     }
-    
+
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news_count, page => $page } );
 
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
@@ -3556,8 +3556,8 @@ post '/news/:news_id/edit' => sub
             ||
             ( ! defined params->{$field} && defined $orig_news->$field() )
             ||
-            ( 
-                defined params->{$field} 
+            (
+                defined params->{$field}
                 &&
                 defined $orig_news->$field()
                 &&
@@ -3585,7 +3585,7 @@ post '/news/:news_id/edit' => sub
 
         # Update Audit Log
         my $audit_msg = 'News Item Updated - <b>Successful</b><br>' .
-                        'Item &gt;' . $orig_news->title() . '&lt; ( News ID: ' . $news_id . ' )<br>' . 
+                        'Item &gt;' . $orig_news->title() . '&lt; ( News ID: ' . $news_id . ' )<br>' .
                         'updated by &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
         $audit_msg .= 'Fields changed:<br>';
 
@@ -3593,7 +3593,7 @@ post '/news/:news_id/edit' => sub
         my $new_values = '';
         foreach my $key ( keys %news_changes )
         {
-            $audit_msg .= "&gt;$key&lt;, "; 
+            $audit_msg .= "&gt;$key&lt;, ";
             $old_values .= "$key: &gt;" . ( $news_changes{$key}{'old'} || '' ) . '&lt;<br>';
             $new_values .= "$key: &gt;" . ( $news_changes{$key}{'new'} || '' ) . '&lt;<br>';
         }

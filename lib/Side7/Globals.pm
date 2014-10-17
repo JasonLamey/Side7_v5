@@ -10,6 +10,8 @@ use Data::Dumper;
 use Side7::Config;
 use Side7::DB;
 
+use version; our $VERSION = qv( '0.1.2' );
+
 
 use vars qw(
     $LOGGER $DB $DBH $CONFIG

@@ -1,10 +1,15 @@
 package Side7::DB;
 
+use strict;
+use warnings;
+
 =pod
+
 
 =head1 NAME
 
 Side7::DB
+
 
 =head1 DESCRIPTION
 
@@ -22,6 +27,8 @@ use Carp qw( confess );
 use List::Util;
 
 use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.5' );
 
 # Use a private registry for this class
 Side7::DB->use_private_registry;
@@ -65,7 +72,9 @@ Side7::DB->default_type( 'main' );
 
 #our $DB = Side7::DB->new();
 
+
 =head1 FUNCTIONS
+
 
 =head2 get_db()
 
@@ -85,6 +94,7 @@ sub get_db
     my $DB = Side7::DB->new( domain => $domain, type => $type );
     return $DB;
 }
+
 
 =head2 build_select()
 
@@ -122,19 +132,19 @@ sub build_select
     if ( ! defined $tables || ref $tables ne 'ARRAY' )
     {
         confess( 'Error creating query; missing table names or tables not an array.' );
-        return undef;
+        return;
     }
 
     if ( ! defined $columns || ref $columns ne 'HASH' )
     {
         confess( 'Error creating query; missing column names or columns not a hash.' );
-        return undef;
+        return;
     }
 
     if ( ! defined $query || ref $query ne 'ARRAY' )
     {
         confess( 'Error creating query; missing query values or query not an array.' );
-        return undef;
+        return;
     }
 
     $DB //= $Side7::Globals::DB;
@@ -214,7 +224,7 @@ sub get_enum_values_for_form
     my %enum_field_values = ();
     while ( my $col_info  = $sth->fetchrow_hashref )
     {
-        if 
+        if
         (
             ( List::Util::any { $col_info->{'COLUMN_NAME'} eq $_ } @{ $fields } )
             &&
@@ -228,7 +238,7 @@ sub get_enum_values_for_form
 
     return \%enum_field_values;
 }
- 
+
 
 =head1 COPYRIGHT
 

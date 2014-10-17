@@ -12,6 +12,8 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::Utils::File;
 
+use version; our $VERSION = qv( '0.1.5' );
+
 const my %IMAGEMAGICK_SIZE_LIMITS => (
                                         tiny   => '50x50',
                                         small  => '100x100',
@@ -205,7 +207,7 @@ sub get_image_stats
     {
         return { error => 'Invalid image file format.' };
     }
-    
+
     my %stats = ();
 
     if

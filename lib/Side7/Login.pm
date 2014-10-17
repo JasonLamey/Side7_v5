@@ -10,6 +10,7 @@ use Side7::Globals;
 use Side7::AuditLog;
 use Side7::User;
 
+use version; our $VERSION = qv( '0.1.11' );
 
 =pod
 
@@ -50,7 +51,7 @@ sub user_login
 
     $rd_url ||= '/'; # Set default redirect path to root, so we don't return to the login screen.
 
-    if 
+    if
     (
         $username eq ''
         ||
@@ -171,7 +172,7 @@ sub user_authorization
     if ( defined $requires_mod )
     {
         if
-        ( 
+        (
             $user_role ne 'Moderator'
             &&
             $user_role ne 'Admin'
@@ -186,7 +187,7 @@ sub user_authorization
     if ( defined $requires_admin )
     {
         if
-        ( 
+        (
             $user_role ne 'Admin'
             &&
             $user_role ne 'Owner'

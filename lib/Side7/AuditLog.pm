@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
 
 
@@ -31,7 +33,7 @@ This package provides functionality into recording and reading audit log entries
     | original_value | text                | YES  |     | NULL    |                |
     | new_value      | text                | YES  |     | NULL    |                |
     | ip_address     | varchar(255)        | YES  |     | NULL    |                |
-     
+
 =cut
 
 # TODO: Define the appropriate package meta config for the DB Object.
@@ -39,7 +41,7 @@ This package provides functionality into recording and reading audit log entries
 __PACKAGE__->meta->setup
 (
     table   => 'audit_logs',
-    columns => [ 
+    columns => [
         id             => { type => 'serial',   not_null => 1 },
         timestamp      => { type => 'datetime', not_null => 1, default => 'now()' },
         title          => { type => 'varchar',  length => 255, not_null => 1 },

@@ -10,6 +10,8 @@ use Data::Dumper;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
 
 
@@ -35,7 +37,7 @@ into logical groups.
     | system     | tinyint(1)       | NO   |     | 0       |                |
     | created_at | datetime         | NO   |     | NULL    |                |
     | updated_at | datetime         | NO   |     | NULL    |                |
-     
+
 
 =head1 RELATIONSHIPS
 
@@ -67,13 +69,13 @@ Many-to-many relationship with Words, mapping through AlbumWordMap.
 __PACKAGE__->meta->setup
 (
     table   => 'albums',
-    columns => [ 
+    columns => [
         id          => { type => 'serial',   not_null => 1 },
-        user_id     => { type => 'integer',  not_null => 1 }, 
-        name        => { type => 'varchar',  length => 255, not_null => 1 }, 
-        description => { type => 'text',     default => 'null' }, 
-        system      => { type => 'integer',  not_null => 1, default => 0 }, 
-        created_at  => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        user_id     => { type => 'integer',  not_null => 1 },
+        name        => { type => 'varchar',  length => 255, not_null => 1 },
+        description => { type => 'text',     default => 'null' },
+        system      => { type => 'integer',  not_null => 1, default => 0 },
+        created_at  => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at  => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -166,10 +168,10 @@ sub get_content
     my @content = ();
     if ( lc($sort_order) eq 'asc' )
     {
-        @content = sort { 
+        @content = sort {
                             if ( $a->$sort_by() =~ m/^\d+$/ && $b->$sort_by() =~ m/^\d+$/ )
                             {
-                                return $a->$sort_by() <=> $b->$sort_by() 
+                                return $a->$sort_by() <=> $b->$sort_by()
                             }
                             else
                             {
@@ -180,10 +182,10 @@ sub get_content
     }
     else
     {
-        @content = sort { 
+        @content = sort {
                             if ( $a->$sort_by() =~ m/^\d+$/ && $b->$sort_by() =~ m/^\d+$/ )
                             {
-                                return $b->$sort_by() <=> $a->$sort_by() 
+                                return $b->$sort_by() <=> $a->$sort_by()
                             }
                             else
                             {

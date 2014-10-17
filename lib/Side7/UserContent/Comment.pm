@@ -5,6 +5,10 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
+
 
 =head1 NAME
 
@@ -50,22 +54,22 @@ Many-to-one relationship; FK is comment_thread_id.
 __PACKAGE__->meta->setup
 (
     table   => 'comments',
-    columns => [ 
+    columns => [
         id                => { type => 'integer', not_null => 1 },
-        comment_thread_id => { type => 'integer', not_null => 1 }, 
-        user_id           => { type => 'integer' }, 
-        anonymous_name    => { type => 'varchar', length => 100 }, 
-        comment           => { type => 'text',    not_null => 1 }, 
-        private           => { type => 'integer', length => 1,  not_null => 1, default => 0 }, 
-        award             => { 
-                                type     => 'enum', 
-                                values   => [ 'none', 'bronze', 'silver', 'gold' ],  
+        comment_thread_id => { type => 'integer', not_null => 1 },
+        user_id           => { type => 'integer' },
+        anonymous_name    => { type => 'varchar', length => 100 },
+        comment           => { type => 'text',    not_null => 1 },
+        private           => { type => 'integer', length => 1,  not_null => 1, default => 0 },
+        award             => {
+                                type     => 'enum',
+                                values   => [ 'none', 'bronze', 'silver', 'gold' ],
                                 not_null => 1,
                                 default  => 'none',
-                             }, 
-        owner_rating      => { type => 'integer' }, 
-        ip_address        => { type => 'varchar', length => 100 }, 
-        created_at        => { type => 'datetime', not_null => 1, default => 'now()' }, 
+                             },
+        owner_rating      => { type => 'integer' },
+        ip_address        => { type => 'varchar', length => 100 },
+        created_at        => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at        => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

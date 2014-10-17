@@ -8,15 +8,20 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::Stage::Manager;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
+
 
 =head1 NAME
 
 Side7::UserContent::Stage
 
+
 =head1 DESCRIPTION
 
 This package represents a content's current stage of progress.
+
 
 =head1 SCHEMA INFORMATION
 
@@ -27,6 +32,7 @@ This package represents a content's current stage of progress.
     | priority   | int(1)          | NO   | MUL | NULL    |                |
     | created_at | datetime        | NO   |     | NULL    |                |
     | updated_at | datetime        | NO   |     | NULL    |                |
+
 
 =head1 RELATIONSHIPS
 
@@ -45,11 +51,11 @@ Stage is a lookup object referenced by Image using C<stage_id> to reference C<id
 __PACKAGE__->meta->setup
 (
     table   => 'stages',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', length => 1,   not_null => 1 },
-        stage         => { type => 'varchar', length => 45,  not_null => 1 }, 
-        priority      => { type => 'integer', length => 1,   not_null => 1 }, 
-        created_at    => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        stage         => { type => 'varchar', length => 45,  not_null => 1 },
+        priority      => { type => 'integer', length => 1,   not_null => 1 },
+        created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

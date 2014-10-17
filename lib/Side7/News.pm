@@ -8,6 +8,8 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::News::Manager;
 
+use version; our $VERSION = qv( '0.1.3' );
+
 =pod
 
 
@@ -55,17 +57,17 @@ One-to-one relationship with User, using user_id as a FK.
 __PACKAGE__->meta->setup
 (
     table   => 'news',
-    columns => [ 
+    columns => [
         id               => { type => 'serial', not_null => 1 },
-        title            => { type => 'varchar', length => 255,  not_null => 1 }, 
-        blurb            => { type => 'text' }, 
-        body             => { type => 'text' }, 
-        link_to_article  => { type => 'varchar', length => 255 }, 
-        is_static        => { type => 'boolean', not_null => 1, default => 0 }, 
-        not_static_after => { type => 'date' }, 
-        priority         => { type => 'integer', not_null => 1, default => 1 }, 
-        user_id          => { type => 'integer', not_null => 1 }, 
-        created_at       => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        title            => { type => 'varchar', length => 255,  not_null => 1 },
+        blurb            => { type => 'text' },
+        body             => { type => 'text' },
+        link_to_article  => { type => 'varchar', length => 255 },
+        is_static        => { type => 'boolean', not_null => 1, default => 0 },
+        not_static_after => { type => 'date' },
+        priority         => { type => 'integer', not_null => 1, default => 1 },
+        user_id          => { type => 'integer', not_null => 1 },
+        created_at       => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at       => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -148,8 +150,8 @@ sub get_news_article_list
     $data->{'news_count'}  = $news_count;
     $data->{'news'}        = $news;
     $data->{'sticky_news'} = $sticky_news;
-   
-    return $data; 
+
+    return $data;
 }
 
 

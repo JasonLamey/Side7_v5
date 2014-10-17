@@ -4,7 +4,10 @@ use strict;
 use warnings;
 
 use base 'Side7::DB::Object';
-use Mojo::Base 'Mojolicious::Controller';
+
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.1' );
 
 # == Schema Information
 #
@@ -17,9 +20,9 @@ use Mojo::Base 'Mojolicious::Controller';
 __PACKAGE__->meta->setup
 (
     table   => 'user_types',
-    columns => [ 
+    columns => [
         id            => { type => 'integer', not_null => 1 },
-        user_type     => { type => 'varchar', length => 45,  not_null => 1 }, 
+        user_type     => { type => 'varchar', length => 45,  not_null => 1 },
     ],
     pk_columns => 'id',
     unique_key => 'user_type',
@@ -27,21 +30,25 @@ __PACKAGE__->meta->setup
 
 =pod
 
+
 =head1 NAME
 
 Side7::User::Type
+
 
 =head1 DESCRIPTION
 
 This class represents a type of user - Basic, Premiere, Ultimate.
 These types determine account permissions and access.
 
+
 =head1 METHODS
+
 
 =head2 new()
 
-    my $user = Side7::User::Type->new( 
-        user_type      => $type, 
+    my $user = Side7::User::Type->new(
+        user_type      => $type,
     );
 
 =over

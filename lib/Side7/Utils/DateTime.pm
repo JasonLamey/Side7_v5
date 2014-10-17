@@ -8,6 +8,9 @@ use Side7::Globals;
 use DateTime;
 use POSIX;
 
+use version; our $VERSION = qv( '0.1.1' );
+
+
 =head1 NAME
 
 Side7::Utils::DateTime;
@@ -130,10 +133,10 @@ sub get_english_elapsed_time
 
 =head2 get_pagination()
 
-    $pagination = Side7::Utils::DateTime::get_pagination( { 
-                                    total_count => $total, 
+    $pagination = Side7::Utils::DateTime::get_pagination( {
+                                    total_count => $total,
                                     page => $page,
-                                    pagination_limit => $pagination_limit 
+                                    pagination_limit => $pagination_limit
                             } );
 
 Returns a hashref of pagination variables, including previous page number, next page number, total count,
@@ -147,7 +150,7 @@ sub get_pagination
 
     my $total_count      = delete $args->{'total_count'}      // 1;
     my $page             = delete $args->{'page'}             // 1;
-    my $pagination_limit = delete $args->{'pagination_limit'} // 
+    my $pagination_limit = delete $args->{'pagination_limit'} //
                                     $CONFIG->{'page'}->{'default'}->{'pagination_limit'};
 
     # In the event a blank but defined parameter is passed in.

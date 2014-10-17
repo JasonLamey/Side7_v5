@@ -7,6 +7,8 @@ use Side7::Globals;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
 
 
@@ -52,10 +54,10 @@ Many to many relationship, with image_id being the FK through images
 __PACKAGE__->meta->setup
 (
     table   => 'album_image_map',
-    columns => [ 
+    columns => [
         album_id   => { type => 'integer',  not_null => 1 },
-        image_id   => { type => 'integer',  not_null => 1 }, 
-        created_at => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        image_id   => { type => 'integer',  not_null => 1 },
+        created_at => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     unique_key => [ [ 'album_id', 'image_id' ], [ 'album_id' ], [ 'image_id' ], ],

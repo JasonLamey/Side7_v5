@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use version; our $VERSION = qv( '0.1.2' );
+
 =pod
 
 
@@ -29,7 +31,7 @@ This package represents a FAQ entry.
     | priority        | int(3)              | NO   |     | NULL    |                |
     | created_at      | datetime            | NO   |     | NULL    |                |
     | updated_at      | datetime            | NO   |     | NULL    |                |
-     
+
 
 =head1 RELATIONSHIPS
 
@@ -48,13 +50,13 @@ Many to one relationship, with faq_category_id as the FK
 __PACKAGE__->meta->setup
 (
     table   => 'faq_entries',
-    columns => [ 
+    columns => [
         id              => { type => 'serial', not_null => 1 },
-        faq_category_id => { type => 'integer', not_null => 1 }, 
-        question        => { type => 'varchar', length => 255, not_null => 1 }, 
-        answer          => { type => 'text', not_null => 1 }, 
-        priority        => { type => 'integer', not_null => 1 }, 
-        created_at      => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        faq_category_id => { type => 'integer', not_null => 1 },
+        question        => { type => 'varchar', length => 255, not_null => 1 },
+        answer          => { type => 'text', not_null => 1 },
+        priority        => { type => 'integer', not_null => 1 },
+        created_at      => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at      => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',

@@ -8,6 +8,8 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::RatingQualifier::Manager;
 
+use version; our $VERSION = qv( '0.1.1' );
+
 =pod
 
 
@@ -52,18 +54,18 @@ TODO: Define the relationship type, and list the foreign key (FK).
 __PACKAGE__->meta->setup
 (
     table   => 'rating_qualifiers',
-    columns => [ 
+    columns => [
         id           => { type => 'serial', not_null => 1 },
-        name         => { type => 'varchar', length => 255, not_null => 1 }, 
-        symbol       => { type => 'char',    length => 1,   not_null => 1 }, 
-        description  => { type => 'text', }, 
-        content_type => { 
+        name         => { type => 'varchar', length => 255, not_null => 1 },
+        symbol       => { type => 'char',    length => 1,   not_null => 1 },
+        description  => { type => 'text', },
+        content_type => {
                           type    => 'enum',
                           values  => [ qw/Image Literature Music Video/ ],
                           default => 'Image',
-        }, 
-        priority     => { type => 'integer', length => 5,   not_null => 1 }, 
-        created_at   => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        },
+        priority     => { type => 'integer', length => 5,   not_null => 1 },
+        created_at   => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at   => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -109,10 +111,10 @@ sub get_rating_qualifiers_for_form
     my @results = ();
     foreach my $qualifier ( @{ $qualifiers } )
     {
-        push( @results, { 
-                            id     => $qualifier->id(), 
-                            name   => $qualifier->name(), 
-                            symbol => $qualifier->symbol(), 
+        push( @results, {
+                            id     => $qualifier->id(),
+                            name   => $qualifier->name(),
+                            symbol => $qualifier->symbol(),
                         }
         );
     }

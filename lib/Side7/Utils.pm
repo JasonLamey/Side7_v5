@@ -3,6 +3,10 @@ package Side7::Utils;
 use strict;
 use warnings;
 
+use Side7::Globals;
+
+use version; our $VERSION = qv( '0.1.2' );
+
 
 =head1 NAME
 

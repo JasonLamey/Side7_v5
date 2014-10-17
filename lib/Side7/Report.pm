@@ -9,6 +9,8 @@ use Data::Dumper;
 
 use Side7::Globals;
 
+use version; our $VERSION = qv( '0.1.2' );
+
 
 =pod
 
@@ -103,9 +105,9 @@ sub get_user_content_breakdown_by_category
 
     if ( scalar( @image_categories ) > 0 )
     {
-        push( @data, { 
+        push( @data, {
                         value                => $user->get_image_count(),
-                        drilldown_name       => 'Image Categories', 
+                        drilldown_name       => 'Image Categories',
                         drilldown_categories => join( ',', @image_categories ),
                         drilldown_values     => join( ',', @image_values ),
                      }
@@ -145,7 +147,7 @@ sub get_user_content_breakdown_by_category
 
 Return a hashref of disk quota and usage values for use with Highcharts gauges. Returned values are in bytes.
 
-Parameters: 
+Parameters:
 
 =over 4
 
@@ -164,7 +166,7 @@ sub get_user_disk_usage_stats
     my $disk_stats = {};
 
     my $disk_usage = 0;
-    my $disk_quota = 0; 
+    my $disk_quota = 0;
     if ( defined $user->{'account'} && defined $user->account->user_role->name() )
     {
         # Disk Quota
@@ -184,9 +186,9 @@ sub get_user_disk_usage_stats
                 if (
                         $perk->perk->name() eq 'disk_quota_500'
                         &&
-                        $perk->perk->suspended != 1 
+                        $perk->perk->suspended != 1
                         &&
-                        $perk->perk->revoked != 1 
+                        $perk->perk->revoked != 1
                 )
                 {
                     $disk_quota = 524288000; # 500MB in bytes
