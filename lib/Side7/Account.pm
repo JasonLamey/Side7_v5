@@ -503,6 +503,12 @@ sub get_account_hash_for_template
             }
     }
 
+    # Process BBCode
+    foreach my $key ( qw/ biography / )
+    {
+        $account_hash->{$key} = Side7::Utils::Text::parse_bbcode_markup( $account_hash->{$key}, {} );
+    }
+
     return $account_hash;
 }
 

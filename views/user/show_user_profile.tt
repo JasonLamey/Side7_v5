@@ -1,4 +1,5 @@
 [% USE date %]
+
 <h1>User Profile for [% user.username %]</h1>
 <p><a href="/user/[% user.username %]/gallery">See [% user.username %]'s Gallery</a>
 [% IF friend_link && session.user_id != user.id %]
@@ -13,9 +14,13 @@
 </p>
 <ol>
     <li>Full Name: [% user.account.full_name %]</li>
-    <li>Created At: [% user.created_at %]</li>
-    <li>Updated At: [% user.updated_at %]</li>
-    <li>Birthday: [% user.account.birthday %]</li>
+    <li>Created At: [% date.format( user.created_at, '%a, %d %b, %Y @ %H:%M' ) %]</li>
+    <li>Updated At: [% date.format( user.updated_at, '%a, %d %b, %Y @ %H:%M' ) %]</li>
+    <li>Birthday: [% date.format( user.account.birthday, '%d %B, %Y' ) %]</li>
     <li>Sex: [% user.account.sex %]</li>
 </ol>
-<div>[% user.account.biography %]</div>
+[% IF vars.filter_profanity == 1 %]
+<div>[% filtered_data.biography_no_profanity %]</div>
+[% ELSE %]
+<div>[% filtered_data.biography %]</div>
+[% END %]

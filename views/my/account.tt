@@ -18,24 +18,24 @@
                 [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
             </p>
         </div>
-        <div style="border: solid 1px #000000; padding: 5px;">
+        <div style="border: solid 1px #000000; padding: 5px; margin-top: 5px;">
             <h2>Change Your Password</h2>
             <form action='/my/changepassword' method='post'>
-                <label for='old_password'>Current Password:</label> 
+                <label for='old_password'>Current Password:</label>
                 <input type="password" name="old_password" value="" placeholder="Current Password" size="30" maxlength="45"><br />
-                <label for='new_password'>New Password:</label> 
+                <label for='new_password'>New Password:</label>
                 <input type="password" name="new_password" value="" placeholder="New Password" size="30" maxlength="45"><br />
-                <label for='confirm_new_password'>Confirm New Password:</label> 
+                <label for='confirm_new_password'>Confirm New Password:</label>
                 <input type="password" name="confirm_new_password" value="" placeholder="Confirm Password" size="30" maxlength="45"><br />
                 <input type="submit" value="Change Password">
             </form>
         </div>
-        <div style="border: solid 1px #000000; padding: 5px;">
+        <div style="border: solid 1px #000000; padding: 5px; margin-top: 5px;">
             <h2>Delete Your Account</h2>
-            <p style="text-align: justify; font-size: 8pt;">If you would like to delete your account 
-            and all of your content uploads, click &quot;Set Delete Flag&quot;. 
-            This will mark your account for automatic removal. You will have 30 days before your 
-            account is removed, and during that time, you can come back to this page and remove 
+            <p style="text-align: justify; font-size: 8pt;">If you would like to delete your account
+            and all of your content uploads, click &quot;Set Delete Flag&quot;.
+            This will mark your account for automatic removal. You will have 30 days before your
+            account is removed, and during that time, you can come back to this page and remove
             the flag if you change your mind.</p>
 
             [% IF user.account.delete_on %]

@@ -49,7 +49,7 @@ sub parse_bbcode_markup
 
     return if ! defined $incoming_text;
 
-    my $smileys = (defined $args->{'smilies'}) ? 1 : 0;
+    my $smileys = ( defined $args->{'smilies'} ) ? 1 : 0;
 
     my $parser = Parse::BBCode->new(
                     {

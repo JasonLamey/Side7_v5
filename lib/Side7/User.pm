@@ -1112,14 +1112,13 @@ sub get_pending_friend_requests
     my $user_id = delete $args{'user_id'} // undef;
 
     my $friend_requests = [];
-    my $query = "friend_id => " . $self->id . ", status => 'Pending',";
-
-    $query .= " user_id => $user_id" if defined $user_id && $user_id =~ m/^\d+$/;
+    my $query = [];
+    push ( @$query, { friend_id => $self->id } );
+    push ( @$query, { status    => 'Pending' } );
+    push ( @$query, { user_id   => $user_id  } ) if defined $user_id && $user_id =~ m/^\d+$/;
 
     $friend_requests = Side7::User::Friend::Manager->get_friends(
-                                                                    query => [
-                                                                                eval { $query },
-                                                                             ],
+                                                                    query => $query,
                                                                     with_objects => [ 'user' ],
                                                                 );
     return $friend_requests;
@@ -1628,7 +1627,8 @@ sub clear_delete_flag
 
 =head2 show_profile()
 
-Displays the public profile page for the given user
+Returns the User object, and any filtered data for use in the template, so that the
+User's profile can be displayed properly.
 
 Parameters:
 
@@ -1640,7 +1640,7 @@ Parameters:
 
 =back
 
-    my $user_hash = Side7::User::show_profile( username => $username )
+    my ( $user, $filtered_data ) = Side7::User::show_profile( username => $username )
 
 =cut
 
@@ -1665,13 +1665,20 @@ sub show_profile
     # User Not Found
     if ( ! defined $user )
     {
-        return;
+        return ();
     }
 
     # User Found
-    my $user_hash = $user->get_user_hash_for_template( filter_profanity => $filter_profanity );
+    my $filtered_data = {};
 
-    return $user_hash;
+    $filtered_data->{'biography'} = Side7::Utils::Text::parse_bbcode_markup( $user->account->biography, {} );
+
+    if ( $filter_profanity == 1 )
+    {
+        $filtered_data->{'biography_no_profanity'} = Side7::Utils::Text::filter_profanity( text => $filtered_data->{'biography'} );
+    }
+
+    return ( $user, $filtered_data );
 }
 
 

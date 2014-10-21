@@ -200,6 +200,67 @@ sub give_kudos_coins
 }
 
 
+=head2 get_kudos_coin_ledger()
+
+Returns an hashref of kudos coins info, including current balance and ledger entries in decending order.
+
+Parameters:
+
+=over 4
+
+=item user: The User object for which to return the ledger.
+
+=back
+
+    my $ledger = Side7::KudosCoin->get_kudos_coin_ledger( user => $user );
+
+=cut
+
+sub get_kudos_coin_ledger
+{
+    my ( $self, %args ) = @_;
+
+    my $user = delete $args{'user'} // undef;
+
+    return [] if ! defined $user || ref( $user ) ne 'Side7::User';
+
+    my $ledger     = [];
+    my $kudos_info = {};
+    my $current_balance = Side7::KudosCoin->get_current_balance( user_id => $user->id() ) // 0;
+    $kudos_info->{'current_balance'} = $current_balance;
+    if ( defined $user->{'kudos_coins'} )
+    {
+        my $kudos_ledger = $user->{'kudos_coins'};
+
+        # Because we're working our ledger in reverse, we're going to be working the running balance
+        # in reverse, too.  We'll be subtracting from the total balance, rather than adding the starting
+        # balance.
+
+        my $running_balance = $current_balance;
+        my $prev_amount = 0;
+
+        foreach my $record ( reverse @{ $kudos_ledger } )
+        {
+            my $timestamp   = $record->get_formatted_timestamp();
+            $running_balance -= $prev_amount;   # Subtracting the previous amount from the current balance.
+            $prev_amount = $record->{'amount'}; # Set a new previous amount.
+
+            push ( $ledger, {
+                                timestamp   => $timestamp,
+                                amount      => $record->{'amount'},
+                                description => $record->{'description'},
+                                balance     => $running_balance,
+                            }
+            );
+        }
+    }
+
+    $kudos_info->{'ledger'} = $ledger;
+
+    return $kudos_info;
+}
+
+
 =head2 get_formatted_timestamp()
 
 Returns a properly formatted timestamp for an individual ledger entry.

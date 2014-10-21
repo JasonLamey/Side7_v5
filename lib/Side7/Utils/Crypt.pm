@@ -105,7 +105,7 @@ sub old_mysql_password
 
     return if ! defined $string;
 
-    my $result = Side7::DB::build_select(
+    my $result = Side7::DB::build_my_select(
         select  => 'OLD_PASSWORD(?) as db_pass',
         tables  => [ 'users' ],
         columns => { users => [ 'db_pass' ] },

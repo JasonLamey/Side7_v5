@@ -118,23 +118,10 @@ get '/' => sub
                                                     limit        => 5,
                                                 );
 
-    # Get News Hashes
-    my $news = [];
-    foreach my $result ( @$results )
-    {
-        push( @$news, $result->get_news_hash_for_template() );
-    }
-
-    my $sticky_news = [];
-    foreach my $sticky ( @$stickies )
-    {
-        push( @$sticky_news, $sticky->get_news_hash_for_template() );
-    }
-
     template 'index', {
                         data => {
-                                    news        => $news,
-                                    sticky_news => $sticky_news,
+                                    news        => $results,
+                                    sticky_news => $stickies,
                                 },
                       }, { layout => 'index' };
 };
@@ -576,12 +563,10 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
 # User profile page.
 get '/user/:username' => sub
 {
-    my $user_hash = Side7::User::show_profile(
-                                                username => params->{'username'},
-                                                filter_profanity => vars->{'filter_profanity'},
-                                             );
-
-    my $user = Side7::User::get_user_by_username( params->{'username'} );
+    my ( $user, $filtered_data ) = Side7::User::show_profile(
+                                                                username => params->{'username'},
+                                                                filter_profanity => vars->{'filter_profanity'},
+                                                            );
 
     my $friend_link = undef;
     if ( defined session( 'logged_in' ) )
@@ -605,12 +590,12 @@ get '/user/:username' => sub
         }
     }
 
-    if ( defined $user_hash )
+    if ( defined $user && ref( $user ) eq 'Side7::User' )
     {
         template 'user/show_user_profile', {
-                                                user        => $user,
-                                                user_hash   => $user_hash,
-                                                friend_link => $friend_link,
+                                                user          => $user,
+                                                filtered_data => $filtered_data,
+                                                friend_link   => $friend_link,
                                            };
     }
     else
