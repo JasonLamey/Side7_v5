@@ -26,7 +26,7 @@ use Data::Dumper;
 use Carp qw( confess );
 use List::Util;
 
-use Side7::Globals;
+#use Side7::Globals;
 
 use version; our $VERSION = qv( '0.1.5' );
 

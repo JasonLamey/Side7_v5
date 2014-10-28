@@ -1,3 +1,4 @@
+[% USE date %]
 <h1>User Directory</h1>
 
 [% PROCESS 'site/_pagination_menu_initials.tt' %]
@@ -6,7 +7,10 @@
 [% thumbs = 'user/_user_directory_thumbs.tt' %]
 [% IF data.users %]
     [% FOREACH user IN data.users %]
-    <div style="padding: 5px; margin-bottom: 5px;"><a href="/user/[% user.user_hash.username %]">[% user.user_hash.username %]</a> ([% user.user_hash.account.full_name %]); Joined: [% user.user_hash.created_at %]; Num Images: <a href="/user/[% user.user_hash.username %]/gallery">[% user.image_count %]</a> | [% PROCESS $thumbs %]</div>
+    <div style="padding: 5px; margin-bottom: 5px;">
+    <a href="/user/[% user.user.username %]">[% user.user.username %]</a> ([% user.user.account.full_name %]);
+    Joined: [% date.format( user.user.created_at, '%d %B, %Y' ) %];
+    Num Images: <a href="/user/[% user.user.username %]/gallery">[% user.image_count %]</a> | [% PROCESS $thumbs %]</div>
     [% END %]
 [% ELSE %]
 <p>No users to display. How sad.</p>

@@ -1,10 +1,11 @@
 [% USE date %]
+[% USE TextUtils %]
 
 <script>
-$(document).ready(function() 
-    { 
-        $("#news_table").tablesorter({ 
-            // sort on the username column (second column), order asc 
+$(document).ready(function()
+    {
+        $("#news_table").tablesorter({
+            // sort on the username column (second column), order asc
             sortList: [[6,1]],
             headers: {
                 3: { sorter: false },
@@ -12,8 +13,8 @@ $(document).ready(function()
                 8: { sorter: false },
             },
             widgets: ['zebra'],
-        }); 
-    } 
+        });
+    }
 );
 </script>
 
@@ -51,18 +52,18 @@ $(document).ready(function()
                             [% IF news.is_static == 1 %]Sticky[% ELSE %]Not Sticky[% END %]</td>
         <td>[% news.title %]</td>
         <td>[% news.blurb %]</td>
-        <td>[% news.body.substr( 0,100 ) %]</td>
+        <td>[% TextUtils.sanitize_text_for_html( news.body.substr( 0,100 ) ) %]</td>
         <td>[% news.user.username %]</td>
         <td>[% date.format( news.created_at, '%Y-%m-%d %H:%M' ) %]</td>
         <td>[% date.format( news.updated_at, '%Y-%m-%d %H:%M' ) %]</td>
         <td align="center" style="white-space: nowrap;">
                     <a href="/admin/news/[% news.id %]/show" data-jkit="[lightbox:width=900px;height=550px]">
-                    <img src="/images/icons/magnifier.gif" alt="News Details" title="News Details" align="absmiddle" border="0"> Details</a> | 
+                    <img src="/images/icons/magnifier.gif" alt="News Details" title="News Details" align="absmiddle" border="0"> Details</a> |
                     [% IF permissions.can_post_site_news == 1 %]
                     <a href="/admin/news/[% news.id %]/edit" data-jkit="[lightbox:width=900px;height=550px]">
-                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit</a> | 
+                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit</a> |
                     [% ELSE %]
-                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit | 
+                    <img src="/images/icons/page_edit.gif" alt="Edit News" title="Edit News" align="absmiddle" border="0"> Edit |
                     [% END %]
                     [% IF permissions.can_post_site_news == 1 %]
                     <a href="/admin/news/[% news.id %]/delete" data-jkit="[lightbox:width=900px;height=550px]">

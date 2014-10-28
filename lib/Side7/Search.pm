@@ -111,7 +111,7 @@ sub get_results
 
     # Check Side7::Search::History to see if this same search has been done within the past 30 minutes.
     # If so, let's pull the cached results instead of re-searching.
-    my $history = Side7::Search::get_history( search_term => $look_for );
+    my $history = Side7::Search::get_history( search_term => $look_for ) // [];
     if ( defined $history && scalar( @{ $history } ) > 0 )
     {
         return $history;
@@ -124,7 +124,7 @@ sub get_results
                                             size             => $size,
                                             filter_profanity => $filter_profanity,
                                            );
-    my @sorted_users = sort { lc( $a->{'username'} ) cmp lc( $b->{'username'} ) } @{ $users };
+    my @sorted_users = sort { lc( $a->{'user'}->username ) cmp lc( $b->{'user'}->username ) } @{ $users };
 
     # Images
     my $images = Side7::Search::search_images(
@@ -142,9 +142,9 @@ sub get_results
     # Videos
 
     my @sorted_results = sort {
-                                $b->{'created_at_epoch'} cmp $a->{'created_at_epoch'}
+                                $b->{'content'}->created_at cmp $a->{'content'}->created_at
                                 ||
-                                $a->{'title'} cmp $b->{'title'}
+                                $a->{'content'}->title      cmp $b->{'content'}->title
                               } @results;
 
     unshift( @sorted_results, @sorted_users );
@@ -210,9 +210,19 @@ sub get_history
         return [];
     }
 
-    my $results = $searches->[0]->{'results'} // '';
-
-    my $history = eval{ $results } // [];
+    my $history = [];
+    my $results = '';
+    if
+    (
+        defined $searches->[0]->{'results'}
+        &&
+        $searches->[0]->{'results'} ne ''
+    )
+    {
+        $results = $searches->[0]->{'results'};
+        $history = eval { @{ $results } };
+        $LOGGER->debug( 'HISTORY: ' . Dumper( $history ) );
+    }
 
     # Update the count on the history record.
     if ( defined $results && $results ne '' )
@@ -300,17 +310,9 @@ sub search_users
 
     foreach my $user ( @{ $users } )
     {
-        my $user_hash = $user->get_user_hash_for_template( filter_profanity => $filter_profanity );
+        my $user_hash = {};
+        $user_hash->{'user'}         = $user;
         $user_hash->{'content_type'} = 'user';
-
-        foreach my $key ( qw/ username first_name last_name full_name / )
-        {
-            if ( defined $user_hash->{$key} )
-            {
-                $user_hash->{'highlighted_' . $key} =
-                            Side7::Search::highlight_match( look_for => $look_for, text => $user_hash->{$key} );
-            }
-        }
 
         push( @results, $user_hash );
     }
@@ -367,19 +369,9 @@ sub search_images
 
     foreach my $image ( @{ $images } )
     {
-        my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity );
+        my $image_hash = {};
+        $image_hash->{'content'}      = $image;
         $image_hash->{'content_type'} = 'image';
-
-        $image_hash->{'blurb'} = substr( $image_hash->{'description'}, 0, 200 );
-
-        foreach my $key ( qw/ title description blurb / )
-        {
-            if ( defined $image_hash->{$key} )
-            {
-                $image_hash->{'highlighted_' . $key} =
-                            Side7::Search::highlight_match( look_for => $look_for, text => $image_hash->{$key} );
-            }
-        }
 
         my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
 

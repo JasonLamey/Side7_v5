@@ -1,6 +1,8 @@
 [% USE date %]
 
 <h1>User Profile for [% user.username %]</h1>
+<div style="float: right; margin-right: 10px; margin-bottom: 10px; max-width: 310px;">
+<img src="[% user.get_avatar( size => 'medium' ) %]" alt="[% user.username %]" title="[% user.username %]"></div>
 <p><a href="/user/[% user.username %]/gallery">See [% user.username %]'s Gallery</a>
 [% IF friend_link && session.user_id != user.id %]
     [% IF friend_link == 'friend' %]

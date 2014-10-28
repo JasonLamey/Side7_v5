@@ -36,7 +36,7 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
-use version; our $VERSION = qv( '0.1.35' );
+use version; our $VERSION = qv( '0.1.36' );
 
 =pod
 
@@ -172,7 +172,6 @@ __PACKAGE__->meta->setup
             key_columns       => { referred_by => 'id' },
             relationship_type => 'many to one',
         },
-
     ],
 );
 
@@ -250,7 +249,7 @@ sub get_user_hash_for_template
             $prev_amount = $record->{'amount'}; # Set a new previous amount.
 
             push ( $user_hash->{'kudos_coins'}->{'ledger'}, {
-                                                                timestamp   => $timestamp,
+                                                                timestamp   => $record->timestamp,
                                                                 amount      => $record->{'amount'},
                                                                 description => $record->{'description'},
                                                                 balance     => $running_balance,
@@ -1112,13 +1111,13 @@ sub get_pending_friend_requests
     my $user_id = delete $args{'user_id'} // undef;
 
     my $friend_requests = [];
-    my $query = [];
-    push ( @$query, { friend_id => $self->id } );
-    push ( @$query, { status    => 'Pending' } );
-    push ( @$query, { user_id   => $user_id  } ) if defined $user_id && $user_id =~ m/^\d+$/;
+    my %query           = ();
+    $query{friend_id} = $self->id;
+    $query{status}    = 'Pending';
+    $query{user_id}   = $user_id if defined $user_id && $user_id =~ m/^\d+$/;
 
     $friend_requests = Side7::User::Friend::Manager->get_friends(
-                                                                    query => $query,
+                                                                    query        => [ %query ],
                                                                     with_objects => [ 'user' ],
                                                                 );
     return $friend_requests;
@@ -2121,9 +2120,9 @@ sub get_users_for_directory
 
         push @$users,
             {
-                user_hash     => $user->get_user_hash_for_template(),
-                image_count   => $user->get_image_count(),
-                images        => \@images,
+                user        => $user,
+                image_count => $user->get_image_count(),
+                images      => \@images,
             };
     }
     $iterator->finish();
@@ -2219,7 +2218,7 @@ sub show_user_gallery
 
     if ( ! defined $user )
     {
-        return; # TODO: Need to redirect to invalid user error page.
+        return;
     }
 
     my $gallery = $user->get_gallery( session => $session );

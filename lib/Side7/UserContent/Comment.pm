@@ -6,6 +6,7 @@ use warnings;
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
 use Side7::Globals;
+use Side7::User;
 
 use version; our $VERSION = qv( '0.1.1' );
 
@@ -95,16 +96,25 @@ __PACKAGE__->meta->setup
 =head1 METHODS
 
 
-=head2 method_name()
+=head2 is_defunct_user()
 
-    my $result = My::Package->method_name();
+Returns a C<boolean> defining if the associated User account is defunct or not.
 
-TODO: Define what this method does, describing both input and output values and types.
+Parameters: None;
+
+    my $result = $comment->is_defuct_user();
+
 
 =cut
 
-sub method_name
+sub is_defunct_user
 {
+    my ( $self ) = @_;
+
+    my $user = Side7::User->new( id => $self->user_id );
+    my $loaded = $user->load( speculative => 1 );
+
+    return $loaded == 0;
 }
 
 

@@ -110,10 +110,10 @@ sub get_gallery
 
     foreach my $image ( @$images )
     {
-        my $image_hash = $image->get_image_hash_for_template();
-        $image_hash->{'content_type'} = 'image';
+        my $image_hash = {};
+        $image_hash->{'content'} = $image;
 
-        my ( $filepath, $error );
+        my ( $filepath, $error ) = ( undef, undef );
 
         if ( $image->block_thumbnail( session => $session ) == 1 )
         {

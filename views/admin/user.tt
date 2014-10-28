@@ -1,15 +1,16 @@
+[% USE date %]
 <script>
-$(document).ready(function() 
-    { 
-        $("#users_table").tablesorter({ 
-            // sort on the username column (second column), order asc 
+$(document).ready(function()
+    {
+        $("#users_table").tablesorter({
+            // sort on the username column (second column), order asc
             sortList: [[1,0]],
             headers: {
                 7: { sorter: false },
             },
             widgets: ['zebra'],
-        }); 
-    } 
+        });
+    }
 );
 </script>
 
@@ -38,29 +39,30 @@ $(document).ready(function()
     <tr><td colspan="8" align="center"><strong>No Users Found For '[% initial %]'</strong></td></tr>
     [% ELSE %]
         [% FOR user IN data.users %]
-    <tr class="admin_row_bg_[% user.user_hash.account.status %]">
-        <td align="right">[% user.user_hash.id %]</td>
-        <td>[% user.user_hash.username %]</td>
-        <td>[% user.user_hash.account.full_name %]</td>
-        <td align="center"><span class="user_status_[% user.user_hash.account.status %]">[% user.user_hash.account.status %]</span></td>
-        <td align="center">[% user.user_hash.account.type %]</td>
-        <td align="center"><span class="user_role_[% user.user_hash.account.role %]">[% user.user_hash.account.role %]</span></td>
-        <td>[% user.user_hash.created_at %]</td>
+    <tr class="admin_row_bg_[% user.account.status %]">
+        <td align="right">[% user.id %]</td>
+        <td>[% user.username %]</td>
+        <td>[% user.account.full_name %]</td>
+        <td align="center"><span class="user_status_[% user.account.user_status.user_status %]">
+                        [% user.account.user_status.user_status %]</span></td>
+        <td align="center">[% user.account.user_type.user_type %]</td>
+        <td align="center"><span class="user_role_[% user.account.user_role.name %]">[% user.account.user_role.name %]</span></td>
+        <td>[% date.format( user.created_at, '%F' ) %]</td>
         <td align="center">
                     [% IF permissions.can_view_account_details == 1 %]
-                    <a href="/admin/users/[% user.user_hash.username %]/show" data-jkit="[lightbox:width=900px;height=550px]">
-                    <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details</a> | 
+                    <a href="/admin/users/[% user.username %]/show" data-jkit="[lightbox:width=900px;height=550px]">
+                    <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details</a> |
                     [% ELSE %]
-                    <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details | 
+                    <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details |
                     [% END %]
                     [% IF permissions.can_modify_user_account == 1 %]
-                    <a href="/admin/users/[% user.user_hash.username %]/edit" data-jkit="[lightbox:width=900px;height=550px]">
-                    <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit</a> | 
+                    <a href="/admin/users/[% user.username %]/edit" data-jkit="[lightbox:width=900px;height=550px]">
+                    <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit</a> |
                     [% ELSE %]
-                    <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit | 
+                    <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit |
                     [% END %]
                     [% IF permissions.can_disable_accounts == 1 %]
-                    <a href="/admin/users/[% user.user_hash.username %]/disable" data-jkit="[lightbox:width=900px;height=550px]">
+                    <a href="/admin/users/[% user.username %]/disable" data-jkit="[lightbox:width=900px;height=550px]">
                     <img src="/images/icons/user_delete.gif" alt="Disable User" title="Disable User" align="absmiddle" border="0"> Disable</a>
                     [% ELSE %]
                     <img src="/images/icons/user_delete.gif" alt="Disable User" title="Disable User" align="absmiddle" border="0"> Disable

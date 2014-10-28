@@ -1,21 +1,22 @@
+[% USE date %]
 <script type="text/javascript">
     $( document ).ready( function() {
-        $( '#sub_expire' ).datepicker( { 
-            changeMonth: true, 
-            changeYear: true, 
-            dateFormat: 'yy-mm-dd', 
+        $( '#sub_expire' ).datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'yy-mm-dd',
             showAnim: 'fadeIn',
         } );
-        $( '#delete_on' ).datepicker( { 
-            changeMonth: true, 
-            changeYear: true, 
-            dateFormat: 'yy-mm-dd', 
+        $( '#delete_on' ).datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'yy-mm-dd',
             showAnim: 'fadeIn'
         } );
-        $( '#birthday' ).datepicker( { 
-            changeMonth: true, 
-            changeYear: true, 
-            dateFormat: 'yy-mm-dd', 
+        $( '#birthday' ).datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'yy-mm-dd',
             showAnim: 'fadeIn'
         } );
         $( '#user_edit_tabs' ).jKit( 'tabs', { 'animation': 'fade' } );
@@ -68,21 +69,25 @@
             <legend>User Data</legend>
             <label for="username">Username:</label> <input type="text" name="username" size="30" maxlength="45" value="[% user.username %]" data-jkit="[validate:required=true;error=Username is required.]"><br>
             <label for="email_address">E-mail Address:</label> <input type="text" name="email_address" size="30" maxlength="255" value="[% user.email_address %]" data-jkit="[validate:required=true;type=email;error=A valid e-mail address is required.]"><br>
-            <label for="referred_by">Referred By:</label> <input type="text" name="referred_by" size="30" maxlength="45" value="[% user.referred_by %]"><br>
-            <label>Joined:</label> [% user.created_at %]<br>
-            <label>Last Updated:</label> [% user.updated_at %]<br>
+            <label for="referred_by">Referred By:</label> <input type="text" name="referred_by" size="30" maxlength="45" value="[% user.referred_by.username %]"><br>
+            <label>Joined:</label> [% date.format( user.created_at, '%d %B, %Y' ) %]<br>
+            <label>Last Updated:</label> [% date.format( user.updated_at, '%d %B, %Y @ %H:%M' ) %]<br>
         </fieldset>
 
         <fieldset>
             <legend>Account Data</legend>
-            <label for="status">Status:</label> [% user.account.status %]<br>
-            <label for="type">Type:</label> [% user.account.type %]<br>
-            <label for="role">Role:</label> [% user.account.role %]<br>
+            <label for="status">Status:</label> [% user.account.user_status.user_status %]<br>
+            <label for="type">Type:</label> [% user.account.user_type.user_type %]<br>
+            <label for="role">Role:</label> [% user.account.user_role.name %]<br>
 
             <label for="subscription_expires_on">Subscription Expires On:</label>
-            <input id="sub_expire" type="date" name="subscription_expires_on" size="30" maxlength="15" value="[% user.account.subscription_expires_on %]"><br>
+            [% IF user.account.subscription_expires_on && user.account.subscription_expires_on != '0000-00-00' %][% expires_on = date.format( user.account.subscription_expires_on, '%F' ) %]
+            [% ELSE %][% expires_on = '' %][% END %]
+            <input id="sub_expire" type="date" name="subscription_expires_on" size="30" maxlength="15" value="[% expires_on %]"><br>
             <label for="delete_on">Deletion Flag Set For:</label>
-            <input id="delete_on" type="date" name="delete_on" size="30" maxlength="15" value="[% user.account.delete_on %]"><br>
+            [% IF user.account.delete_on && user.account.delete_on != '0000-00-00' %][% delete_on = date.format( user.account.delete_on, '%F' ) %]
+            [% ELSE %][% delete_on = '' %][% END %]
+            <input id="delete_on" type="date" name="delete_on" size="30" maxlength="15" value="[% delete_on %]"><br>
             <br>
             <label for="first_name">First Name:</label> <input type="text" name="first_name" size="30" maxlength="15" value="[% user.account.first_name %]"><br>
             <label for="last_name">Last Name:</label> <input type="text" name="last_name" size="30" maxlength="15" value="[% user.account.last_name %]"><br>
@@ -93,11 +98,13 @@
                 <option value='[% sex %]'[% selected %]>[% sex %]</option>
                 [% END %]
             </select><br>
-            <label for="birthday">Birthday:</label> <input type="date" id="birthday" name="birthday" size="30" maxlength="15" value="[% user.account.birthday %]" data-jkit="[validate:required=true;error=Birthday is required.]"><br>
+            [% IF user.account.birthday && user.account.birthday != '0000-00-00' %][% birthday = date.format( user.account.birthday, '%F' ) %]
+            [% ELSE %][% birthday = '' %][% END %]
+            <label for="birthday">Birthday:</label> <input type="date" id="birthday" name="birthday" size="30" maxlength="15" value="[% birthday %]" data-jkit="[validate:required=true;error=Birthday is required.]"><br>
             <label for="birthday_visibility">Birthday Visibility:</label> <select name='birthday_visibility'>
                 <option value=''>--</option>
                 [% FOREACH birthday_visibility IN data.birthday_visibilities %]
-                [% IF birthday_visibility.visibility == user.account.birthday_visibility %][% selected = ' selected' %][% ELSE %][% selected = '' %][% END %]
+                [% IF birthday_visibility.id == user.account.birthday_visibility %][% selected = ' selected' %][% ELSE %][% selected = '' %][% END %]
                 <option value='[% birthday_visibility.id %]'[% selected %]>[% birthday_visibility.visibility %]</option>
                 [% END %]
             </select><br>
@@ -122,8 +129,8 @@
             <label>Biography:</label><br>
             <textarea name="biography" cols="80" rows="10" class="user_input_textarea">[% user.account.biography %]</textarea>
             <br>
-            <label>Created:</label> [% user.account.created_at %]<br>
-            <label>Last Updated:</label> [% user.account.updated_at %]<br>
+            <label>Created:</label> [% date.format( user.account.created_at, '%d %B, %Y' ) %]<br>
+            <label>Last Updated:</label> [% date.format( user.account.updated_at, '%d %B, %Y @ %H:%M' ) %]<br>
         </fieldset>
         <input type="submit" value="Save Changes">
         </form>

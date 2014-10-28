@@ -25,6 +25,7 @@ engines:
   template_toolkit:
     start_tag: '[%'
     end_tag:   '%]'
+    PLUGIN_BASE: 'Side7::Template::Plugin'
 
 # Logger setup
 logger: log4perl

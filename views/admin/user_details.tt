@@ -1,14 +1,17 @@
+[% USE date %]
+[% USE TextUtils %]
+<div style="float: right; margin: 5px; padding: 5px; width: 50px; height: 50px;"><img src="[% user.get_avatar( size => "tiny" ) %]"></div>
 <h1>[% user.username %]</h1>
 
 <div>
-    <strong>User's Account Links:</strong> 
+    <strong>User's Account Links:</strong>
     <a href="/user/[% user.username %]" target="_blank">Profile</a>
     &middot;
     <a href="/user/[% user.username %]/gallery" target="_blank">Gallery</a>
 
     &nbsp; || &nbsp;
 
-    <strong>Admin Links:</strong> 
+    <strong>Admin Links:</strong>
     [% IF permissions.can_modify_user_account %]
     <a href="/admin/users/[% user.username %]/edit">Edit User</a>
     [% ELSE %]
@@ -19,27 +22,31 @@
 <div style="border: solid 1px #000; margin: 5px; padding: 5px;">
     <h3>User Data:</h3>
     <strong>E-mail Address:</strong> [% user.email_address %]<br>
-    <strong>Referred By:</strong> [% user.referred_by %]<br>
-    <strong>Joined:</strong> [% user.created_at %]<br>
-    <strong>Last Updated:</strong> [% user.updated_at %]
+    <strong>Referred By:</strong> [% user.referred_by.username %]<br>
+    <strong>Joined:</strong> [% date.format( user.created_at, '%d %b, %Y' ) %]<br>
+    <strong>Last Updated:</strong> [% date.format( user.updated_at, '%d %b, %Y @ %H:%M' ) %]
 </div>
 
 <div style="border: solid 1px #000; margin: 0 5px 5px; padding: 5px;">
     <h3>Account Data</h3>
-    <strong>Status:</strong> [% user.account.status %]<br>
-    <strong>Type:</strong> [% user.account.type %]<br>
-    <strong>Role:</strong> [% user.account.role %]<br>
+    <strong>Status:</strong> [% user.account.user_status.user_status %]<br>
+    <strong>Type:</strong> [% user.account.user_type.user_type %]<br>
+    <strong>Role:</strong> [% user.account.user_role.name %]<br>
     <strong>Subscription Expires On:</strong>
-    [% IF user.account.subscription_expires_on %][% user.account.subscription_expires_on %][% ELSE %]N/A[% END %]<br>
+    [% IF user.account.subscription_expires_on %][% date.format( user.account.subscription_expires_on, '%d %b, %Y' ) %][% ELSE %]N/A[% END %]<br>
     <strong>Deletion Flag Set For:</strong>
-    [% IF user.account.delete_on %][% user.account.delete_on %][% ELSE %]N/A[% END %]<br>
+    [% IF user.account.delete_on %][% date.format( user.account.delete_on, '%d %b, %Y' ) %][% ELSE %]N/A[% END %]<br>
     <br>
     <strong>First Name:</strong> [% user.account.first_name %]<br>
     <strong>Last Name:</strong> [% user.account.last_name %]<br>
     <strong>Sex:</strong> [% user.account.sex %]<br>
-    <strong>Birthday:</strong> [% user.account.birthday_raw %] ( Visibility: [% user.account.birthday_visibility %] )<br>
+    [% IF user.account.birthday && user.account.birthday != '0000-00-00' %]
+    [% birthday_date = date.format( user.account.birthday, '%d %b, %Y' ) %]
+    [% ELSE %][% birthday_date = 'NO BIRTHDAY ASSIGNED' %][% END %]
+    <strong>Birthday:</strong> [% birthday_date %]
+                ( Visibility: [% user.account.bday_visibility.visibility %] )<br>
     <strong>State:</strong> [% user.account.state %]<br>
-    <strong>Country:</strong> [% user.account.country %]
+    <strong>Country:</strong> [% user.account.country.name %]
     <br>
     <strong>Webpage:</strong>
     [% IF user.account.webpage_url %]<a href="[% user.account.webpage_url %]" target="_blank">[% user.account.webpage_name %]</a>[% ELSE %]None[% END %]<br>
@@ -51,8 +58,8 @@
     <strong>Skype:</strong> [% user.account.skype %]<br>
     <br>
     <strong>Biography:</strong><br>
-    <div style="margin: 10px 0;">[% user.account.biography %]</div>
+    <div style="margin: 10px 0;">[% TextUtils.parse_bbcode_markup( user.account.biography ) %]</div>
     <br>
-    <strong>Created:</strong> [% user.account.created_at %]<br>
-    <strong>Last Updated:</strong> [% user.account.updated_at %]
+    <strong>Created:</strong> [% date.format( user.account.created_at, '%d %b, %Y @ %H:%M' ) %]<br>
+    <strong>Last Updated:</strong> [% date.format( user.account.updated_at, '%d %b, %Y @ %H:%M' ) %]
 </div>

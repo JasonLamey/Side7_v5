@@ -1,3 +1,4 @@
+<div style="text-align: center;">
 [% FOREACH m_initial IN data.initials %]
     [% IF initial.upper == m_initial.upper %]
     <strong>[% m_initial %]</strong>
@@ -8,3 +9,4 @@
     &middot;
     [% END %]
 [% END %]
+</div>

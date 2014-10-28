@@ -1,23 +1,25 @@
+[% USE date %]
+
 <h1>[% user.username %]'s Gallery</h1>
 [% IF NOT gallery %]
 <div>Nothing to show. Poke this user to get them to upload!</div>
 [% ELSE %]
 <p><a href="/user/[% user.username %]">[% user.username %]'s Profile</a></p>
 <ol type="1">
-    [% FOREACH content IN gallery %]
+    [% FOREACH content_item IN gallery %]
     <li>
-    [% IF content.filepath %]
-    <a href='[% content.uri %]'><img src='[% content.filepath %]' alt='' title='' border='0' /></a>
-    [% ELSE %]
-    [ [% content.filepath_error %] ]
-    [% END %]
-    <a href="/[% content.content_type %]/[% content.id %]">
-    [% IF content.title %]
-    [% content.title %]
-    [% ELSE %]
+        [% IF content_item.filepath %]
+    <a href='[% content_item.uri %]'><img src='[% content_item.filepath %]' alt='' title='' border='0' /></a>
+        [% ELSE %]
+    [ [% content_item.filepath_error %] ]
+        [% END %]
+    <a href="/[% content_item.content.content_type FILTER lower %]/[% content_item.content.id %]">
+        [% IF content_item.content.title %]
+    [% content_item.content.title %]
+        [% ELSE %]
     Untitled
-    [% END %]
-    </a> - [% content.rating_text %] / [% content.category_text %] / [% content.stage_text %] - Uploaded [% content.created_at %]</li>
+        [% END %]
+    </a> - [% content_item.content.rating.rating %] / [% content_item.content.category.category %] / [% content_item.content.stage.stage %] - Uploaded [% date.format( content_item.content.created_at, '%d %b, %Y @ %H:%M' ) %]</li>
     [% END %]
 </ol>
 [% END %]

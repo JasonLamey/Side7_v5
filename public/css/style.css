@@ -195,7 +195,7 @@ code, tt {
 
 form {
     font-family: "AlwinLight", sans-serif;
-} 
+}
 
 input, textarea, select {
     font-family: "AlwinLight", sans-serif;
@@ -233,11 +233,11 @@ fieldset {
 
 .form_field {
     height: 1.8em;
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 .form_field input, .form_field select, .form_field textarea {
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 th, td {
@@ -254,12 +254,12 @@ th, td {
 }
 
 hr.faded {
-  clear: both; 
-  float: none; 
-  width: 100%; 
+  clear: both;
+  float: none;
+  width: 100%;
   height: 1px;
   margin: 0.8em 0;
-  border: none; 
+  border: none;
   background: #ddd;
   background-image: -webkit-gradient(
       linear,
@@ -288,11 +288,75 @@ textarea.user_input_textarea {
     max-width: 350px;
     font-size: 9pt;
     background-color: #ccf;
-    border: solid 1px $aaf;
+    border: solid 1px #336;
     color: #000;
 }
 
 .small_text
 {
     font-size: 8pt;
+}
+
+/* Comments */
+.comment_thread
+{
+    padding: 2px;
+    margin: 5px 5px 5px 320px;
+    background-color: #336;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+.comment
+{
+    padding: 3px;
+    margin: 3px;
+    background-color: #ccf;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.defunct_user
+{
+    color: #b33;
+    font-weight: bold;
+}
+
+/* LEDGERS */
+
+.ledger
+{
+    width: 100%;
+    margin: 10px 5px;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+    border-collapse: collapse;
+}
+
+.ledger th
+{
+    font-weight: bold;
+    font-size: 12pt;
+    background-color: #336;
+    color: #fff;
+    padding-top: 5px;
+    padding-bottom: 3px;
+}
+
+.ledger_row_odd td, .ledger_row_even td
+{
+    padding: 3px;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+    font-size: 8pt;
+}
+
+.ledger_row_odd
+{
+    background-color: #ccf;
+}
+
+.ledger_row_even
+{
+    background-color: #aac;
 }

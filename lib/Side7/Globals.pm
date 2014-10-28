@@ -25,11 +25,11 @@ our @EXPORT = qw(
 
 our @EXPORT_OK = qw();
 
-=pod
 
 =head1 NAME
 
 Side7::Globals
+
 
 =head1 DESCRIPTION
 
@@ -58,21 +58,13 @@ BEGIN
     $LOGGER = Log::Log4perl::get_logger();
 
     # Create DB connection.
-    $DB = Side7::DB::get_db( type => 'main' );
+    $DB  = Side7::DB::get_db( type => 'main' );
     $DBH = $DB->dbh or croak $DB->error;
 }
 
+
 =head1 METHODS
 
-=head2 method_name
-
-    $result = My::Package->method_name();
-
-TODO: Define what this method does, describing both input and output values and types.
-
-=cut
-
-=pod
 
 =head1 COPYRIGHT
 

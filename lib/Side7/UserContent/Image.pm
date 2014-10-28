@@ -497,10 +497,12 @@ sub show_image
                                 with =>
                                 [
                                     'user',
+                                    'stage',
                                     'rating',
                                     'category',
-                                    'stage',
                                     'properties',
+                                    'comment_threads',
+                                    'comment_threads.comments',
                                 ]
     );
 
@@ -516,7 +518,36 @@ sub show_image
     }
 
     # Image Found
-    my $image_hash = $image->get_image_hash_for_template( filter_profanity => $filter_profanity ) // {};
+    my $image_hash = {};
+    $image_hash->{'content'} = $image;
+
+    my $filtered_data = {};
+
+    # BBCode Parsing
+    foreach my $key ( qw/ description / )
+    {
+        $filtered_data->{$key} = Side7::Utils::Text::parse_bbcode_markup( $image->$key, {} );
+    }
+
+    $filtered_data->{'filesize'} =
+                Side7::Utils::File::get_formatted_filesize_from_bytes( bytes => $image->filesize );
+
+    # Filter profanity
+    if ( $filter_profanity == 1 )
+    {
+        foreach my $key ( qw/ title description / )
+        {
+            my $text = ( exists $filtered_data->{$key} ) ? $filtered_data->{$key} : $image->$key;
+            $filtered_data->{$key} = Side7::Utils::Text::filter_profanity( text => $text );
+        }
+    }
+
+    # Image Rating Stylizing and Qualifiers
+    $filtered_data->{'rating'} = $image->rating->rating;
+    if ( defined $image->rating_qualifiers && $image->rating_qualifiers ne '' )
+    {
+        $filtered_data->{'rating'} .= ' (' . $image->rating_qualifiers . ')';
+    }
 
     # Fetch Image Comments
     my $image_comments =
@@ -571,10 +602,10 @@ sub show_image
 
     ### Insert new Detailed View record, including date, IP info, user agent info, and referrer info.
     my $detailed_updated = Side7::UserContent::Image::DetailedView::add_detailed_view(
-                            image_id => $image_id,
-                            request  => $request,
-                            session  => $session,
-    );
+                                                                                        image_id => $image_id,
+                                                                                        request  => $request,
+                                                                                        session  => $session,
+                                                                                     );
 
     if ( ! defined $detailed_updated )
     {
@@ -584,6 +615,8 @@ sub show_image
     # Get total views
     $image_hash->{'total_views'} =
         Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id ) // 0;
+
+    $image_hash->{'filtered_content'} = $filtered_data;
 
     return $image_hash;
 }

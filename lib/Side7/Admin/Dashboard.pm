@@ -212,12 +212,14 @@ sub show_user_dashboard
                                                                             filter_profanity => 0,
                                                                          );
 
+    my @found_users = map { $_->{'user'} } @$users;
+
     my $statuses = Side7::Admin::Dashboard::get_user_statuses_for_select();
     my $roles    = Side7::Admin::Dashboard::get_user_roles_for_select();
     my $types    = Side7::Admin::Dashboard::get_user_types_for_select();
 
     return {
-                users      => $users,
+                users      => \@found_users,
                 user_count => $user_count,
                 initials   => $initials,
                 statuses   => $statuses,
@@ -425,62 +427,51 @@ sub search_users
     my $role        = delete $args{'role'}        // undef;
     my $page        = delete $args{'page'}        // 1;
 
-    my $query = '';
+    my %query = ();
 
     if ( defined $search_term && $search_term ne '' )
     {
         my $search = $search_term;
         $search =~ s/([\@\$\#\%])/\\$1/g;
-        $query .= qq(
-                    or => [
-                            'username'           => { like => "%$search%" },
-                            'email_address'      => { like => "%$search%" },
-                            'account.first_name' => { like => "%$search%" },
-                            'account.last_name'  => { like => "%$search%" },
-                          ], );
+
+        my %or = ();
+        $or{'username'}           = { like => "%$search%" };
+        $or{'email_address'}      = { like => "%$search%" };
+        $or{'account.first_name'} = { like => "%$search%" };
+        $or{'account.last_name'}  = { like => "%$search%" };
+
+        $query{'or'} = [ %or ];
     }
     if ( defined $status && $status ne '' )
     {
-        $query .= qq( 'account.user_status_id' => "$status", );
+        $query{'account.user_status_id'} = $status;
     }
     if ( defined $role && $role ne '' )
     {
-        $query .= qq( 'account.user_role_id' => "$role", );
+        $query{'account.user_role_id'} = $role;
     }
     if ( defined $type && $type ne '' )
     {
-        $query .= qq( 'account.user_type_id' => "$type", );
+        $query{'account.user_type_id'} = $type;
     }
 
     my $user_count = Side7::User::Manager->get_users_count(
-        query =>
-            [
-                eval { $query },
-            ],
+        query        => [ %query ],
         with_objects => [ 'account' ],
     );
 
     my $users = Side7::User::Manager->get_users
     (
-        query => [
-                    eval { $query },
-                 ],
+        query        => [ %query ],
         with_objects => [ 'account' ],
         sort_by      => 'username ASC',
         page         => $page,
         per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
     );
 
-    my @results = ();
-
-    foreach my $user ( @{ $users } )
-    {
-        push( @results, { user_hash => $user->get_user_hash_for_template( filter_profanity => 0 ) } );
-    }
-
     my %data = ();
 
-    $data{'users'}      = \@results;
+    $data{'users'}      = $users;
     $data{'user_count'} = $user_count;
     $data{'initials'}   = Side7::User::get_username_initials();
     $data{'statuses'}   = Side7::Admin::Dashboard::get_user_statuses_for_select();
@@ -499,7 +490,7 @@ Parameters:
 
 =over 4
 
-=item search_term: A string containing the text for which to search in the titel, description, user_id, and ip_address.
+=item search_term: A string containing the text for which to search in the title, description, user_id, and ip_address.
 
 =item page: The page of results to return.
 
@@ -519,34 +510,30 @@ sub search_audit_logs
     my $search_term = delete $args{'search_term'} // undef;
     my $page        = delete $args{'page'}        // 1;
 
-    my $query = '';
+    my %query = ();
 
     if ( defined $search_term && $search_term ne '' )
     {
         my $search = $search_term;
         $search =~ s/([\@\$\#\%])/\\$1/g;
-        $query .= qq(
-                    or => [
-                            'title'       => { like => "%$search%" },
-                            'description' => { like => "%$search%" },
-                            'user_id'     => { like => "%$search%" },
-                            'ip_address'  => { like => "%$search%" },
-                          ], );
+
+        my %or = ();
+        $or{'title'}       = { like => "%$search%" };
+        $or{'description'} = { like => "%$search%" };
+        $or{'user_id'}     = { like => "%$search%" };
+        $or{'ip_address'}  = { like => "%$search%" };
+
+        $query{'or'} = [ %or ];
     }
 
     my $log_count = Side7::AuditLog::Manager->get_audit_logs_count(
-        query =>
-            [
-                eval { $query },
-            ],
+        query        => [ %query ],
         with_objects => [ 'user' ],
     );
 
     my $logs = Side7::AuditLog::Manager->get_audit_logs
     (
-        query => [
-                    eval { $query },
-                 ],
+        query        => [ %query ],
         with_objects => [ 'user' ],
         sort_by      => 'timestamp DESC',
         page         => $page,

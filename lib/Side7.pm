@@ -9,7 +9,7 @@ use Dancer::Plugin::ValidateTiny;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::DirectoryView;
 use Dancer::Plugin::TimeRequests;
-use Dancer::Plugin::NYTProf;
+#use Dancer::Plugin::NYTProf;
 
 use DateTime;
 use Data::Dumper;
@@ -37,7 +37,11 @@ use Side7::FAQCategory;
 use Side7::FAQCategory::Manager;
 use Side7::FAQEntry;
 
-use version; our $VERSION = qv( '0.1.40' );
+use version; our $VERSION = qv( '0.1.41' );
+
+# Dancer Settings
+set charset => 'UTF-8';
+
 const my $AGE_18_IN_MONTHS => 216;
 
 hook 'before_template_render' => sub
@@ -1015,8 +1019,6 @@ post '/my/changepassword/?' => sub
         return redirect '/my/account';
     }
 
-    my $user_hash = $user->get_user_hash_for_template();
-
     my $confirmation_code = Side7::Utils::Crypt::sha1_hex_encode( session( 'username' ) . time() );
     my $confirmation_link = uri_for( "/my/confirm_password_change/$confirmation_code" );
 
@@ -1058,7 +1060,7 @@ post '/my/changepassword/?' => sub
     $audit_log->save();
 
     # Display page with instructions to the User
-    return template 'my/password_change_next_step', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    return template 'my/password_change_next_step', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
 # User Change Password Step 2
@@ -1116,8 +1118,6 @@ post '/my/setdelete/?' => sub
 
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
-    my $user_hash = $user->get_user_hash_for_template();
-
     my $confirmation_code = Side7::Utils::Crypt::sha1_hex_encode( session( 'username' ) . time() );
     my $confirmation_link = uri_for( "/my/confirm_set_delete/$confirmation_code" );
 
@@ -1158,7 +1158,7 @@ post '/my/setdelete/?' => sub
     $audit_log->save();
 
     # Display page with instructions to the User
-    return template 'my/set_delete_flag_next_step', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    return template 'my/set_delete_flag_next_step', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
 # User Set Delete Flag Step 2
@@ -1241,9 +1241,8 @@ post '/my/cleardelete' => sub
 get '/my/profile/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
-    my ( $user_hash ) = $user->get_user_hash_for_template();
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
@@ -2404,15 +2403,14 @@ post '/my/preferences' => sub
 get '/my/gallery/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
-    my ( $user_hash ) = $user->get_user_hash_for_template();
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/gallery', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    template 'my/gallery', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
 # User Content Upload Page
@@ -2938,12 +2936,10 @@ get '/users/:username/show' => sub
 
     my $user = Side7::User::get_user_by_username( $username );
 
-    my $user_hash = $user->get_user_hash_for_template( filter_profanity => 0 );
-
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
     template 'admin/user_details', {
-                                        user => $user_hash,
+                                        user => $user,
                                         permissions => {
                                                         can_modify_user_account  => $admin_user->has_permission( 'can_modify_user_account' ),
                                                        },
@@ -2968,15 +2964,10 @@ get '/users/:username/edit' => sub
 
     my $user = Side7::User::get_user_by_username( $username );
 
-    my $user_hash = $user->get_user_hash_for_template(
-                                                        filter_profanity => 0,
-                                                        admin_dates      => 1,
-                                                     );
-
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
     template 'admin/user_edit_form', {
-                                        user        => $user_hash,
+                                        user        => $user,
                                         data        => {
                                                         sexes                 => $sexes,
                                                         birthday_visibilities => $visibilities,
@@ -3018,11 +3009,6 @@ post '/users/:username/edit' => sub
     {
         my $user = Side7::User::get_user_by_username( $username );
 
-        my $user_hash = $user->get_user_hash_for_template(
-                                                            filter_profanity => 0,
-                                                            admin_dates      => 1,
-                                                         );
-
         my $sexes        = Side7::Admin::Dashboard::get_user_sexes_for_select();
         my $visibilities = Side7::Admin::Dashboard::get_birthday_visibilities_for_select();
         my $countries    = Side7::Admin::Dashboard::get_countries_for_select();
@@ -3030,7 +3016,7 @@ post '/users/:username/edit' => sub
         my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
         return template 'admin/user_edit_form', {
-                                            user        => $user_hash,
+                                            user        => $user,
                                             data        => {
                                                             sexes                 => $sexes,
                                                             birthday_visibilities => $visibilities,
@@ -3350,26 +3336,6 @@ get '/news/?:page?' => sub
                                                        per_page     => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
                                                    );
 
-    my $news = ();
-    foreach my $result ( @$results )
-    {
-        my $news_hash = {};
-        foreach my $key ( qw/ id title blurb body link_to_article priority created_at updated_at / )
-        {
-            if ( $key eq 'body' )
-            {
-                $news_hash->{'body'} = Side7::Utils::Text::sanitize_text_for_html( $result->body() );
-            }
-            else
-            {
-                $news_hash->{$key} = $result->$key();
-            }
-        }
-        $news_hash->{'user'} = $result->user->get_user_hash_for_template();
-
-        push ( @$news, $news_hash );
-    }
-
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news_count, page => $page } );
 
     my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
@@ -3377,7 +3343,7 @@ get '/news/?:page?' => sub
 
     template 'admin/news', {
                                         data          => {
-                                                            news       => $news,
+                                                            news       => $results,
                                                             news_count => $news_count,
                                                             priorities => $priorities,
                                                          },
@@ -3411,13 +3377,12 @@ get '/news/:news_id/show' => sub
         return redirect '/admin/news';
     }
 
-    my $news_hash = $news->get_news_hash_for_template();
     my $priorities = Side7::News->get_priority_names();
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
     template 'admin/news_details', {
-                                        news        => $news_hash,
+                                        news        => $news,
                                         data        => {
                                                         priorities => $priorities,
                                                        },
@@ -3448,13 +3413,12 @@ get '/news/:news_id/edit' => sub
         return redirect '/admin/news';
     }
 
-    my $news_hash = $news->get_news_hash_for_template( format_dates => 0 );
     my $priorities = Side7::News->get_priority_names();
 
     my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
     template 'admin/news_edit_form', {
-                                        news        => $news_hash,
+                                        news        => $news,
                                         data        => {
                                                         priorities => $priorities,
                                                        },
@@ -3482,14 +3446,13 @@ post '/news/:news_id/edit' => sub
             return redirect '/admin/news';
         }
 
-        my $news_hash = $news->get_news_hash_for_template( format_dates => 0 );
         my $priorities = Side7::News->get_priority_names();
 
         my $admin_user = Side7::User::get_user_by_username( session( 'username' ) );
 
         return template 'admin/news_edit_form', {
                                                     news_id     => $news_id,
-                                                    news        => $news_hash,
+                                                    news        => $news,
                                                     data        => {
                                                                     priorities => $priorities,
                                                                    },

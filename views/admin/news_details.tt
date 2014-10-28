@@ -1,9 +1,12 @@
+[% USE date %]
+[% USE TextUtils %]
+
 <h1>[% news.title %]</h1>
 
 <div>
-    <strong>Admin Links:</strong> 
+    <strong>Admin Links:</strong>
     [% IF permissions.can_post_site_news %]
-    <a href="/admin/news/post">Post New News Article</a> | 
+    <a href="/admin/news/post">Post New News Article</a> |
     <a href="/admin/news/[% news.id %]/edit">Edit This Article</a>
     [% ELSE %]
     None
@@ -15,13 +18,14 @@
 <div style="border: solid 1px #000; margin: 5px; padding: 5px;">
     <h3>News Article Details:</h3>
     <strong>Title:</strong> [% news.title %]<br>
-    <strong>Blurb:</strong> [% news.blurb %]<br>
-    <strong>Body:</strong><br>[% news.body %]<br>
-    <strong>Link To Article:</strong> [% news.link_to_article %]<br>
+    <strong>Blurb:</strong> [% TextUtils.parse_bbcode_markup( news.blurb ) %]<br>
+    <strong>Body:</strong><br>[% TextUtils.parse_bbcode_markup( news.body ) %]<br>
+    <strong>Link To Article:</strong> <a href="[% news.link_to_article %]" target="_blank">[% news.link_to_article %]</a><br>
     <strong>Posted By:</strong> [% news.user.username %]<br>
     <strong>Priority:</strong> [% data.priorities.$key %]<br>
     <strong>Is Sticky:</strong> [% IF news.is_static %]Yes[% ELSE %]No[% END %]<br>
-    <strong>Stickiness Expires:</strong> [% news.not_static_after %]<br>
-    <strong>Created:</strong> [% news.created_at %]<br>
-    <strong>Last Updated:</strong> [% news.updated_at %]<br>
+    [% IF news.not_static_after %][% sticky_ends = date.format( news.not_static_after, '%d %B, %Y' ) %][% ELSE %][% sticky_ends = '' %][% END %]
+    <strong>Stickiness Expires:</strong> [% sticky_ends %]<br>
+    <strong>Created:</strong> [% date.format( news.created_at, '%d %B, %Y @ %H:%M' ) %]<br>
+    <strong>Last Updated:</strong> [% date.format( news.updated_at, '%d %B, %Y @ %H:%M' ) %]<br>
 </div>

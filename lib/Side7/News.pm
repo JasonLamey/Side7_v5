@@ -8,7 +8,7 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::News::Manager;
 
-use version; our $VERSION = qv( '0.1.3' );
+use version; our $VERSION = qv( '0.1.4' );
 
 =pod
 
@@ -117,12 +117,6 @@ sub get_news_article_list
                                                     per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
                                                 );
 
-    my $news = [];
-    foreach my $result ( @$results )
-    {
-        push( @$news, $result->get_news_hash_for_template() );
-    }
-
     my $stickies = Side7::News::Manager->get_news(
                                                     query => [
                                                                 is_static => 1,
@@ -133,12 +127,6 @@ sub get_news_article_list
                                                     limit    => 5,
                                                  );
 
-    my $sticky_news = [];
-    foreach my $sticky ( @$stickies )
-    {
-        push( @$sticky_news, $sticky->get_news_hash_for_template() );
-    }
-
     my $news_count = Side7::News::Manager->get_news_count(
                                                             query => [
                                                                         is_static => 0,
@@ -148,8 +136,8 @@ sub get_news_article_list
     my $data = {};
 
     $data->{'news_count'}  = $news_count;
-    $data->{'news'}        = $news;
-    $data->{'sticky_news'} = $sticky_news;
+    $data->{'news'}        = $results;
+    $data->{'sticky_news'} = $stickies;
 
     return $data;
 }

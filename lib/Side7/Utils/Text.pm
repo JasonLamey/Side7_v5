@@ -5,10 +5,11 @@ use warnings;
 
 use Parse::BBCode;
 use Regexp::Common qw/profanity profanity_us/;
+use HTML::Escape;
 
 use Side7::Globals;
 
-use version; our $VERSION = qv( '0.1.7' );
+use version; our $VERSION = qv( '0.1.9' );
 
 
 =head1 NAME
@@ -127,12 +128,9 @@ sub sanitize_text_for_html
 
     return if ! defined $text;
 
-    $text =~ s/"/&quot;/g;
-    $text =~ s/'/&apos;/g;
-    $text =~ s/</&lt;/g;
-    $text =~ s/>/&gt;/g;
+    my $escaped_text = HTML::Escape::escape_html( $text );
 
-    return $text;
+    return $escaped_text;
 }
 
 

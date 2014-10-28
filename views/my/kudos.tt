@@ -1,13 +1,18 @@
-    <h2>Current Balance: [% user.kudos_coins.total %]</h2>
+[% USE date %][% USE iterator( user.kudos_coins.ledger, args) %]
+<h2>Current Balance: [% user.kudos_coins.total %]</h2>
 
-    <table width="100%" style="border: solid 1px #000000;">
-    <tr><th width="30%">Date</th><th>Description</th><th width="10%">Amount</th><th width="10%">Balance</th></tr>
-    [% FOREACH record IN user.kudos_coins.ledger %]
-        <tr>
-        <td>[% record.timestamp %]</td>
-        <td>[% record.description %]</td>
-        <td align="right">[% record.amount %]</td>
-        <td align="right">[% record.balance %]</td>
-        </tr>
-    [% END %]
+    <table width="100%" class="ledger" data-jkit="[paginate:limit=25;animation=grow;speed=350;container=tbody;pos=before]">
+        <thead>
+            <tr><th width="15%">Date</th><th>Description</th><th width="10%">Amount</th><th width="10%">Balance</th></tr>
+        </thead>
+        <tbody>
+        [% FOREACH record IN iterator %]
+            <tr class="ledger_row_[% loop.parity %]">
+            <td>[% date.format( record.timestamp, '%d %b %Y %H:%M' ) %]</td>
+            <td>[% record.description %]</td>
+            <td align="right">[% record.amount %]</td>
+            <td align="right">[% record.balance %]</td>
+            </tr>
+        [% END %]
+        </tbody>
     </table>

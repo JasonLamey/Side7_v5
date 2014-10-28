@@ -1,3 +1,6 @@
+[% USE date %]
+[% USE Search %]
+[% USE TextUtils %]
 <div style="text-align: center;">
     <form action="/search" method="post">
         <input type="text" size="60" maxlength="255" name="look_for" value="[% look_for %]" placeholder="Search ..." />
@@ -28,22 +31,33 @@
             [% content_type = result.content_type %]
         [% END %]
 
-        <div style="border: solid 1px #000; padding: 5px; margin-bottom: 5px;">
-        <!-- &gt;[% result.content_type %]&lt; -->
+        <div style="border: solid 1px #000; padding: 5px; margin-bottom: 5px; min-height: 101px;">
         [% IF result.content_type == 'user' %]
-            <a href="/user/[% result.username %]">[% result.highlighted_username %] ( [% result.account.full_name %] )</a><br />
-            <b>Joined:</b> [% result.created_at %]
+            <div style="float: left; width: 100px; height: 100px; margin-right: 5px;"><img src="[% result.user.get_avatar( size => 'small' ) %]" border="0"></div>
+            <a href="/user/[% result.user.username %]">[% result.user.account.full_name %] ( [% Search.highlight_match( result.user.username, look_for ) %] )</a><br />
+            <b>Joined:</b> [% date.format( result.user.created_at, '%d %B, %Y' ) %]
         [% ELSIF result.content_type == 'image' %]
+            <div style="float: left; width: 100px; height: 100px; margin-right: 5px; text-align: center; display: table;">
             [% IF result.filepath %]
-                <a href='[% result.uri %]'><img src='[% result.filepath %]' alt='' title='' border='0' /></a>
-                <a href='[% result.uri %]'>[% result.highlighted_title %]</a>
-                <b>Uploaded:</b> [% result.created_at %]
+                <div style="display: table-cell; vertical-align: middle;">
+                <a href='[% result.uri %]'>
+                    <img src='[% result.filepath %]' alt='' title='' border='0'></a>
             [% ELSE %]
                 [ [% result.filepath_error %] ]
             [% END %]
-                by <a href="/user/[% result.user.username %]">[% result.user.username %]</a><br />
-                <hr style="height: 1px; color: #000000;" />
-                [% result.highlighted_blurb %]
+                </div>
+            </div>
+            <div style="margin-left: 105px;">
+                <a href='[% result.uri %]'>[% Search.highlight_match( result.content.title, look_for ) %]</a>
+                <b>Uploaded:</b> [% date.format( result.content.created_at, '%d %b, %Y @ %H:%M' ) %]
+                by <a href="/user/[% result.content.user.username %]">[% result.content.user.username %]</a><br>
+                <hr>
+                [% IF result.content.description.length > 100 %]
+                [% Search.highlight_match( TextUtils.sanitize_text_for_html( TextUtils.parse_bbcode_markup( result.content.description ) ).substr( 0, 100), look_for ) %]... [more]
+                [% ELSE %]
+                [% Search.highlight_match( TextUtils.parse_bbcode_markup( result.content.description ), look_for ) %]
+                [% END %]
+            </div>
         [% ELSE %]
         [% END %]
         </div>
