@@ -237,7 +237,7 @@
         <br>
 
     </fieldset>
-    <strong>Last updated on:</strong> <em>[% date.format( user_preferences.updated_at, '%Y-%m-%d %H:%M' ) %]</em><br>
+    <strong>Last updated on:</strong> <em>[% date.format( user_preferences.updated_at, '%d %B, %Y @ %H:%M' ) %]</em><br>
     <br>
 
     <input type="submit" value="Save Preferences">

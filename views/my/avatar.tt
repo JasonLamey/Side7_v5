@@ -14,13 +14,13 @@
             {
                 document.getElementById(id_name).checked = false;
             }
-        } 
+        }
     }
 </script>
 <h1>My Avatar</h1>
 
 <h3>Your Current Avatar</h3>
-<img src="[% avatar %]" alt='[% user.username %]' title='[% user.username %]'><br>
+<img src="[% user.get_avatar( size => 'medium' ) %]" alt='[% user.username %]' title='[% user.username %]'><br>
 
 <h2>Upload A New Avatar</h2>
 <form action="/my/avatar/upload" method="post" enctype="multipart/form-data">

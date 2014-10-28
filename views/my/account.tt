@@ -1,18 +1,23 @@
+[% USE date %]
         <div style="border: solid 1px #000000; padding: 5px;">
             <div style="float: right; min-width: 150px; min-height: 150px; max-width: 250px; max-height: 250px; text-align: center; vertical-align: middle;">
                 <div style="border: 1px dashed #000; padding: 3px; text-align: center; vertical-align: middle; margin: auto; margin-bottom: 5px;">
-                    <a href="/my/avatar"><img src="[% avatar %]" alt="[% user.username %]" title="[% user.username %]" border='0'></a>
+                    <a href="/my/avatar"><img src="[% user.get_avatar( size => 'medium' ) %]" alt="[% user.username %]" title="[% user.username %]" border='0'></a>
                 </div>
                 <a href="/my/avatar">Edit Avatar</a>
             </div>
             <h2>Account Information</h2>
             <p>
-                <b>Joined:</b> [% user.account.created_at %]<br />
-                <b>Account Status:</b> [% user.account.status %]<br />
-                <b>Account Type:</b> [% user.account.type %]<br />
-                <b>Subscription Expires:</b> [% user.account.subscription_expires_on %]<br />
+                <b>Joined:</b> [% date.format( user.account.created_at, '%d %B, %Y' ) %]<br />
+                <b>Account Status:</b> [% user.account.user_status.user_status %]<br />
+                <b>Account Type:</b> [% user.account.user_type.user_type %]<br />
+                [% IF user.account.user_type.user_type == 'Subscriber' %]
+                    [% IF user.account.subscription_expires_on %][% expires_on = date.format( user.account.subscription_expires_on, '%d %B, %Y' ) %]
+                    [% ELSE %][% expires_on  = '' %][% END %]
+                    <b>Subscription Expires:</b> [% expires_on %]<br />
+                [% END %]
                 [% IF user.account.delete_on %]
-                <b>Your Account Will Be Deleted On:</b> [% user.account.delete_on %]<br />
+                    <b>Your Account Will Be Deleted On:</b> [% date.format( user.account.delete_on, '%d %B, %Y' ) %]<br />
                 [% END %]
                 <br />
                 [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
@@ -49,7 +54,7 @@
             [% IF user.account.delete_on %]
             [% delete_form_action = '/my/cleardelete' %]
             [% delete_button      = 'Remove Account Deletion Flag' %]
-            [% delete_date        = "(Account will be purged on <strong>${user.account.delete_on}</strong>.)" %]
+            [% delete_date        = "(Account will be purged on <strong>${date.format( user.account.delete_on, '%d %B, %Y' ) }</strong>.)" %]
             [% delete_style       = '' %]
             [% action_flag        = 'clear_flag' %]
             [% ELSE %]

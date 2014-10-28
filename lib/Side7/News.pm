@@ -222,13 +222,12 @@ sub get_news_article
     my $news_item = Side7::News->new( id => $news_id );
     my $loaded = $news_item->load( speculative => 1, with => [ 'user' ] );
 
-    my $news_hash = {};
-    if ( $loaded != 0 && ref( $news_item ) eq 'Side7::News' )
+    if ( $loaded == 0 || ref( $news_item ) ne 'Side7::News' )
     {
-        $news_hash = $news_item->get_news_hash_for_template();
+        return;
     }
 
-    return $news_hash;
+    return $news_item;
 }
 
 

@@ -6,9 +6,9 @@
 
             <script>
             $(function () {
-    
+
                 $('#disk_quota').highcharts({
-    
+
                     chart: {
                         type: 'gauge',
                         plotBackgroundColor: null,
@@ -16,11 +16,11 @@
                         plotBorderWidth: 0,
                         plotShadow: false,
                     },
-    
+
                     title: {
                         text: 'Disk Usage'
                     },
-    
+
                     pane: {
                         startAngle: -150,
                         endAngle: 150,
@@ -57,7 +57,7 @@
                     // the value axis
                     yAxis: {
                         min: 0,
-                        max: [% user.disk_quota %],
+                        max: [% data.disk_quota %],
 
                         minorTickInterval: 'auto',
                         minorTickWidth: 1,
@@ -75,28 +75,28 @@
                             rotation: 'auto'
                         },
                         title: {
-                            text: '[% user.disk_quota_units %]'
+                            text: '[% data.disk_quota_units %]'
                         },
                         plotBands: [{
-                            from: [% user.disk_band1_start %],
-                            to: [% user.disk_band1_end %],
+                            from: [% data.disk_band1_start %],
+                            to: [% data.disk_band1_end %],
                             color: '#55BF3B' // green
                         }, {
-                            from: [% user.disk_band2_start %],
-                            to: [% user.disk_band2_end %],
+                            from: [% data.disk_band2_start %],
+                            to: [% data.disk_band2_end %],
                             color: '#DDDF0D' // yellow
                         }, {
-                            from: [% user.disk_band3_start %],
-                            to: [% user.disk_band3_end %],
+                            from: [% data.disk_band3_start %],
+                            to: [% data.disk_band3_end %],
                             color: '#DF5353' // red
                         }]
                     },
 
                     series: [{
-                        name: 'Used:',
-                        data: [[% user.disk_used %]],
+                        name: 'Used',
+                        data: [[% data.disk_used %]],
                         tooltip: {
-                            valueSuffix: ' [% user.disk_quota_units %] of [% user.disk_quota %] MB'
+                            valueSuffix: ' [% data.disk_quota_units %] of [% data.disk_quota %] MB'
                         }
                     }]
                 });
@@ -110,10 +110,10 @@
             <script>
                 $(function () {
                     var colors = Highcharts.getOptions().colors,
-                        categories = [[% user.content_data.categories %]],
+                        categories = [[% data.content_data.categories %]],
                         name = 'Your Content',
                         data = [
-                        [% FOREACH data IN user.content_data.data %]
+                        [% FOREACH data IN data.content_data.data %]
                             {
                                 y: [% data.value %],
                                 color: colors[[% loop.index %]],

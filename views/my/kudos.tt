@@ -1,5 +1,5 @@
-[% USE date %][% USE iterator( user.kudos_coins.ledger, args) %]
-<h2>Current Balance: [% user.kudos_coins.total %]</h2>
+[% USE date %][% USE iterator( data.kudos_coins.ledger, args ) %]
+<h2>Current Balance: [% data.kudos_coins.total %]</h2>
 
     <table width="100%" class="ledger" data-jkit="[paginate:limit=25;animation=grow;speed=350;container=tbody;pos=before]">
         <thead>

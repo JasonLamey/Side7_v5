@@ -1,12 +1,19 @@
+[% USE date %]
+[% USE TextUtils %]
+
 <div>
     <a href="/news">Return to News Listings</a> &middot; Print this article<br>
     <div style="margin-bottom: 8px;">
         <h2>[% data.title %]</h2>
-        <small>Posted: [% data.created_at %] - By: [% data.user.username %]</small><br>
+        <small><strong>Posted:</strong> [% date.format( data.created_at, '%d %B, %Y @ %H:%M' ) %] -
+            <strong>By:</strong> <a href="/user/[% data.user.username %]">[% data.user.username %]</a></small><br>
+        [% IF data.created_at != data.updated_at %]
+            <small><strong>Last Updated:</strong> [% date.format( data.updated_at, '%d %B, %Y @ %H:%M' ) %]</small><br>
+        [% END %]
         [% IF data.link_to_article %]
         This article exists at another location. <a href="[% data.link_to_article %]">Read the article here.</a><br>
         [% ELSIF data.body %]
-        <p>[% data.body %]</p>
+        <div style="margin: 10px 50px; text-align: justify;">[% TextUtils.parse_bbcode_markup( data.body ) %]</div>
         [% END %]
     </div>
     <a href="/news">Return to News Listings</a> &middot; Print this article<br>

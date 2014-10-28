@@ -153,15 +153,15 @@ get '/news/article/:news_id' => sub
 
     if ( ! defined $news_id )
     {
-        flash error => 'Invalid News ID';
+        flash error => 'Invalid News ID - Cannot retrieve news article.';
         return redirect '/news';
     }
 
     my $news_item = Side7::News->get_news_article( news_id => $news_id );
 
-    if ( scalar( keys %$news_item ) == 0 )
+    if ( ! defined $news_item )
     {
-        flash error => 'Invalid News ID';
+        flash error => 'Invalid News ID - Article could not be found.';
         return redirect '/news';
     }
 
@@ -631,6 +631,12 @@ get '/user/:username/gallery/?' => sub
     template 'user/show_gallery', { user => $user, gallery => $gallery };
 };
 
+# S7v4 Image Path Redirect
+get '/image.cgim' => sub
+{
+    redirect '/image/' . params->{'image_id'};
+};
+
 # Image display page.
 get '/image/:image_id/?' => sub
 {
@@ -693,33 +699,31 @@ hook 'before' => sub
 # User Home Page
 get '/my/home/?' => sub
 {
-    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
-    my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/home', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
+
+    template 'my/home', { data => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Account Management Landing Page
 get '/my/account/?' => sub
 {
-    my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
-    my ( $user_hash ) = Side7::User::show_account( username => session( 'username' ) );
+    my $user = Side7::User::show_account( username => session( 'username' ) );
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    my $avatar = $user->get_avatar( { size => 'medium' } );
-
-    template 'my/account', { user => $user_hash, avatar => $avatar, activity_log => vars->{'activity_log'} };
+    template 'my/account', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
 # User Avatar Modification Page
@@ -733,13 +737,11 @@ get '/my/avatar/?' => sub
         return redirect '/'; # TODO: REDIRECT TO USER-NO-FOUND
     }
 
-    my $avatar         = $user->get_avatar( { size => 'medium' } );
     my $system_avatars = Side7::User::Avatar::SystemAvatar->get_all_system_avatars( size => 'small' );
     my $user_avatars   = $user->get_all_avatars( size => 'small' );
 
     template 'my/avatar', {
                             user           => $user,
-                            avatar         => $avatar,
                             system_avatars => $system_avatars,
                             user_avatars   => $user_avatars,
                             activity_log   => vars->{'activity_log'},
@@ -981,6 +983,8 @@ post '/my/avatar/select/?' => sub
     flash message => 'Your Avatar has been successfully updated!';
     redirect '/my/avatar';
 };
+
+# User Avatar Delete
 
 # User Change Password Step 1
 post '/my/changepassword/?' => sub
@@ -1745,21 +1749,23 @@ get '/my/gallery/?' => sub
     # Fetch Gallery Stats
     my ( $user_hash ) = Side7::User::show_gallery( username => session( 'username' ) );
 
-    template 'my/gallery', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    template 'my/gallery', { data => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Kudos Landing Page
 get '/my/kudos/?' => sub
 {
-    my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user_hash )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'my/kudos', { user => $user_hash, activity_log => vars->{'activity_log'} };
+    my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
+
+    template 'my/kudos', { data => $user_hash, activity_log => vars->{'activity_log'} };
 };
 
 # User Album Pages
@@ -2236,7 +2242,8 @@ get '/my/preferences/?' => sub
     my $user_preferences = Side7::User::Preference->new( user_id => session( 'user_id' ) );
     my $loaded = $user_preferences->load( speculative => 1 );
 
-    if (
+    if
+    (
         $loaded == 0
         ||
         ! defined $user_preferences
@@ -2250,7 +2257,8 @@ get '/my/preferences/?' => sub
 
     my $is_adult = 0;
     my $today = DateTime->today();
-    if (
+    if
+    (
         ! defined $user->account->birthday()
         ||
         $user->account->birthday() eq '0000-00-00'

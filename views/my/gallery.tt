@@ -14,7 +14,7 @@
     <a href="/my/content">Modify or Delete</a>
 
     <h3>Albums:</h3>
-    <a href="/my/albums/new" data-jkit="[lightbox:width=900px;height=550px]">Create A New Album</a> | 
+    <a href="/my/albums/new" data-jkit="[lightbox:width=900px;height=550px]">Create A New Album</a> |
     <a href="/my/albums" data-jkit="[lightbox:width=900px;height=550px]">Manage My Albums</a>
 
     <h3>Account Statistics:</h3>

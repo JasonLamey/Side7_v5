@@ -1,34 +1,29 @@
-<div>
-
+[% USE date %][% USE TextUtils %]
+<div style="margin: 5px 50px 0;">
     [% FOREACH item IN data.sticky_news %]
-    <div style="margin-bottom: 8px;">
-        <h2>[% item.title %]</h2><br>
-        [% IF item.blurb %][% item.blurb %]<br>[% END %]
-        <small>Posted: [% item.created_at %] - Posted by: [% item.user.username %]</small><br>
-        [% IF item.link_to_article %]
-        <a href="[% item.link_to_article %]">Read More...</a><br>
-        [% ELSIF item.body %]
-        <a href="/news/article/[% item.id %]">Read More...</a><br>
-        [% END %]
-    </div>
-    [% IF ! loop.last %]<hr class="faded">[% END %]
+        [% PROCESS list_item %]
+        [% IF ! loop.last %]<hr class="faded">[% END %]
     [% END %]
 
     [% PROCESS 'site/_pagination_menu_pages.tt' %]
 
     [% FOREACH item IN data.news %]
+        [% PROCESS list_item %]
+        [% IF ! loop.last %]<hr class="faded">[% END %]
+    [% END %]
+
+    [% PROCESS 'site/_pagination_menu_pages.tt' %]
+</div>
+
+[% BLOCK list_item %]
     <div style="margin-bottom: 8px;">
         <h2>[% item.title %]</h2>
-        [% IF item.blurb %][% item.blurb %]<br>[% END %]
-        <small>Posted: [% item.created_at %] - By: [% item.user.username %]</small><br>
+        <small><strong>Posted:</strong> [% date.format( item.created_at, '%d %B, %Y @ %H:%M' ) %] - <strong>Posted by:</strong> <a href="/user/[% item.user.username %]">[% item.user.username %]</a></small><br>
+        [% IF item.blurb %][% TextUtils.parse_bbcode_markup( item.blurb ) %]<br>[% END %]
         [% IF item.link_to_article %]
         <a href="[% item.link_to_article %]">Read More...</a><br>
         [% ELSIF item.body %]
         <a href="/news/article/[% item.id %]">Read More...</a><br>
         [% END %]
     </div>
-    [% IF ! loop.last %]<hr class="faded">[% END %]
-    [% END %]
-
-    [% PROCESS 'site/_pagination_menu_pages.tt' %]
-</div>
+[% END %]

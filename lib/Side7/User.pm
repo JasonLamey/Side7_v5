@@ -1726,7 +1726,8 @@ sub show_home
         return;
     }
 
-    my $user_hash = $user->get_user_hash_for_template();
+    my $user_hash = {};
+    $user_hash->{'user'} = $user;
 
     # Content Counts By Category
     $user_hash->{'content_data'} = Side7::Report->get_user_content_breakdown_by_category( $user->id() );
@@ -1797,9 +1798,7 @@ sub show_account
         return;
     }
 
-    my $user_hash = $user->get_user_hash_for_template();
-
-    return $user_hash;
+    return $user;
 }
 
 
@@ -1842,7 +1841,38 @@ sub show_kudos
         return;
     }
 
-    my $user_hash = $user->get_user_hash_for_template();
+    my $user_hash = {};
+    $user_hash->{'user'} = $user;
+
+    if ( defined $user->{'kudos_coins'} )
+    {
+        my $kudos_ledger = $user->{'kudos_coins'};
+
+        $user_hash->{'kudos_coins'}->{'total'} = Side7::KudosCoin->get_current_balance( user_id => $user->id() );
+
+        # Because we're working our ledger in reverse, we're going to be working the running balance
+        # in reverse, too.  We'll be subtracting from the total balance, rather than adding the starting
+        # balance.
+
+        my $running_balance = $user_hash->{'kudos_coins'}->{'total'};
+        my $prev_amount = 0;
+
+        $user_hash->{'kudos_coins'}->{'ledger'} = [];
+        foreach my $record ( reverse @{ $kudos_ledger } )
+        {
+            my $timestamp   = $record->get_formatted_timestamp();
+            $running_balance -= $prev_amount;   # Subtracting the previous amount from the current balance.
+            $prev_amount = $record->{'amount'}; # Set a new previous amount.
+
+            push ( $user_hash->{'kudos_coins'}->{'ledger'}, {
+                                                                timestamp   => $record->timestamp,
+                                                                amount      => $record->{'amount'},
+                                                                description => $record->{'description'},
+                                                                balance     => $running_balance,
+                                                            }
+            );
+        }
+    }
 
     return $user_hash;
 }
@@ -1890,8 +1920,8 @@ sub show_gallery
         return;
     }
 
-    my $user_hash = $user->get_user_hash_for_template();
-
+    my $user_hash = {};
+    $user_hash->{'user'} = $user;
 
     # Content Counts By Category
     $user_hash->{'content_data'} = Side7::Report->get_user_content_breakdown_by_category( $user->id() );
