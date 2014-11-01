@@ -1,0 +1,94 @@
+Side7 depends_on: strict warnings Dancer Dancer::Plugin::FlashMessage Dancer::Plugin::ValidateTiny Dancer::Plugin::Email Dancer::Plugin::DirectoryView Dancer::Plugin::TimeRequests DateTime Data::Dumper Const::Fast List::MoreUtils Side7::Globals Side7::AuditLog Side7::Search Side7::Login Side7::News::Manager Side7::User Side7::User::ChangePassword Side7::User::AccountDelete Side7::User::Avatar::SystemAvatar::Manager Side7::DateVisibility::Manager Side7::Account Side7::UserContent::Image Side7::UserContent::RatingQualifier Side7::UserContent::AlbumImageMap Side7::Utils::Crypt Side7::Utils::Pagination Side7::Utils::Image Side7::FAQCategory Side7::FAQCategory::Manager Side7::FAQEntry Side7::PrivateMessage Side7::PrivateMessage::Manager version Dancer::Plugin::NYTProf Side7::AuditLog::Manager Side7::News Side7::Admin::Dashboard Side7::Admin::Report
+Side7::Account depends_on: strict warnings base Side7::DB::Object parent Side7::Globals version
+Side7::Account::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::ActivityLog depends_on: strict warnings base Side7::DB::Object version
+Side7::ActivityLog::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Admin::Dashboard depends_on: strict warnings Data::Dumper Side7::Globals Side7::DB Side7::AuditLog::Manager Side7::User Side7::User::Manager Side7::User::Status::Manager Side7::User::Type::Manager Side7::User::Role::Manager Side7::User::Country::Manager Side7::DateVisibility::Manager version
+Side7::Admin::Report depends_on: strict warnings DateTime Rose::DB::Object::QueryBuilder Data::Dumper Side7::Globals version
+Side7::AuditLog depends_on: strict warnings base Side7::DB::Object version
+Side7::AuditLog::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Config depends_on: strict warnings version
+Side7::DB depends_on: strict warnings Rose::DB Rose::DB::Object::QueryBuilder Data::Dumper Carp List::Util version
+Side7::DB::Object depends_on: strict warnings Side7::DB base Rose::DB::Object version
+Side7::DateVisibility depends_on: strict warnings base Side7::DB::Object Mojo::Base Side7::Account version
+Side7::DateVisibility::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::FAQCategory depends_on: strict warnings base Side7::DB::Object version
+Side7::FAQCategory::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::FAQEntry depends_on: strict warnings base Side7::DB::Object version
+Side7::FAQEntry::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Globals depends_on: strict warnings Exporter Log::Log4perl Data::Dumper Side7::Config Side7::DB version vars
+Side7::KudosCoin depends_on: strict warnings base Side7::DB::Object Rose::DB::Object::QueryBuilder Try::Tiny Side7::Globals version
+Side7::KudosCoin::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Login depends_on: strict warnings Dancer Data::Dumper Side7::Globals Side7::AuditLog Side7::User version
+Side7::News depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::News::Manager version
+Side7::News::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::PrivateMessage depends_on: strict warnings base Side7::DB::Object Side7::Globals
+Side7::PrivateMessage::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Report depends_on: strict warnings Rose::DB::Object::QueryBuilder Data::Dumper Side7::Globals version
+Side7::Search depends_on: strict warnings Data::Dumper DateTime Try::Tiny Side7::Globals Side7::Search::History Side7::Search::History::Manager Side7::User Side7::User::Manager Side7::UserContent::Image Side7::UserContent::Image::Manager version
+Side7::Search::History depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::Search::History::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Template::Plugin::Search depends_on: base Template::Plugin strict warnings Data::Dumper Side7::Globals Side7::Search
+Side7::Template::Plugin::TextUtils depends_on: base Template::Plugin strict warnings Data::Dumper Side7::Globals Side7::Utils::Text
+Side7::User depends_on: strict warnings base Side7::DB::Object List::Util Data::Dumper POSIX DateTime Rose::DB::Object::QueryBuilder Side7::Globals Side7::User::Manager Side7::UserContent Side7::UserContent::Image Side7::UserContent::Album Side7::UserContent::Album::Manager Side7::User::Role Side7::User::Permission Side7::User::UserOwnedPermission Side7::User::UserOwnedPermission::Manager Side7::User::Perk Side7::User::UserOwnedPerk Side7::User::UserOwnedPerk::Manager Side7::User::Preference Side7::User::Avatar Side7::User::Avatar::UserAvatar Side7::User::Avatar::UserAvatar::Manager Side7::User::Friend::Manager Side7::ActivityLog::Manager Side7::Utils::Crypt Side7::Utils::File Side7::Utils::Text Side7::Utils::DateTime Side7::Report version
+Side7::User::AccountDelete depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Avatar depends_on: strict warnings Gravatar::URL Side7::Globals Side7::UserContent Side7::User::Avatar::UserAvatar Side7::User::Avatar::UserAvatar::Manager Side7::User::Avatar::SystemAvatar version
+Side7::User::Avatar::SystemAvatar depends_on: strict warnings base Side7::DB::Object Data::Dumper Side7::Globals Side7::User::Avatar::SystemAvatar::Manager Side7::Utils::File Side7::Utils::Image Side7::UserContent
+Side7::User::Avatar::SystemAvatar::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Avatar::UserAvatar depends_on: strict warnings base Side7::DB::Object Data::Dumper Side7::Globals Side7::Utils::File Side7::Utils::Image Side7::UserContent
+Side7::User::Avatar::UserAvatar::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::ChangePassword depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Country depends_on: strict warnings base Side7::DB::Object Mojo::Base Side7::Globals version
+Side7::User::Country::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Friend depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Friend::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Perk depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Perk::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Permission depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Permission::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Preference depends_on: strict warnings base Side7::DB::Object parent Side7::Globals version
+Side7::User::Preference::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Role depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Role::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::RolesPerksMap depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::RolesPermissionsMap depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Status depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Status::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::Type depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::Type::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::UserOwnedPerk depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::UserOwnedPerk::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::User::UserOwnedPermission depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::User::UserOwnedPermission::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent depends_on: strict warnings Dancer Data::Dumper Side7::Globals Side7::UserContent::Image Side7::UserContent::Image::Manager version
+Side7::UserContent::Album depends_on: strict warnings base Side7::DB::Object parent Data::Dumper Side7::Globals version
+Side7::UserContent::Album::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::AlbumImageMap depends_on: strict warnings Side7::Globals base Side7::DB::Object version
+Side7::UserContent::Category depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::UserContent::Category::Manager version
+Side7::UserContent::Category::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Comment depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::User version
+Side7::UserContent::Comment::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::CommentThread depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::UserContent::CommentThread::Manager version
+Side7::UserContent::CommentThread::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Image depends_on: strict warnings base Side7::DB::Object DateTime Data::Dumper Side7::Globals Side7::UserContent Side7::UserContent::Image::DailyView::Manager Side7::UserContent::Image::DetailedView::Manager Side7::UserContent::Comment Side7::Utils::File Side7::Utils::Text Side7::Utils::Image version
+Side7::UserContent::Image::DailyView depends_on: strict warnings base Side7::DB::Object DateTime Side7::Globals Side7::UserContent::Image::DailyView::Manager version
+Side7::UserContent::Image::DailyView::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Image::DetailedView depends_on: strict warnings base Side7::DB::Object DateTime Side7::Globals Side7::UserContent::Image::DetailedView::Manager version
+Side7::UserContent::Image::DetailedView::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Image::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Image::Property depends_on: strict warnings base Side7::DB::Object Side7::Globals version
+Side7::UserContent::Image::Property::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Rating depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::UserContent::Rating::Manager version
+Side7::UserContent::Rating::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::RatingQualifier depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::UserContent::RatingQualifier::Manager version
+Side7::UserContent::RatingQualifier::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::UserContent::Stage depends_on: strict warnings base Side7::DB::Object Side7::Globals Side7::UserContent::Stage::Manager version
+Side7::UserContent::Stage::Manager depends_on: strict warnings base Rose::DB::Object::Manager
+Side7::Utils depends_on: strict warnings Side7::Globals version
+Side7::Utils::Crypt depends_on: strict warnings Digest::SHA1 Digest::MD5 Side7::Globals Side7::DB version
+Side7::Utils::DateTime depends_on: strict warnings Side7::Globals DateTime POSIX version
+Side7::Utils::File depends_on: strict warnings DateTime File::Path Filesys::DiskUsage List::Util Side7::Globals Side7::AuditLog version
+Side7::Utils::Image depends_on: strict warnings Image::Magick GD Image::Thumbnail Const::Fast Data::Dumper Side7::Globals Side7::Utils::File version
+Side7::Utils::Pagination depends_on: strict warnings Side7::Globals version
+Side7::Utils::Text depends_on: strict warnings Parse::BBCode Regexp::Common HTML::Escape Side7::Globals version

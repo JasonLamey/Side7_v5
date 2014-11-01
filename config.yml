@@ -26,6 +26,9 @@ engines:
     start_tag: '[%'
     end_tag:   '%]'
     PLUGIN_BASE: 'Side7::Template::Plugin'
+    ENCODING: 'utf8'
+    COMPILE_DIR: 'public/cached_files/templates'
+    COMPILE_EXT: '.ttc'
 
 # Logger setup
 logger: log4perl

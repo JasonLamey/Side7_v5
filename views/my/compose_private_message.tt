@@ -1,0 +1,39 @@
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
+
+<style>
+label
+{
+    font-weight: bold;
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+}
+
+textarea.user_input_textarea
+{
+    width: 450px;
+    height: 300px;
+}
+</style>
+
+<form method="post" action='/my/pms/send'>
+    <input type="hidden" name="reply_to" value="[% reply_to %]">
+    <label for="recipient">To (username):</label>
+    <input type="text" name="recipient" id="recipient" maxlength="255" size="40" value="[% recipient %]" placeholder="Search via first, last or username"><br>
+
+    <label for="subject">Subject:</label>
+    <input type="text" name="subject" maxlength="255" size="40" value="[% subject %]" placeholder="Optional"><br>
+    <br>
+    <label for="body">Message:</label>
+    <textarea class="user_input_textarea" name="body" cols="60" rows="10">[% quote %][% body %]</textarea><br>
+    <input type="submit" value="Send">
+</form>
+
+<script>
+    $(function() {
+        $( "#recipient" ).autocomplete({
+            source: "/un_search",
+            minLength: 3,
+        });
+    });
+</script>

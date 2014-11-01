@@ -28,6 +28,9 @@
 <!-- SCEditor -->
 <link rel="stylesheet" href="/javascripts/sceditor/minified/themes/default.min.css" type="text/css" media="all" />
 <script type="text/javascript" src="/javascripts/sceditor/minified/jquery.sceditor.bbcode.min.js"></script>
+<!-- javascript-based syntax highlighting - used for BBCode-parsed code blocks -->
+<link rel="stylesheet" href="/javascripts/shjs/css/sh_vim.min.css">
+<script type="text/javascript" src="/javascripts/shjs/sh_main.js"></script>
 
 [% IF ( flash.message || flash.error ) %]
 <!-- jgrowl -->
@@ -68,8 +71,8 @@
         margin-right: 5px;
     }
     .home_menu_option {
-        text-align: left; 
-        padding: 3px; 
+        text-align: left;
+        padding: 3px;
         border-bottom: solid 1px #000;
     }
     .home_menu_option a {
@@ -83,13 +86,14 @@
         padding: 5px;
         width: auto;
         height: auto;
-        border: solid 1px #666;
+        /* border: solid 1px #666; */
     }
 </style>
 
 <script type="text/javascript">
 $(document).ready(function(){
     $('body').jKit();
+    sh_highlightDocument('/javascripts/shjs/lang/', '.js');
 });
 </script>
 
@@ -127,9 +131,6 @@ $(document).ready(function(){
 <div id="page_content">
     <div id="section_content">
     [% content %]
-    </div>
-    <div id="footer">
-    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
     </div>
 </div>
 </body>

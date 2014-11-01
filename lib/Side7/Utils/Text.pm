@@ -4,12 +4,13 @@ use strict;
 use warnings;
 
 use Parse::BBCode;
+use Parse::BBCode::HTML;
 use Regexp::Common qw/profanity profanity_us/;
 use HTML::Escape;
 
 use Side7::Globals;
 
-use version; our $VERSION = qv( '0.1.9' );
+use version; our $VERSION = qv( '0.1.10' );
 
 
 =head1 NAME
@@ -50,12 +51,178 @@ sub parse_bbcode_markup
 
     return if ! defined $incoming_text;
 
-    my $smileys = ( defined $args->{'smilies'} ) ? 1 : 0;
-
     my $parser = Parse::BBCode->new(
                     {
-                        attribute_quote => q/'"/,
-                        close_open_tags => 1,
+                        attribute_quote   => q/'"/,
+                        close_open_tags   => 1,
+                        strict_attributes => 0,
+                        smileys         => {
+                                            base_url => '/images/emoticons/',
+                                            icons    => {
+                                                            qw/
+                                                                :alien:     alien.png
+                                                                :blush:     blush.png
+                                                                :'(         cwy.png
+                                                                <3          heart.png
+                                                                :pinch:     pinch.png
+                                                                :sick:      sick.png
+                                                                :)          smile.png
+                                                                :-)         smile.png
+                                                                :wassat:    wassat.png
+                                                                :angel:     angel.png
+                                                                :cheerful:  cheerful.png
+                                                                :devil:     devil.png
+                                                                :getlost:   getlost.png
+                                                                :kissing:   kissing.png
+                                                                :kiss:      kissing.png
+                                                                :pouty:     pouty.png
+                                                                :sideways:  sideways.png
+                                                                :P          tongue.png
+                                                                :p          tongue.png
+                                                                :b          tongue.png
+                                                                :whistling: whistling.png
+                                                                :angry:     angry.png
+                                                                >:(         angry.png
+                                                                8-)         cool.png
+                                                                8)          cool.png
+                                                                :cool:      cool.png
+                                                                :dizzy:     dizzy.png
+                                                                :D          grin.png
+                                                                :laughing:  laughing.png
+                                                                :laugh:     laughing.png
+                                                                :(          sad.png
+                                                                :sad:       sad.png
+                                                                :silly:     silly.png
+                                                                :unsure:    unsure.png
+                                                                ;)          wink.png
+                                                                :wink:      wink.png
+                                                                :blink:     blink.png
+                                                                :erm:       ermm.png
+                                                                :ermm:      ermm.png
+                                                                :happy:     happy.png
+                                                                :ninja:     ninja.png
+                                                                :O          shocked.png
+                                                                :0          shocked.png
+                                                                :o          shocked.png
+                                                                :sleeping:  sleeping.png
+                                                                :woot:      w00t.png
+                                                                :w00t:      w00t.png
+                                                                :love:      wub.png
+                                                            /
+                                                        },
+                                            format => '<img src="%s" alt="%s" title="%2$s" border="0">',
+                                           },
+                        url_finder => {
+                                        max_length  => 50,
+                                        # sprintf format:
+                                        format      => '<a href="%s" rel="nofollow">%s</a>',
+                                      },
+                        tags => {
+                                    Parse::BBCode::HTML->defaults,
+
+                                    # Custom/overridden tags
+                                    noparse => '<pre>%{html}s</pre>',
+                                    code => {
+                                                code => sub {
+                                                                my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                                my $code_name = ( defined $attr ) ? uc( $attr ) . ' ' : '';
+                                                                my $pre_class = ( defined $attr ) ? ' class="sh_' . lc( $attr ) . '"' : '' ;
+                                                                $content = Parse::BBCode::escape_html( $$content );
+                                                                qq{<div class="bbcode_code_header">$code_name} . qq{Code:\n} .
+                                                                qq{<div class="bbcode_code_body"><pre$pre_class>$content</pre></div></div>}
+                                                            },
+                                                parse => 0,
+                                                class => 'block',
+                                            },
+                                    table => {
+                                                code  => sub {
+                                                                my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                                my $output = "<table border='1'>$$content</table>";
+                                                                $output =~ s/(<\/?t[rhd]>)<br>/$1/gi;
+                                                                $output
+                                                             },
+                                                parse => 1,
+                                                class => 'block',
+                                             },
+                                    tr    => '<tr>%{parse}s</tr>',
+                                    th    => '<th>%{parse}s</th>',
+                                    td    => '<td>%{parse}s</td>',
+                                    hr => {
+                                            class  => 'block',
+                                            output => '<hr size="1">',
+                                            single => 1,
+                                          },
+                                    font  => {
+                                                code => sub {
+                                                                my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                                if ( defined $attr )
+                                                                {
+                                                                    $content = '<span style="font-family: ' .
+                                                                                $attr . '">' . $$content . '</font>';
+                                                                }
+                                                                else
+                                                                {
+                                                                    $content = Parse::BBCode::escape_html( $$content );
+                                                                }
+                                                                $content
+                                                            },
+                                                parse => 1,
+                                                class => 'inline',
+                                             },
+                                    right    => '<div style="text-align: right;">%{parse}s</div>',
+                                    left     => '<div style="text-align: left;">%{parse}s</div>',
+                                    center   => '<div style="text-align: center;">%{parse}s</div>',
+                                    justify  => '<div style="text-align: justify;">%{parse}s</div>',
+                                    s        => '<span style="text-decoration: line-through;">%{parse}s</span>',
+                                    sup      => '<sup>%{parse}s</sup>',
+                                    sub      => '<sub>%{parse}s</sub>',
+                                    img      => {
+                                                    code => sub {
+                                                                    my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                                    if ( defined $attr )
+                                                                    {
+                                                                        my ( $width, $height ) = split( /x/, $attr );
+                                                                        $content = qq{<img src="$$content" width="$width" height="$height" alt='' border="0">};
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $content = qq{<img src="$$content" alt='' border="0">};
+                                                                    }
+                                                                    $content
+                                                                },
+                                                    parse => 0,
+                                                    class => 'inline',
+                                                },
+                                    ul => {
+                                            code => sub {
+                                                            my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                            $content = qq{<ul>\n$$content\n</ul>};
+                                                            $content =~ s/(<\/?li>)<br>/$1/gi;
+                                                            $content
+                                                        },
+                                            parse => 1,
+                                            class => 'block',
+                                          },
+                                    ol => {
+                                            code => sub {
+                                                            my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                            $content = qq{<ol>\n$$content\n</ol>};
+                                                            $content =~ s/(<\/?li>)<br>/$1/gi;
+                                                            $content
+                                                        },
+                                            parse => 1,
+                                            class => 'block',
+                                          },
+                                    li => {
+                                            code => sub {
+                                                            my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                            $content = qq{<li>$$content</li>};
+                                                            $content
+                                                        },
+                                            parse => 1,
+                                            class => 'block',
+                                          },
+                                },
                     }
                 );
 

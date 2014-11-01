@@ -179,6 +179,11 @@ a:hover {
     margin-bottom: 5px;
 }
 
+.ui-autocomplete-loading
+{
+    background: white url("/images/loading-16x16.gif") right center no-repeat;
+}
+
 h1, h2, h3, h4, h5 {
     font-family: "AlwinLight", sans-serif;
     margin: 0.6em 0 0.3em 0;
@@ -359,4 +364,71 @@ textarea.user_input_textarea {
 .ledger_row_even
 {
     background-color: #aac;
+}
+
+/* BBCODE Styles */
+.bbcode_quote_header
+{
+    margin: 0 10px;
+    font-weight: bold;
+    background-color: #336;
+    color: #fff;
+    padding: 2px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.bbcode_quote_body
+{
+    background-color: #ccf;
+    color: #000;
+    padding: 5px;
+    font-weight: normal;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+.bbcode_code_header
+{
+    margin: 0 10px;
+    font-weight: bold;
+    background-color: #663;
+    color: #fff;
+    padding: 2px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.bbcode_code_body
+{
+    background-color: #ccf;
+    color: #000;
+    padding: 5px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+    font-size: 9pt;
+    white-space: pre;
+}
+
+.bbcode_code_body pre
+{
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 3px;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+    font-weight: normal;
+    font-size: 8pt;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin: 0;
+    background-color: #fff;
 }

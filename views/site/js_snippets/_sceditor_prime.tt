@@ -5,6 +5,10 @@
             style: "/javascripts/sceditor/minified/jquery.sceditor.default.min.css",
             emoticonsRoot: '/images/',
             toolbarExclude: 'youtube,ltr,rtl,print',
+
+            parserOptions: {
+                quoteType: $.sceditor.BBCodeParser.QuoteType.always
+            }
         });
-    }); 
+    });
 </script>

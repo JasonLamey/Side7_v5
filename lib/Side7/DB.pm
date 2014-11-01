@@ -92,6 +92,7 @@ sub get_db
     my $type   = delete $args{'type'}   || 'main';
 
     my $DB = Side7::DB->new( domain => $domain, type => $type );
+    $DB->mysql_enable_utf8( 1 );
     return $DB;
 }
 

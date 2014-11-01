@@ -26,6 +26,7 @@ use Side7::Utils::Text;
 use Side7::FAQCategory;
 use Side7::FAQEntry;
 use Side7::News;
+use Side7::PrivateMessage;
 
 use Getopt::Std;
 use Carp;
@@ -42,9 +43,9 @@ use vars qw(
     $VERSION %opt $has_opts $DB4 $DB5 %ID_TRANSLATIONS $CWD %packages
 );
 
-$|++; 
+$|++;
 
-$VERSION = 1.30;
+$VERSION = 1.50;
 
 %packages = (
                 news            => 'migrate_news',
@@ -62,6 +63,7 @@ $VERSION = 1.30;
                 rig_images      => 'migrate_related_image_group_images',
                 faq_cats        => 'migrate_faq_categories',
                 faq_entries     => 'migrate_faq_entries',
+                private_msgs    => 'migrate_private_messages',
             );
 
 init();
@@ -135,13 +137,20 @@ sub migrate
         $opt{l} = 1; # Do this to ensure we can import large tables.
         foreach my $key ( split( /,\s*/, $opt{p} ) )
         {
-            say "=> Migrating >" . $key . '<' if defined $opt{V};
-            if ( ! defined $packages{$key} )
+            say "=> Attempting to migrate package >" . $key . '<' if defined $opt{V};
+            if ( ! defined $packages{ lc( $key ) } )
             {
                 say "=> ERROR: Invalid package name: >" . $key . '<';
                 next;
             }
-            eval lc( $packages{$key} );
+            try
+            {
+                eval $packages{ lc ( $key ) };
+            }
+            catch
+            {
+                croak 'Processing package for ' . $key . 'failed: ' . $_;
+            };
         }
     }
     elsif ( defined $opt{L} )
@@ -171,6 +180,7 @@ sub migrate
         migrate_related_image_group_images();
         migrate_faq_categories();
         migrate_faq_entries();
+        migrate_private_messages();
     }
 
     db_disconnect();
@@ -194,7 +204,7 @@ sub db_connect
     my $v4_un   = 's7old';
     my $v4_pw   = 's7CPR';
 
-    $DB4 = DBI->connect( "DBI:mysql:database=$v4_db;host=$v4_host", $v4_un, $v4_pw ) 
+    $DB4 = DBI->connect( "DBI:mysql:database=$v4_db;host=$v4_host", $v4_un, $v4_pw )
         || croak 'Could not connect to old DB';
 
     if ( defined $opt{V} ) { say 'Connected to both the v4 and v5 databases.'; }
@@ -229,7 +239,7 @@ sub migrate_users
 
     my $sth = $DB4->prepare(
        'SELECT ua.*, ua.id as user_id, uap.*, uas.*
-        FROM user_accounts ua 
+        FROM user_accounts ua
         INNER JOIN user_account_personal_info uap
             ON uap.user_account_id = ua.id
         INNER JOIN user_account_system_info uas
@@ -299,7 +309,7 @@ sub migrate_users
         my $birthday = '0000-00-00';
         if (
             defined $row->{birthdate}
-            && 
+            &&
             $row->{birthdate} ne '0000-00-00'
             &&
             $row->{birthdate} !~ m/0{2,4}/)
@@ -393,7 +403,7 @@ sub migrate_user_preferences
 
     my $sth = $DB4->prepare(
        'SELECT up.*, up.id as user_preference_id
-        FROM user_preferences up 
+        FROM user_preferences up
         ORDER BY up.id'
     );
     $sth->execute();
@@ -412,7 +422,7 @@ sub migrate_user_preferences
         # Minor cleanup
         my $show_m_thumbs = ( $row->{display_show_rated_m_thumbnails} eq 'Nowhere' ) ? 0 : 1;
         my $display_type  = ( $row->{display_image_list_type} eq 'Thumbnails' )      ? 'Grid' : 'List';
-        my $comment_type  = ( $row->{account_default_comment_type_setting} eq 'Any Kind' ) ? 'Any' 
+        my $comment_type  = ( $row->{account_default_comment_type_setting} eq 'Any Kind' ) ? 'Any'
                                 : $row->{account_default_comment_type_setting};
         my $comment_visibility = ( $row->{account_default_comment_visibility_setting} eq 'Hide All' ) ? 'Hide' : 'Show';
 
@@ -521,8 +531,8 @@ sub migrate_images
         }
 
         my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} .
-            substr( $row->{'user_account_id'}, 0, 1 ) . '/' . 
-            substr( $row->{'user_account_id'}, 0, 3 ) . '/' . 
+            substr( $row->{'user_account_id'}, 0, 1 ) . '/' .
+            substr( $row->{'user_account_id'}, 0, 3 ) . '/' .
             $row->{'user_account_id'} . '/';
 
         my $checksum = '';
@@ -643,8 +653,8 @@ sub migrate_image_properties
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Properties."; }
 
-    if ( ! defined $opt{l} && ! defined $opt{L} ) 
-    { 
+    if ( ! defined $opt{l} && ! defined $opt{L} )
+    {
         say "\t=> Skipping large table migration.";
         return;
     }
@@ -727,8 +737,8 @@ sub migrate_image_comments
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Comments."; }
 
-#    if ( ! defined $opt{l} && ! defined $opt{L} ) 
-#    { 
+#    if ( ! defined $opt{l} && ! defined $opt{L} )
+#    {
 #        say "\t=> Skipping large table migration.";
 #        return;
 #    }
@@ -799,8 +809,8 @@ sub migrate_image_comment_threads
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Comment Threads."; }
 
-#    if ( ! defined $opt{l} && ! defined $opt{L} ) 
-#    { 
+#    if ( ! defined $opt{l} && ! defined $opt{L} )
+#    {
 #        say "\t=> Skipping large table migration.";
 #        return;
 #    }
@@ -964,9 +974,9 @@ sub migrate_albums
         my %albums = (
             1 => { name => undef, description => undef, system => undef },
             2 => { name => undef, description => undef, system => undef },
-            3 => { 
-                    name        => 'Art Trades', 
-                    description => 'User Content traded or commissioned.', 
+            3 => {
+                    name        => 'Art Trades',
+                    description => 'User Content traded or commissioned.',
                     system      => 1,
                  },
             4 => { name => undef, description => undef, system => undef },
@@ -1340,6 +1350,89 @@ sub migrate_news
     say "\t=> Migrated News records: " . _commafy( $entry_count ) if defined $opt{V};
 }
 
+sub migrate_private_messages
+{
+    if ( defined $opt{V} ) { say "=> Migrating Private Messages."; }
+
+    # Cleanup from any previous migrations occurred with News migration.
+    if ( ! defined $opt{D} )
+    {
+        if ( defined $opt{V} ) { say "\t=> Truncating v5 Private Messages tables."; }
+
+        my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
+
+        foreach my $table ( qw/ private_messages / )
+        {
+            $dbh5->do( "TRUNCATE TABLE $table" );
+        }
+    }
+
+    # Pull data from the v4 news table;
+    if ( defined $opt{V} ) { say "\t=> Pulling Private Message records from v4 DB."; }
+
+    my $sth = $DB4->prepare(
+        'SELECT forum_private_messages.*, forum_private_messages.id as pm_id
+         FROM forum_private_messages
+         ORDER BY id'
+    );
+    $sth->execute();
+
+    my $row_count = $sth->rows();
+    my $interval  = int( $row_count / 10 );
+
+    if ( defined $opt{V} ) { say "\t=> Pulled " . _commafy( $row_count ) . ' records from v4 DB.'; }
+
+    my $entry_count = 0;
+
+    print "\t=> Inserting records into v5 DB " if defined $opt{V};
+    while ( my $row = $sth->fetchrow_hashref() )
+    {
+        # Some conversion and clean up.
+        my $status = 'Delivered';
+        my $read_at    = undef;
+        my $replied_at = undef;
+        my $deleted_at = undef;
+        if ( lc( $row->{'is_read'} ) eq 'true' )
+        {
+            $status  = 'Read';
+            $read_at = $row->{'timestamp'};
+        }
+        if ( lc( $row->{'is_replied_to'} ) eq 'true' )
+        {
+            $status     = 'Replied To';
+            $replied_at = $row->{'timestamp'};
+        }
+        if ( lc( $row->{'is_deleted'} ) eq 'true' )
+        {
+            $status     = 'Deleted';
+            $deleted_at = $row->{'timestamp'};
+        }
+
+        # Create Entry and save it.
+        my $entry = Side7::PrivateMessage->new(
+            id               => $row->{pm_id},
+            sender_id        => $row->{sender_user_account_id},
+            recipient_id     => $row->{recipient_user_account_id},
+            subject          => $row->{subject},
+            body             => $row->{body},
+            status           => $status,
+            created_at       => $row->{timestamp},
+            read_at          => $read_at,
+            replied_at       => $replied_at,
+            deleted_at       => $deleted_at,
+        );
+        $entry->save if ! defined $opt{D};
+
+        $entry_count++;
+
+        print _progress_dot( total => $row_count, count => $entry_count, interval => $interval ) if defined $opt{V};
+    }
+    print "\n" if defined $opt{V};
+
+    $sth->finish();
+    say "\t=> Migrated Private Message records: " . _commafy( $entry_count ) if defined $opt{V};
+}
+
 sub time_elapsed
 {
     my $elapsed = shift;
@@ -1425,7 +1518,7 @@ sub _get_is_public_hash
     # IS_PUBLIC CONTAINS:  email, icq, aim, msn, yahoo, googletalk, state, country
     $binary = _decimal_to_binary( number => $params{'number'} );
 
-    return undef if ! defined $binary;
+    return if ! defined $binary;
 
     # SPLIT THE BINARY NUMBER INTO DIGITS, AND PUT INTO AN ARRAY FOR SORTING
     @values = split( //, $binary );
@@ -1435,7 +1528,8 @@ sub _get_is_public_hash
 
     # PUSH THE VALUES INTO A HASH
     $i = 0;
-    foreach $value ( @values ) {
+    foreach my $value ( @values )
+    {
         if ( $params{'truefalse'} > 0 ) {
             $value = _int_to_true_false( text => int( $value ) );
         }
@@ -1455,7 +1549,7 @@ sub _decimal_to_binary
     my ( %params ) = @_;
     my ( $binary );
 
-    $params{'number'} || return undef;
+    $params{'number'} || return;
 
     $binary = sprintf( "%b", $params{'number'} );
 

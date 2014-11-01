@@ -1,0 +1,136 @@
+[% USE date %][% USE TextUtils %]
+<style>
+#msgs_container
+{
+    float: left;
+    width: 100%;
+    height: 500px;
+    padding: 5px;
+}
+
+#msgs_list
+{
+    clear: left;
+    float: left;
+    width: 34%;
+    height: 500px;
+    overflow: auto;
+    margin: 3px;
+    display: inline;
+}
+
+#msg_content
+{
+    float: right;
+    width: 62%;
+    height: 500px;
+    overflow: auto;
+    padding: 3px;
+    margin: 3px;
+    display: inline;
+}
+
+.msg_header, .msg_header_new
+{
+    position: relative;
+    margin-bottom: 5px;
+    padding: 3px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    width: 96%;
+}
+
+.msg_header_new
+{
+    background-color: #ceceff;
+}
+
+.msg_header
+{
+    background-color: #dedeff;
+}
+
+.msg_header_new a, .msg_header a
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    text-decoration: none; /* No underlines on the link */
+    z-index: 10; /* Places the link above everything else in the div */
+    background-color: #FFF; /* Fix to make div clickable in IE */
+    opacity: 0; /* Fix to make div clickable in IE */
+    filter: alpha(opacity=1); /* Fix to make div clickable in IE */
+}
+
+.msg_header_new:hover, .msg_header:hover
+{
+    background-color: #AEAEBF;
+    color: #fff;
+}
+
+.msg_icon
+{
+    width: 18px;
+    height: 100%;
+    margin-right: 1px;
+    float: left;
+    text-align: center;
+}
+
+.msg_header_details
+{
+    margin-left: 20px;
+}
+
+#msg_actions
+{
+    height: 22px;
+    margin-bottom: 5px;
+    padding: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    width: 96%;
+    background-color: #dedeff;
+}
+
+#msg_window
+{
+    border: none;
+}
+
+</style>
+
+<h2>Messages</h2>
+<div id="msgs_container">
+    <div id="msgs_list">
+    [% IF pms.size == 0 %]
+        <div style="text-align: center; font-weight: bold; font-size: 12pt;">You have no messages.</div>
+    [% ELSE %]
+        [% FOREACH msg IN pms %]
+            [% icon = 'email.gif' %][% header_class = 'msg_header' %]
+            [% IF msg.status == 'Read' %][% icon = 'email_open.gif' %]
+            [% ELSIF msg.status == 'Replied To' %][% icon = 'email_go.gif' %]
+            [% ELSE %][% header_class = 'msg_header_new' %][% END %]
+            <div class="[% header_class %]">
+                <a href="/my/pms/message/[% msg.id %]" target="msg_window"></a>
+                <div class="msg_icon"><img src="/images/icons/[% icon %]" alt='[% msg.status %]' title='[% msg.status %]' width="16" height="16" border="0"></div>
+                <div class="msg_header_details">
+                    <strong>From:</strong> [% msg.sender.username %]<br>
+                    <strong>Sent:</strong> [% date.format( msg.created_at, '%d %b, %Y %H:%M' ) %]<br>
+                    [% msg.subject %]
+                </div>
+            </div>
+        [% END %]
+    [% END %]
+    </div>
+    <div id="msg_content">
+        <div id="msg_actions">
+            <form style="display: inline;"><input type="button" value="Compose New Message" onClick="msg_window.location='/my/pms/compose'"></form>
+        </div>
+        <iframe name='msg_window' id="msg_window" height='465' seamless='seamless' width='100%' frameborder='0'></iframe>
+    </div>
+</div>

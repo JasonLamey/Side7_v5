@@ -1,0 +1,16 @@
+Parent & child dependencies for package Side7
+---------------------------------------------
+
+Key: Parent> indicates parent dependencies
+      Child> are child dependencies
+       ****> indicates the item(s) from which the relationships are drawn
+
+Grapher.pm 6632 - Wed Oct 29 16:00:21 2014
+
+   ****> +- Side7
+         |
+  Child> +- Const::Fast, Dancer, Dancer::Plugin::DirectoryView, Dancer::Plugin::Email, Dancer::Plugin::FlashMessage, Dancer::Plugin::NYTProf, Dancer::Plugin::TimeRequests, Dancer::Plugin::ValidateTiny, Data::Dumper, DateTime, List::MoreUtils, Side7::Account, Side7::Admin::Dashboard, Side7::Admin::Report, Side7::AuditLog, Side7::AuditLog::Manager, Side7::DateVisibility::Manager, Side7::FAQCategory, Side7::FAQCategory::Manager, Side7::FAQEntry, Side7::Globals, Side7::Login, Side7::News, Side7::News::Manager, Side7::PrivateMessage, Side7::PrivateMessage::Manager, Side7::Search, Side7::User, Side7::User::AccountDelete, Side7::User::Avatar::SystemAvatar::Manager, Side7::User::ChangePassword, Side7::UserContent::AlbumImageMap, Side7::UserContent::Image, Side7::UserContent::RatingQualifier, Side7::Utils::Crypt, Side7::Utils::Image, Side7::Utils::Pagination, strict, version, warnings
+         |
+  Child> +- Digest::MD5, Digest::SHA1, Exporter, GD, Image::Magick, Image::Thumbnail, List::Util, Log::Log4perl, POSIX, Rose::DB::Object::Manager, Rose::DB::Object::QueryBuilder, Side7::ActivityLog::Manager, Side7::Config, Side7::DB, Side7::DB::Object, Side7::Report, Side7::Search::History, Side7::Search::History::Manager, Side7::User::Avatar, Side7::User::Avatar::UserAvatar, Side7::User::Avatar::UserAvatar::Manager, Side7::User::Country::Manager, Side7::User::Friend::Manager, Side7::User::Manager, Side7::User::Perk, Side7::User::Permission, Side7::User::Preference, Side7::User::Role, Side7::User::Role::Manager, Side7::User::Status::Manager, Side7::User::Type::Manager, Side7::User::UserOwnedPerk, Side7::User::UserOwnedPerk::Manager, Side7::User::UserOwnedPermission, Side7::User::UserOwnedPermission::Manager, Side7::UserContent, Side7::UserContent::Album, Side7::UserContent::Album::Manager, Side7::UserContent::Comment, Side7::UserContent::Image::DailyView::Manager, Side7::UserContent::Image::DetailedView::Manager, Side7::UserContent::Image::Manager, Side7::UserContent::RatingQualifier::Manager, Side7::Utils::DateTime, Side7::Utils::File, Side7::Utils::Text, Try::Tiny, base, parent, vars
+         |
+  Child> +- Carp, File::Path, Filesys::DiskUsage, Gravatar::URL, HTML::Escape, Parse::BBCode, Regexp::Common, Rose::DB, Rose::DB::Object, Side7::User::Avatar::SystemAvatar

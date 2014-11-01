@@ -36,8 +36,10 @@ use Side7::Utils::Image;
 use Side7::FAQCategory;
 use Side7::FAQCategory::Manager;
 use Side7::FAQEntry;
+use Side7::PrivateMessage;
+use Side7::PrivateMessage::Manager;
 
-use version; our $VERSION = qv( '0.1.41' );
+use version; our $VERSION = qv( '0.1.43' );
 
 # Dancer Settings
 set charset => 'UTF-8';
@@ -192,6 +194,24 @@ get qr{^/cached_files/(.*)} => sub {
     my ( $path ) = splat;
 
     send_file 'public/cached_files/' . $path;
+};
+
+get '/un_search' => sub {
+    set serializer => 'JSON';
+    my $users = Side7::User::Manager->get_users( query => [
+                                                            or => [
+                                                                    't1.username'   => { like => '%' . params->{'term'} . '%' },
+                                                                    't2.first_name' => { like => '%' . params->{'term'} . '%' },
+                                                                    't2.last_name'  => { like => '%' . params->{'term'} . '%' },
+                                                                  ],
+                                                          ],
+                                                 sort_by => 'username asc',
+                                                 with_objects => [ 'account' ],
+    );
+
+    my @found = map { { label => $_->account->full_name . ' (' .$_->username . ')', value => $_->username } } @$users;
+
+    return \@found;
 };
 
 ###################################
@@ -689,6 +709,12 @@ hook 'before' => sub
 
             my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
+            if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+            {
+                flash error => 'You are either not logged in or your account could not be accessed.';
+                return redirect '/'; # Not an authorized page.
+            }
+
             var activity_log => $user->get_activity_logs();
 
             set layout => 'my';
@@ -701,12 +727,6 @@ get '/my/home/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my ( $user_hash ) = Side7::User::show_home( username => session( 'username' ) );
 
     template 'my/home', { data => $user_hash, activity_log => vars->{'activity_log'} };
@@ -717,12 +737,6 @@ get '/my/account/?' => sub
 {
     my $user = Side7::User::show_account( username => session( 'username' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     template 'my/account', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
@@ -730,12 +744,6 @@ get '/my/account/?' => sub
 get '/my/avatar/?' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NO-FOUND
-    }
 
     my $system_avatars = Side7::User::Avatar::SystemAvatar->get_all_system_avatars( size => 'small' );
     my $user_avatars   = $user->get_all_avatars( size => 'small' );
@@ -1246,12 +1254,6 @@ get '/my/profile/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my $is_public_hash      = $user->account->get_is_public_hash();
     my $enums               = Side7::Account->get_enum_values();
     my $date_visibilities   = Side7::DateVisibility::Manager->get_date_visibilities( query => [], sort_by => 'id' );
@@ -1397,12 +1399,6 @@ get '/my/friends/?' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my $approved_friends = $user->get_friends_by_status( status => 'Approved' );
 
     my $pending_requests = $user->get_pending_friend_requests();
@@ -1428,12 +1424,6 @@ get '/friend_link/:username' => sub
 
     my $user      = Side7::User::get_user_by_id( session( 'user_id' ) );
     my $recipient = Side7::User::get_user_by_username( params->{'username'} );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'You must be logged in to send a Friend Link request.';
-        return redirect $rd_url;
-    }
 
     if ( ! defined $recipient || ref( $recipient ) ne 'Side7::User' )
     {
@@ -1487,12 +1477,6 @@ get '/friend_link/:username' => sub
 get '/my/friends/:user_id/accept' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
 
     my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
 
@@ -1568,12 +1552,6 @@ get '/my/friends/:user_id/ignore' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
 
     my $pending_request = $pending_requests->[0];
@@ -1616,12 +1594,6 @@ get '/my/friends/:user_id/ignore' => sub
 get '/my/friends/:user_id/deny' => sub
 {
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
 
     my $pending_requests = $user->get_pending_friend_requests( user_id => params->{'user_id'} );
 
@@ -1677,12 +1649,6 @@ get '/my/friends/:username/dissolve' => sub
 
     my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
     my $target = Side7::User::get_user_by_username( params->{'username'} );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
 
     if ( ! defined $target || ref( $target ) ne 'Side7::User' )
     {
@@ -1740,12 +1706,6 @@ get '/my/gallery/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     # Fetch Gallery Stats
     my ( $user_hash ) = Side7::User::show_gallery( username => session( 'username' ) );
 
@@ -1756,12 +1716,6 @@ get '/my/gallery/?' => sub
 get '/my/kudos/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
-
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
 
     my ( $user_hash ) = Side7::User::show_kudos( username => session( 'username' ) );
 
@@ -2412,12 +2366,6 @@ get '/my/gallery/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     template 'my/gallery', { user => $user, activity_log => vars->{'activity_log'} };
 };
 
@@ -2641,12 +2589,6 @@ get '/my/permissions/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my $permissions = $user->get_all_permissions();
     my $user_hash = {};
 
@@ -2658,16 +2600,220 @@ get '/my/perks/?' => sub
 {
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 
-    if ( ! defined $user )
-    {
-        flash error => 'Either you are not logged in, or your account can not be found.';
-        redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
-    }
-
     my $perks = $user->get_all_perks();
     my $user_hash = {};
 
     template 'my/perks', { user => $user_hash, perks => $perks, activity_log => vars->{'activity_log'} };
+};
+
+# User Private Messages
+## PM Listing View
+get qr{/my/pms/?(\d*)/?} => sub
+{
+    my $page = splat;
+    $page //= 1;
+    my $user = Side7::User::get_user_by_username( session( 'username' ) );
+
+    my $private_messages = Side7::PrivateMessage::Manager->get_private_messages( query => [
+                                                                                            recipient_id => $user->id,
+                                                                                            '!status'    => 'Deleted',
+                                                                                          ],
+                                                                                 sort_by  => 'created_at desc',
+                                                                                 per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
+                                                                                 page     => $page,
+                                                                                 with_objects => [ 'sender.account' ],
+    );
+
+    template 'my/pms', {
+                        user => $user,
+                        pms  => $private_messages,
+                        page => $page,
+                        activity_log => vars->{'activity_log'},
+                       };
+};
+
+## PM Composition View
+get '/my/pms/compose/?' => sub
+{
+    template 'my/compose_private_message', {}, { layout => 'my_lightbox' };
+};
+
+# PM Send Action
+post '/my/pms/send/?' => sub
+{
+    my $params    = params;
+    my $recipient = params->{'recipient'};
+    my $subject   = params->{'subject'};
+    my $body      = params->{'body'};
+    my $reply_to  = params->{'reply_to'};
+
+    my $data = validator( $params, 'private_message_send_form.pl' );
+
+    # Return to Compose if errors.
+    if ( ! $data->{'valid'} )
+    {
+        my $err_message = "You have errors that need to be corrected:<br />";
+        foreach my $key ( sort keys %{$data->{'result'}} )
+        {
+            if ( $key =~ m/^err_/ )
+            {
+                $err_message .= "$data->{'result'}->{$key}<br />";
+            }
+        }
+        $err_message =~ s/<br \/>$//;
+        flash error => $err_message;
+
+        return template 'my/compose_private_message', {
+                                                        recipient => $recipient,
+                                                        subject   => $subject,
+                                                        body      => $body,
+                                                        reply_to  => $reply_to,
+                                                      },
+                                                      { layout => 'my_lightbox' };
+    }
+
+    my $sent_message = Side7::PrivateMessage->new(
+                                                    recipient_id => Side7::User::get_user_by_username( $recipient )->id,
+                                                    sender_id    => session( 'user_id' ),
+                                                    subject      => $subject,
+                                                    body         => $body,
+                                                    status       => 'Delivered',
+                                                    created_at   => DateTime->now(),
+    );
+    $sent_message->save;
+
+    if ( defined $reply_to && $reply_to =~ m/^\d+$/ )
+    {
+        my $private_message = Side7::PrivateMessage->new( id => $reply_to );
+        my $loaded = $private_message->load( speculative => 1 );
+
+        if ( $loaded != 0 && ref( $private_message ) eq 'Side7::PrivateMessage' )
+        {
+            $private_message->status( 'Replied To' );
+            $private_message->replied_at( DateTime->now );
+            $private_message->save;
+        }
+    }
+
+    template 'my/private_message_sent', { recipient => $recipient }, { layout => 'my_lightbox' };
+};
+
+## PM Read View
+get '/my/pms/message/:pm_id/?' => sub
+{
+    my $pm_id = params->{'pm_id'} // undef;
+
+    if ( ! defined $pm_id || $pm_id !~ /^\d+$/ )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    my $private_message = Side7::PrivateMessage->new( id => $pm_id );
+    my $loaded = $private_message->load( speculative => 1, with => [ 'sender.account' ] );
+
+    if ( $loaded == 0 || ref( $private_message ) ne 'Side7::PrivateMessage' )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    if ( session( 'user_id' ) ne $private_message->recipient_id )
+    {
+        return template 'my/private_message_error', { error => 'It appears you are trying to read messages that are not yours.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    if ( $private_message->status eq 'Deleted' )
+    {
+        return template 'my/private_message_error', { error => 'Could not load the requested message: it has been deleted.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    if ( ! defined $private_message->read_at || $private_message->status eq 'Delivered' )
+    {
+        $private_message->status( 'Read' );
+        $private_message->read_at( DateTime->now() );
+        $private_message->save();
+    }
+
+    template 'my/read_private_message', { data => $private_message }, { layout => 'my_lightbox' };
+};
+
+## PM Reply View
+get '/my/pms/message/:pm_id/reply/?' => sub
+{
+    my $pm_id = params->{'pm_id'} // undef;
+
+    if ( ! defined $pm_id || $pm_id !~ /^\d+$/ )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    my $private_message = Side7::PrivateMessage->new( id => $pm_id );
+    my $loaded = $private_message->load( speculative => 1, with => [ 'sender.account' ] );
+
+    if ( $loaded == 0 || ref( $private_message ) ne 'Side7::PrivateMessage' )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    if ( session( 'user_id' ) ne $private_message->recipient_id )
+    {
+        return template 'my/private_message_error', { error => 'It appears you are trying to read messages that are not yours.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    my $quote = '[quote="' . $private_message->sender->username . ' wrote on ' .
+                $private_message->created_at->strftime( '%a, %d %b, %Y at %H:%M' ) .
+                '"]' . $private_message->body . '[/quote]';
+
+    template 'my/compose_private_message', {
+                                            recipient => $private_message->sender->username,
+                                            reply_to  => $private_message->id,
+                                            quote     => $quote,
+                                            subject   => (
+                                                            ( $private_message->subject !~ m/^RE:\s/ ) ? 'RE: ' . $private_message->subject
+                                                                                                       : $private_message->subject
+                                                         ),
+                                           }, { layout => 'my_lightbox' };
+};
+
+## PM Delete View
+
+## PM Delete Action
+get '/my/pms/message/:pm_id/delete/?' => sub
+{
+    my $pm_id = params->{'pm_id'} // undef;
+
+    if ( ! defined $pm_id || $pm_id !~ /^\d+$/ )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    my $private_message = Side7::PrivateMessage->new( id => $pm_id );
+    my $loaded = $private_message->load( speculative => 1, with => [ 'sender.account' ] );
+
+    if ( $loaded == 0 || ref( $private_message ) ne 'Side7::PrivateMessage' )
+    {
+        return template 'my/private_message_error', { error => 'Sorry, could not retrieve the requested message.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    if ( session( 'user_id' ) ne $private_message->recipient_id )
+    {
+        return template 'my/private_message_error', { error => 'It appears you are trying to read messages that are not yours.' },
+                                                    { layout => 'my_lightbox' };
+    }
+
+    $private_message->status( 'Deleted' );
+    $private_message->deleted_at( DateTime->now() );
+    $private_message->save;
+
+    template 'my/private_message_deleted', { pm => $private_message }, { layout => 'my_lightbox' };
 };
 
 #############################

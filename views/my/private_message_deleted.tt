@@ -1,0 +1,3 @@
+<h2>Message Deleted</h2>
+
+<div>Your message, <strong>[% pm.subject %]</strong>, has been deleted.</div>
