@@ -67,6 +67,7 @@ sub parse_bbcode_markup
                                                                 :pinch:     pinch.png
                                                                 :sick:      sick.png
                                                                 :)          smile.png
+                                                                =)          smile.png
                                                                 :-)         smile.png
                                                                 :wassat:    wassat.png
                                                                 :angel:     angel.png
@@ -88,6 +89,7 @@ sub parse_bbcode_markup
                                                                 :cool:      cool.png
                                                                 :dizzy:     dizzy.png
                                                                 :D          grin.png
+                                                                =D          grin.png
                                                                 :laughing:  laughing.png
                                                                 :laugh:     laughing.png
                                                                 :(          sad.png
@@ -158,7 +160,7 @@ sub parse_bbcode_markup
                                                                 if ( defined $attr )
                                                                 {
                                                                     $content = '<span style="font-family: ' .
-                                                                                $attr . '">' . $$content . '</font>';
+                                                                                $attr . '">' . $$content . '</span>';
                                                                 }
                                                                 else
                                                                 {
@@ -169,6 +171,24 @@ sub parse_bbcode_markup
                                                 parse => 1,
                                                 class => 'inline',
                                              },
+                                    size => {
+                                                code => sub {
+                                                                my ( $parser, $attr, $content, $attribute_fallback ) = @_;
+                                                                my %font_sizes = (
+                                                                                    1 => '8pt',
+                                                                                    2 => '10pt',
+                                                                                    3 => '12pt',
+                                                                                    4 => '14pt',
+                                                                                    5 => '18pt',
+                                                                                    6 => '24pt',
+                                                                                    7 => '36pt',
+                                                                                 );
+                                                                $content = '<span style="font-size: ' . $font_sizes{$attr} .
+                                                                            '">' . $$content . '</span>';
+                                                            },
+                                                parse => 1,
+                                                class => 'inline',
+                                            },
                                     right    => '<div style="text-align: right;">%{parse}s</div>',
                                     left     => '<div style="text-align: left;">%{parse}s</div>',
                                     center   => '<div style="text-align: center;">%{parse}s</div>',

@@ -45,7 +45,7 @@ use vars qw(
 
 $|++;
 
-$VERSION = 1.50;
+$VERSION = 1.51;
 
 %packages = (
                 news            => 'migrate_news',
@@ -344,6 +344,14 @@ sub migrate_users
             }
         }
 
+        # translate '<BR>' into newlines
+        my $biography = undef;
+        if ( defined $row->{'biography'} && $row->{'biography'} ne '' )
+        {
+            $biography = $row->{'biography'};
+            $biography =~ s/<br\s?\/?>/\n/gi;
+        }
+
         my $account = Side7::Account->new(
             user_id                 => $row->{user_id},
             first_name              => $row->{first_name},
@@ -352,7 +360,7 @@ sub migrate_users
             user_status_id          => $statuses{$row->{status}},
             user_role_id            => $user_roles{$row->{access_control_list_id}},
             other_aliases           => $row->{alias},
-            biography               => $row->{biography},
+            biography               => $biography,
             sex                     => $row->{sex},
             birthday                => $birthday,
             birthday_visibility     => $datevis{$row->{birthdate_mode}},
@@ -550,6 +558,12 @@ sub migrate_images
             }
         }
 
+        my $description = $row->{description};
+        if ( defined $description && $description ne '' )
+        {
+            $description =~ s/<br\s?\/?>/\n/ig;
+        }
+
         # Create image and save it.
         my $image = Side7::UserContent::Image->new(
             id                => $row->{image_id},
@@ -562,7 +576,7 @@ sub migrate_images
             rating_id         => $row->{image_rating_id},
             rating_qualifiers => ( $qualifiers // undef ),
             stage_id          => $row->{image_class_id},
-            description       => $row->{description},
+            description       => $description,
             privacy           => $privacy,
             is_archived       => $archived,
             copyright_year    => $row->{copyright_year},
@@ -1320,16 +1334,23 @@ sub migrate_news
     my $entry_count = 0;
 
     print "\t=> Inserting records into v5 DB " if defined $opt{V};
+
     while ( my $row = $sth->fetchrow_hashref() )
     {
         # Some conversion and clean up.
+        my $body = $row->{article};
+        if ( defined $body && $body ne '' )
+        {
+            $body =~ s/<br\s?\/?>/\n/gi;
+        }
+
 
         # Create Entry and save it.
         my $entry = Side7::News->new(
             id               => $row->{news_id},
             title            => $row->{title},
             blurb            => $row->{blurb},
-            body             => $row->{article},
+            body             => $body,
             link_to_article  => $row->{external_link},
             is_static        => $row->{static},
             not_static_after => $row->{expires},
@@ -1408,13 +1429,24 @@ sub migrate_private_messages
             $deleted_at = $row->{'timestamp'};
         }
 
+        my $body = $row->{body};
+        if ( defined $body and $body ne '' )
+        {
+            $body =~ s/<br\s?\/?>/\n/gi;
+            $body =~ s/<font style="font-size: 8pt;">/[size="1"]/ig;
+            $body =~ s/<\/font>/[\/size]/ig;
+            $body =~ s/<\/?p>//ig;
+            $body =~ s/<(\/?[bi])>/\[$1\]/ig;
+            $body =~ s/<a href="(.*)">(.*)<\/a>/\[url="$1"\]$2\[\/url\]/ig;
+        }
+
         # Create Entry and save it.
         my $entry = Side7::PrivateMessage->new(
             id               => $row->{pm_id},
             sender_id        => $row->{sender_user_account_id},
             recipient_id     => $row->{recipient_user_account_id},
             subject          => $row->{subject},
-            body             => $row->{body},
+            body             => $body,
             status           => $status,
             created_at       => $row->{timestamp},
             read_at          => $read_at,

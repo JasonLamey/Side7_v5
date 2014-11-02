@@ -64,10 +64,14 @@ $message_buttons img
 <div class="message_container">
     <div class="message_header">
         <div id="message_buttons">
+            [% IF data.sender_id != 0 %]
             <a href="/my/pms/message/[% data.id %]/reply"><img src="/images/icons/email_go.gif" alt="Reply" title="Reply" border="0"></a>
+            [% END %]
             <a href="/my/pms/message/[% data.id %]/delete"><img src="/images/icons/email_delete.gif" alt="Delete" title="Delete" border="0"></a>
         </div>
-        <strong>From:</strong> <a href="/user/[% data.sender.username %]">[% data.sender.account.full_name %]</a> ( <a href="/user/[% data.sender.username %]">[% data.sender.username %]</a> )<br>
+        [% IF data.sender_id == 0 %][% sender = 'Oni (System Messenger)' %][% ELSE %]
+            [% sender = '<a href="/user/${data.sender.username}">${data.sender.account.full_name}</a> ( <a href="/user/${data.sender.username}">${data.sender.username}</a> )' %][% END %]
+        <strong>From:</strong> [% sender %]</a><br>
         <strong>Sent:</strong> [% date.format( data.created_at, '%d %B, %Y %H:%M' ) %]<br>
         <span class="subject">[% data.subject %]</span>
     </div>

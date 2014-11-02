@@ -115,11 +115,12 @@
             [% IF msg.status == 'Read' %][% icon = 'email_open.gif' %]
             [% ELSIF msg.status == 'Replied To' %][% icon = 'email_go.gif' %]
             [% ELSE %][% header_class = 'msg_header_new' %][% END %]
+            [% IF msg.sender_id == 0 %][% sender = 'Oni (System Messenger)' %][% ELSE %][% sender = msg.sender.username %][% END %]
             <div class="[% header_class %]">
                 <a href="/my/pms/message/[% msg.id %]" target="msg_window"></a>
                 <div class="msg_icon"><img src="/images/icons/[% icon %]" alt='[% msg.status %]' title='[% msg.status %]' width="16" height="16" border="0"></div>
                 <div class="msg_header_details">
-                    <strong>From:</strong> [% msg.sender.username %]<br>
+                    <strong>From:</strong> [% sender %]<br>
                     <strong>Sent:</strong> [% date.format( msg.created_at, '%d %b, %Y %H:%M' ) %]<br>
                     [% msg.subject %]
                 </div>

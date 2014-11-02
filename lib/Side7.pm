@@ -628,10 +628,23 @@ get '/user/:username' => sub
     }
 };
 
+# Old v4 style URL redirect
+get '/profile.cgim' => sub
+{
+    redirect '/user/' . params->{'member'};
+};
+
+
 # User Gallery page.
 get '/gallery/:username/?' => sub
 {
     redirect '/user/' . params->{'username'} . '/gallery';
+};
+
+# v4 style User Gallery link.
+get '/gallery.cgim' => sub
+{
+    redirect '/user/' . params->{'member'} . '/gallery';
 };
 
 get '/user/:username/gallery/?' => sub
@@ -2621,7 +2634,7 @@ get qr{/my/pms/?(\d*)/?} => sub
                                                                                  sort_by  => 'created_at desc',
                                                                                  per_page => $CONFIG->{'page'}->{'default'}->{'pagination_limit'},
                                                                                  page     => $page,
-                                                                                 with_objects => [ 'sender.account' ],
+                                                                                 #with_objects => [ 'sender.account' ],
     );
 
     template 'my/pms', {
@@ -2710,7 +2723,7 @@ get '/my/pms/message/:pm_id/?' => sub
     }
 
     my $private_message = Side7::PrivateMessage->new( id => $pm_id );
-    my $loaded = $private_message->load( speculative => 1, with => [ 'sender.account' ] );
+    my $loaded = $private_message->load( speculative => 1 );
 
     if ( $loaded == 0 || ref( $private_message ) ne 'Side7::PrivateMessage' )
     {
