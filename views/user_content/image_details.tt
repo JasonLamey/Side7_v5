@@ -1,59 +1,35 @@
 [% USE date %]
 [% USE TextUtils %]
 
-<h1>&gt;[% image.filtered_content.title %]&lt;</h1>
-<h2>By [% image.content.user.account.full_name %]</h2>
+<h1>&gt;[% user_content.filtered_content.title %]&lt;</h1>
+<h2>By [% user_content.content.user.account.full_name %]</h2>
 
 <div>
     <div>
-        [% IF image.filepath_error %]
-        <div>[% image.filepath_error %]</div>
+        [% IF user_content.filepath_error %]
+        <div>[% user_content.filepath_error %]</div>
         [% ELSE %]
-        <img src="[% image.filepath %]" alt='[% image.filtered_content.title %]' title='[% image.filtered_content.title %]' /><br />
-        URI: [% image.content.user.get_content_uri %][% image.content.filename %]
+        <img src="[% user_content.filepath %]" alt='[% user_content.filtered_content.title %]' title='[% user_content.filtered_content.title %]' /><br />
+        URI: [% user_content.content.user.get_content_uri %][% user_content.content.filename %]
         [% END %]
     </div>
     <div style="width: 300px; float: left; padding 5px; margin: 10px; border: 1px solid #000;">
-        Dimensions: [% image.content.dimensions %]<br />
-        Uploaded on: [% date.format( image.content.created_at, '%b %d, %Y @ %H:%M' ) %]<br />
-        Filesize: [% image.filtered_content.filesize %]<br />
+        Dimensions: [% user_content.content.dimensions %]<br />
+        Uploaded on: [% date.format( user_content.content.created_at, '%b %d, %Y @ %H:%M' ) %]<br />
+        Filesize: [% user_content.filtered_content.filesize %]<br />
         Owner:
-        [% IF image.content.user.username %]
-        <a href="/user/[% image.content.user.username %]">[% image.content.user.username %]</a>
+        [% IF user_content.content.user.username %]
+        <a href="/user/[% user_content.content.user.username %]">[% user_content.content.user.username %]</a>
         [% ELSE %]
         Unknown
         [% END %]<br />
-        Category: [% image.content.category.category %]<br />
-        Rating: [% image.filtered_content.rating %]<br />
-        Stage: [% image.content.stage.stage %]<br />
-        Views: [% image.total_views %]<br>
+        Category: [% user_content.content.category.category %]<br />
+        Rating: [% user_content.filtered_content.rating %]<br />
+        Stage: [% user_content.content.stage.stage %]<br />
+        Views: [% user_content.total_views %]<br>
     </div>
 
-    <div>[% image.filtered_content.description %]</div>
+    <div>[% user_content.filtered_content.description %]</div>
 
-    <!-- TODO: put the following into a snippet to be included via PROCESS -->
-    [% IF image.content.comment_threads && image.content.comment_threads.size > 0 %]
-    <h3>Comments &amp; Critiques:</h3>
-    [% END %]
-    [% FOREACH comment_thread IN image.content.comment_threads %]
-    <div class="comment_thread">
-        [% FOREACH comment IN comment_thread.comments %]
-        <div class="comment">
-            [% IF comment.user_id %]
-                [% IF comment.is_defunct_user != 1 %]
-            <strong>From: <a href="/user/[% comment.user.username %]">[% comment.user.username %]</a></strong><br>
-                [% ELSE %]
-            <strong>From: <span class="defunct_user">Defunct User</span></strong><br>
-                [% END %]
-            [% ELSE %]
-            <strong>From: [% comment.anonymous_name %]</strong> (Anonymously Posted)<br>
-            [% END %]
-            Posted on: [% date.format( comment.created_at, '%b %d, %Y @ %H:%M' ) %]<br />
-            <br>
-            [% TextUtils.parse_bbcode_markup( comment.comment ) %]
-        </div>
-        [% END %]
-    </div>
-    [% END %]
-    <!-- END TODO: -->
+    [% PROCESS 'user_content/_comment_threads.tt' %]
 </div>

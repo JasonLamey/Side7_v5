@@ -70,7 +70,8 @@ $message_buttons img
             <a href="/my/pms/message/[% data.id %]/delete"><img src="/images/icons/email_delete.gif" alt="Delete" title="Delete" border="0"></a>
         </div>
         [% IF data.sender_id == 0 %][% sender = 'Oni (System Messenger)' %][% ELSE %]
-            [% sender = '<a href="/user/${data.sender.username}">${data.sender.account.full_name}</a> ( <a href="/user/${data.sender.username}">${data.sender.username}</a> )' %][% END %]
+            [% sender = '<a href="/user/' _ data.sender.username _ '">' _ data.sender.account.full_name _ '</a> (<a href="/user/' _
+                        data.sender.username _ '">' _ data.sender.username _ '</a>)' %][% END %]
         <strong>From:</strong> [% sender %]</a><br>
         <strong>Sent:</strong> [% date.format( data.created_at, '%d %B, %Y %H:%M' ) %]<br>
         <span class="subject">[% data.subject %]</span>

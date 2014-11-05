@@ -547,11 +547,7 @@ sub search_audit_logs
         my %rowhash = ();
         foreach my $key ( qw/ id timestamp title description affected_id original_value new_value user_id ip_address / )
         {
-            if ( $key eq 'timestamp' )
-            {
-                $rowhash{$key} = $log->$key->strftime('%d %b %Y - %T');
-            }
-            elsif
+            if
             (
                 $key eq 'title'
                 ||
@@ -566,7 +562,7 @@ sub search_audit_logs
             }
             else
             {
-                $rowhash{$key} = $log->$key();
+                $rowhash{$key} = $log->$key;
             }
         }
 

@@ -1,8 +1,9 @@
+[% USE date %]
 <script>
-$(document).ready(function() 
-    { 
-        $("#logs_table").tablesorter({ 
-            // sort on the username column (second column), order asc 
+$(document).ready(function()
+    {
+        $("#logs_table").tablesorter({
+            // sort on the username column (second column), order asc
             sortList: [[0,0]],
             headers: {
                 2: { sorter: false },
@@ -10,8 +11,8 @@ $(document).ready(function()
                 5: { sorter: false },
             },
             widgets: ['zebra'],
-        }); 
-    } 
+        });
+    }
 );
 </script>
 
@@ -40,7 +41,7 @@ $(document).ready(function()
     [% ELSE %]
         [% FOR log IN data.logs %]
     <tr>
-        <td align="right">[% log.timestamp %]</td>
+        <td align="right">[% date.format( log.timestamp, '%F @ %H:%M' ) %]</td>
         <td>[% log.title %]</td>
         <td>[% log.description %]</td>
         <td align="center">[% log.affected_id %]</span></td>

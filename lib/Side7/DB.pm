@@ -28,10 +28,11 @@ use List::Util;
 
 #use Side7::Globals;
 
-use version; our $VERSION = qv( '0.1.5' );
+use version; our $VERSION = qv( '0.1.6' );
 
 # Use a private registry for this class
-Side7::DB->use_private_registry;
+__PACKAGE__->use_private_registry;
+__PACKAGE__->default_connect_options( mysql_enable_utf8 => 1 );
 
 # Register your data sources using the default type and domain
 Side7::DB->register_db(

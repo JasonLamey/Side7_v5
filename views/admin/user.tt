@@ -50,19 +50,19 @@ $(document).ready(function()
         <td>[% date.format( user.created_at, '%F' ) %]</td>
         <td align="center">
                     [% IF permissions.can_view_account_details == 1 %]
-                    <a href="/admin/users/[% user.username %]/show" data-jkit="[lightbox:width=900px;height=550px]">
+                    <a href="/admin/users/[% user.username %]/show" [% PROCESS 'site/js_snippets/jkit_lightbox.tt' %]>
                     <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details</a> |
                     [% ELSE %]
                     <img src="/images/icons/magnifier.gif" alt="User Details" title="User Details" align="absmiddle" border="0"> Details |
                     [% END %]
                     [% IF permissions.can_modify_user_account == 1 %]
-                    <a href="/admin/users/[% user.username %]/edit" data-jkit="[lightbox:width=900px;height=550px]">
+                    <a href="/admin/users/[% user.username %]/edit" [% PROCESS 'site/js_snippets/jkit_lightbox.tt' %]>
                     <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit</a> |
                     [% ELSE %]
                     <img src="/images/icons/user_edit.gif" alt="Edit User" title="Edit User" align="absmiddle" border="0"> Edit |
                     [% END %]
                     [% IF permissions.can_disable_accounts == 1 %]
-                    <a href="/admin/users/[% user.username %]/disable" data-jkit="[lightbox:width=900px;height=550px]">
+                    <a href="/admin/users/[% user.username %]/disable" [% PROCESS 'site/js_snippets/jkit_lightbox.tt' %]>
                     <img src="/images/icons/user_delete.gif" alt="Disable User" title="Disable User" align="absmiddle" border="0"> Disable</a>
                     [% ELSE %]
                     <img src="/images/icons/user_delete.gif" alt="Disable User" title="Disable User" align="absmiddle" border="0"> Disable

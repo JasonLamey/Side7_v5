@@ -683,11 +683,38 @@ get '/image/:image_id/?' => sub
 
     if ( defined $image_hash )
     {
-        template 'user_content/image_details', { image => $image_hash };
+        template 'user_content/image_details', { user_content => $image_hash };
     }
     else
     {
         redirect '/'; # TODO: Redirect to Image Doesn't Exist Page?
+    }
+};
+
+# Create User Content Comment Thread
+get qr{/[A-Za-z0-9]+/[0-9]+/comment/?} => sub
+{
+    my ( $content_type, $content_id ) = splat;
+
+    if
+    (
+        lc( $content_type ) ne 'image'
+        &&
+        lc( $content_type ) ne 'music'
+        &&
+        lc( $content_type ) ne 'literature'
+        &&
+        lc( $content_type ) ne 'video'
+    )
+    {
+        $LOGGER->warn( 'Invalid content_type provided: >' . $content_type . '<' );
+        flash error => 'Could not find comments for the content type you were looking for.';
+    }
+
+    if ( ! defined $content_id )
+    {
+        $LOGGER->warn( 'Invalid content_id provided: >' . $content_id . '<' );
+        flash error => 'Could not find comments for the content you were looking for.';
     }
 };
 
@@ -844,7 +871,7 @@ post '/my/avatar/upload/?' => sub
     $user->account->save();
 
     # Record Audit Message
-    $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>%lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded a new Avatar';
+    $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded a new Avatar';
     $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
     $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
     $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
@@ -2623,7 +2650,7 @@ get '/my/perks/?' => sub
 ## PM Listing View
 get qr{/my/pms/?(\d*)/?} => sub
 {
-    my $page = splat;
+    my ( $page ) = splat;
     $page //= 1;
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
 

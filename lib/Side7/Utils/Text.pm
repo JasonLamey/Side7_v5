@@ -246,9 +246,57 @@ sub parse_bbcode_markup
                     }
                 );
 
-    my $parsed_text = $parser->render( $incoming_text );
+    my $parsed_text = Side7::Utils::Text::tag_usernames( $incoming_text );
+    $parsed_text = $parser->render( $parsed_text );
+
 
     return $parsed_text;
+}
+
+
+=head2 tag_usernames()
+
+Returns a C<string> in which C<@username> is converted into a link
+to the User's profile, and ( #TODO ) notifies the User of being tagged.
+
+Parameters:
+
+=over 4
+
+=item text: The text to search for usernames within
+
+=back
+
+    my $text = Side7::Utils::Text::tag_usernames( $text );
+
+=cut
+
+sub tag_usernames
+{
+    my ( $text ) = @_;
+
+    return if ! defined $text;
+
+    my $user_exists = sub
+    {
+        my ( %args ) = @_;
+        my $pre      = delete $args{'pre'}      // undef;
+        my $username = delete $args{'username'} // undef;
+        my $post     = delete $args{'post'}     // undef;
+
+        return $pre . '@' . $username . $post if ! defined $username || $username eq '';
+
+        my $user = Side7::User->new( username => $username );
+        my $loaded = $user->load( speculative => 1 );
+
+        return $pre . '@' . $username . $post if $loaded == 0 || ref( $user ) ne 'Side7::User';
+
+        return $pre . '[url="/user/' . $user->username . '"]@' . $user->username . '[/url]' . $post;
+    };
+
+    $text =~ s/(^|\s+)\@(\S*)(\s+|$)/$user_exists->( pre => $1, username => $2, post => $3 )/eg;
+
+    return $text;
 }
 
 
