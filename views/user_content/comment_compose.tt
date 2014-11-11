@@ -1,0 +1,56 @@
+[% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
+<h2>Post Comment or Critique</h2>
+
+<form action="/user_content/comment/save" method="post">
+    <input type="hidden" name="comment_thread_id" value="[% comment.comment_thread_id %]">
+    <input type="hidden" name="content_type" value="[% content.content_type %]">
+    <input type="hidden" name="content_id" value="[% content.id %]">
+    <input type="hidden" name="replied_to" value="[% comment.id %]">
+
+    <label for="comment_type">Comment Type:</label>
+    <select name="comment_type">
+    [% FOREACH type IN enums.comment_type %]
+        [% selected = '' %][% preferred = '' %]
+        [% IF content.user.user_preferences.default_comment_type == type %]
+            [% preferred = ' (' _ content.user.username _ '\'s Preference)' %]
+        [% END %]
+        [% IF comment.comment_type && comment.comment_type == type %]
+            [% selected = ' selected' %]
+        [% ELSE %]
+            [% IF content.user.user_preferences.default_comment_type == type %]
+                [% selected = ' selected' %]
+            [% END %]
+        [% END %]
+        <option value="[% type %]"[% selected %]>[% type %][% preferred %]</option>
+    [% END %]
+    </select> <img src="/images/icons/information.gif" width="16" height="16" alt='' title='' border="0" style="vertical-align: middle;" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=<b>Commentary</b> - Giving your general opinion or thoughts on, or asking question about the piece<br><b>Light Critique</b> - Giving general suggestions for the purpose of helping to improve the piece.<br><b>Heavy Critique</b> - Giving serious constructive criticism, even providing example modifications, to aid the artist in improving their work on this piece.<br><br><i>Please remember to be polite!</i>]"><br>
+
+    <label for="privacy">Private Comment?</label>
+    [% checked = '' %]
+    [% IF comment.privacy && comment.privacy == 1 %]
+        [% checked = ' checked' %]
+    [% ELSE %]
+        [% IF content.user.user_preferences.default_comment_visibility == 'Hide' %]
+            [% checked = ' checked' %]
+        [% END %]
+    [% END %]
+    <input type="checkbox" name="privacy"[% checked %]><br>
+
+    [% quote = '' %]
+    [% IF comment.comment %]
+        [% quote = "[quote=${comment.user.username}]" _ comment.comment _ '[/quote]' %]
+    [% END %]
+
+    <label for="comment">Your Comment:</label><br>
+    <textarea name="comment" rows="10" cols="60" class="user_input_textarea">[% quote %]</textarea><br>
+
+    <label for="award">Want To Give The Artist An Additional Award?</label>
+    [% FOREACH award IN enums.award %]
+        <input type="radio" name="award" value="[% award %]"> [% award %]
+        [% IF award != 'None' %]
+        <img src="/images/icons/award_star_[% award FILTER lower %]_1.gif" width="16" height="16" alt="[% award %] Star" title="[% award %] Star" style="vertical-align: middle;" border="0">
+        [% END %]
+    [% END %]<br>
+
+    <input type="submit" value="Post">
+</form>

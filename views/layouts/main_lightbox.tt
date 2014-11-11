@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>Side7 - My Dashboard
+<title>Side7
 [% IF title %]
  - [% title %]
 [% END %]
@@ -28,11 +28,10 @@
 <!-- SCEditor -->
 <link rel="stylesheet" href="/javascripts/sceditor/minified/themes/default.min.css" type="text/css" media="all" />
 <script type="text/javascript" src="/javascripts/sceditor/minified/jquery.sceditor.bbcode.min.js"></script>
-<!-- jquery tools -->
-<script src="http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js"></script>
 
 [% IF ( flash.message || flash.error ) %]
 <!-- jgrowl -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
 <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
@@ -65,82 +64,54 @@
         margin-right: 5px;
     }
     .metanav {
+        margin-top: 3px;
         height: 55px;
         vertical-align: middle;
-        margin-top: 3px;
     }
-    .home_menu {
+    .admin_menu {
         width:200px;
         position:absolute;
         left:0;
-        top:67px;
+        top:40px;
         bottom:40px;
         height:auto;
         display: block;
         margin-right: 5px;
     }
-    .home_menu_option {
+    .admin_menu_option {
         text-align: left;
         padding: 3px;
         border-bottom: solid 1px #000;
     }
-    .home_menu_option a {
+    .admin_menu_option a {
         font-weight: bold;
     }
-    .home_menu_option .disabled {
+    .admin_menu_option .disabled {
         font-weight: normal;
         color: #777;
     }
     #section_content {
-        margin-left: 205px;
-        margin-right: 205px;
+        /* margin-left: 205px; */
         padding: 5px;
         width: auto;
         height: auto;
-        /* border: solid 1px #666; */
+        min-height: 450px;
     }
-    #activity_log {
-        width: 200px;
-        padding-top: 5px;
-        padding-right: 3px;
-        position: absolute;
-        right: 0;
-        top: 67px;
-        height: 300px;
-        overflow: auto;
-        font-size: 9pt;
-    }
-    .activity_log_entries {
-        padding: 2px;
-    }
-    .activity_log_elapsed {
-        font-size: 8pt;
-        color: #888;
-        text-align: right;
+    #footer {
     }
 </style>
 
 <script type="text/javascript">
-$(document).ready(function(){
-    $('body').jKit();
-});
+    $(document).ready(function(){
+        $('body').jKit();
+    });
 </script>
 
 </head>
 <body>
 <div id="page_content">
-[% PROCESS 'site/_page_header.tt' %]
-    <div class="home_menu">
-    [% PROCESS 'my/_home_menu.tt' %]
-    </div>
-    <div id="activity_log">
-    [% PROCESS 'my/_activity_log.tt' %]
-    </div>
     <div id="section_content">
     [% content %]
-    </div>
-    <div id="footer">
-    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
     </div>
 </div>
 </body>

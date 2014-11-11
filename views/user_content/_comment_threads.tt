@@ -1,0 +1,84 @@
+<div>
+    <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment"
+    title="Leave a comment or critique for [% user_content.content.user.username %]" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Comment or Critique</a>
+</div>
+    [% IF user_content.content.comment_threads && user_content.content.comment_threads.size > 0 %]
+    <h3>Comments &amp; Critiques:</h3>
+    [% END %]
+    [% FOREACH comment_thread IN user_content.content.comment_threads %]
+    <div class="comment_thread">
+        [% FOREACH comment IN comment_thread.comments %]
+        <div class="comment"><a name="[% comment.id %]"></a>
+        [% IF
+                comment.private == 1
+                &&
+                comment.user_id != session.user_id
+                &&
+                user_content.content.user_id != session.user_id
+        %]
+            <em>Private Comment</em>
+        [% ELSE %]
+
+                <strong>[% comment.comment_type %]
+                [% IF comment.user_id %]
+                    [% IF comment.is_defunct_user != 1 %]
+                        From: <a href="/user/[% comment.user.username %]">[% comment.user.username %]</a>
+                        [% reply_title = 'Reply to ' _ comment.user.username %]
+                    [% ELSE %]
+                        From: <span class="defunct_user">Defunct User</span>
+                        [% reply_title = 'Reply to comment' %]
+                    [% END %]
+                [% ELSE %]
+                    From: [% comment.anonymous_name %] <span style="font-weight: normal;">(Anonymously Posted)</span>
+                    [% reply_title = 'Reply to ' _ comment.anonymous_name %]
+                [% END %]
+                </strong><br>
+                <small>Posted on: [% date.format( comment.created_at, '%b %d, %Y @ %H:%M' ) %]</small><br />
+                <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/reply"
+                    title="[% reply_title %]" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Reply</a>
+                [% IF session.user_id == user_content.content.user_id %]
+                    [% IF session.user_id != comment.user_id && ! comment.owner_rating %]
+                        - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/rate"
+                            title="Rate This Comment" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Rate</a>
+                    [% END %]
+                    [% IF comment.private == 1 %]
+                        [% action = 'show' %]
+                        [% link = 'Make Public' %][% link_icon = '<img src="/images/icons/lightbulb.gif" border="0" alt="Make Public" title="Make Public" style="vertical-align: bottom;">' %]
+                    [% ELSE %]
+                        [% action = 'hide' %]
+                        [% link = 'Make Private' %][% link_icon = '<img src="/images/icons/lightbulb_off.gif" border="0" alt="Make Private" title="Make Private" style="vertical-align: bottom;">' %]
+                    [% END %]
+                    - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/[% action %]"
+                        title="[% link %]">[% link_icon %]</a>
+                    - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/delete"
+                        title="Delete Comment"><img src="/images/icons/comment_delete.gif" border="0" alt='Delete Comment' title='Delete Comment' style="vertical-align: bottom;"></a>
+                [% END %]
+                [% IF session.user_id != comment.user_id %]
+                    - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/like"><img src="/images/icons/thumb_up.gif" width="16" height="16" alt="Like" title="Like" border="0" style="vertical-align: bottom;"></a>
+                    - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/dontlike"><img src="/images/icons/thumb_down.gif" width="16" height="16" alt="Don't Like" title="Don't Like" border="0" style="vertical-align: bottom;"></a>
+                [% ELSE %]
+                    - <img src="/images/icons/thumb_up.gif" width="16" height="16" alt="Like" title="Like" border="0" style="vertical-align: bottom; opacity: 0.4; filter: alpha(opacity=40);">
+                    - <img src="/images/icons/thumb_down.gif" width="16" height="16" alt="Don't Like" title="Don't Like" border="0" style="vertical-align: bottom; opacity: 0.4; filter: alpha(opacity=40);">
+                [% END %]
+                <br>
+                <br>
+                [% IF comment.award != 'None' %]
+                        <img src="/images/icons/award_star_[% comment.award FILTER lower %]_1.gif" alt="[% comment.award %] Star Award" title="[% comment.award %] Star Award" border="0" style="vertical-align: bottom;" width="16" height="16">
+                [% END %]
+
+                [% TextUtils.parse_bbcode_markup( comment.comment ) %]
+
+                [% IF comment.owner_rating %]
+                    <br>[% index = comment.owner_rating - 1 %]
+                    <div class="owner_rating">
+                        <img src="/images/icons/star.gif" width="16" height="16" alt='Rated' title='Rated' style="vertical-align: bottom;">
+                        <strong>[% user_content.content.user.username %]</strong> rated this comment [% comment.owner_rating %] out of 5.
+                            ( [% owner_ratings.$index %] )
+                    </div>
+                [% END %]
+
+            [% END %]
+        </div>
+        [% END %]
+    </div>
+    [% END %]

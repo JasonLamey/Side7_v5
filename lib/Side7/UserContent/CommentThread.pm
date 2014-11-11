@@ -8,7 +8,7 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::CommentThread::Manager;
 
-use version; our $VERSION = qv( '0.1.1' );
+use version; our $VERSION = qv( '0.1.2' );
 
 
 =pod
@@ -28,12 +28,12 @@ This package represents comment threads on User uploaded content.
 
     Table name: comment_threads
 
-    | id            | bigint(20) unsigned                   | NO   | PRI | NULL    | auto_increment |
-    | content_id    | bigint(20) unsigned                   | NO   | MUL | NULL    |                |
-    | content_type  | enum('image','words','music','video') | NO   |     | NULL    |                |
-    | thread_status | enum('open','closed')                 | NO   |     | open    |                |
-    | created_at    | datetime                              | NO   |     | NULL    |                |
-    | updated_at    | datetime                              | NO   |     | NULL    |                |
+    | id            | bigint(20) unsigned                        | NO   | PRI | NULL    | auto_increment |
+    | content_id    | bigint(20) unsigned                        | NO   | MUL | NULL    |                |
+    | content_type  | enum('Image','Literature','Music','Video') | NO   |     | NULL    |                |
+    | thread_status | enum('Open','Closed     ')                 | NO   |     | open    |                |
+    | created_at    | datetime                                   | NO   |     | NULL    |                |
+    | updated_at    | datetime                                   | NO   |     | NULL    |                |
 
 
 =head1 RELATIONSHIPS
@@ -58,13 +58,13 @@ __PACKAGE__->meta->setup
         content_id    => { type => 'integer', not_null => 1 },
         content_type  => {
                             type     => 'enum',
-                            values   => [ 'image', 'words', 'music', 'video' ],
+                            values   => [ 'Image', 'Literature', 'Music', 'Video' ],
                             not_null => 1,
                          },
         thread_status => {
                             type     => 'enum',
-                            values   => [ 'open', 'closed' ],
-                            default  => 'open',
+                            values   => [ 'Open', 'Closed' ],
+                            default  => 'Open',
                             not_null => 1,
                          },
         created_at    => { type => 'datetime', not_null => 1, default => 'now()' },
@@ -134,13 +134,13 @@ sub get_all_comments_for_content
     return [] if ( ! defined $content_type && ! defined $content_id );
 
     if (
-        $content_type ne 'image'
+        $content_type ne 'Image'
         &&
-        $content_type ne 'words'
+        $content_type ne 'Literature'
         &&
-        $content_type ne 'music'
+        $content_type ne 'Music'
         &&
-        $content_type ne 'video'
+        $content_type ne 'Video'
     )
     {
         $LOGGER->warn( 'Invalid content_type >' . $content_type . '< passed in.' );

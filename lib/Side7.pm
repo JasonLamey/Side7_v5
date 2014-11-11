@@ -683,7 +683,10 @@ get '/image/:image_id/?' => sub
 
     if ( defined $image_hash )
     {
-        template 'user_content/image_details', { user_content => $image_hash };
+        template 'user_content/image_details', {
+                                                user_content  => $image_hash,
+                                                owner_ratings => $CONFIG->{'owner_ratings'},
+                                               };
     }
     else
     {
@@ -691,10 +694,19 @@ get '/image/:image_id/?' => sub
     }
 };
 
-# Create User Content Comment Thread
-get qr{/[A-Za-z0-9]+/[0-9]+/comment/?} => sub
+# Create User Content Comment & Thread
+get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/?} => sub
 {
     my ( $content_type, $content_id ) = splat;
+
+    # USER MUST BE LOGGED IN TO COMMENT
+    if ( ! session('username') )
+    {
+        $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+        flash error => 'You must be logged in to view that page.';
+        var rd_url => request->path_info;
+        request->path_info( '/login' );
+    }
 
     if
     (
@@ -716,11 +728,506 @@ get qr{/[A-Za-z0-9]+/[0-9]+/comment/?} => sub
         $LOGGER->warn( 'Invalid content_id provided: >' . $content_id . '<' );
         flash error => 'Could not find comments for the content you were looking for.';
     }
+
+    my $content = undef;
+    if ( lc( $content_type ) eq 'video' )
+    {
+        #$content = Side7::UserContent::Video->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+        #$content = Side7::UserContent::Literature->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        #$content = Side7::UserContent::Music->new( id => $content_id );
+    }
+    else
+    {
+        $content = Side7::UserContent::Image->new( id => $content_id );
+    }
+
+    my $loaded = $content->load( speculative => 1, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        return '<strong>Could not access the content you were trying to comment upon.</strong>';
+    }
+
+    my $enums = Side7::UserContent::Comment->get_enum_values();
+
+    template 'user_content/comment_compose.tt', {
+                                                    content => $content,
+                                                    enums   => $enums,
+                                                }, { layout => 'main_lightbox' };
 };
 
-##############################
-### Pages requiring logins ###
-##############################
+# Reply to Comment
+get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/reply/?} => sub
+{
+    my ( $content_type, $content_id, $comment_id ) = splat;
+
+    # USER MUST BE LOGGED IN TO COMMENT
+    if ( ! session('username') )
+    {
+        $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+        flash error => 'You must be logged in to view that page.';
+        var rd_url => request->path_info;
+        request->path_info( '/login' );
+    }
+
+    if
+    (
+        lc( $content_type ) ne 'image'
+        &&
+        lc( $content_type ) ne 'music'
+        &&
+        lc( $content_type ) ne 'literature'
+        &&
+        lc( $content_type ) ne 'video'
+    )
+    {
+        $LOGGER->warn( 'Invalid content_type provided: >' . $content_type . '<' );
+        flash error => 'Could not find comments for the content type you were looking for.';
+    }
+
+    if ( ! defined $content_id )
+    {
+        $LOGGER->warn( 'Invalid content_id provided: >' . $content_id . '<' );
+        flash error => 'Could not find comments for the content you were looking for.';
+    }
+
+    if ( ! defined $comment_id )
+    {
+        $LOGGER->warn( 'Invalid comment_id provided: >' . $comment_id . '<' );
+        flash error => 'Could not find comments for the content you were looking for.';
+    }
+
+    my $content = undef;
+    if ( lc( $content_type ) eq 'video' )
+    {
+        #$content = Side7::UserContent::Video->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+        #$content = Side7::UserContent::Literature->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        #$content = Side7::UserContent::Music->new( id => $content_id );
+    }
+    else
+    {
+        $content = Side7::UserContent::Image->new( id => $content_id );
+    }
+
+    my $loaded = $content->load( speculative => 1, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        return '<strong>Could not access the content you were trying to comment upon.</strong>';
+    }
+
+    my $replying_to = Side7::UserContent::Comment->new( id => $comment_id );
+    $loaded = $replying_to->load( speculative => 1, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        return '<strong>Could not access the comment you were trying to reply to.</strong>';
+    }
+
+    my $enums = Side7::UserContent::Comment->get_enum_values();
+
+    template 'user_content/comment_compose.tt', {
+                                                    content => $content,
+                                                    comment => $replying_to,
+                                                    enums   => $enums,
+                                                }, { layout => 'main_lightbox' };
+};
+
+# Submit comment Action
+post qr{/user_content/comment/save/?} => sub
+{
+    my $content_type      = params->{'content_type'}      // undef;
+    my $content_id        = params->{'content_id'}        // undef;
+    my $comment_thread_id = params->{'comment_thread_id'} // undef;
+    my $comment           = params->{'comment'}           // undef;
+    my $replied_to        = params->{'replied_to'}        // undef;
+    my $comment_type      = params->{'comment_type'}      // 'Commentary';
+    my $private           = params->{'private'}           // 0;
+    my $award             = params->{'award'}             // 'None';
+
+    # USER MUST BE LOGGED IN TO COMMENT
+    if ( ! session('username') )
+    {
+        $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+        flash error => 'You must be logged in to view that page.';
+        var rd_url => request->path_info;
+        request->path_info( '/login' );
+    }
+
+    if ( ! defined $content_type )
+    {
+        flash error => 'An error has occurred.  Could not save the comment.';
+        $LOGGER->warn( 'Could not save comment on User Content: invalid or missing content_type value.' );
+        return '<p>Comment not saved.</p>';
+    }
+
+    if
+    (
+        lc( $content_type ) ne 'image'
+        &&
+        lc( $content_type ) ne 'literature'
+        &&
+        lc( $content_type ) ne 'music'
+        &&
+        lc( $content_type ) ne 'video'
+    )
+    {
+        flash error => 'Invalid content type. Could not save comment.';
+        $LOGGER->warn( 'Received invalid content_type of >' . $content_type . '< when saving comment.' );
+        return '<p>Comment not saved.</p>';
+    }
+
+    if ( $content_id !~ m/^\d+$/ )
+    {
+        flash error => 'Invalid content ID. Could not save comment.';
+        $LOGGER->warn( 'Received invalid comment_id of >' . $content_id . '< when saving comment.' );
+        return '<p>Comment not saved.</p>';
+    }
+
+    if ( ! defined $comment || $comment eq '' )
+    {
+        flash error => 'Cannot save a comment with no content.';
+        return '<p>Comment not saved.</p>';
+    }
+
+    # Ensure the comment_thread_id is valid
+    if ( defined $comment_thread_id && $comment_thread_id =~ m/^\d+$/ )
+    {
+        my $thread_exists = Side7::UserContent::CommentThread::Manager->get_comment_threads_count(
+                                                                                                    query => [
+                                                                                                                id            => $comment_thread_id,
+                                                                                                                content_type  => $content_type,
+                                                                                                                content_id    => $content_id,
+                                                                                                                thread_status => 'Open',
+                                                                                                             ],
+        );
+        if ( ! defined $thread_exists )
+        {
+            flash error => 'Invalid Comment Thread. Could not save comment.';
+            $LOGGER->warn( 'Received comment_thread_id >' . $comment_thread_id . '< of an invalid comment thread when saving comment.' );
+            return '<p>Comment not saved.</p>';
+        }
+    }
+
+    my $content = undef;
+    if ( lc( $content_type ) eq 'video' )
+    {
+        #$content = Side7::UserContent::Video->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+        #$content = Side7::UserContent::Literature->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        #$content = Side7::UserContent::Music->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'image' )
+    {
+        $content = Side7::UserContent::Image->new( id => $content_id );
+    }
+    else
+    {
+        flash error => 'Invalid Content Type. Could not save comment.';
+        $LOGGER->warn( 'Received invalid content_id >' . $content_id . '< for a(n) ' . $content_type . ' when saving comment.' );
+        return '<p>Comment not saved.</p>';
+    }
+
+    my $loaded = $content->load( speculative => 0, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        flash error => 'Invalid Content ID. Could not save comment.';
+        $LOGGER->warn( 'Received invalid content_id >' . $content_id . '< for a(n) ' . $content_type . ' when saving comment.' );
+        return '<p>Comment not saved.</p>';
+    }
+
+    # Save Comment
+    if
+    (
+        ! defined $comment_thread_id
+        ||
+        $comment_thread_id !~ m/^\d+$/
+        ||
+        $comment_thread_id == 0
+    )
+    {
+        my $comment_thread = Side7::UserContent::CommentThread->new(
+                                                                    content_id    => $content_id,
+                                                                    content_type  => $content_type,
+                                                                    thread_status => 'Open',
+                                                                    created_at    => DateTime->now(),
+                                                                    updated_at    => DateTime->now(),
+                                                                   );
+        $comment_thread->save;
+        $comment_thread_id = $comment_thread->id;
+    }
+
+    my $remote_host   = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+
+    my $new_comment = Side7::UserContent::Comment->new(
+                                                        comment_thread_id => $comment_thread_id,
+                                                        user_id           => session( 'user_id' ),
+                                                        comment_type      => $comment_type,
+                                                        comment           => $comment,
+                                                        private           => $private,
+                                                        award             => $award,
+                                                        ip_address        => request->address() . $remote_host,
+                                                        created_at        => DateTime->now(),
+                                                        updated_at        => DateTime->now(),
+                                                      );
+    $new_comment->save;
+
+    # Award commenter Kudos Coins for the comment.
+    my $description = 'Left a ' . $comment_type . ' on <a href="/user/' . $content->user->username . '">' .
+                      $content->user->username . '\'s</a> ' . $content_type . ', "<a href="/' . lc( $content_type ) .
+                      '/' . $content_id . '" target="_blank">' . $content->title . '</a>"';
+    my $award_name = lc( $comment_type );
+    $award_name =~ s/\s/_/g;
+    my $kudos_award = Side7::KudosCoin->new(
+                                            user_id     => session( 'user_id' ),
+                                            amount      => $CONFIG->{'kudos_coins'}->{'award'}->{'leave_' . $award_name },
+                                            description => $description,
+                                            timestamp   => DateTime->now(),
+                                            purchased   => 0,
+    );
+    $kudos_award->save;
+
+    # Audit Log
+    my $audit_message = 'New Comment Posted - <b>Successful</b><br>';
+    $audit_message   .= 'User <b>' . session( 'username' ) . '</b> ( User ID: ' . session( 'user_id' ) . ' ) posted a comment';
+    $audit_message   .= 'on ' . $content_type . ' belonging to User ' . $content->user->username . ' ( User ID: ' . $content->user_id . ' ).';
+    $audit_message   .= '<br>User was awarded ' . $CONFIG->{'kudos_coins'}->{'award'}->{'leave_' . $award_name } . ' Kudos Coins.';
+    my $new_value    .= '&gt;' . $new_comment->comment . '&lt;';
+    my $audit_log = Side7::AuditLog->new(
+                                          title          => 'New Comment on ' . $content_type . ' Posted',
+                                          description    => $audit_message,
+                                          ip_address     => request->address() . $remote_host,
+                                          user_id        => session( 'user_id' ),
+                                          original_value => undef,
+                                          new_value      => $new_value,
+                                          affected_id    => $content_id,
+                                          timestamp      => DateTime->now(),
+    );
+    $audit_log->save();
+
+    my $commenter = Side7::User::get_user_by_id( session( 'user_id' ) );
+    # Notify Content Owner of new comment.
+    if
+    (
+        defined $content->user->user_preferences->comment_notifications
+        &&
+        $content->user->user_preferences->comment_notifications == 1
+    )
+    {
+        my $msg_body = template 'pm_notifications/new_comment', {
+                                                                content   => $content,
+                                                                comment   => $new_comment,
+                                                                commenter => $commenter,
+                                                               }, { layout => 'pm_notifications' };
+
+        my $subject = 'You have received a ' . $new_comment->comment_type . ' on your ' .
+                       $content->content_type . ', "' . $content->title . '"!';
+
+        my $pm = Side7::PrivateMessage->new(
+                                            sender_id    => 0,
+                                            recipient_id => $content->user_id,
+                                            subject      => $subject,
+                                            body         => $msg_body,
+                                            status       => 'Delivered',
+                                            created_at   => DateTime->now(),
+                                           );
+        $pm->save;
+
+        my $email_body = template 'email/new_comment_notification', {
+                                                                        content   => $content,
+                                                                        comment   => $new_comment,
+                                                                        commenter => $commenter,
+                                                                    }, { layout => 'email' };
+
+        email {
+            from    => 'oni@side7.com',
+            to      => $content->user->email_address,
+            subject => $subject,
+            body    => $email_body,
+        };
+    }
+
+    # If this is a reply, notify the writer of the original comment that they have a response.
+    if
+    (
+        defined $replied_to
+        &&
+        $replied_to =~ m/^\d+$/
+    )
+    {
+        my $original_comment = Side7::UserContent::Comment->new( id => $replied_to );
+        my $loaded = $original_comment->load( speculative => 1, with_objects => [ 'user' ] );
+
+        if ( $loaded == 0 )
+        {
+            $LOGGER->warn( 'Unable to retrieve comment being replied to, to inform its author of a reply.' );
+        }
+        else
+        {
+            if
+            (
+                defined $original_comment->user->user_preferences->comment_notifications
+                &&
+                $original_comment->user->user_preferences->comment_notifications == 1
+            )
+            {
+                my $msg_body = template 'pm_notifications/new_reply', {
+                                                                        original_comment => $original_comment,
+                                                                        content          => $content,
+                                                                        comment          => $new_comment,
+                                                                        commenter        => $commenter,
+                                                                      }, { layout => 'pm_notifications' };
+
+                my $subject = 'You have received a reply to your ' . $original_comment->comment_type . ' on ' .
+                              $content->user->username . '\'s ' . $content->content_type . ', "' . $content->title . '"!';
+
+                my $pm = Side7::PrivateMessage->new(
+                                                    sender_id    => 0,
+                                                    recipient_id => $original_comment->user_id,
+                                                    subject      => $subject,
+                                                    body         => $msg_body,
+                                                    status       => 'Delivered',
+                                                    created_at   => DateTime->now(),
+                                                   );
+                $pm->save;
+
+                my $email_body = template 'email/new_reply_notification', {
+                                                                            original_comment => $original_comment,
+                                                                            content          => $content,
+                                                                            comment          => $new_comment,
+                                                                            commenter        => $commenter,
+                                                                          }, { layout => 'email' };
+
+                email {
+                    from    => 'oni@side7.com',
+                    to      => $content->user->email_address,
+                    subject => $subject,
+                    body    => $email_body,
+                };
+            }
+        }
+    }
+
+    # Return
+    flash message => 'Your comment has been saved.';
+    return '<div>Saved!</div>';
+};
+
+# Alter visibility of a comment.
+get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/(show|hide)/?} => sub
+{
+    my ( $content_type, $content_id, $comment_id, $action ) = splat;
+
+    # USER MUST BE LOGGED IN TO MANAGE COMMENT
+    if ( ! session('username') )
+    {
+        $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+        flash error => 'You must be logged in to view that page.';
+        var rd_url => request->path_info;
+        request->path_info( '/login' );
+    }
+
+    if
+    (
+        lc( $content_type ) ne 'image'
+        &&
+        lc( $content_type ) ne 'music'
+        &&
+        lc( $content_type ) ne 'literature'
+        &&
+        lc( $content_type ) ne 'video'
+    )
+    {
+        $LOGGER->warn( 'Invalid content_type provided: >' . $content_type . '<' );
+        flash error => 'Could not find comments for the content you indicated; something went wrong.';
+        return redirect '/';
+    }
+
+    if ( ! defined $content_id )
+    {
+        $LOGGER->warn( 'Invalid content_id provided: >' . $content_id . '<' );
+        flash error => 'Could not find comments for the content you indicated; something went wrong.';
+        return redirect '/';
+    }
+
+    if ( ! defined $comment_id )
+    {
+        $LOGGER->warn( 'Invalid comment_id provided: >' . $comment_id . '<' );
+        flash error => 'Could not find the comment you wanted to modify; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    my $content = undef;
+    if ( lc( $content_type ) eq 'video' )
+    {
+        #$content = Side7::UserContent::Video->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+        #$content = Side7::UserContent::Literature->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        #$content = Side7::UserContent::Music->new( id => $content_id );
+    }
+    else
+    {
+        $content = Side7::UserContent::Image->new( id => $content_id );
+    }
+
+    my $loaded = $content->load( speculative => 1, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not load the User Content that was requested: type: >' . $content_type .
+                                                                                        '<, ID: >' . $content_id . '<' );
+        flash error => 'Could not load the User Content you indicated; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    if ( $content->user_id ne session( 'user_id' ) )
+    {
+        $LOGGER->warn( 'User >' . session( 'username' ) . '< ( ID: ' . session( 'user_id' ) .
+                       ') attempted to alter the visibility of a comment on content belonging to >' .
+                       $content->user->username . '< (ID: ' . $content->user_id . ')' );
+        flash error => 'This is not your content; you cannot change the visiblity of comments here.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    my $comment = Side7::UserContent::Comment->new( id = $comment_id );
+    $loaded = $comment->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not load the Comment that was requested: ID: >' . $content_id . '<' );
+        flash error => 'Could not load the Comment you indicated; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    $comment->privacy( ( lc( $action ) eq 'hide' ) ? 0 : 0 );
+};
+
+# Delete a comment.
+get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/delete/?} => sub
+{
+};
+
+#############################################
+### User Dashboard Pages requiring logins ###
+#############################################
 
 hook 'before' => sub
 {

@@ -1,0 +1,12 @@
+[% USE date %][% USE TextUtils %]
+Dear [% original_comment.user.username %],
+
+Your [% original_comment.comment_type %] on [% content.user.username %]'s [% content.content_type %] entitled "<a href='[% request.uri_base %]/[% content.content_type FILTER lower %]/[% content.id %]'>[% content.title %]</a>" has received a new reply:
+<a href="/user/[% commenter.username %]">[% commenter.username %]</a> replied on [% date.format( comment.created_at, '%A, %d %B, %Y at %H:%M' ) %].
+
+The comment was:
+[% TextUtils.parse_bbcode_markup( comment.comment ) %]
+
+You can see, respond to, or manage this comment here: <a href="[% request.uri_base %]/[% content.content_type FILTER lower %]/[% content.id %]#[% comment.id %]">[% request.uri_base %]/[% content.content_type FILTER lower %]/[% content.id %]#[% comment.id %]</a>
+
+[% PROCESS 'email/_oni_sig.tt' %]

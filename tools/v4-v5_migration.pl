@@ -430,8 +430,9 @@ sub migrate_user_preferences
         # Minor cleanup
         my $show_m_thumbs = ( $row->{display_show_rated_m_thumbnails} eq 'Nowhere' ) ? 0 : 1;
         my $display_type  = ( $row->{display_image_list_type} eq 'Thumbnails' )      ? 'Grid' : 'List';
-        my $comment_type  = ( $row->{account_default_comment_type_setting} eq 'Any Kind' ) ? 'Any'
-                                : $row->{account_default_comment_type_setting};
+        my $comment_type  = ( $row->{account_default_comment_type_setting} eq 'Any Kind' ) ? 'Any' :
+                            ( $row->{account_default_comment_type_setting} eq 'Commentary Only' ) ? 'Commentary' :
+                            $row->{account_default_comment_type_setting};
         my $comment_visibility = ( $row->{account_default_comment_visibility_setting} eq 'Hide All' ) ? 'Hide' : 'Show';
 
         my $pref = Side7::User::Preference->new(
@@ -800,9 +801,10 @@ sub migrate_image_comments
             comment_thread_id => $row->{image_comment_thread_id},
             user_id           => $row->{user_account_id},
             anonymous_name    => $row->{anonymous_name},
+            comment_type      => 'Commentary',
             comment           => $row->{comment},
             private           => ( $row->{private} eq 'true' ) ? 1 : 0,
-            award             => ( defined $row->{rating} && $row->{rating} ne '' ) ? $row->{rating} : 'none',
+            award             => ( defined $row->{rating} && $row->{rating} ne '' ) ? ucfirst( $row->{rating} ) : 'None',
             owner_rating      => '',
             ip_address        => $row->{ip_address},
             created_at        => $row->{'timestamp'},
@@ -822,12 +824,6 @@ sub migrate_image_comments
 sub migrate_image_comment_threads
 {
     if ( defined $opt{V} ) { say "=> Migrating Image Comment Threads."; }
-
-#    if ( ! defined $opt{l} && ! defined $opt{L} )
-#    {
-#        say "\t=> Skipping large table migration.";
-#        return;
-#    }
 
     # Cleanup from any previous migrations.
     if ( ! defined $opt{D} )
@@ -870,8 +866,8 @@ sub migrate_image_comment_threads
         my $comment_thread = Side7::UserContent::CommentThread->new(
             id            => $row->{'image_comment_thread_id'},
             content_id    => $row->{image_id},
-            content_type  => 'image',
-            thread_status => 'open',
+            content_type  => 'Image',
+            thread_status => 'Open',
             created_at    => $row->{'timestamp'},
             updated_at    => $datetime->ymd(),
         );

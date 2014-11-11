@@ -287,14 +287,7 @@ hr.faded {
 textarea.user_input_textarea {
     width: 625px;
     height: 200px;
-}
-
-.info_tooltip {
-    max-width: 350px;
-    font-size: 9pt;
-    background-color: #ccf;
-    border: solid 1px #336;
-    color: #000;
+    margin-left: 200px;
 }
 
 .small_text
@@ -327,6 +320,18 @@ textarea.user_input_textarea {
 {
     color: #b33;
     font-weight: bold;
+}
+
+.owner_rating
+{
+    position: relative;
+    margin: 5px;
+    background-color: #336;
+    color: #fff;
+    padding: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 /* LEDGERS */
@@ -434,6 +439,7 @@ textarea.user_input_textarea {
 }
 
 /* JKIT STYLES */
+/* jkit lightbox */
 div#jkit-lightbox-bg {
     display: none;
     position: fixed;
@@ -497,3 +503,27 @@ span#jkit-lightbox-nav-next {
 span#jkit-lightbox-nav-prev {
     margin-right: 10px;
 }
+
+/* jkit lightbox */
+div#jkit-tooltip {
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: absolute;
+}
+
+.info_tooltip {
+    max-width: 350px;
+    font-size: 9pt;
+    background-color: #ccf;
+    opacity: 0.9;
+    border: solid 1px #336;
+    color: #000;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-box-shadow:0 0 5px #aaa;
+    -moz-box-shadow: 0 0 5px #aaa;
+    box-shadow:0 0 5px #aaa;
+}
+

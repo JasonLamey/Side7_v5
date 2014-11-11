@@ -552,7 +552,7 @@ sub show_image
     # Fetch Image Comments
     my $image_comments =
         Side7::UserContent::CommentThread::get_all_comments_for_content(
-                                                                        content_type => 'image',
+                                                                        content_type => $image->content_type,
                                                                         content_id   => $image_id
                                                                        ) // [];
     $image_hash->{'comment_threads'} = $image_comments if defined $image_comments;

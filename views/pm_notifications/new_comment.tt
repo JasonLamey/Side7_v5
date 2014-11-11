@@ -1,0 +1,12 @@
+[% USE date %]
+Dear [% content.user.username %],
+
+A new comment has been posted on your [% content.content_type %] entitled "[url=[% request.uri_base %]/[% content.content_type FILTER lower %]/[% content.id %]][% content.title %][/url]":
+[url="/user/[% commenter.username %]"][% commenter.username %][/url] left a [% comment.comment_type %] on [% date.format( comment.created_at, '%A, %d %B, %Y at %H:%M' ) %].
+
+The comment was:
+[quote][% comment.comment %][/quote]
+
+You can see, respond to, or manage this comment here: [url target="_blank"][% request.uri_base %]/[% content.content_type FILTER lower %]/[% content.id %]#[% comment.id %][/url]
+
+[% PROCESS 'pm_notifications/_oni_sig.tt' %]

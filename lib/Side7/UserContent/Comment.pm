@@ -60,13 +60,19 @@ __PACKAGE__->meta->setup
         comment_thread_id => { type => 'integer', not_null => 1 },
         user_id           => { type => 'integer' },
         anonymous_name    => { type => 'varchar', length => 100 },
+        comment_type      => {
+                                type     => 'enum',
+                                values   => [ 'Commentary', 'Light Critique', 'Heavy Critique' ],
+                                not_null => 1,
+                                default  => 'Commentary',
+                             },
         comment           => { type => 'text',    not_null => 1 },
         private           => { type => 'integer', length => 1,  not_null => 1, default => 0 },
         award             => {
                                 type     => 'enum',
-                                values   => [ 'none', 'bronze', 'silver', 'gold' ],
+                                values   => [ 'None', 'Bronze', 'Silver', 'Gold' ],
                                 not_null => 1,
-                                default  => 'none',
+                                default  => 'None',
                              },
         owner_rating      => { type => 'integer' },
         ip_address        => { type => 'varchar', length => 100 },
@@ -94,6 +100,36 @@ __PACKAGE__->meta->setup
 
 
 =head1 METHODS
+
+
+=head2 get_enum_values()
+
+Returns a hash ref of arrays of enum values for each related field for the Comment.
+
+Parameters: None.
+
+    my $enums = Side7::UserContent::Comment->get_enum_values();
+
+=cut
+
+sub get_enum_values
+{
+    my $self = shift;
+
+    my $enums = {};
+
+    my $comment_enums = Side7::DB::get_enum_values_for_form( fields => [
+                                                                        'comment_type',
+                                                                        'award',
+                                                                       ],
+                                                          table  => 'comments',
+                                                        );
+
+    $enums = ( $comment_enums ); # Merging returned enum hash refs into one hash ref.
+
+    return $enums;
+}
+
 
 
 =head2 is_defunct_user()

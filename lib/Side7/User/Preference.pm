@@ -29,7 +29,7 @@ This package handles all the management for User Preferences.
     | display_signature          | tinyint(1)                                                      | NO   |     | 0           |                |
     | show_management_thumbs     | tinyint(1)                                                      | NO   |     | 1           |                |
     | default_comment_visibility | enum('Show','Hide')                                             | NO   |     | Show        |                |
-    | default_comment_type       | enum('Any','Commentary Only','Light Critique','Heavy Critique') | NO   |     | Any         |                |
+    | default_comment_type       | enum('Any','Commentary','Light Critique','Heavy Critique')      | NO   |     | Any         |                |
     | allow_watching             | tinyint(1)                                                      | NO   |     | 1           |                |
     | allow_favoriting           | tinyint(1)                                                      | NO   |     | 1           |                |
     | allow_sharing              | tinyint(1)                                                      | NO   |     | 1           |                |
@@ -78,7 +78,7 @@ __PACKAGE__->meta->setup
                                       },
         default_comment_type       => {
                                         type     => 'enum',
-                                        values   => [ 'Any', 'Commentary Only', 'Light Critique', 'Heavy Critique' ],
+                                        values   => [ 'Any', 'Commentary', 'Light Critique', 'Heavy Critique' ],
                                         not_null => 1,
                                         default  => 'Any',
                                       },

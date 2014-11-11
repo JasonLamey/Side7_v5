@@ -3,7 +3,7 @@ package Side7::Config;
 use strict;
 use warnings;
 
-use version; our $VERSION = qv( '0.1.10' );
+use version; our $VERSION = qv( '0.1.11' );
 
 =pod
 
@@ -70,8 +70,20 @@ sub new
     $CONFIG->{'log4perl'}->{'LOGFILE.layout.ConversionPattern'} = '[%d] [%p] %M %L - %m%n';
 
     # Kudos Coins Awards & Costs
-    $CONFIG->{'kudos_coins'}->{'award'}->{'referral'} = 25;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'referral'}             = 50;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'leave_commentary'}     = 2;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'leave_light_critique'} = 3;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'leave_heavy_critique'} = 5;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'gave_owner_rating'}    = 10;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'owner_rating_1'}       = 0;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'owner_rating_2'}       = 1;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'owner_rating_3'}       = 3;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'owner_rating_4'}       = 4;
+    $CONFIG->{'kudos_coins'}->{'award'}->{'owner_rating_5'}       = 5;
+
     $CONFIG->{'kudos_coins'}->{'cost'}->{'test'}      = -50;
+
+    $CONFIG->{'owner_ratings'} = [ 'Completely Unhelpful', 'Somewhat Unhelpful', 'Helpful', 'Very Helpful', 'Extremely Helpful' ];
 
     return $CONFIG;
 }
