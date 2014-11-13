@@ -306,7 +306,7 @@ textarea.user_input_textarea {
     -moz-border-radius: 10px;
 }
 
-.comment
+.comment, .comment_hidden
 {
     padding: 3px;
     margin: 3px;
@@ -314,6 +314,19 @@ textarea.user_input_textarea {
     border-radius: 5px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
+}
+
+.comment_hidden
+{
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+    background: repeating-linear-gradient(
+        45deg,
+        #eef,
+        #eef 10px,
+        #ccf 10px,
+        #ccf 20px
+    );
 }
 
 .defunct_user

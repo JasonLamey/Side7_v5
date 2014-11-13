@@ -1,3 +1,10 @@
+<script type="text/javascript">
+function confirmDelete()
+{
+    var confirmed = confirm( 'Are you sure you want to delete this comment?' );
+    return confirmed;
+}
+</script>
 <div>
     <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment"
     title="Leave a comment or critique for [% user_content.content.user.username %]" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Comment or Critique</a>
@@ -7,8 +14,10 @@
     [% END %]
     [% FOREACH comment_thread IN user_content.content.comment_threads %]
     <div class="comment_thread">
+        <a name="t[% comment_thread.id %]"></a>
         [% FOREACH comment IN comment_thread.comments %]
-        <div class="comment"><a name="[% comment.id %]"></a>
+        [% IF comment.private == 1 %][% div_name = 'comment_hidden' %][% ELSE %][% div_name = 'comment' %][% END %]
+        <div class="[% div_name %]"><a name="[% comment.id %]"></a>
         [% IF
                 comment.private == 1
                 &&
@@ -51,7 +60,8 @@
                     - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/[% action %]"
                         title="[% link %]">[% link_icon %]</a>
                     - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/delete"
-                        title="Delete Comment"><img src="/images/icons/comment_delete.gif" border="0" alt='Delete Comment' title='Delete Comment' style="vertical-align: bottom;"></a>
+                        title="Delete Comment" onClick='return confirmDelete();'>
+                        <img src="/images/icons/comment_delete.gif" border="0" alt='Delete Comment' title='Delete Comment' style="vertical-align: bottom;"></a>
                 [% END %]
                 [% IF session.user_id != comment.user_id %]
                     - <a href="/[% user_content.content.content_type FILTER lower %]/[% user_content.content.id %]/comment/[% comment.id %]/like"><img src="/images/icons/thumb_up.gif" width="16" height="16" alt="Like" title="Like" border="0" style="vertical-align: bottom;"></a>

@@ -30,6 +30,7 @@ use Side7::Account;
 use Side7::UserContent::Image;
 use Side7::UserContent::RatingQualifier;
 use Side7::UserContent::AlbumImageMap;
+use Side7::UserContent::Comment::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::Pagination;
 use Side7::Utils::Image;
@@ -700,12 +701,11 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/?} => sub
     my ( $content_type, $content_id ) = splat;
 
     # USER MUST BE LOGGED IN TO COMMENT
-    if ( ! session('username') )
+    if ( ! defined session('logged_in') )
     {
         $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
-        flash error => 'You must be logged in to view that page.';
-        var rd_url => request->path_info;
-        request->path_info( '/login' );
+        flash error => 'You must be logged in to leave a comment.';
+        return forward '/login', { rd_url => "/$content_type/$content_id/comment" };
     }
 
     if
@@ -767,12 +767,11 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/reply/?} => sub
     my ( $content_type, $content_id, $comment_id ) = splat;
 
     # USER MUST BE LOGGED IN TO COMMENT
-    if ( ! session('username') )
+    if ( ! defined session('logged_in') )
     {
         $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
-        flash error => 'You must be logged in to view that page.';
-        var rd_url => request->path_info;
-        request->path_info( '/login' );
+        flash error => 'You must be logged in to reply to a comment.';
+        return forward '/login', { rd_url => "/$content_type/$content_id/comment/$comment_id/reply" };
     }
 
     if
@@ -855,12 +854,11 @@ post qr{/user_content/comment/save/?} => sub
     my $award             = params->{'award'}             // 'None';
 
     # USER MUST BE LOGGED IN TO COMMENT
-    if ( ! session('username') )
+    if ( ! defined session('logged_in') )
     {
         $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
-        flash error => 'You must be logged in to view that page.';
-        var rd_url => request->path_info;
-        request->path_info( '/login' );
+        flash error => 'You must be logged in to leave a comment.';
+        return forward '/login', { rd_url => '/user_content/comment/save' };
     }
 
     if ( ! defined $content_type )
@@ -1133,12 +1131,11 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/(show|hide)/?} => sub
     my ( $content_type, $content_id, $comment_id, $action ) = splat;
 
     # USER MUST BE LOGGED IN TO MANAGE COMMENT
-    if ( ! session('username') )
+    if ( ! defined session('logged_in') )
     {
         $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
-        flash error => 'You must be logged in to view that page.';
-        var rd_url => request->path_info;
-        request->path_info( '/login' );
+        flash error => 'You must be logged in to modify a comment\'s visibility.';
+        return forward '/login', { rd_url => "/$content_type/$content_id/comment/$comment_id/$action" };
     }
 
     if
@@ -1207,7 +1204,7 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/(show|hide)/?} => sub
         return redirect '/' . $content_type . '/' . $content_id;
     }
 
-    my $comment = Side7::UserContent::Comment->new( id = $comment_id );
+    my $comment = Side7::UserContent::Comment->new( id => $comment_id );
     $loaded = $comment->load( speculative => 1 );
 
     if ( $loaded == 0 )
@@ -1217,12 +1214,139 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/(show|hide)/?} => sub
         return redirect '/' . $content_type . '/' . $content_id;
     }
 
-    $comment->privacy( ( lc( $action ) eq 'hide' ) ? 0 : 0 );
+    $comment->private( ( lc( $action ) eq 'hide' ) ? 1 : 0 );
+    $comment->save;
+
+    my $state = ( lc( $action ) eq 'hide' ) ? 'Private' : 'Public';
+
+    flash message => 'Successfully set the visibility of the comment to <strong>' . $state . '</strong>.';
+    redirect '/' . $content_type . '/' . $content_id . '#' . $comment_id;
 };
 
 # Delete a comment.
 get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/delete/?} => sub
 {
+    my ( $content_type, $content_id, $comment_id, $action ) = splat;
+
+    # USER MUST BE LOGGED IN TO MANAGE COMMENT
+    if ( ! defined session('logged_in') )
+    {
+        $LOGGER->info( 'No session established while trying to reach >' . request->path_info . '<' );
+        flash error => 'You must be logged in to delete a comment.';
+        return forward '/login', { rd_url => "/$content_type/$content_id/comment/$comment_id/delete" };
+    }
+
+    # Is the content type a proper type?
+    if
+    (
+        lc( $content_type ) ne 'image'
+        &&
+        lc( $content_type ) ne 'music'
+        &&
+        lc( $content_type ) ne 'literature'
+        &&
+        lc( $content_type ) ne 'video'
+    )
+    {
+        $LOGGER->warn( 'Invalid content_type provided: >' . $content_type . '<' );
+        flash error => 'Could not find comments for the content you indicated; something went wrong.';
+        return redirect '/';
+    }
+
+    # Did we get a content ID?
+    if ( ! defined $content_id )
+    {
+        $LOGGER->warn( 'Invalid content_id provided: >' . $content_id . '<' );
+        flash error => 'Could not find comments for the content you indicated; something went wrong.';
+        return redirect '/';
+    }
+
+    # Did we get a comment ID?
+    if ( ! defined $comment_id )
+    {
+        $LOGGER->warn( 'Invalid comment_id provided: >' . $comment_id . '<' );
+        flash error => 'Could not find the comment you wanted to modify; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    my $content = undef;
+    if ( lc( $content_type ) eq 'video' )
+    {
+        #$content = Side7::UserContent::Video->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+        #$content = Side7::UserContent::Literature->new( id => $content_id );
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        #$content = Side7::UserContent::Music->new( id => $content_id );
+    }
+    else
+    {
+        $content = Side7::UserContent::Image->new( id => $content_id );
+    }
+
+    # Can we load the indicated content?
+    my $loaded = $content->load( speculative => 1, with_objects => [ 'user' ] );
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not load the User Content that was requested: type: >' . $content_type .
+                                                                                        '<, ID: >' . $content_id . '<' );
+        flash error => 'Could not load the User Content you indicated; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    # Is the current user the owner of the content?
+    if ( $content->user_id ne session( 'user_id' ) )
+    {
+        $LOGGER->warn( 'User >' . session( 'username' ) . '< ( ID: ' . session( 'user_id' ) .
+                       ') attempted to delete a comment on content belonging to >' .
+                       $content->user->username . '< (ID: ' . $content->user_id . ')' );
+        flash error => 'This is not your content; you cannot delete comments here.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    # Does the comment exist?
+    my $comment = Side7::UserContent::Comment->new( id => $comment_id );
+    $loaded = $comment->load( speculative => 1 );
+
+    if ( $loaded == 0 )
+    {
+        $LOGGER->warn( 'Could not load the Comment that was requested: ID: >' . $content_id . '<' );
+        flash error => 'Could not find the Comment you indicated; something went wrong.';
+        return redirect '/' . $content_type . '/' . $content_id;
+    }
+
+    # Fetch the comment count from the thread.
+    my $comment_thread_id = $comment->comment_thread_id;
+    my $comment_count = Side7::UserContent::Comment::Manager->get_comments_count(
+                                                                            query => [
+                                                                                        comment_thread_id => $comment->comment_thread_id,
+                                                                                     ],
+    ) // 0;
+
+    # Delete the comment.
+    $comment->delete;
+
+    # Kill the comment thread if we just deleted the only comment.
+    if ( $comment_count == 1 )
+    {
+        my $comment_thread = Side7::UserContent::CommentThread->new( id => $comment_thread_id );
+        my $loaded = $comment_thread->load( speculative => 1 );
+
+        if ( $loaded == 0 )
+        {
+            $LOGGER->warn( 'Could not delete comment_thread >' . $comment_thread_id . '<; Could not load it from the database.' );
+        }
+        else
+        {
+            $comment_thread->delete;
+        }
+    }
+
+    flash message => 'Successfully deleted the comment.';
+    redirect '/' . $content_type . '/' . $content_id . '#t' . $comment_thread_id;
 };
 
 #############################################

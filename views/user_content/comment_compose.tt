@@ -42,7 +42,9 @@
     [% END %]
 
     <label for="comment">Your Comment:</label><br>
-    <textarea name="comment" rows="10" cols="60" class="user_input_textarea">[% quote %]</textarea><br>
+    <div style="margin-left: 200px;">
+    <textarea name="comment" rows="20" cols="60" class="user_input_textarea" style="height: 350px;">[% quote %]</textarea>
+    </div><br>
 
     <label for="award">Want To Give The Artist An Additional Award?</label>
     [% FOREACH award IN enums.award %]

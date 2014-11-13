@@ -18,7 +18,10 @@
     <li>Full Name: [% user.account.full_name %]</li>
     <li>Created At: [% date.format( user.created_at, '%a, %d %b, %Y @ %H:%M' ) %]</li>
     <li>Updated At: [% date.format( user.updated_at, '%a, %d %b, %Y @ %H:%M' ) %]</li>
-    <li>Birthday: [% date.format( user.account.birthday, '%d %B, %Y' ) %]</li>
+    [% IF user.account.birthday && user.account.birthday != '0000-00-00' %]
+    [% birthday = date.format( user.account.birthday, '%d %B, %Y' ) %]
+    [% ELSE %][% birthday = 'Birthday Not Entered' %][% END %]
+    <li>Birthday: [% birthday %]</li>
     <li>Sex: [% user.account.sex %]</li>
 </ol>
 [% IF vars.filter_profanity == 1 %]

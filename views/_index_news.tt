@@ -1,7 +1,7 @@
 [% USE date %]
 <div>
     [% FOREACH item IN data.sticky_news %]
-    <div style="margin-bottom: 8px;">
+    <div style="margin-bottom: 8px; background-color: #ccf;">
         <b>[% item.title %]</b><br>Posted: [% date.format( item.created_at, '%a, %d %b, %y @ %H:%M' ) %]<br>
         [% IF item.updated_at != item.created_at %]
         Updated: [% date.format( item.updated_at, '%a, %d %b, %y @ %H:%M' ) %]<br>
@@ -9,7 +9,8 @@
         [% IF item.blurb %][% item.blurb %]<br>[% END %]
         Posted by: [% item.user.username %]<br>
         [% IF item.link_to_article %]
-        <a href="[% item.link_to_article %]">Read More...</a><br>
+        <a href="[% item.link_to_article %]">Read More...
+            <img src="/images/icons/page_link.gif" border="0" style="vertical-align: bottom" alt='External Link' title='External Link'></a><br>
         [% ELSIF item.body %]
         <a href="/news/article/[% item.id %]">Read More...</a><br>
         [% END %]
@@ -26,7 +27,8 @@
         [% END %]
         By: [% item.user.username %]</small><br>
         [% IF item.link_to_article %]
-        <a href="[% item.link_to_article %]">Read More...</a><br>
+        <a href="[% item.link_to_article %]">Read More...
+            <img src="/images/icons/page_link.gif" border="0" style="vertical-align: bottom" alt='External Link' title='External Link'></a><br>
         [% ELSIF item.body %]
         <a href="/news/article/[% item.id %]">Read More...</a><br>
         [% END %]

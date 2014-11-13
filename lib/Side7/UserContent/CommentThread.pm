@@ -72,6 +72,7 @@ __PACKAGE__->meta->setup
     ],
     pk_columns => 'id',
     unique_key => [
+                    [ 'id', 'content_id', 'content_type', 'thread_status' ],
                     [ 'content_id', 'content_type', 'thread_status' ],
                     [ 'content_id', 'content_type' ],
                     [ 'content_id' ],
