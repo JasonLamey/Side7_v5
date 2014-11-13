@@ -1,9 +1,9 @@
 <script type="text/javascript">
     $( document ).ready( function() {
-        $( '#birthday' ).datepicker( { 
-            changeMonth: true, 
-            changeYear: true, 
-            dateFormat: 'yy-mm-dd', 
+        $( '#birthday' ).datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'yy-mm-dd',
             yearRange: '-100:c',
             showAnim: 'fadeIn',
         } );
@@ -44,9 +44,9 @@ EnableSubmit = function(val)
     <input type="password" name="password_confirmation" size="30" maxlength="45" />
     <br />
     <br />
-    
-    <label for="referred_by">If someone referred you to Side 7, please give us their username so that we can say thank you!</label><br />
-    <input type="text" name="referred_by" value="[% referred_by %]" placeholder="Referrer's Username" maxlength="255" size="45"><br /><br />
+
+    <label for="referred_by">If someone referred you to Side 7, please give us their username so that we can say thank you!</label>
+    <input type="text" name="referred_by" id="referred_by" value="[% referred_by %]" placeholder="Referrer's Username" maxlength="255" size="45"><br /><br />
 
     <!-- THESE LINKS SHOULD POP-UP IN LIGHTBOXES -->
     <label for="agree_to_rules">I have read &amp; agree to the <a href="#">site rules</a> and <a href="#">rules of conduct</a>:</label>
@@ -54,3 +54,12 @@ EnableSubmit = function(val)
 
     <input type="submit" value="Sign Up!" id="SignUp" disabled="disabled" />
 </form>
+
+<script>
+    $(function() {
+        $( "#referred_by" ).autocomplete({
+            source: "/un_search",
+            minLength: 3,
+        });
+    });
+</script>
