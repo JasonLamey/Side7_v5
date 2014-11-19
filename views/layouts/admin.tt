@@ -2,162 +2,167 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>Side7 Admin Dashboard
-[% IF title %]
- - [% title %]
-[% END %]
-</title>
-<link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
+    <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+    <title>Side7 Admin Dashboard
+    [% IF title %]
+     - [% title %]
+    [% END %]
+    </title>
+    <link rel="stylesheet" href="[% request.uri_base %]/css/style.css" />
 
-<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-<!-- jQuery -->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript">/* <![CDATA[ */
-    !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
-/* ]]> */</script>
-<!-- jQuery UI -->
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
-<!-- jkit -->
-<link rel="stylesheet" href="/css/jkit.new.css" />
-<script type="text/javascript" src="/javascripts/jkit/jquery.jkit.1.2.16.min.js"></script>
-<!-- tablesorter -->
-<link rel="stylesheet" href="/javascripts/tablesorter/themes/blue/style.css" />
-<script src="/javascripts/tablesorter/jquery.tablesorter.min.js"></script>
-<!-- SCEditor -->
-<link rel="stylesheet" href="/javascripts/sceditor/minified/themes/default.min.css" type="text/css" media="all" />
-<script type="text/javascript" src="/javascripts/sceditor/minified/jquery.sceditor.bbcode.min.js"></script>
+    <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+    <!-- jQuery -->
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">/* <![CDATA[ */
+        !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.js"><\/script>')
+    /* ]]> */</script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/blitzer/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+    <!-- jkit -->
+    <link rel="stylesheet" href="/css/jkit.new.css" />
+    <script type="text/javascript" src="/javascripts/jkit/jquery.jkit.1.2.16.min.js"></script>
+    <!-- tablesorter -->
+    <link rel="stylesheet" href="/javascripts/tablesorter/themes/blue/style.css" />
+    <script src="/javascripts/tablesorter/jquery.tablesorter.min.js"></script>
+    <!-- SCEditor -->
+    <link rel="stylesheet" href="/javascripts/sceditor/minified/themes/default.min.css" type="text/css" media="all" />
+    <script type="text/javascript" src="/javascripts/sceditor/minified/jquery.sceditor.bbcode.min.js"></script>
 
-[% IF ( flash.message || flash.error ) %]
-<!-- jgrowl -->
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
-[% END %]
+    [% IF ( flash.message || flash.error ) %]
+    <!-- jgrowl -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
+    [% END %]
 
-<script type="text/javascript">
-$(document).ready(function(){
-    $('body').jKit();
-});
-</script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('body').jKit();
+    });
+    </script>
 
-<style>
-    #page_content {
-        display: block;
-        position:absolute;
-        bottom:0;
-        top:0;
-        left:0;
-        right:0;
-    }
-    .column_wrap {position:relative;}
-    #page_header {
-        width: auto;
-        padding: 3px 5px;
-        margin: 0;
-        height: 60px;
-        background-color: #F2B9B8;
-    }
-    #header_search {
-        float: right;
-        width: 200px;
-        text-align: right;
-    }
-    #header_avatar {
-        float: left;
-        margin-right: 5px;
-    }   
-    .metanav {
-        height: 55px;
-        vertical-align: middle;
-        margin-top: 3px;
-    }
-    .admin_menu {
-        width:200px;
-        position:absolute;
-        left:0;
-        top:63px;
-        bottom:40px;
-        height:auto;
-        display: block;
-        margin-right: 5px;
-    }
-    .admin_menu_option {
-        text-align: left; 
-        padding: 3px; 
-        border-bottom: solid 1px #000;
-    }
-    .admin_menu_option a {
-        font-weight: bold;
-    }
-    .admin_menu_option .disabled {
-        font-weight: normal;
-        color: #777;
-    }
-    #section_content {
-        margin-left: 205px;
-        padding: 5px;
-        width: auto;
-        height: auto;
-        border: solid 1px #666;
-    }
-    .user_status_Pending {
-        color: purple; 
-        background-color: #FFAAFF;
-        font-weight: bold;
-    }
-    .user_status_Active {
-        color: green; 
-    }
-    .user_status_Suspended {
-        color: orange; 
-        background-color: #FFFFAA;
-        font-weight: bold;
-    }
-    .user_status_Disabled {
-        color: red; 
-        background-color: #FFAAAA;
-        font-weight: bold;
-    }
-    .user_role_Guest {
-        color: gray;
-    }
-    .user_role_User {
-    }
-    .user_role_Subscriber {
-        color: gold;
-        background-color: seagreen;
-    }
-    .user_role_Moderator {
-        font-weight: bold;
-        color: lightsteelblue;
-        background-color: navy;
-    }
-    .user_role_Admin {
-        font-weight: bold;
-        color: yellow;
-        background-color: orangered;
-    }
-    .user_role_Owner {
-        font-weight: bold;
-        color: white;
-        background-color: black;
-    }
-</style>
+    <style>
+        #page_content {
+            display: block;
+            position:absolute;
+            bottom:0;
+            top:0;
+            left:0;
+            right:0;
+        }
+        .column_wrap {position:relative;}
+        #page_header {
+            width: auto;
+            padding: 3px 5px;
+            margin: 0;
+            height: 60px;
+            background: repeating-linear-gradient(
+                135deg,
+                #fee,
+                #fee 5px,
+                #fdd 5px,
+                #fdd 10px
+            );
+        }
+        #header_search {
+            float: right;
+            width: 200px;
+            text-align: right;
+        }
+        #header_avatar {
+            float: left;
+            margin-right: 5px;
+        }
+        .metanav {
+            height: 55px;
+            vertical-align: middle;
+            margin-top: 3px;
+        }
+        .admin_menu {
+            width:200px;
+            position:absolute;
+            left:0;
+            top:65px;
+            bottom:40px;
+            height:auto;
+            display: block;
+            margin-right: 5px;
+        }
+        .admin_menu_option {
+            text-align: left;
+            padding: 3px;
+            border-bottom: solid 1px #000;
+        }
+        .admin_menu_option a {
+            font-weight: bold;
+        }
+        .admin_menu_option .disabled {
+            font-weight: normal;
+            color: #777;
+        }
+        #section_content {
+            margin-left: 205px;
+            padding: 5px;
+            width: auto;
+            height: auto;
+        }
+        .user_status_Pending {
+            color: purple;
+            background-color: #FFAAFF;
+            font-weight: bold;
+        }
+        .user_status_Active {
+            color: green;
+        }
+        .user_status_Suspended {
+            color: orange;
+            background-color: #FFFFAA;
+            font-weight: bold;
+        }
+        .user_status_Disabled {
+            color: red;
+            background-color: #FFAAAA;
+            font-weight: bold;
+        }
+        .user_role_Guest {
+            color: gray;
+        }
+        .user_role_User {
+        }
+        .user_role_Subscriber {
+            color: gold;
+            background-color: seagreen;
+        }
+        .user_role_Moderator {
+            font-weight: bold;
+            color: lightsteelblue;
+            background-color: navy;
+        }
+        .user_role_Admin {
+            font-weight: bold;
+            color: yellow;
+            background-color: orangered;
+        }
+        .user_role_Owner {
+            font-weight: bold;
+            color: white;
+            background-color: black;
+        }
+    </style>
 
 </head>
 <body>
-<div id="page_content">
-[% PROCESS 'site/_page_header.tt' %]
-    <div class="admin_menu">
-[% PROCESS 'admin/_main_menu.tt' %]
-    </div>
-    <div id="section_content">
-    [% content %]
-    </div>
-    <div id="footer">
-    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
-    </div>
-</div>
+
+    <div id="page_content">
+    [% PROCESS 'site/_page_header.tt' %]
+        <div class="admin_menu">
+    [% PROCESS 'admin/_main_menu.tt' %]
+        </div><!-- end admin_menu -->
+        <div id="section_content">
+        [% content %]
+        </div><!-- end section_content -->
+    [% PROCESS 'site/_footer.tt' %]
+    </div><!-- end page_content -->
+
 </body>
 </html>

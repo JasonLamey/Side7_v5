@@ -10,4 +10,4 @@
 
 <p>Confirming your set deletion flag request will set your account to be removed via automated process in 30 days. Your account, and all content you've uploaded, will be deleted permanently from our system.</p>
 
-<p>-- The Side 7 Staff</p>
+[% PROCESS 'email/_oni_sig.tt' %]

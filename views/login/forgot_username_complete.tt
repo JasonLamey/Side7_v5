@@ -1,0 +1,12 @@
+<h1>Forgot My Username</h1>
+
+<div class="rounded_block" style="margin: 5px 25px;">
+    Your request has been processed, and if the e-mail address is correct you should have a reminder e-mail in your inbox within about 15 minutes.<br>
+    <br>
+    <em><strong>If you do not see an e-mail within that time:</strong></em>
+    <ol type='1'>
+        <li>Check your junk mail folder. Some e-mail hosts are rather indiscriminant about what they deem to be junk mail.</li>
+        <li>If the e-mail isn't there, it is possible you have misremembered what e-mail address you used when you signed up. In that case, you
+            can <a href="#">contact us</a> for further help.</li>
+    </ol>
+</div>

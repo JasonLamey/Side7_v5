@@ -139,9 +139,7 @@ $(document).ready(function(){
     <div id="section_content">
     [% content %]
     </div>
-    <div id="footer">
-    Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %]
-    </div>
+    [% PROCESS 'site/_footer.tt' %]
 </div>
 </body>
 </html>

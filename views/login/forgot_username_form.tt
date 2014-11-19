@@ -1,0 +1,10 @@
+<h1>Forgot My Username</h1>
+
+<div class="rounded_block" style="margin: 5px 25px;">
+    <form action="/forgot_username" method="post">
+        <label for="username">What is e-mail address you signed up with?</label>
+        <input type="text" name="email_address" size="40" maxlength="255">
+        <input type="submit" value="Send Me My Usename"><br>
+        <div style="margin-left: 310px; margin-bottom: 5px;"><small><a href="#">I forgot my e-mail address</a></small></div>
+    </form>
+</div>

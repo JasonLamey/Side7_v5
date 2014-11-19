@@ -952,7 +952,7 @@ sub migrate_albums
 
         my $dbh5 = $DB5->dbh || croak "Unable to establish DB5 handle: $DB5->error";
 
-        foreach my $table ( qw/ albums album_image_map album_music_map album_words_map / )
+        foreach my $table ( qw/ albums album_image_map album_music_map album_literature_map / )
         {
             $dbh5->do( "TRUNCATE TABLE $table" );
         }

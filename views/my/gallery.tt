@@ -14,8 +14,8 @@
     <a href="/my/content">Modify or Delete</a>
 
     <h3>Albums:</h3>
-    <a href="/my/albums/new" [% PROCESS 'site/js_snippets/jkit_lightbox.tt' %]>Create A New Album</a> |
-    <a href="/my/albums" [% PROCESS 'site/js_snippets/jkit_lightbox.tt' %]>Manage My Albums</a>
+    <a href="/my/albums/new" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Create A New Album</a> |
+    <a href="/my/albums" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Manage My Albums</a>
 
     <h3>Account Statistics:</h3>
     <a href="/my/stats/gallery">View Gallery Stats</a> |

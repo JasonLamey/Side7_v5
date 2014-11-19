@@ -56,6 +56,7 @@ hook 'before_template_render' => sub
     $tokens->{'logout_url'} = uri_for( '/logout' );
     $tokens->{'signup_url'} = uri_for( '/signup' );
     $tokens->{'user_home_url'} = uri_for( '/my/home' );
+    $tokens->{'site_version'} = $CONFIG->{'general'}->{'version'};
 
     if ( defined session( 'logged_in' ) )
     {
@@ -442,28 +443,170 @@ post '/confirm_user' => sub
     return redirect '/confirm_user/' . params->{'confirmation_code'};
 };
 
+# Forgot password view
+get '/forgot_password' => sub
+{
+    template 'login/forgot_password_form.tt';
+};
+
+# Forgot password initial action
+post '/forgot_password' => sub
+{
+    my $username = params->{'username'};
+
+    if ( ! defined $username || $username =~ m/^\s+$/ )
+    {
+        flash error => 'You must enter a username in order to reset your password.';
+        return template 'login/forgot_password_form.tt';
+    }
+
+    my $user = Side7::User->new( username => $username );
+    my $loaded = $user->load( speculative => 1 );
+    if ( $loaded == 0 || ref( $user ) ne 'Side7::User' )
+    {
+        flash error => '<strong>' . $username . '</strong> is an invalid username. Could not retrieve any account under that name.';
+        return template 'login/forgot_password_form.tt';
+    }
+
+    my $reset_code = Side7::Utils::Crypt::sha1_hex_encode( $username . time() );
+    my $reset_link = uri_for( "/reset_password/$reset_code" );
+
+    my $new_password = Side7::User::ChangePassword->generate_random_password( 10 ); # Random password should be 10 chars long.
+
+    # Record change to be made in a temp record
+    my $password_change = Side7::User::ChangePassword->new(
+                                                            user_id           => $user->id,
+                                                            confirmation_code => $reset_code,
+                                                            new_password      => $new_password,
+                                                            is_a_reset        => 1,
+                                                            created_at        => DateTime->now,
+                                                            updated_at        => DateTime->now,
+                                                          );
+
+    $password_change->save();
+
+    my $email_body = template 'email/reset_password_confirmation', {
+        user       => $user,
+        reset_link => $reset_link,
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $user->email_address,
+        subject => 'Password Reset Confirmation',
+        body    => $email_body,
+    };
+
+    template 'login/forgot_password_confirm.tt', { username => $username };
+};
+
+# Reset Password Action
+get '/reset_password/?:reset_code?' => sub
+{
+    if ( ! defined params->{'reset_code'} )
+    {
+        flash error => 'You need to enter your password reset confirmation code.';
+        return template 'login/reset_password_confirmation_form';
+    }
+
+    my $results = Side7::User::ChangePassword->reset_password( params->{'reset_code'} );
+
+    if ( $results->{'success'} == 0 )
+    {
+        flash error => $results->{'error'};
+        return template 'login/reset_password_confirmation_form', { reset_code => params->{'reset_code'} };
+    }
+
+    my $email_body = template 'email/reset_password_complete', {
+        user         => $results->{'user'},
+        new_password => $results->{'new_password'},
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $results->{'user'}->email_address,
+        subject => 'Password Reset Complete',
+        body    => $email_body,
+    };
+
+    my $audit_message = 'Password Reset confirmation - <b>Successful</b> - ';
+    $audit_message   .= 'Confirmation Code: &gt;<b>' . params->{'reset_code'} . '</b>&lt;';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Reset Password Confirmation',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          affected_id => $results->{'user'}->id,
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    template 'login/reset_password_complete';
+};
+
+# Reset Password Post-redirect to Get
+post '/reset_password' => sub
+{
+    return redirect '/reset_password/' . params->{'reset_code'};
+};
+
+# Forgot username view
+get '/forgot_username' => sub
+{
+    template 'login/forgot_username_form.tt';
+};
+
+# Forgot password action
+post '/forgot_username' => sub
+{
+    my $email_address = params->{'email_address'} // undef;
+
+    if ( ! defined $email_address || $email_address =~ m/^\s*$/ )
+    {
+        flash error => 'You must enter an e-mail address in order to reset your password.';
+        return template 'login/forgot_username_form.tt';
+    }
+
+    my $user = Side7::User->new( email_address => $email_address );
+    my $loaded = $user->load( speculative => 1 );
+    if ( $loaded == 0 || ref( $user ) ne 'Side7::User' )
+    {
+        $LOGGER->info( 'Invalid e-mail address entered for forgot_username: >' . $email_address . '<' );
+        return template 'login/forgot_username_complete.tt';
+    }
+
+    $LOGGER->info( 'Sending forgot_username e-mail to User >' . $user->username . '< at >' . $email_address . '<' );
+
+    my $email_body = template 'email/forgot_username', {
+        user => $user,
+    }, { layout => 'email' };
+
+    email {
+        from    => 'system@side7.com',
+        to      => $user->email_address,
+        subject => 'Forgotten Username',
+        body    => $email_body,
+    };
+
+    my $audit_message = 'Forgot Username Request - <b>Successful</b> - ';
+    $audit_message   .= 'Fulfilled a Forgot Username Request for &gt;<b>' . $email_address . '</b>&lt; which';
+    $audit_message   .= 'belongs to &gt;' . $user->username . '&lt; (User ID: ' . $user->id . ' )';
+    my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+    my $audit_log = Side7::AuditLog->new(
+                                          title       => 'Forgot Username Request',
+                                          description => $audit_message,
+                                          ip_address  => request->address() . $remote_host,
+                                          affected_id => $user->id,
+                                          timestamp   => DateTime->now(),
+    );
+    $audit_log->save();
+
+    template 'login/forgot_username_complete';
+};
+
 ###########################
 ### Public-facing pages ###
 ###########################
-
-# Progress Bar
-#get '/progress_bar' => sub {
-#    long_running 'progress_bar', 5, sub {
-#        my $state = shift;
-#
-#        $state->{timer} =
-#        AnyEvent->timer(after => 1, interval => 1, cb => sub {
-#            if (++$state->{cnt} == 5) {
-#                undef $state->{timer};
-#                finished 'progress_bar';
-#            } else {
-#                progress 'progress_bar' => $state->{cnt};
-#            }
-#        });
-#    };
-#
-#    template 'progressbar', { name => 'progress_bar' };
-#};
 
 # Search
 get '/search/?' => sub
@@ -1710,6 +1853,7 @@ post '/my/changepassword/?' => sub
                                                             user_id           => session( 'user_id' ),
                                                             confirmation_code => $confirmation_code,
                                                             new_password      => params->{'new_password'},
+                                                            is_a_reset        => 0,
                                                             created_at        => 'now',
                                                             updated_at        => 'now',
                                                           );

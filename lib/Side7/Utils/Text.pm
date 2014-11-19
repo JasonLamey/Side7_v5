@@ -294,7 +294,7 @@ sub tag_usernames
         return $pre . '[url="/user/' . $user->username . '"]@' . $user->username . '[/url]' . $post;
     };
 
-    $text =~ s/(^|\s+)\@(\S*)(\s+|$)/$user_exists->( pre => $1, username => $2, post => $3 )/eg;
+    $text =~ s/(^|\s+)@(\S*)(\s+|$)/$user_exists->( pre => $1, username => $2, post => $3 )/eg;
 
     return $text;
 }

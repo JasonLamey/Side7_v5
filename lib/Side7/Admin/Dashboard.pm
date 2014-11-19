@@ -117,6 +117,10 @@ sub get_main_menu
     $enabled = ( $user->has_permission( 'can_manage_faq_entries' ) ) ? 1 : 0;
     push ( @main_menu_options, { name => 'Manage FAQ', link => '/admin/faq', enabled => $enabled } );
 
+    # Contests
+
+    # Polls
+
     # Users
     $enabled = ( $user->has_permission( 'can_view_account_details' ) ) ? 1 : 0;
     push ( @main_menu_options, { name => 'Manage Users', link => '/admin/users', enabled => $enabled } );

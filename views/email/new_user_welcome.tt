@@ -14,4 +14,4 @@
 
 <p>Again, welcome to the site! We're happy you're here!</p>
 
-<p>-- The Side 7 Staff</p>
+[% PROCESS 'email/_oni_sig.tt' %]

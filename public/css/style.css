@@ -251,11 +251,39 @@ th, td {
 
 #footer {
     clear: both;
-    padding-top: 2em;
     text-align: center;
-    padding-right: 160px;
     font-family: sans-serif;
-    font-size: 10px;
+    font-size: 9pt;
+    margin: 10px;
+    font-family: "AlwinLight", sans-serif;
+}
+
+#footer_left, #footer_right
+{
+    padding: 5px;
+}
+
+#footer_left
+{
+    float: left;
+    text-align: left;
+    width: 30%;
+}
+
+#footer_right
+{
+    float: right;
+    text-align: right;
+    width: 45%;
+}
+
+.rounded_block
+{
+    padding: 5px;
+    background-color: #bbf;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 hr.faded {
@@ -318,14 +346,14 @@ textarea.user_input_textarea {
 
 .comment_hidden
 {
-    opacity: 0.6;
-    filter: alpha(opacity=60);
+    opacity: 0.7;
+    filter: alpha(opacity=70);
     background: repeating-linear-gradient(
         45deg,
         #eef,
-        #eef 10px,
-        #ccf 10px,
-        #ccf 20px
+        #eef 5px,
+        #ddf 5px,
+        #ddf 10px
     );
 }
 
@@ -408,6 +436,13 @@ textarea.user_input_textarea {
     -moz-border-radius: 3px;
 }
 
+.comment_hidden .bbcode_quote_header,
+.comment_hidden .bbcode_quote_header .bbcode_quote_body
+{
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+}
+
 .bbcode_code_header
 {
     margin: 0 10px;
@@ -431,6 +466,14 @@ textarea.user_input_textarea {
     font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
     font-size: 9pt;
     white-space: pre;
+}
+
+.comment_hidden .bbcode_code_header,
+.comment_hidden .bbcode_code_header .bbcode_code_body,
+.comment_hidden .bbcode_code_header .bbcode_code_body pre
+{
+    opacity: 0.7;
+    filter: alpha(opacity=70);
 }
 
 .bbcode_code_body pre

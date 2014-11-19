@@ -7,7 +7,9 @@
     [% END %]
     <label for="username">Username:</label>
     <input type="text" size="30" maxlength="45" name="username" value="[% username %]" /><br />
+    <div style="margin-left: 310px; margin-bottom: 5px;"><small><a href="/forgot_username">I forgot my username</a></small></div>
     <label for="password">Password:</label>
     <input type="password" size="30" maxlength="45" name="password" /><br />
-    <input type="submit" value="Log In" />
+    <div style="margin-left: 310px; margin-bottom: 5px;"><small><a href="/forgot_password">I forgot my password</a></small></div>
+    <input type="submit" value="Log In" style="margin-left: 310px;" />
 </form>

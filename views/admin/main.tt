@@ -12,9 +12,9 @@
         <script>
         $(function () {
                 var chart;
-                
+
                 $(document).ready(function () {
-                    
+
                     // Build the chart
                     $('#count_by_type').highcharts({
                         chart: {
@@ -43,7 +43,7 @@
                             name: 'Users By Type',
                             data: [
                                 [% FOR record IN data.user_stats.total_by_type %]
-                                
+
                                     [% IF record.user_type == 'Subscriber' %]
                                 {
                                     name: '[% record.user_type %]',
@@ -62,7 +62,7 @@
             });
         </script>
 
-    </div>
+    </div><!-- end count_by_type block -->
 
     <div style="width: 34%; font-family: monospace; float: left;">
         <div id="count_by_status" style="min-width: 275px; height: 400px; max-width: 100%; margin: 5px auto"></div>
@@ -70,9 +70,9 @@
         <script>
         $(function () {
                 var chart;
-                
+
                 $(document).ready(function () {
-                    
+
                     // Build the chart
                     $('#count_by_status').highcharts({
                         chart: {
@@ -101,7 +101,7 @@
                             name: 'Users By Status',
                             data: [
                                 [% FOR record IN data.user_stats.total_by_status %]
-                                
+
                                     [% IF record.user_status == 'Active' %]
                                 {
                                     name: '[% record.user_status %]',
@@ -119,7 +119,7 @@
                 });
             });
         </script>
-    </div>
+    </div><!-- end count_by_status block -->
 
     <div style="width: 33%; font-family: monospace; float: left;">
         <div id="count_by_role" style="min-width: 275px; height: 400px; max-width: 100%; margin: 5px auto"></div>
@@ -127,9 +127,9 @@
         <script>
         $(function () {
                 var chart;
-                
+
                 $(document).ready(function () {
-                    
+
                     // Build the chart
                     $('#count_by_role').highcharts({
                         chart: {
@@ -158,7 +158,7 @@
                             name: 'Users By Role',
                             data: [
                                 [% FOR record IN data.user_stats.total_by_role %]
-                                
+
                                     [% IF record.user_status == 'Subscriber' %]
                                 {
                                     name: '[% record.user_role %]',
@@ -176,8 +176,8 @@
                 });
             });
         </script>
-    </div>
-</div>
+    </div><!-- end count_by_role block -->
+</div> <!-- end quick site stats block -->
 
 <div style="width: 100%; margin-top: 10px; clear: both;">
 [% duration = 30 %]
@@ -227,7 +227,7 @@
             });
         });
     </script>
-</div>
+</div><!-- End new and deleted users block -->
 
 <div style="width: 100%; clear: both;">
 [% duration = 30 %]
@@ -289,4 +289,4 @@
             });
         });
     </script>
-</div>
+</div><!-- end new content block -->

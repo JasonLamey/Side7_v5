@@ -32,8 +32,6 @@
 [% IF ( flash.message || flash.error ) %]
 <!-- jgrowl -->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.css" />
-<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
 [% END %]
 
@@ -97,8 +95,6 @@
         height: auto;
         min-height: 450px;
     }
-    #footer {
-    }
 </style>
 
 <script type="text/javascript">
@@ -114,8 +110,7 @@
     <div id="section_content">
     [% content %]
     </div>
-    <div id="footer">
-    </div>
+[% PROCESS 'site/_footer.tt' %]
 </div>
 </body>
 </html>

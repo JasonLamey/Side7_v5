@@ -1,7 +1,9 @@
 [% IF user.image_count == 0 || ! user.image_count %]
   User has no Content to display.
 [% ELSE %]
+    <div style="display: table; padding: 5px;">
   [% FOREACH image IN user.images %]
+        <div style="display: table-cell; width: 104px; height: 100px; text-align: center; vertical-align: middle; margin-right: 10px;">
     [% IF image.filepath %]
         [% title = '' %]
         [% IF image.filepath_error %]
@@ -13,5 +15,7 @@
     [% ELSE %]
         [ [% image.filepath_error %] ]
     [% END %]
+        </div>
   [% END %]
+    </div>
 [% END %]

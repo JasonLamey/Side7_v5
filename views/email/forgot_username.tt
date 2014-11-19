@@ -1,0 +1,10 @@
+<p>Greetings [% user.username %]!</p>
+
+<p>This e-mail is being sent to you because you, or someone else, claims you forgot your username. This process <em>changes nothing</em> on your account. It merely sends a reminder e-mail to the e-mail account we have on record.</p>
+
+<p>Your username is:
+<pre>[% user.username %]</pre></p>
+
+Hope this helps!
+
+[% PROCESS 'email/_oni_sig.tt' %]
