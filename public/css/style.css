@@ -179,6 +179,22 @@ a:hover {
     margin-bottom: 5px;
 }
 
+.error_message_box
+{
+    border: solid 2px #f00;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    padding: 5px;
+    background: repeating-linear-gradient(
+        135deg,
+        #fcc,
+        #fcc 5px,
+        #fbb 5px,
+        #fbb 10px
+    );
+}
+
 .ui-autocomplete-loading
 {
     background: white url("/images/loading-16x16.gif") right center no-repeat;

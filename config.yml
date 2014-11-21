@@ -19,6 +19,7 @@ charset: "UTF-8"
 # template_toolkit: TT
 
 #template: "simple"
+auto_page: 1
 
 template: "template_toolkit"
 engines:

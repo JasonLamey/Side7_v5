@@ -49,7 +49,9 @@ EnableSubmit = function(val)
     <input type="text" name="referred_by" id="referred_by" value="[% referred_by %]" placeholder="Referrer's Username" maxlength="255" size="45"><br /><br />
 
     <!-- THESE LINKS SHOULD POP-UP IN LIGHTBOXES -->
-    <label for="agree_to_rules">I have read &amp; agree to the <a href="#">site rules</a> and <a href="#">rules of conduct</a>:</label>
+    <label for="agree_to_rules">I have read &amp; agree to the<br>
+        <a href="/site_rules" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>site rules</a> and
+        <a href="/privacy" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>privacy policy</a>:</label>
     <input type="checkbox" name="agree_to_rules" value="1" onClick="EnableSubmit( this )"><br />
 
     <input type="submit" value="Sign Up!" id="SignUp" disabled="disabled" />
