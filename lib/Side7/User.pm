@@ -36,7 +36,7 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
-use version; our $VERSION = qv( '0.1.36' );
+use version; our $VERSION = qv( '0.1.37' );
 
 =pod
 
@@ -162,6 +162,18 @@ __PACKAGE__->meta->setup
             type       => 'one to many',
             class      => 'Side7::User::Friend',
             column_map => { id => 'friend_id' },
+        },
+        private_messages_sent =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::PrivateMessage',
+            column_map => { id => 'sender_id' },
+        },
+        private_messages_received =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::PrivateMessage',
+            column_map => { id => 'recipient_id' },
         },
     ],
     foreign_keys =>
@@ -1269,6 +1281,44 @@ sub is_friend_linked
     }
 
     return 1;
+}
+
+
+=head2 get_private_messages( $msg_type )
+
+Returns an C<arrayref> of private message objects, based on the message type indicated.
+
+Parameters:
+
+=over 4
+
+=item msg_type: 'sent' or 'received'.  Defaults to 'sent'
+
+=back
+
+    my $pms = $user->get_private_messages( 'sent' );
+
+=cut
+
+sub get_private_messages
+{
+    my ( $self, $msg_type ) = @_;
+
+    $msg_type //= 'sent';
+
+    return [] if ! defined $self || ref( $self ) ne 'Side7::User';
+
+    my $pms = [];
+    if ( lc( $msg_type ) eq 'received' )
+    {
+        $pms = $self->private_messages_received();
+    }
+    else
+    {
+        $pms = $self->private_messages_sent();
+    }
+
+    return $pms;
 }
 
 

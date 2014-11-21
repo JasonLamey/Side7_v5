@@ -4164,6 +4164,23 @@ post '/users/:username/edit' => sub
     return redirect '/admin/users/' . $username . '/show';
 };
 
+# User Private Messages
+get '/users/:username/pms/?:msg_type?/?' => sub
+{
+    my $username = params->{'username'} // undef;
+    my $msg_type = params->{'msg_type'} // 'sent';
+
+    my $user = Side7::User::get_user_by_username( $username );
+
+    my $pms = $user->get_private_messages( $msg_type );
+
+    template 'admin/user_pms', {
+                                user     => $user,
+                                msg_type => $msg_type,
+                                pms      => $pms,
+                               }, { layout => 'admin_lightbox' };
+};
+
 # Admin Audit Logs View
 get '/audit_logs/?:page?' => sub
 {

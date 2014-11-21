@@ -14,9 +14,9 @@
     <strong>Admin Links:</strong>
     [% IF permissions.can_modify_user_account %]
     <a href="/admin/users/[% user.username %]/edit">Edit User</a>
-    [% ELSE %]
-    None
+    &middot;
     [% END %]
+    <a href="/admin/users/[% user.username %]/pms">View PMs</a>
 </div>
 
 <div style="border: solid 1px #000; margin: 5px; padding: 5px;">

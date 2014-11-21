@@ -1,0 +1,44 @@
+[% USE date %]
+[% USE TextUtils %]
+<div style="float: right; margin: 5px; padding: 5px; width: 50px; height: 50px;"><img src="[% user.get_avatar( size => "tiny" ) %]"></div>
+<h1>[% user.username %]</h1>
+
+<div style="margin-bottom: 10px;">
+    <strong>User's Account Links:</strong>
+    <a href="/user/[% user.username %]" target="_blank">Profile</a>
+    &middot;
+    <a href="/user/[% user.username %]/gallery" target="_blank">Gallery</a>
+
+    &nbsp; || &nbsp;
+
+    <strong>View:</strong>
+    [% IF msg_type == 'sent' %]
+        Sent &middot;
+        <a href="/admin/users/[% user.username %]/pms/received">Received</a>
+    [% ELSE %]
+        <a href="/admin/users/[% user.username %]/pms/sent">Sent</a> &middot;
+        Received
+    [% END %]
+</div>
+
+<div style="height: 460px; overflow: auto;">
+[% FOREACH pm IN pms.sort( 'created_at' ).reverse %]
+    <div class="rounded_block" style="margin-bottom: 5px;">
+        <strong>To:</strong>[% TRY %][% pm.recipient.username %][% CATCH %]Unknown User[% END %]<br>
+        <strong>From:</strong>
+            [% TRY %][% pm.sender.username %]
+            [% CATCH %]
+                [% IF pm.sender_id == 0 %]
+                    Oni (System)
+                [% ELSE %]
+                    Unknown/Defunct User
+                [% END %]
+            [% END %]<br>
+        <strong>Sent:</strong> [% date.format( pm.created_at, '%d %b, %Y @ %H:%M' )%]
+        <strong>Status:</strong> [% pm.status %]<br>
+        <strong>Subject:</strong> [% pm.subject %]<br>
+        <hr>
+        [% TextUtils.parse_bbcode_markup( pm.body ) %]
+    </div>
+[% END %]
+</div>
