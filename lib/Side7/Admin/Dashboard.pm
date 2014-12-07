@@ -105,6 +105,10 @@ sub get_main_menu
     # Home
     push ( @main_menu_options, { name => 'Admin Home', link => '/admin', enabled => 1 } );
 
+    # Admin Functions
+    $enabled = ( $user->is_role( [ qw/ Admin Owner / ] ) ) ? 1 : 0;
+    push ( @main_menu_options, { name => 'Admin Tools', link => '/admin/tools', enabled => $enabled } );
+
     # Site News
     $enabled = ( $user->has_permission( 'can_post_site_news' ) ) ? 1 : 0;
     push ( @main_menu_options, { name => 'Manage News', link => '/admin/news', enabled => $enabled } );

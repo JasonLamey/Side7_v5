@@ -1322,6 +1322,49 @@ sub get_private_messages
 }
 
 
+=head2 is_role( $role )
+
+Returns a C<boolean> as to whether the User in question is the role indicated.
+
+Parameters:
+
+=over 4
+
+=item role: The role being checked against. Can be either a C<string> or an C<arrayref>. Required.
+
+=back
+
+    my $is_role = $user->is_role( $role );
+
+=cut
+
+sub is_role
+{
+    my ( $self, $role ) = @_;
+
+    return 0 if ! defined $role;
+
+    if ( ref( $role ) eq 'ARRAY' )
+    {
+        foreach my $check ( @{ $role } )
+        {
+            return 1 if $self->account->user_role->name eq $check;
+        }
+        return 0;
+    }
+    elsif ( ref( $role ) eq 'SCALAR' )
+    {
+        return 1 if $self->account->user_role->name eq $role;
+    }
+    else
+    {
+        $LOGGER->warn( 'Invalid ref for $role: >' . ref( $role ) . '<' );
+    }
+
+    return 0;
+}
+
+
 =head1 FUNCTIONS
 
 

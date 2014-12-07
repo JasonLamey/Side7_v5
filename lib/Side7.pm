@@ -3645,6 +3645,8 @@ use Dancer::Plugin::TimeRequests;
 use Dancer::Plugin::NYTProf;
 
 use DateTime;
+use List::Util;
+use File::Path;
 use Data::Dumper;
 
 use Side7::Globals;
@@ -3656,6 +3658,7 @@ use Side7::News::Manager;
 use Side7::User;
 use Side7::Admin::Dashboard;
 use Side7::Admin::Report;
+use Side7::Admin::Maintenance;
 use Side7::Utils::Pagination;
 
 prefix '/admin';
@@ -4550,6 +4553,69 @@ post '/news/:news_id/edit' => sub
 
     flash message => 'News Item &gt;<b>' . $orig_news->title() . '</b>&lt; has been updated.';
     return redirect '/admin/news/' . $news_id . '/show';
+};
+
+# Admin Tools
+get '/tools' => sub
+{
+    my $admin_user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! $admin_user->is_role( [ qw/ Admin Owner / ] ) )
+    {
+        $LOGGER->warn( 'User >' . session( 'username' ) . '< attempted to access Admin Tools illegally.' );
+        flash error => 'Access Denied';
+        return redirect '/admin';
+    }
+
+    # Set Maintanance Mode Flag
+    my $maint_file = $CONFIG->{'app_dir'} . '/maint_mode';
+    my $maintenance_mode = ( -f $maint_file ) ? 1 : undef;
+
+    my $menu_options = Side7::Admin::Dashboard::get_main_menu( username => session( 'username' ) );
+
+    template 'admin/admin_tools.tt', {
+                                        maintenance_mode => $maintenance_mode,
+                                        main_menu        => $menu_options,
+                                        permissions      => {
+                                                            },
+                                     },
+                                     { layout => 'admin' };
+};
+
+get '/flush_tools/:flush_type/?' => sub
+{
+    my $admin_user = Side7::User::get_user_by_id( session( 'user_id' ) );
+
+    if ( ! $admin_user->is_role( [ qw/ Admin Owner / ] ) )
+    {
+        $LOGGER->warn( 'User >' . session( 'username' ) . '< attempted to access Cache Flush Tools illegally.' );
+        flash error => 'Access Denied';
+        return redirect '/admin';
+    }
+
+    my $flush_type = params->{'flush_type'} // undef;
+
+    if ( List::Util::none { $flush_type eq $_ } ( qw/ images avatars templates routes user_cache all / ) )
+    {
+        $LOGGER->warn( 'Invalid flush type >' . $flush_type . '< specified in Cache Flush.' );
+        flash error => 'No clue what you are trying to flush.';
+        return redirect '/admin/tools';
+    }
+
+    if ( List::Util::any { $flush_type eq $_ } ( qw/ images avatars templates / ) )
+    {
+        my $results = Side7::Admin::Maintenance->flush_cached_files( $flush_type );
+
+        if ( ! $results->{'success'} )
+        {
+            flash error => '<strong>An error occurred while flushing cache:</strong> ' . $results->{'error'} . '<br>' .
+                                $results->{'num_removed'} . ' files removed.';
+            return redirect '/admin/tools';
+        }
+
+        flash message => 'The ' . ucfirst( $flush_type ) . ' cache has been flushed.<br>' . $results->{'num_removed'} . ' files removed.';
+        return redirect '/admin/tools';
+    }
 };
 
 true;

@@ -1,0 +1,23 @@
+<h1>Admin Tools</h1>
+
+<h2>Site Maintenance Mode</h2>
+<div [% IF maintenance_mode %]class="error_message_box"[% END %]>
+[% IF maintenance_mode %]
+    <strong>SITE IS IN MAINTENANCE MODE</strong><br>
+    <a href='/admin/tools/disable_maint'>Disable Maintenance Mode</a>
+[% ELSE %]
+    <a href='/admin/tools/enable_maint'>Enable Maintenance Mode</a>
+[% END %]
+</div>
+
+<h2>Flush Cache</h2>
+<div>
+    <ul>
+        <li><a href="/admin/flush_tools/images">Image cache</a></li>
+        <li><a href="/admin/flush_tools/avatars">Avatar cache</a></li>
+        <li><a href="/admin/flush_tools/templates">Template cache</a></li>
+        <li><a href="/admin/flush_tools/routes">Route cache</a></li>
+        <li><a href="/admin/flush_tools/user_cache">Cache for a particular user</a></li>
+        <li><a href="/admin/flush_tools/all">All Cache</a> <strong>(NOT RECOMMENDED IN PRODUCTION)</strong></li>
+    </ul>
+</div>
