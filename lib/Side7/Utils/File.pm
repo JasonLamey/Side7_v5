@@ -5,13 +5,14 @@ use warnings;
 
 use DateTime;
 use File::Path;
+use File::Basename;
 use Filesys::DiskUsage;
 use List::Util;
 
 use Side7::Globals;
 use Side7::AuditLog;
 
-use version; our $VERSION = qv( '0.1.10' );
+use version; our $VERSION = qv( '0.1.11' );
 
 
 =head1 NAME
@@ -84,11 +85,20 @@ sub get_formatted_filesize_from_bytes
 }
 
 
-=head2 create_user_directory
+=head2 create_user_directory()
+
+Creates the file structure for a new User account.  Returns a boolean for success, and any error messages.
+
+Parameters:
+
+=over 4
+
+=item user_id: The ID of the User for which to create directories.
+
+=back
 
     my $success = Side7::Utils::File::create_user_directory( $user->id );
 
-Creates the file structure for a new User account.  Returns a boolean for success, and any error messages.
 
 =cut
 
@@ -201,6 +211,50 @@ sub create_user_directory
                                                     timestamp   => DateTime->now(),
             );
             return ( 0, 'User directory still does not exist after successful creation return.' );
+        }
+    }
+
+    $user_dir  = $CONFIG->{'general'}->{'base_music_directory'} . $tier1 . '/' . $tier2 . '/' . $user_id;
+
+    if ( ! -d $CONFIG->{'general'}->{'base_music_directory'} )
+    {
+        my $error = 'ERROR: Base music directory >' . $CONFIG->{'general'}->{'base_music_directory'} . '< does not exist.';
+        my $audit_log = Side7::AuditLog->new(
+                                                title       => 'Directory Creation Error',
+                                                description => $error,
+                                                ip_address  => '',
+                                                timestamp   => DateTime->now(),
+        );
+        $audit_log->save();
+        return ( 0, 'An error occurred while creating the User directory.' );
+    }
+
+    if ( ! -d $user_dir )
+    {
+        File::Path::make_path( $user_dir, { error => \my $error } );
+        if ( @{ $error } )
+        {
+            foreach my $diag ( @{ $error } )
+            {
+                my ( $file, $message ) = %{ $diag };
+                if ( $file eq '' )
+                {
+                    $error_message .= 'Directory creation error: ' . $message . '; ';
+                }
+                else
+                {
+                    $error_message .= 'Problem creating User directory >' . $file . '<: ' . $message . '; ';
+                }
+            }
+            my $audit_msg = 'ERROR: User directory >' . $user_dir . '< was not created: ' . $error_message;
+            my $audit_log = Side7::AuditLog->new(
+                                                    title       => 'Directory Creation Error',
+                                                    description => $audit_msg,
+                                                    ip_address  => '',
+                                                    timestamp   => DateTime->now(),
+            );
+            $audit_log->save();
+            return ( 0, $error_message );
         }
     }
 
@@ -432,9 +486,40 @@ sub get_disk_usage
 }
 
 
+=head2 get_file_extension( $filepath )
+
+Returns a C<string> containing the file extension for the filename/filepath provided.
+Returns C<undef> if no extension exists or can be parsed.
+
+Parameters:
+
+=over 4
+
+=item filepath: A C<string> containing the filepath to be parsed.
+
+=back
+
+    my $ext = Side7::Utils::File::get_file_extension( $filepath );
+
+=cut
+
+sub get_file_extension
+{
+    my ( $filepath ) = @_;
+
+    return if ! defined $filepath || $filepath eq '';
+
+    my ( $filename, $path, $extension ) = File::Basename::fileparse( $filepath, qr/\.[^.]*/ );
+
+    $extension =~ s/^\.+//g;
+
+    return $extension;
+}
+
+
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2014
+All code is Copyright (C) Side 7 1992 - 2015
 
 =cut
 

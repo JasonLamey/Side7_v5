@@ -68,6 +68,12 @@ __PACKAGE__->meta->setup
             class      => 'Side7::UserContent::Image',
             column_map => { id => 'stage_id' },
         },
+        music =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Music',
+            column_map => { id => 'stage_id' },
+        },
     ],
 );
 

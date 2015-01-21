@@ -1,0 +1,60 @@
+    <label for="category_id">Category:</label>
+    <select name="category_id">
+        <option value=''>Pick One</option>
+        [% FOREACH category IN categories %]
+            [% selected = '' %]
+            [% IF category_id == category.id %]
+                [% selected = ' selected="selected"' %]
+            [% END %]
+            <option value='[% category.id %]'[% selected %] >[% category.category %]</option>
+        [% END %]
+    </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
+
+    <label for="rating_id">Rating:</label>
+    <select name="rating_id">
+        <option value=''>Pick One</option>
+        [% FOREACH rating IN ratings %]
+            [% selected = '' %]
+            [% IF rating_id == rating.id %]
+                [% selected = ' selected="selected"' %]
+            [% END %]
+            <option value='[% rating.id %]'[% selected %] >[% rating.rating %]</option>
+        [% END %]
+    </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
+
+    <label for="title">Music Title:</label>
+    <input type="text" name="title" maxlength="255" size="40" value="[% title %]" /><br /><br />
+
+    <label for="stage_id">Classification:</label>
+    <select name="stage_id">
+        <option value=''>Pick One</option>
+        [% FOREACH stage IN stages %]
+            [% selected = '' %]
+            [% IF stage_id == stage.id %]
+                [% selected = ' selected="selected"' %]
+            [% END %]
+            <option value='[% stage.id %]'[% selected %] >[% stage.stage %]</option>
+        [% END %]
+    </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
+
+    <label for="description">Description:</label>
+    <textarea name="description" cols="40" rows="10" class="user_input_textarea">[% description %]</textarea><br /><br />
+
+    [% cy_checked = '' %]
+    [% IF copyright_year %]
+        [% cy_checked = ' checked="checked"' %]
+    [% END %]
+    <label for="copyright_year">Add a copyright line to your description:</label>
+    <input type="checkbox" name="copyright_year" value="1"[% cy_checked %] /><br /><br />
+
+    <label for="privacy">Who can see this?</label>
+    <select name="privacy">
+        <option value=''>Pick One</option>
+        [% FOREACH setting IN enums.privacy %]
+            [% selected = '' %]
+            [% IF privacy == setting %]
+                [% selected = ' selected="selected"' %]
+            [% END %]
+            <option value='[% setting %]'[% selected %] >[% setting %]</option>
+        [% END %]
+    </select><br /><br />

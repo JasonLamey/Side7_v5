@@ -199,7 +199,7 @@ sub get_cached_image_path
                );
     }
 
-    my $user_gallery_path = $self->user->get_content_directory();
+    my $user_gallery_path = $self->user->get_content_directory( 'image' );
 
     my $original_image = Image::Magick->new();
 
@@ -302,7 +302,7 @@ sub get_image_hash_for_template
         {
             $image_hash->{'user'}->{$key} = $user->$key;
         }
-        $image_hash->{'user'}->{'user_directory'} = $user->get_content_directory();
+        $image_hash->{'user'}->{'user_directory'} = $user->get_content_directory( 'image' );
         $image_hash->{'user'}->{'user_uri'}       = $user->get_content_uri();
     }
 

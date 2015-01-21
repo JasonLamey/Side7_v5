@@ -9,8 +9,10 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::Manager;
+use Side7::UserContent::Music;
+use Side7::UserContent::Music::Manager;
 
-use version; our $VERSION = qv( '0.1.9' );
+use version; our $VERSION = qv( '0.1.11' );
 
 =pod
 
@@ -64,7 +66,9 @@ Parameters:
 
 =item session: The visitor's session for User Preference controls/filtering.  Defaults to undef.
 
-=item sort_by: Custom sort-by routine. Defaults to 'created_at DESC'.
+=item sort_by: Custom sort-by field. Defaults to 'created_at'.
+
+=item sort_order: Custom sort-order routine. Defaults to 'desc'.
 
 =item size: Thumbnail size; defaults to 'small'.
 
@@ -73,8 +77,9 @@ Parameters:
     my $gallery = Side7::UserContent::get_gallery(
         $user_id,
         {
-            session => $session,
-            sort_by => 'created_at DESC',
+            session    => $session,
+            sort_by    => 'created_at',
+            sort_order => 'desc',
             TODO: DEFINE ADDITIONAL OPTIONAL ARGUMENTS
         }
     );
@@ -83,11 +88,12 @@ Parameters:
 
 sub get_gallery
 {
-    my ( $user_id, $args ) = @_;
+    my ( $user_id, %args ) = @_;
 
-    my $sort_by = delete $args->{'sort_by'} // 'created_at DESC';
-    my $size    = delete $args->{'size'}    // 'small';
-    my $session = delete $args->{'session'} // undef;
+    my $sort_by    = delete $args{'sort_by'}    // 'created_at';
+    my $sort_order = delete $args{'sort_order'} // 'desc';
+    my $size       = delete $args{'size'}       // 'small';
+    my $session    = delete $args{'session'}    // undef;
 
     if ( ! defined $user_id || $user_id !~ m/^\d+$/)
     {
@@ -156,9 +162,37 @@ sub get_gallery
 
     # TODO: Literature
 
-    # TODO: Music
+    # Music
+    my $all_music = Side7::UserContent::Music::Manager->get_music
+    (
+        query =>
+        [
+            user_id => [ $user_id ],
+        ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => $sort_by,
+    );
+
+    foreach my $music ( @$all_music )
+    {
+        my $music_hash = {};
+        $music_hash->{'content'} = $music;
+
+        my ( $filepath, $error ) = ( undef, undef );
+
+        $music_hash->{'filepath'}       = $filepath;
+        $music_hash->{'filepath_error'} = $error;
+        $music_hash->{'uri'}            = "/music/$music->{'id'}";
+
+        push @results, $music_hash;
+    }
 
     # TODO: Videos
+
+    # Sort results
+    my @sorted_results = sort { $a->{'content'}->$sort_by cmp $b->{'content'}->$sort_by } @results;
+
+    @sorted_results = reverse @sorted_results if lc( $sort_order ) eq 'desc';
 
     return \@results;
 }
@@ -229,6 +263,7 @@ sub get_enums_for_form
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
+        $enums = Side7::UserContent::Music->get_enum_values();
     }
     elsif ( lc( $content_type ) eq 'literature' )
     {
@@ -245,7 +280,7 @@ sub get_enums_for_form
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2014
+All code is Copyright (C) Side 7 1992 - 2015
 
 =cut
 

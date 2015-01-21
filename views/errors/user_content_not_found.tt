@@ -1,0 +1,11 @@
+[% USE date %]
+
+<h1>UH OH!</h1>
+
+<div class="rounded_block">
+    <big><strong>It looks like the [% content_type %] you were looking for doesn't exist or was deleted!</strong></big><br>
+    <br>
+    Feel free to return to the <a href="/">main page</a>, or <a href="/search">search</a> for the content.<br>
+    <br>
+    <small><em>Path requested: [% path %]</em></small>
+</div>

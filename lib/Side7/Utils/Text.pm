@@ -10,7 +10,7 @@ use HTML::Escape;
 
 use Side7::Globals;
 
-use version; our $VERSION = qv( '0.1.10' );
+use version; our $VERSION = qv( '0.1.11' );
 
 
 =head1 NAME
@@ -459,7 +459,7 @@ sub get_pronoun
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2014
+All code is Copyright (C) Side 7 1992 - 2015
 
 =cut
 

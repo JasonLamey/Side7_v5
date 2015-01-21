@@ -10,7 +10,7 @@ use Data::Dumper;
 
 use Side7::Globals;
 
-use version; our $VERSION = qv( '0.1.3' );
+use version; our $VERSION = qv( '0.1.4' );
 
 =pod
 
@@ -55,9 +55,9 @@ Many-to-many relationship with Images, mapping through AlbumImageMap.
 
 Many-to-many relationship with Music, mapping through AlbumMusicMap.
 
-=item Side7::UserContent::Word
+=item Side7::UserContent::Literature
 
-Many-to-many relationship with Words, mapping through AlbumWordMap.
+Many-to-many relationship with Literature, mapping through AlbumLiteratureMap.
 
 =back
 
@@ -96,7 +96,11 @@ __PACKAGE__->meta->setup
             type      => 'many to many',
             map_class => 'Side7::UserContent::AlbumImageMap',
         },
-
+        music =>
+        {
+            type      => 'many to many',
+            map_class => 'Side7::UserContent::AlbumMusicMap',
+        },
     ],
 );
 
@@ -125,7 +129,8 @@ sub get_content_count
     my $literature_count = 0;
 
     # TODO Fix music_count once UserContent::Music is made.
-    my $music_count = 0;
+    my $music = $self->music();
+    my $music_count = scalar( @$music ) // 0;
 
     return ( $image_count + $literature_count + $music_count );
 }
@@ -162,8 +167,8 @@ sub get_content
     # TODO Fix literature once UserContent::Literature is made.
     my $literature = [];
 
-    # TODO Fix music once UserContent::Music is made.
-    my $music = [];
+    # TODO DITTO
+    my $music = $self->music();
 
     my @content = ();
     if ( lc($sort_order) eq 'asc' )
@@ -199,35 +204,9 @@ sub get_content
 }
 
 
-=head1 FUNCTIONS
-
-
-=head2 function_name()
-
-TODO: Define what this method does, describing both input and output values and types.
-
-Parameters:
-
-=over 4
-
-=item parameter1: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
-
-=item parameter2: what is this parameter, and what kind of data is it? What is it for? What is it's default value?
-
-=back
-
-    my $result = My::Package::function_name();
-
-=cut
-
-sub function_name
-{
-}
-
-
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2014
+All code is Copyright (C) Side 7 1992 - 2015
 
 =cut
 

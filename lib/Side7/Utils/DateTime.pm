@@ -8,7 +8,7 @@ use Side7::Globals;
 use DateTime;
 use POSIX;
 
-use version; our $VERSION = qv( '0.1.1' );
+use version; our $VERSION = qv( '0.1.2' );
 
 
 =head1 NAME
@@ -128,63 +128,47 @@ sub get_english_elapsed_time
 }
 
 
-=head1 FUNCTIONS
+=head2 format_ms_to_timestamp( $ms )
 
+Takes an C<integer> of milliseconds and returns a formatted C<string> such as '6h15m30s'.
 
-=head2 get_pagination()
+Parameters:
 
-    $pagination = Side7::Utils::DateTime::get_pagination( {
-                                    total_count => $total,
-                                    page => $page,
-                                    pagination_limit => $pagination_limit
-                            } );
+=over 4
 
-Returns a hashref of pagination variables, including previous page number, next page number, total count,
-first item, last item, total pages.  C<pagination_limit> is optional, and defaults to the configured amount.
+=item milliseconds: Integer of milliseconds.
+
+=back
+
+    my $time = Side7::Utils::Text::format_ms_to_timestamp( $milli );
 
 =cut
 
-sub get_pagination
+sub format_ms_to_timestamp
 {
-    my ( $args ) = @_;
+    my ( $milliseconds ) = @_;
 
-    my $total_count      = delete $args->{'total_count'}      // 1;
-    my $page             = delete $args->{'page'}             // 1;
-    my $pagination_limit = delete $args->{'pagination_limit'} //
-                                    $CONFIG->{'page'}->{'default'}->{'pagination_limit'};
+    my $conv_secs = POSIX::floor( $milliseconds / 1000 );
 
-    # In the event a blank but defined parameter is passed in.
-    if ( $total_count eq '' )
-    {
-        $total_count = 1;
-    }
-    if ( $page eq '' )
-    {
-        $page = 1;
-    }
+    my $hours = undef;
+    my $mins  = undef;
+    my $secs  = undef;
 
-    my $last_page = ( $total_count % $pagination_limit == 0 )
-                  ? ( $total_count / $pagination_limit )
-                  : ( int( $total_count / $pagination_limit ) ) + 1;
+    $hours = int( $conv_secs / 3600 );
+    my $remaining = $conv_secs % 3600;
+    $mins  = int( $remaining / 60 );
+    $secs  = int( $remaining % 60 );
 
-    my $next_page     = ( $page != $last_page ) ? ( $page + 1 ) : undef;
-    my $previous_page = ( $page != 1 )          ? ( $page - 1 ) : undef;
+    my $time = undef;
+    $time .= sprintf( '%02dh', $hours ) if defined $hours && $hours != 0;
+    $time .= sprintf( '%02dm', $mins )  if defined $mins && ( $mins != 0 || defined $time );
+    $time .= sprintf( '%02ds', $secs ) if defined $secs;
 
-    my $first_item = ( ( ( $page - 1 ) * $pagination_limit ) + 1 );
-    my $last_item  = ( $page == $last_page ) ? $total_count : ( $first_item + ( $pagination_limit - 1 ) );
-
-    my $pagination = {
-        first_item    => $first_item,
-        last_item     => $last_item,
-        total_count   => $total_count,
-        next_page     => $next_page,
-        previous_page => $previous_page,
-        total_pages   => $last_page,
-        current_page  => $page,
-    };
-
-    return $pagination;
+    return $time;
 }
+
+
+=head1 FUNCTIONS
 
 
 =head1 COPYRIGHT

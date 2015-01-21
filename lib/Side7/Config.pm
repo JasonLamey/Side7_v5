@@ -3,7 +3,7 @@ package Side7::Config;
 use strict;
 use warnings;
 
-use version; our $VERSION = qv( '0.1.11' );
+use version; our $VERSION = qv( '0.1.12' );
 
 =pod
 
@@ -40,6 +40,7 @@ sub new
     $CONFIG->{'general'}->{'version'}                = '5.0';
     $CONFIG->{'general'}->{'base_gallery_directory'} = '/data/galleries/';
     $CONFIG->{'general'}->{'base_gallery_uri'}       = '/galleries/';
+    $CONFIG->{'general'}->{'base_music_directory'}   = '/data/user_audio/'; # Outside of web-accessible dir tree.
     $CONFIG->{'general'}->{'cached_file_directory'}  = '/data/cached_files/';
     $CONFIG->{'general'}->{'cached_file_uri'}        = '/cached_files/';
 
@@ -91,7 +92,7 @@ sub new
 
 =head1 COPYRIGHT
 
-All code is Copyright (C) Side 7 1992 - 2013
+All code is Copyright (C) Side 7 1992 - 2015
 
 =cut
 

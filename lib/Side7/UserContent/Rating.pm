@@ -68,6 +68,18 @@ __PACKAGE__->meta->setup
     ],
     pk_columns => 'id',
     unique_key => [ 'content_type' ],
+    relationships => [
+        images => {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Image',
+            column_map => { id => 'rating_id' },
+        },
+        music => {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Music',
+            column_map => { id => 'rating_id' },
+        },
+    ],
 );
 
 

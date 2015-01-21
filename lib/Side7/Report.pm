@@ -56,7 +56,6 @@ sub get_user_content_breakdown_by_category
     my @content_types         = ();
     my @image_categories      = ();
     my @image_values          = ();
-    my @image_percents        = ();
     my @music_categories      = ();
     my @music_values          = ();
     my @literature_categories = ();
@@ -86,8 +85,6 @@ sub get_user_content_breakdown_by_category
                                 group_by => 'category',
                           );
 
-    #$LOGGER->debug( "SQL: $sql" );
-
     my $sth = $dbh->prepare( $sql );
     $sth->execute();
 
@@ -96,7 +93,6 @@ sub get_user_content_breakdown_by_category
         push( @content_types, "'Images'" );
     }
 
-    my $total = $user->get_image_count();
     while ( my $row = $sth->fetchrow_hashref )
     {
         push( @image_categories, "'$row->{'category'}'" );
@@ -115,14 +111,50 @@ sub get_user_content_breakdown_by_category
     }
 
     # Get Music Breakdown
-    push( @content_types, "'Music'" );
-    push( @data, {
-                    value                => 15,
-                    drilldown_name       => 'Music Categories',
-                    drilldown_categories => "'Rock','Electronic','Jazz','Vocal'",
-                    drilldown_values     => '2,6,4,3',
-                 }
-    );
+    $sql = build_select(
+                            db       => $DB,
+                            dbh      => $dbh,
+                            select   => 'COUNT( 1 ) as num_music, category',
+                            tables   => [ 'music', 'categories' ],
+                            classes  => {
+                                            music      => 'Side7::UserContent::Music',
+                                            categories => 'Side7::UserContent::Category',
+                                        },
+                            columns  => {
+                                            music      => [],
+                                            categories => [ qw( category ) ],
+                                        },
+                            query    => [
+                                            user_id => $user_id,
+                                        ],
+                            clauses  => [ 't1.category_id = t2.id' ],
+                            group_by => 'category',
+                       );
+
+    $sth = $dbh->prepare( $sql );
+    $sth->execute();
+
+    if ( $sth->rows() > 0 )
+    {
+        push( @content_types, "'Music'" );
+    }
+
+    while ( my $row = $sth->fetchrow_hashref )
+    {
+        push( @music_categories, "'$row->{'category'}'" );
+        push( @music_values, $row->{'num_music'} );
+    }
+
+    if ( scalar( @music_categories ) > 0 )
+    {
+        push( @data, {
+                        value                => $user->get_music_count(),
+                        drilldown_name       => 'Music Categories',
+                        drilldown_categories => join( ',', @music_categories ),
+                        drilldown_values     => join( ',', @music_values ),
+                     }
+        );
+    }
 
     # Get Literature Breakdown
     push( @content_types, "'Literature'" );
@@ -170,7 +202,10 @@ sub get_user_disk_usage_stats
     if ( defined $user->{'account'} && defined $user->account->user_role->name() )
     {
         # Disk Quota
-        $disk_usage = Side7::Utils::File::get_disk_usage( filepath => $user->get_content_directory() ) // 0;
+        foreach my $content_type ( qw/ image music / ) # TODO add literature and video
+        {
+            $disk_usage += Side7::Utils::File::get_disk_usage( filepath => $user->get_content_directory( $content_type ) ) // 0;
+        }
 
         if ( $user->account->user_role->has_perk( 'disk_quota_unlimited' ) )
         {

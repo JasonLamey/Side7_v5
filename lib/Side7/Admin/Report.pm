@@ -374,13 +374,14 @@ sub get_thirty_day_new_content
         push ( @date_range, $date );
     }
 
-    # Image Data
     my ( $year, $month, $day ) = split( /-/, $date_range[0] );
     $month -= 1;
 
     $content_data{'start_date'} = join( ', ', ( $year, $month, $day ) );
 
     my $dbh = $DB->dbh();
+
+    # Image Data
     my $i_sql = build_select(
                                 db      => $DB,
                                 dbh     => $dbh,
@@ -393,19 +394,42 @@ sub get_thirty_day_new_content
                                             created_at => { le => $today },
                                          ],
                                 order_by => 'created_at ASC',
-                                group_by => 'created_at',
+                                group_by => 'DATE( created_at )',
                              );
 
     my $i_sth = $dbh->prepare( $i_sql );
     $i_sth->execute;
 
-    my %images;
+    my %images = ();
     while ( my $row = $i_sth->fetchrow_hashref )
     {
         $images{$row->{'created_at'}} = $row->{'num_images'};
     }
 
     # Music Data
+    my $m_sql = build_select(
+                                db      => $DB,
+                                dbh     => $dbh,
+                                select  => 'COUNT( 1 ) AS num_music, DATE( created_at ) AS created_at',
+                                tables  => [ 'music' ],
+                                classes => { music => 'Side7::UserContent::Music' },
+                                columns => { music => [ qw( created_at ) ] },
+                                query => [
+                                            created_at => { ge => $thirty_days_ago },
+                                            created_at => { le => $today },
+                                         ],
+                                order_by => 'created_at ASC',
+                                group_by => 'DATE( created_at )',
+                             );
+
+    my $m_sth = $dbh->prepare( $m_sql );
+    $m_sth->execute;
+
+    my %music = ();
+    while ( my $row = $m_sth->fetchrow_hashref )
+    {
+        $music{$row->{'created_at'}} = $row->{'num_music'};
+    }
 
     # Literature Data
 
@@ -430,6 +454,11 @@ sub get_thirty_day_new_content
         push ( @images, $icount );
 
         # Music
+        if ( defined $music{ $date } )
+        {
+            $count += $music{ $date };
+            $mcount = $music{ $date };
+        }
         push ( @music, $mcount );
 
         # Literature

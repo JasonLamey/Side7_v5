@@ -15,6 +15,7 @@ use DateTime;
 use Data::Dumper;
 use Const::Fast;
 use List::MoreUtils qw{none};
+use Try::Tiny;
 
 use Side7::Globals;
 use Side7::AuditLog;
@@ -28,12 +29,15 @@ use Side7::User::Avatar::SystemAvatar::Manager;
 use Side7::DateVisibility::Manager;
 use Side7::Account;
 use Side7::UserContent::Image;
+use Side7::UserContent::Music;
 use Side7::UserContent::RatingQualifier;
 use Side7::UserContent::AlbumImageMap;
+use Side7::UserContent::AlbumMusicMap;
 use Side7::UserContent::Comment::Manager;
 use Side7::Utils::Crypt;
 use Side7::Utils::Pagination;
 use Side7::Utils::Image;
+use Side7::Utils::Music;
 use Side7::FAQCategory;
 use Side7::FAQCategory::Manager;
 use Side7::FAQEntry;
@@ -214,6 +218,30 @@ get '/un_search' => sub {
     my @found = map { { label => $_->account->full_name . ' (' .$_->username . ')', value => $_->username } } @$users;
 
     return \@found;
+};
+
+###################################
+### Special Error Page routes   ###
+###################################
+
+# Could Not Find User Content
+get '/user_content_not_found' => sub
+{
+    status 'not_found';
+    template 'errors/user_content_not_found.tt', {
+                                                    path         => params->{'path'},
+                                                    content_type => params->{'content_type'},
+                                                 };
+};
+
+# Could Not Find User
+get '/user_not_found' => sub
+{
+    status 'not_found';
+    template 'errors/user_not_found.tt', {
+                                            path     => params->{'path'},
+                                            username => params->{'username'},
+                                         };
 };
 
 ###################################
@@ -768,7 +796,7 @@ get '/user/:username' => sub
     }
     else
     {
-        redirect '/';
+        return forward '/user_not_found', { path => request->path, username => params->{'username'} };
     }
 };
 
@@ -825,7 +853,7 @@ get '/image/:image_id/?' => sub
                                                             filter_profanity => vars->{'filter_profanity'},
     );
 
-    if ( defined $image_hash )
+    if ( defined $image_hash && scalar( keys %{ $image_hash } ) > 0 )
     {
         template 'user_content/image_details', {
                                                 user_content  => $image_hash,
@@ -834,7 +862,55 @@ get '/image/:image_id/?' => sub
     }
     else
     {
-        redirect '/'; # TODO: Redirect to Image Doesn't Exist Page?
+        return forward '/user_content_not_found', { path => request->path, content_type => 'image' };
+    }
+};
+
+# Music display page.
+get '/music/:music_id/?' => sub
+{
+    my $music_hash = Side7::UserContent::Music->show_music(
+                                                            music_id => params->{'music_id'},
+                                                            request  => request,
+                                                            session  => session,
+    );
+
+    if ( defined $music_hash && scalar( keys %{ $music_hash } ) > 0 )
+    {
+        # Create temp path to the file
+        my $user_content_path = $music_hash->{'content'}->user->get_content_directory( 'music' );
+        my $user_filepath = $user_content_path . $music_hash->{'content'}->filename;
+        my $temp_link = Side7::Utils::Crypt::md5_hex_encode( session( 'id' ) . DateTime->now() );
+        my $temp_path = '/data/cached_files/audio/' . $temp_link;
+
+        $LOGGER->debug( 'FILEPATH: >' . $user_filepath . '<' );
+        $LOGGER->debug( 'TEMPPATH: >' . $temp_path . '<' );
+        my $linked = 0;
+        try
+        {
+            $linked = symlink( $user_filepath, $temp_path );
+        }
+        catch
+        {
+            $LOGGER->error( 'Could not symlink User music file >' . $user_filepath . '< to temp path >' . $temp_path . '<: >' . $_ . '<' );
+        };
+
+        if ( $linked == 1 )
+        {
+            $music_hash->{'filtered_content'}->{'filepath'} = $temp_path;
+        }
+        else
+        {
+            flash error => 'Error: Could not retrieve audio file.';
+        }
+        template 'user_content/music_details', {
+                                                user_content  => $music_hash,
+                                                owner_ratings => $CONFIG->{'owner_ratings'},
+                                               };
+    }
+    else
+    {
+        return forward '/user_content_not_found', { path => request->path, content_type => 'music' };
     }
 };
 
@@ -2640,8 +2716,7 @@ get '/my/albums/:album_id/delete_confirmed/?' => sub
 
     # Remove Album Mappings
     $album->images( [] );
-    # TODO: Delete music
-    # $album->music( [] );
+    $album->music( [] );
     # TODO: Delete literature
     # $album->literature( [] );
     $album->save();
@@ -2909,12 +2984,38 @@ post '/my/albums/:album_id/manage' => sub
     # Fulfill any Remove requests
     # As we go through each request, we will ensure that the content being operated on
     # actually belongs to the User.
+    # TODO: Clean this up and make each of the following ifs into a class method.
     foreach my $content ( @$content_to_remove )
     {
         my ( $content_type, $content_id ) = split( /-/, $content );
+
         if ( $content_type eq 'music' )
         {
-            # TODO: set up music rules
+            # Music removal
+            my $map = Side7::UserContent::AlbumMusicMap->new( album_id => $album->id(), music_id => $content_id );
+            my $loaded = $map->load( speculative => 1 );
+
+            if ( $loaded == 0 )
+            {
+                flash error => 'Could not find the Music being referenced for removal from this Album.';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+
+            my $deleted = $map->delete;
+            if ( ! $deleted )
+            {
+                $LOGGER->warn( 'Could not remove Music ID >' . $content_id . '< from Album >' .
+                                $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
+                $audit_msg .= '<strong>Could not remove Music ID &gt;' . $content_id . '&lt; from Album: ' .
+                                $map->error() . '</strong><br>';
+
+                $flash_error .= 'Could not remove a Music item being referenced from this Album.<br>';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+            else
+            {
+                $audit_msg .= 'Removed Music ID &gt;' . $content_id . '&lt; from Album<br>';
+            }
         }
         elsif ( $content_type eq 'literature' )
         {
@@ -2932,11 +3033,13 @@ post '/my/albums/:album_id/manage' => sub
                 return redirect '/my/albums/' . $album->id() . '/manage';
             }
 
-            my $deleted = $map->delete();
+            my $deleted = $map->delete;
             if ( ! $deleted )
             {
-                $LOGGER->warn( 'Could not remove Image ID >' . $content_id . '< from Album >' . $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
-                $audit_msg .= '<strong>Could not remove Image ID &gt;' . $content_id . '&lt; from Album: ' . $map->error() . '</strong><br>';
+                $LOGGER->warn( 'Could not remove Image ID >' . $content_id . '< from Album >' .
+                                $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
+                $audit_msg .= '<strong>Could not remove Image ID &gt;' . $content_id . '&lt; from Album: ' .
+                                $map->error() . '</strong><br>';
 
                 $flash_error .= 'Could not remove an Image being referenced from this Album.<br>';
                 return redirect '/my/albums/' . $album->id() . '/manage';
@@ -2951,13 +3054,29 @@ post '/my/albums/:album_id/manage' => sub
     # Fulfill any Add requests
     # As we go through each request, we will ensure that the content being operated on
     # actually belongs to the User.
+    # TODO: Clean this up and make each of the following ifs into a class method.
     foreach my $content ( @$content_to_add )
     {
         my ( $content_type, $content_id ) = split( /-/, $content );
 
         if ( $content_type eq 'music' )
         {
-            # TODO: set up music rules
+            # Music adding
+            my $map = Side7::UserContent::AlbumMusicMap->new( album_id => $album->id(), music_id => $content_id, created_at => DateTime->now(), updated_at => DateTime->now() );
+            my $saved = $map->save();
+
+            if ( ! $saved )
+            {
+                $LOGGER->warn( 'Could not add Music ID >' . $content_id . '< to Album >' . $album->name() . ' (ID: ' . $album->id() . ')<: ' . $map->error() );
+                $audit_msg .= '<strong>Could not add Music ID &gt;' . $content_id . '&lt; to Album: ' . $map->error() . '</strong><br>';
+
+                $flash_error .= 'Could not add a Music item to this Album.<br>';
+                return redirect '/my/albums/' . $album->id() . '/manage';
+            }
+            else
+            {
+                $audit_msg .= 'Added Music ID &gt;' . $content_id . '&lt; to Album<br>';
+            }
         }
         elsif ( $content_type eq 'literature' )
         {
@@ -3224,6 +3343,7 @@ post '/my/upload' => sub
         my $stages            = Side7::UserContent::Stage->get_stages_for_form( content_type => params->{'upload_type'} );
         my $qualifiers        = Side7::UserContent::RatingQualifier->get_rating_qualifiers_for_form( content_type => params->{'upload_type'} );
         return template 'my/upload', {
+                            filename          => params->{'filename'},
                             upload_type       => params->{'upload_type'},
                             overwrite_dupe    => params->{'overwrite_dupe'},
                             category_id       => params->{'category_id'},
@@ -3263,7 +3383,9 @@ post '/my/upload' => sub
 
     # Get User & Content Path
     my $user = Side7::User::get_user_by_username( session( 'username' ) );
-    my $upload_dir = $user->get_content_directory();
+    my $upload_dir = $user->get_content_directory( params->{'upload_type'} );
+
+    $LOGGER->debug( 'UPLOAD DIR: >' . $upload_dir . '<' );
 
     # If filename exists, and overwrite_dupe is not checked, bail with an error message.
     if
@@ -3292,15 +3414,31 @@ post '/my/upload' => sub
 
     my $new_content = undef;
 
+    # Common Fields between upload types.
+    my $copyright_year = undef;
+    if ( defined params->{'copyright_year'} )
+    {
+        $copyright_year = DateTime->today->year();
+    }
+
+    my $now = DateTime->now();
+
+    my $checksum = '';
+    my $fh = new IO::File;
+    if ( $fh->open( '< ' . $upload_dir . params->{'filename'} ) )
+    {
+        binmode ($fh);
+        $checksum = Digest::MD5->new->addfile($fh)->hexdigest();
+    }
+    else
+    {
+        $LOGGER->warn( 'Could not generate MD5 hash of uploaded file: >' . $upload_dir . params->{'filename'} . '<' );
+    }
+
     # Insert the content record into the database.
     # TODO: REFACTOR THIS CRAP.
     if ( lc( params->{'upload_type'} ) eq 'image' )
     {
-        my $copyright_year = undef;
-        if ( defined params->{'copyright_year'} )
-        {
-            $copyright_year = DateTime->today->year();
-        }
         my $rating_qualifiers = undef;
         if ( defined params->{'rating_qualifiers'} )
         {
@@ -3322,8 +3460,6 @@ post '/my/upload' => sub
             return $return_to_form->();
         }
 
-        my $now = DateTime->now();
-
         $new_content = Side7::UserContent::Image->new(
                                                         user_id           => $user->id(),
                                                         filename          => params->{'filename'},
@@ -3336,14 +3472,17 @@ post '/my/upload' => sub
                                                         title             => params->{'title'},
                                                         description       => params->{'description'},
                                                         copyright_year    => $copyright_year,
+                                                        is_archived       => 0,
                                                         privacy           => params->{'privacy'},
+                                                        checksum          => $checksum,
                                                         created_at        => $now,
                                                         updated_at        => $now,
                                                      );
 
         $new_content->save();
 
-        $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded new Content:<br />';
+        $audit_message  = 'User &gt;<b>' . session( 'username' ) .
+                          '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded new Content:<br />';
         $audit_message .= 'Content Type: image<br />';
         $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
         $new_values    .= 'Filesize: &gt;' . $file->size() . '&lt;<br />';
@@ -3361,7 +3500,55 @@ post '/my/upload' => sub
     }
     elsif ( lc( params->{'upload_type'} ) eq 'music' )
     {
-        # TODO: Create Music object. Make sure to use the $new_content object.
+        my $file_stats = Side7::Utils::Music->get_audio_stats( filepath => $upload_dir . $file->filename() );
+        if ( defined $file_stats->{'error'} )
+        {
+            $LOGGER->warn( 'ERROR GETTING AUDIO STATS: ' . $file_stats->{'error'} );
+            flash error => 'Invalid file format has been uploaded as an audio file.';
+            return $return_to_form->();
+        }
+
+        $new_content = Side7::UserContent::Music->new(
+                                                        user_id           => $user->id(),
+                                                        filename          => params->{'filename'},
+                                                        filesize          => $file_stats->{'filesize'},
+                                                        category_id       => params->{'category_id'},
+                                                        rating_id         => params->{'rating_id'},
+                                                        stage_id          => params->{'stage_id'},
+                                                        title             => params->{'title'},
+                                                        description       => params->{'description'},
+                                                        encoding          => $file_stats->{'encoding'},
+                                                        bitrate           => $file_stats->{'bitrate'},
+                                                        sample_rate       => $file_stats->{'samplerate'},
+                                                        length            => $file_stats->{'length'},
+                                                        copyright_year    => $copyright_year,
+                                                        is_archived       => 0,
+                                                        privacy           => params->{'privacy'},
+                                                        checksum          => $checksum,
+                                                        created_at        => $now,
+                                                        updated_at        => $now,
+                                                     );
+
+        $new_content->save();
+
+        $audit_message  = 'User &gt;<b>' . session( 'username' ) .
+                          '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded new Content:<br />';
+        $audit_message .= 'Content Type: music<br />';
+        $new_values     = 'Filename: &gt;' . params->{'filename'} . '&lt;<br />';
+        $new_values    .= 'Filesize: &gt;' . ( $file_stats->{'filesize'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Category_id: &gt;' . params->{'category_id'} . '&lt;<br />';
+        $new_values    .= 'Rating_id: &gt;' . params->{'rating_id'} . '&lt;<br />';
+        $new_values    .= 'Stage_id: &gt;' . params->{'stage_id'} . '&lt;<br />';
+        $new_values    .= 'Title: &gt;' . params->{'title'} . '&lt;<br />';
+        $new_values    .= 'Description: &gt;' . ( params->{'description'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Encoding: &gt;' . ( $file_stats->{'encoding'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Bitrate: &gt;' . ( $file_stats->{'bitrate'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Sample Rate: &gt;' . ( $file_stats->{'samplerate'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Length: &gt;' . ( $file_stats->{'length'} // '' ) . '&lt;<br />';
+        $new_values    .= 'Copyright_year: &gt;' . ( $copyright_year // '' ) . '&lt;<br />';
+        $new_values    .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
+        $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
+        $new_values    .= 'Updated_at: &gt;' . $now . '&lt;<br />';
     }
     elsif ( lc( params->{'upload_type'} ) eq 'literature' )
     {
@@ -3377,6 +3564,7 @@ post '/my/upload' => sub
     }
 
     my $audit_log = Side7::AuditLog->new(
+                                          user_id     => session( 'user_id' ),
                                           title       => 'New User Content Uploaded',
                                           description => $audit_message,
                                           ip_address  => request->address() . $remote_host,

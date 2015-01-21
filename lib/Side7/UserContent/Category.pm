@@ -8,7 +8,7 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use Side7::Globals;
 use Side7::UserContent::Category::Manager;
 
-use version; our $VERSION = qv( '0.1.3' );
+use version; our $VERSION = qv( '0.1.4' );
 
 =pod
 
@@ -68,6 +68,12 @@ __PACKAGE__->meta->setup
         {
             type       => 'one to many',
             class      => 'Side7::UserContent::Image',
+            column_map => { id => 'category_id' },
+        },
+        music =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::UserContent::Music',
             column_map => { id => 'category_id' },
         },
     ],

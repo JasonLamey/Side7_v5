@@ -12,7 +12,7 @@ use Data::Dumper;
 use Side7::Globals;
 use Side7::Utils::File;
 
-use version; our $VERSION = qv( '0.1.5' );
+use version; our $VERSION = qv( '0.1.6' );
 
 const my %IMAGEMAGICK_SIZE_LIMITS => (
                                         tiny   => '50x50',
@@ -94,7 +94,7 @@ sub create_cached_image
         $path = $filepath;
     }
 
-    my $user_gallery_path = $image->user->get_content_directory();
+    my $user_gallery_path = $image->user->get_content_directory( 'image' );
 
     my $input  = $user_gallery_path . $image->filename;
 

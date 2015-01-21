@@ -91,8 +91,9 @@ sub get_avatar
     {
         my ( $gravatar_size, undef ) = split( /x/, $CONFIG->{'avatar'}->{'size'}->{$size} );
         my %options = (
-                        size   => $gravatar_size,
-                        rating => 'r',
+                        size    => $gravatar_size,
+                        rating  => 'r',
+                        default => 'identicon',
                       );
         $avatar_uri = Gravatar::URL::gravatar_url( email => $user->email_address(), %options );
     }

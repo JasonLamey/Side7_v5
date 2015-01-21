@@ -7,7 +7,7 @@ use Side7::Globals;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
-use version; our $VERSION = qv( '0.1.2' );
+use version; our $VERSION = qv( '0.1.3' );
 
 =pod
 
@@ -60,7 +60,7 @@ __PACKAGE__->meta->setup
         created_at => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
-    unique_key => [ [ 'album_id', 'image_id' ], [ 'album_id' ], [ 'image_id' ], ],
+    pk_columns => [ 'album_id', 'image_id' ],
     relationships =>
     [
         album =>

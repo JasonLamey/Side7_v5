@@ -1,0 +1,35 @@
+[% USE date %]
+[% USE TextUtils %]
+[% USE DateTimeUtils %]
+
+<h1>&gt;[% user_content.filtered_content.title %]&lt;</h1>
+<h2>By [% user_content.content.user.account.full_name %]</h2>
+
+<div>
+    <div>
+        <strong>MUSIC FILE HERE</strong><br>
+        [% user_content.filtered_content.filepath %]
+    </div>
+    <div style="width: 300px; float: left; padding 5px; margin: 10px; border: 1px solid #000;">
+        Uploaded on: [% date.format( user_content.content.created_at, '%b %d, %Y @ %H:%M' ) %]<br />
+        Filesize: [% user_content.filtered_content.filesize %]<br />
+        Bitrate: [% user_content.content.bitrate %] bps<br />
+        Sample Rate: [% user_content.content.sample_rate %] kHz<br />
+        Length: [% DateTimeUtils.format_ms_to_timestamp( user_content.content.length ) %]<br />
+        Encoding: [% user_content.content.encoding FILTER upper %]<br />
+        Owner:
+        [% IF user_content.content.user.username %]
+        <a href="/user/[% user_content.content.user.username %]">[% user_content.content.user.username %]</a>
+        [% ELSE %]
+        Unknown
+        [% END %]<br />
+        Category: [% user_content.content.category.category %]<br />
+        Rating: [% user_content.filtered_content.rating %]<br />
+        Stage: [% user_content.content.stage.stage %]<br />
+        Views: [% user_content.total_views %]<br>
+    </div>
+
+    <div>[% user_content.filtered_content.description %]</div>
+
+    [% PROCESS 'user_content/_comment_threads.tt' %]
+</div>

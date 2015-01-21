@@ -15,6 +15,7 @@ use Side7::Globals;
 use Side7::User::Manager;
 use Side7::UserContent;
 use Side7::UserContent::Image;
+use Side7::UserContent::Music;
 use Side7::UserContent::Album;
 use Side7::UserContent::Album::Manager;
 use Side7::User::Role;
@@ -36,7 +37,7 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
-use version; our $VERSION = qv( '0.1.37' );
+use version; our $VERSION = qv( '0.1.38' );
 
 =pod
 
@@ -310,17 +311,59 @@ sub get_image_count
 }
 
 
-=head2 get_content_directory()
+=head2 get_music_count()
 
-Returns a string for the User's content directory on the filesystem.
+Returns the total number of music files for a given User.
 
-    my $user_content_directory = $user->get_content_directory();
+Parameters:
+
+=over 4
+
+=item None
+
+=back
+
+    my $music_count = $user->get_music_count();
+
+=cut
+
+sub get_music_count
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return 0;
+    }
+
+    return Side7::UserContent::Music::Manager->get_music_count(
+        query => [
+            user_id => [ $self->id ],
+        ],
+    );
+}
+
+
+=head2 get_content_directory( $content_type )
+
+Returns a C<string> for the User's content directory on the filesystem.
+
+Parameters:
+
+=over 4
+
+=item content_type: A C<string> determining the content type to determine the content directory. Accepts 'image', 'music', 'literature', or 'video'. Mandatory.
+
+=back
+
+    my $user_content_directory = $user->get_content_directory( $content_type );
 
 =cut
 
 sub get_content_directory
 {
-    my ( $self ) = @_;
+    my ( $self, $content_type ) = @_;
 
     if ( ! defined $self )
     {
@@ -328,10 +371,47 @@ sub get_content_directory
         return;
     }
 
-    my $content_directory = $CONFIG->{'general'}->{'base_gallery_directory'} .
-            substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+    if ( ! defined $content_type )
+    {
+        $LOGGER->warn( 'No content_type provided.' );
+        return;
+    }
 
-    return $content_directory;
+    my $user_subdir = substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+
+    if ( lc( $content_type ) eq 'image' )
+    {
+        if ( ! -d $CONFIG->{'general'}->{'base_gallery_directory'} . $user_subdir )
+        {
+            my ( $success, $error ) = Side7::Utils::File::create_user_directory( $self->id );
+            if ( defined $error )
+            {
+                $LOGGER->warning( $error );
+            }
+        }
+        return $CONFIG->{'general'}->{'base_gallery_directory'} . $user_subdir;
+    }
+    elsif ( lc( $content_type ) eq 'music' )
+    {
+        if ( ! -d $CONFIG->{'general'}->{'base_music_directory'} . $user_subdir )
+        {
+            my ( $success, $error ) = Side7::Utils::File::create_user_directory( $self->id );
+            if ( defined $error )
+            {
+                $LOGGER->warning( $error );
+            }
+        }
+        return $CONFIG->{'general'}->{'base_music_directory'} . $user_subdir;
+    }
+    elsif ( lc( $content_type ) eq 'literature' )
+    {
+    }
+    elsif ( lc( $content_type ) eq 'video' )
+    {
+    }
+
+    $LOGGER->warn( 'Invalid content_type provided: >' . $content_type . '<.' );
+    return;
 }
 
 
@@ -353,7 +433,7 @@ sub get_avatar_directory
         return;
     }
 
-    my $content_directory = $self->get_content_directory() . 'avatars/';
+    my $content_directory = $self->get_content_directory( 'image' ) . 'avatars/';
 
     if ( ! -d $content_directory )
     {
@@ -399,7 +479,9 @@ Parameters:
 
 =item session: The visitor's session hash from the request.
 
-=item TODO: Additional paramters to be defined as functionality is created.
+=item sort_by: The field to sort by. Defaults to 'created_at'. Accepts 'created_at', 'title', 'content_type'.
+
+=item sort_order: The direction to sort in. Defaults to 'desc'. Accepts 'desc', 'asc'.
 
 =back
 
@@ -411,6 +493,9 @@ sub get_gallery
 {
     my ( $self, %args ) = @_;
 
+    my $sort_by    = $args{'sort_by'}    // 'created_at';
+    my $sort_order = $args{'sort_order'} // 'desc';
+
     if ( ! defined $self )
     {
         $LOGGER->warn( 'No User object passed in.' );
@@ -420,7 +505,7 @@ sub get_gallery
     my $session = delete $args{'session'} // undef;
 
     # TODO: BUILD OUT ADDITIONAL, OPTIONAL ARGUMENTS TO CONTROL CONTENT.
-    my $gallery = Side7::UserContent::get_gallery( $self->id , { session => $session } );
+    my $gallery = Side7::UserContent::get_gallery( $self->id , session => $session, sort_by => $sort_by, sort_order => $sort_order );
 
     return $gallery;
 }
@@ -489,7 +574,19 @@ sub get_all_content
 
     # TODO: Literature
 
-    # TODO: Music
+    # Music
+    my $music = Side7::UserContent::Music::Manager->get_music
+    (
+        query =>
+        [
+            user_id => [ $self->id() ],
+        ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by => $sort_by,
+    );
+
+    push( @results, @$music );
+
 
     return \@results;
 }
