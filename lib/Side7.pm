@@ -880,11 +880,10 @@ get '/music/:music_id/?' => sub
         # Create temp path to the file
         my $user_content_path = $music_hash->{'content'}->user->get_content_directory( 'music' );
         my $user_filepath = $user_content_path . $music_hash->{'content'}->filename;
-        my $temp_link = Side7::Utils::Crypt::md5_hex_encode( session( 'id' ) . DateTime->now() );
+        my $temp_link = Side7::Utils::Crypt::md5_hex_encode( session( 'id' ) . DateTime->now() ) .
+                        '.' . $music_hash->{'content'}->encoding;
         my $temp_path = '/data/cached_files/audio/' . $temp_link;
 
-        $LOGGER->debug( 'FILEPATH: >' . $user_filepath . '<' );
-        $LOGGER->debug( 'TEMPPATH: >' . $temp_path . '<' );
         my $linked = 0;
         try
         {
@@ -897,7 +896,7 @@ get '/music/:music_id/?' => sub
 
         if ( $linked == 1 )
         {
-            $music_hash->{'filtered_content'}->{'filepath'} = $temp_path;
+            ( $music_hash->{'filtered_content'}->{'filepath'} = $temp_path ) =~ s/^\/data//;
         }
         else
         {
@@ -959,7 +958,7 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/?} => sub
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
-        #$content = Side7::UserContent::Music->new( id => $content_id );
+        $content = Side7::UserContent::Music->new( id => $content_id );
     }
     else
     {
@@ -1031,7 +1030,7 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/reply/?} => sub
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
-        #$content = Side7::UserContent::Music->new( id => $content_id );
+        $content = Side7::UserContent::Music->new( id => $content_id );
     }
     else
     {
@@ -1146,7 +1145,7 @@ post qr{/user_content/comment/save/?} => sub
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
-        #$content = Side7::UserContent::Music->new( id => $content_id );
+        $content = Side7::UserContent::Music->new( id => $content_id );
     }
     elsif ( lc( $content_type ) eq 'image' )
     {
@@ -1179,7 +1178,7 @@ post qr{/user_content/comment/save/?} => sub
     {
         my $comment_thread = Side7::UserContent::CommentThread->new(
                                                                     content_id    => $content_id,
-                                                                    content_type  => $content_type,
+                                                                    content_type  => ucfirst( $content_type ),
                                                                     thread_status => 'Open',
                                                                     created_at    => DateTime->now(),
                                                                     updated_at    => DateTime->now(),
@@ -1193,7 +1192,7 @@ post qr{/user_content/comment/save/?} => sub
     my $new_comment = Side7::UserContent::Comment->new(
                                                         comment_thread_id => $comment_thread_id,
                                                         user_id           => session( 'user_id' ),
-                                                        comment_type      => $comment_type,
+                                                        comment_type      => ucfirst( $comment_type ),
                                                         comment           => $comment,
                                                         private           => $private,
                                                         award             => $award,
@@ -1398,7 +1397,7 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/(show|hide)/?} => sub
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
-        #$content = Side7::UserContent::Music->new( id => $content_id );
+        $content = Side7::UserContent::Music->new( id => $content_id );
     }
     else
     {
@@ -1499,7 +1498,7 @@ get qr{/([A-Za-z0-9]+)/([0-9]+)/comment/([0-9]+)/delete/?} => sub
     }
     elsif ( lc( $content_type ) eq 'music' )
     {
-        #$content = Side7::UserContent::Music->new( id => $content_id );
+        $content = Side7::UserContent::Music->new( id => $content_id );
     }
     else
     {

@@ -1,4 +1,4 @@
-package Side7::UserContent::Image::DetailedView::Manager;
+package Side7::UserContent::Music::DetailedView::Manager;
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ use base 'Rose::DB::Object::Manager'; # Only needed if this is a database object
 
 =head1 NAME
 
-Side7::UserContent::Image::DetailedView::Manager
+Side7::UserContent::Music::DetailedView::Manager
 
 =head1 DESCRIPTION
 
@@ -17,11 +17,11 @@ Creates a DB Object manager for multiple records.
 
 =head1 SCHEMA INFORMATION
 
-    See Side7::UserContent::Image::DetailedView.
+    See Side7::UserContent::Music::DetailedView.
 
 =head1 RELATIONSHIPS
 
-    See Side7::UserContent::Image::DetailedView.
+    See Side7::UserContent::Music::DetailedView.
 
 =cut
 
@@ -29,13 +29,13 @@ Creates a DB Object manager for multiple records.
 
 =head2 make_manager_methods('object');
 
-    $result = Side7::UserContent::Image::DetailedView::Manager->make_manager_methods();
+    $result = Side7::UserContent::Music::DetailedView::Manager->make_manager_methods();
 
 TODO: Define what this method does, describing both input and output values and types.
 
 =cut
 
-sub object_class { 'Side7::UserContent::Image::DetailedView' }
+sub object_class { 'Side7::UserContent::Music::DetailedView' }
 
 __PACKAGE__->make_manager_methods('detailed_views');
 

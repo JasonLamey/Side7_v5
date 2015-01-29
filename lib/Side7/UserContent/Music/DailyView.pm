@@ -1,4 +1,4 @@
-package Side7::UserContent::Image::DailyView;
+package Side7::UserContent::Music::DailyView;
 
 use strict;
 use warnings;
@@ -8,29 +8,29 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use DateTime;
 
 use Side7::Globals;
-use Side7::UserContent::Image::DailyView::Manager;
+use Side7::UserContent::Music::DailyView::Manager;
 
-use version; our $VERSION = qv( '0.1.3' );
+use version; our $VERSION = qv( '0.1.0' );
 
 =pod
 
 
 =head1 NAME
 
-Side7::UserContent::Image::DailyView
+Side7::UserContent::Music::DailyView
 
 
 =head1 DESCRIPTION
 
-This package represents daily total image view counts.
+This package represents daily total music view counts.
 
 
 =head1 SCHEMA INFORMATION
 
-    Table name: image_daily_views
+    Table name: music_daily_views
 
     | id         | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
-    | image_id   | bigint(20) unsigned | NO   |     | NULL    |                |
+    | music_id   | bigint(20) unsigned | NO   |     | NULL    |                |
     | views      | bigint(20) unsigned | NO   | MUL | NULL    |                |
     | date       | date                | NO   |     | NULL    |                |
 
@@ -39,9 +39,9 @@ This package represents daily total image view counts.
 
 =over
 
-=item Side7::UserContent::Image
+=item Side7::UserContent::Music
 
-References the Image object via the image_id foreign key.
+References the Music object via the music_id foreign key.
 
 =back
 
@@ -51,22 +51,22 @@ References the Image object via the image_id foreign key.
 
 __PACKAGE__->meta->setup
 (
-    table   => 'image_daily_views',
+    table   => 'music_daily_views',
     columns => [
         id       => { type => 'integer',                not_null => 1 },
-        image_id => { type => 'integer', length => 45,  not_null => 1 },
+        music_id => { type => 'integer', length => 45,  not_null => 1 },
         views    => { type => 'integer', length => 255, not_null => 1 },
         date     => { type => 'date',                   not_null => 1 },
     ],
     pk_columns => 'id',
-    unique_key => [ [ 'image_id', 'date' ], [ 'image_id' ], [ 'date' ] ],
+    unique_key => [ [ 'music_id', 'date' ], [ 'music_id' ], [ 'date' ] ],
     relationships =>
     [
-        image =>
+        music =>
         {
             type       => 'many to one',
-            class      => 'Side7::UserContent::Image',
-            column_map => { image_id => 'id' },
+            class      => 'Side7::UserContent::Music',
+            column_map => { music_id => 'id' },
         },
     ],
 );
@@ -93,9 +93,9 @@ sub method_name
 
 =head2 get_total_views()
 
-    my $total_views = Side7::UserContent::Image::DailyView::get_total_views( image_id => $image_id );
+    my $total_views = Side7::UserContent::Music::DailyView::get_total_views( music_id => $music_id );
 
-Returns an integer of the sum total views for an image.
+Returns an integer of the sum total views for an music.
 
 =cut
 
@@ -103,15 +103,15 @@ sub get_total_views_count
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'} // undef;
+    my $music_id = delete $args{'music_id'} // undef;
 
-    return if ! defined $image_id;
+    return if ! defined $music_id;
 
     my $total_views = Side7::DB::build_my_select(
         select  => 'SUM(views) as total_views',
-        tables  => [ 'image_daily_views' ],
-        columns => { image_daily_views => [ 'image_id', 'views' ] },
-        query   => [ image_id => $image_id ],
+        tables  => [ 'music_daily_views' ],
+        columns => { music_daily_views => [ 'music_id', 'views' ] },
+        query   => [ music_id => $music_id ],
         bind    => [ ],
         limit   => 1,
     );
@@ -122,9 +122,9 @@ sub get_total_views_count
 
 =head2 update_daily_views
 
-    my $updated = Side7::UserContent::Image::DailyView::update_daily_views( image_id => $image_id );
+    my $updated = Side7::UserContent::Music::DailyView::update_daily_views( music_id => $music_id );
 
-Inserts or updates a daily view record for a given image.
+Inserts or updates a daily view record for a given music.
 
 =cut
 
@@ -132,13 +132,13 @@ sub update_daily_views
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'} // undef;
+    my $music_id = delete $args{'music_id'} // undef;
 
-    return if ! defined $image_id;
+    return if ! defined $music_id;
 
     my $datetime = DateTime->today();
 
-    my $daily_view = Side7::UserContent::Image::DailyView->new( image_id => $image_id, date => $datetime->ymd() );
+    my $daily_view = Side7::UserContent::Music::DailyView->new( music_id => $music_id, date => $datetime->ymd() );
     my $loaded = $daily_view->load( speculative => 1, for_update => 1,  );
 
     if ( $loaded != 0 )

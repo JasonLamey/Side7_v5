@@ -1,4 +1,4 @@
-package Side7::UserContent::Image::DailyView::Manager;
+package Side7::UserContent::Music::DailyView::Manager;
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ use base 'Rose::DB::Object::Manager'; # Only needed if this is a database object
 
 =head1 NAME
 
-Side7::UserContent::Image::DailyView::Manager
+Side7::UserContent::Music::DailyView::Manager
 
 =head1 DESCRIPTION
 
@@ -17,11 +17,11 @@ Creates a DB Object manager for multiple records.
 
 =head1 SCHEMA INFORMATION
 
-    See Side7::UserContent::Image::DailyView.
+    See Side7::UserContent::Music::DailyView.
 
 =head1 RELATIONSHIPS
 
-    See Side7::UserContent::Image::DailyView.
+    See Side7::UserContent::Music::DailyView.
 
 =cut
 
@@ -29,13 +29,13 @@ Creates a DB Object manager for multiple records.
 
 =head2 make_manager_methods('object');
 
-    $result = Side7::UserContent::Image::DailyView::Manager->make_manager_methods();
+    $result = Side7::UserContent::Music::DailyView::Manager->make_manager_methods();
 
 TODO: Define what this method does, describing both input and output values and types.
 
 =cut
 
-sub object_class { 'Side7::UserContent::Image::DailyView' }
+sub object_class { 'Side7::UserContent::Music::DailyView' }
 
 __PACKAGE__->make_manager_methods('daily_views');
 

@@ -1,4 +1,4 @@
-package Side7::UserContent::Image::DetailedView;
+package Side7::UserContent::Music::DetailedView;
 
 use strict;
 use warnings;
@@ -8,7 +8,7 @@ use base 'Side7::DB::Object'; # Only needed if this is a database object.
 use DateTime;
 
 use Side7::Globals;
-use Side7::UserContent::Image::DetailedView::Manager;
+use Side7::UserContent::Music::DetailedView::Manager;
 
 use version; our $VERSION = qv( '0.1.2' );
 
@@ -17,7 +17,7 @@ use version; our $VERSION = qv( '0.1.2' );
 
 =head1 NAME
 
-Side7::UserContent::Image::DetailedView
+Side7::UserContent::Music::DetailedView
 
 
 =head1 DESCRIPTION
@@ -27,10 +27,10 @@ This package represents detailed information on every view a User Content receiv
 
 =head1 SCHEMA INFORMATION
 
-    Table name: image_detailed_views
+    Table name: music_detailed_views
 
     | id         | bigint(20) unsigned | NO   | PRI | NULL    | auto_increment |
-    | image_id   | bigint(20) unsigned | NO   |     | NULL    |                |
+    | music_id   | bigint(20) unsigned | NO   |     | NULL    |                |
     | user_id    | bigint(20) unsigned | YES  |     | NULL    |                |
     | ip_address | varchar(255)        | YES  |     | NULL    |                |
     | user_agent | varchar(255)        | YES  |     | NULL    |                |
@@ -42,9 +42,9 @@ This package represents detailed information on every view a User Content receiv
 
 =over
 
-=item Side7::UserContent::Image
+=item Side7::UserContent::Music
 
-References the Image object via the image_id foreign key.
+References the Music object via the music_id foreign key.
 
 =item Side7::User
 
@@ -58,10 +58,10 @@ References the User object via the user_id foreign key.
 
 __PACKAGE__->meta->setup
 (
-    table   => 'image_detailed_views',
+    table   => 'music_detailed_views',
     columns => [
         id         => { type => 'integer',                not_null => 1 },
-        image_id   => { type => 'integer', length => 45,  not_null => 1 },
+        music_id   => { type => 'integer', length => 45,  not_null => 1 },
         user_id    => { type => 'integer', length => 45 },
         ip_address => { type => 'varchar', length => 255 },
         user_agent => { type => 'varchar', length => 255 },
@@ -69,14 +69,14 @@ __PACKAGE__->meta->setup
         date       => { type => 'date',                   not_null => 1 },
     ],
     pk_columns => 'id',
-    unique_key => [ [ 'image_id', 'date' ], [ 'image_id' ], [ 'date' ] ],
+    unique_key => [ [ 'music_id', 'date' ], [ 'music_id' ], [ 'date' ] ],
     relationships =>
     [
-        image =>
+        music =>
         {
             type       => 'many to one',
-            class      => 'Side7::UserContent::Image',
-            column_map => { image_id => 'id' },
+            class      => 'Side7::UserContent::Music',
+            column_map => { music_id => 'id' },
         },
         user =>
         {
@@ -109,7 +109,7 @@ sub method_name
 
 =head2 add_detailed_view()
 
-    my $added = Side7::UserContent::Image::DetailedView::add_detailed_view( image_id => $image_id, request => $request );
+    my $added = Side7::UserContent::Music::DetailedView::add_detailed_view( music_id => $music_id, request => $request );
 
 Returns a success value if view is inserted.
 
@@ -119,11 +119,11 @@ sub add_detailed_view
 {
     my ( %args ) = @_;
 
-    my $image_id = delete $args{'image_id'} // undef;
+    my $music_id = delete $args{'music_id'} // undef;
     my $request  = delete $args{'request'}  // {};
     my $session  = delete $args{'session'}  // {};
 
-    return if ! defined $image_id;
+    return if ! defined $music_id;
 
     my $datetime = DateTime->today();
 
@@ -131,8 +131,8 @@ sub add_detailed_view
                         ? $request->{env}->{REMOTE_ADDR} . ':' . $request->{env}->{REMOTE_HOST}
                         : $request->{env}->{REMOTE_ADDR};
 
-    my $detailed_view = Side7::UserContent::Image::DetailedView->new(
-        image_id   => $image_id,
+    my $detailed_view = Side7::UserContent::Music::DetailedView->new(
+        music_id   => $music_id,
         user_id    => $session->{user_id},
         ip_address => $ip_address,
         user_agent => $request->{user_agent},

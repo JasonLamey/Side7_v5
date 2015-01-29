@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Side7::DB::Object'; # Only needed if this is a database object.
 
+use Data::Dumper;
+
 use Side7::Globals;
 use Side7::UserContent::CommentThread::Manager;
 
@@ -135,13 +137,13 @@ sub get_all_comments_for_content
     return [] if ( ! defined $content_type && ! defined $content_id );
 
     if (
-        $content_type ne 'Image'
+        ucfirst( $content_type ) ne 'Image'
         &&
-        $content_type ne 'Literature'
+        ucfirst( $content_type ) ne 'Literature'
         &&
-        $content_type ne 'Music'
+        ucfirst( $content_type ) ne 'Music'
         &&
-        $content_type ne 'Video'
+        ucfirst( $content_type ) ne 'Video'
     )
     {
         $LOGGER->warn( 'Invalid content_type >' . $content_type . '< passed in.' );

@@ -10,6 +10,9 @@ use Data::Dumper;
 
 use Side7::Globals;
 use Side7::UserContent;
+use Side7::UserContent::Music::DailyView::Manager;
+use Side7::UserContent::Music::DetailedView::Manager;
+use Side7::UserContent::Comment;
 use Side7::Utils::File;
 use Side7::Utils::Text;
 #use Side7::Utils::Audio; # TODO: COMING SOON.
@@ -101,6 +104,18 @@ __PACKAGE__->meta->setup
     pk_columns => 'id',
     foreign_keys =>
     [
+        daily_views =>
+        {
+            class       => 'Side7::UserContent::Music::DailyView',
+            key_columns => { id => 'music_id' },
+            type        => 'one to many',
+        },
+        detailed_views =>
+        {
+            class       => 'Side7::UserContent::Music::DetailedView',
+            key_columns => { id => 'music_id' },
+            type        => 'one to many',
+        },
         user =>
         {
             class       => 'Side7::User',
@@ -133,7 +148,7 @@ __PACKAGE__->meta->setup
         {
             type        => 'one to many',
             class       => 'Side7::UserContent::CommentThread',
-            key_columns => { id => 'content_id' },
+            key_columns => { id => 'content_id', content_type => 'content_type' },
         },
     ],
 );
@@ -275,7 +290,7 @@ sub show_music
     # Fetch Music Comments
     my $music_comments =
         Side7::UserContent::CommentThread::get_all_comments_for_content(
-                                                                        content_type => $music->content_type,
+                                                                        content_type => ucfirst( $music->content_type ),
                                                                         content_id   => $music_id
                                                                        ) // [];
     $music_hash->{'comment_threads'} = $music_comments if defined $music_comments;
@@ -314,30 +329,30 @@ sub show_music
 #        }
 #    }
 #
-#    # Add a new view
-#    ### Increase Daily View counter.
-#    my $daily_updated = Side7::UserContent::Image::DailyView::update_daily_views( image_id => $image_id );
-#
-#    if ( ! defined $daily_updated )
-#    {
-#        $LOGGER->warn( 'Could not update daily view count for Image ID: >' . $image_id . '<.' );
-#    }
-#
-#    ### Insert new Detailed View record, including date, IP info, user agent info, and referrer info.
-#    my $detailed_updated = Side7::UserContent::Image::DetailedView::add_detailed_view(
-#                                                                                        image_id => $image_id,
-#                                                                                        request  => $request,
-#                                                                                        session  => $session,
-#                                                                                     );
-#
-#    if ( ! defined $detailed_updated )
-#    {
-#        $LOGGER->warn( 'Could not update detailed view for Image ID: >' . $image_id . '<.' );
-#    }
-#
-#    # Get total views
-#    $image_hash->{'total_views'} =
-#        Side7::UserContent::Image::DailyView::get_total_views_count( image_id => $image_id ) // 0;
+    # Add a new view
+    ### Increase Daily View counter.
+    my $daily_updated = Side7::UserContent::Music::DailyView::update_daily_views( music_id => $music_id );
+
+    if ( ! defined $daily_updated )
+    {
+        $LOGGER->warn( 'Could not update daily view count for Music ID: >' . $music_id . '<.' );
+    }
+
+    ### Insert new Detailed View record, including date, IP info, user agent info, and referrer info.
+    my $detailed_updated = Side7::UserContent::Music::DetailedView::add_detailed_view(
+                                                                                        music_id => $music_id,
+                                                                                        request  => $request,
+                                                                                        session  => $session,
+                                                                                     );
+
+    if ( ! defined $detailed_updated )
+    {
+        $LOGGER->warn( 'Could not update detailed view for Music ID: >' . $music_id . '<.' );
+    }
+
+    # Get total views
+    $music_hash->{'total_views'} =
+        Side7::UserContent::Music::DailyView::get_total_views_count( music_id => $music_id ) // 0;
 
     $music_hash->{'filtered_content'} = $filtered_data;
 
