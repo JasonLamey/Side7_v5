@@ -1154,7 +1154,7 @@ sub get_friends_by_status
                                                                         user_id => $self->id(),
                                                                         status  => $status,
                                                                      ],
-                                                            with_objects => [ 'friend' ],
+                                                            with_objects => [ 'friend', 'friend.account' ],
                                                         );
 
     return $friends;
@@ -1196,7 +1196,7 @@ sub get_friends_by_id
                                                                         status    => 'Approved',
                                                                         friend_id => $user_ids,
                                                                      ],
-                                                            with_objects => [ 'friend' ],
+                                                            with_objects => [ 'friend', 'friend.account' ],
                                                         );
 
     return $friends;
@@ -1227,7 +1227,7 @@ sub get_pending_friend_requests
 
     $friend_requests = Side7::User::Friend::Manager->get_friends(
                                                                     query        => [ %query ],
-                                                                    with_objects => [ 'user' ],
+                                                                    with_objects => [ 'user', 'user.account' ],
                                                                 );
     return $friend_requests;
 }

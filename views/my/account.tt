@@ -1,5 +1,5 @@
 [% USE date %]
-        <div style="border: solid 1px #000000; padding: 5px;">
+        <div class="content_box">
             <div style="float: right; min-width: 150px; min-height: 150px; max-width: 250px; max-height: 250px; text-align: center; vertical-align: middle;">
                 <div style="border: 1px dashed #000; padding: 3px; text-align: center; vertical-align: middle; margin: auto; margin-bottom: 5px;">
                     <a href="/my/avatar"><img src="[% user.get_avatar( size => 'medium' ) %]" alt="[% user.username %]" title="[% user.username %]" border='0'></a>
@@ -23,7 +23,7 @@
                 [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
             </p>
         </div>
-        <div style="border: solid 1px #000000; padding: 5px; margin-top: 5px;">
+        <div class="content_box">
             <h2>Change Your Password</h2>
             <form action='/my/changepassword' method='post' data-jkit="[form:validateonly=true]">
                 <label for='old_password'>Current Password:</label>
@@ -43,7 +43,7 @@
                 <input type="submit" value="Change Password">
             </form>
         </div>
-        <div style="border: solid 1px #000000; padding: 5px; margin-top: 5px;">
+        <div class="content_box">
             <h2>Delete Your Account</h2>
             <p style="text-align: justify; font-size: 8pt;">If you would like to delete your account
             and all of your content uploads, click &quot;Set Delete Flag&quot;.

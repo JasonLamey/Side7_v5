@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>Side7
+<title>Side 7
 [% IF title %]
  - [% title %]
 [% END %]
@@ -38,68 +38,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
 [% END %]
 
-<style>
-    #page_content {
-        display: block;
-        position:absolute;
-        bottom:0;
-        top:0;
-        left:0;
-        right:0;
-    }
-    .column_wrap {position:relative;}
-    #page_header {
-        width: auto;
-        padding: 3px 5px;
-        margin: 0;
-        height: 60px;
-        background-color: #AEAEBF;
-    }
-    #header_search {
-        float: right;
-        width: 200px;
-        text-align: right;
-    }
-    #header_avatar {
-        float: left;
-        margin-right: 5px;
-    }
-    .metanav {
-        margin-top: 3px;
-        height: 55px;
-        vertical-align: middle;
-    }
-    .admin_menu {
-        width:200px;
-        position:absolute;
-        left:0;
-        top:40px;
-        bottom:40px;
-        height:auto;
-        display: block;
-        margin-right: 5px;
-    }
-    .admin_menu_option {
-        text-align: left;
-        padding: 3px;
-        border-bottom: solid 1px #000;
-    }
-    .admin_menu_option a {
-        font-weight: bold;
-    }
-    .admin_menu_option .disabled {
-        font-weight: normal;
-        color: #777;
-    }
-    #section_content {
-        /* margin-left: 205px; */
-        padding: 5px;
-        width: auto;
-        height: auto;
-        min-height: 450px;
-    }
-</style>
-
 <script type="text/javascript">
     $(document).ready(function(){
         $('body').jKit();
@@ -109,11 +47,11 @@
 </head>
 <body>
 <div id="page_content">
-[% PROCESS 'site/_page_header.tt' %]
+    [% PROCESS 'site/_page_header.tt' %]
     <div id="section_content">
-    [% content %]
-    </div>
+        [% content %]
+    </div> <!-- end section_content -->
+</div> <!-- end page_content -->
 [% PROCESS 'site/_footer.tt' %]
-</div>
 </body>
 </html>

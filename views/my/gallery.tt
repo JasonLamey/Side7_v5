@@ -1,22 +1,24 @@
 
-    <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px; display: block;">
+    <div class="content_box">
         <h2>Gallery Information</h2>
         [% PROCESS 'my/_gallery_stats_gauges.tt' %]
     </div>
 
-    <h2>Manage Your Content</h2>
-    <h3>Upload New Content:</h3>
-    <a href="/my/upload/image">An Image</a> |
-    <a href="/my/upload/music">Music</a> |
-    <a href="/my/upload/literature">Literature</a>
+    <div class="content_box">
+        <h2>Manage Your Content</h2>
+        <h3>Upload New Content:</h3>
+        <a href="/my/upload/image">An Image</a> |
+        <a href="/my/upload/music">Music</a> |
+        <a href="/my/upload/literature">Literature</a>
 
-    <h3>Existing Content:</h3>
-    <a href="/my/content">Modify or Delete</a>
+        <h3>Existing Content:</h3>
+        <a href="/my/content">Modify or Delete</a>
 
-    <h3>Albums:</h3>
-    <a href="/my/albums/new" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Create A New Album</a> |
-    <a href="/my/albums" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Manage My Albums</a>
+        <h3>Albums:</h3>
+        <a href="/my/albums/new" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Create A New Album</a> |
+        <a href="/my/albums" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>Manage My Albums</a>
 
-    <h3>Account Statistics:</h3>
-    <a href="/my/stats/gallery">View Gallery Stats</a> |
-    <a href="/my/stats/content">View Content Stats</a>
+        <h3>Account Statistics:</h3>
+        <a href="/my/stats/gallery">View Gallery Stats</a> |
+        <a href="/my/stats/content">View Content Stats</a>
+    </div>

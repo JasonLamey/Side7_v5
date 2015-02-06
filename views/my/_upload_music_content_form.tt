@@ -38,7 +38,14 @@
     </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
 
     <label for="description">Description:</label>
-    <textarea name="description" cols="40" rows="10" class="user_input_textarea">[% description %]</textarea><br /><br />
+    <div class="sceditor_block">
+        <textarea name="description" cols="40" rows="10" class="user_input_textarea">[% description %]</textarea><br /><br />
+    </div>
+
+    <label for="transcript">Transcript:<br><small>(Lyrics, dialog, etc.)</small></label>
+    <div class="sceditor_block">
+        <textarea name="transcript" cols="40" rows="10" class="user_input_textarea">[% transcript %]</textarea><br /><br />
+    </div>
 
     [% cy_checked = '' %]
     [% IF copyright_year %]

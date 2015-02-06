@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
-<title>Side7
+<title>Side 7
 [% IF title %]
  - [% title %]
 [% END %]
@@ -26,47 +26,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-jgrowl/1.2.12/jquery.jgrowl.min.js"></script>
 [% END %]
 
-<style>
-    #page_content {
-        display: block;
-        position:absolute;
-        bottom:0;
-        top:0;
-        left:0;
-        right:0;
-    }
-    .column_wrap {position:relative;}
-    #page_header {
-        width: auto;
-        padding: 3px 5px;
-        margin: 0;
-        height: 60px;
-        background-color: #AEAEBF;
-    }
-    #header_search {
-        float: right;
-        width: 200px;
-        text-align: right;
-    }
-    #header_avatar {
-        float: left;
-        margin-right: 5px;
-    }
-    .metanav {
-        margin-top: 3px;
-        height: 55px;
-        vertical-align: middle;
-    }
-    #section_content {
-        padding: 5px;
-        width: auto;
-        height: auto;
-        min-height: 450px;
-    }
-    #footer {
-    }
-</style>
-
 <script type="text/javascript">
      $(document).ready(function(){
          $('body').jKit();
@@ -74,20 +33,20 @@
 </script>
 </head>
 <body>
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
 <div id="page_content">
-[% PROCESS 'site/_page_header.tt' %]
+    [% PROCESS 'site/_page_header.tt' %]
     <div id="section_content">
-    [% content %]
-    </div>
-    [% PROCESS 'site/_footer.tt' %]
-</div>
+        [% content %]
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+    </div><!-- end section_content -->
+</div> <!-- end page_content -->
+[% PROCESS 'site/_footer.tt' %]
 </body>
 </html>

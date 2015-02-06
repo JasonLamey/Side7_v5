@@ -1,38 +1,53 @@
-    <div id="page_header">
-        <div id="header_search">
-            <form method="post" action="/search">
-                <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
-                <input type="submit" value="Go" />
-            </form>
-        </div>
+<div id="page_header">
+    <div id="site_header">
         [% IF session.logged_in %]
-        <div id="header_avatar"><img src="[% header_avatar %]" alt="[% session.username %]" title="[% session.username %]"></div>
+        <div id="header_avatar">
+            <div id="header_avatar_img">
+                <img src="[% header_avatar %]" alt="[% session.username %]" title="[% session.username %]">
+            </div> <!-- end header_avatar_img -->
+        </div> <!-- end header_avatar -->
         [% END %]
-        <div class="metanav">
+        <div id="header_search">
+            <div id="header_search_box">
+                <form method="post" action="/search">
+                    <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
+                    <input type="submit" value="Go" />
+                </form>
+            </div> <!-- end header_search_box -->
+        </div> <!-- end header_search -->
+        <div id="header_logo">
+            <div id="header_logo_img">
+                <a href="/"><img src="/images/S7_header_logo.png" height="40" width="150" border="0" alt='Side 7'></a>
+            </div> <!-- end header_logo_img -->
+        </div> <!-- end header_logo -->
+    </div> <!-- end site_header -->
+    <div id="site_menu">
+        <div id="user_menu">
             <div>
                 [% IF not session.logged_in %]
                 <a href="[% login_url %]">Log In</a> | <a href="[% signup_url %]">Sign Up</a>
                 [% ELSE %]
-                [% session.username %]:
-                <a href="/my/home">Home</a>
-                &middot;
-                <a href="/user/[% session.username %]">Profile</a>
-                &middot;
-                <a href="/user/[% session.username %]/gallery">Gallery</a>
-                &middot;
-                <a href="[% logout_url %]">Log Out</a>
+                <ul>
+                    <li><a href="[% logout_url %]">Log Out</a></li>
+                    <li><a href="/user/[% session.username %]/gallery">Gallery</a></li>
+                    <li><a href="/user/[% session.username %]">Profile</a></li>
+                    <li><a href="/my/home">Home</a></li>
+                    <li>[% session.username %]:</li>
+                </ul>
                 [% END %]
-            </div>
-            <div>
-                <a href="/">Main</a> &middot;
-                <a href="/news">News</a> &middot;
-                <a href="/faq">F.A.Q.</a> &middot;
-                <a href="/user_directory">User Directory</a>
-            </div>
-        </div>
-    </div>
+            </div> <!-- end user_menu internal div -->
+        </div> <!-- end user_menu -->
+        <div id="main_menu">
+            <ul>
+                <li><a href="/">Main</a></li>
+                <li><a href="/news">News</a></li>
+                <li><a href="/faq">F.A.Q.</a></li>
+                <li><a href="/user_directory">User Directory</a></li>
+            </ul>
+        </div> <!-- end main_menu -->
+    </div> <!-- end site_menu -->
+</div> <!-- end page_header -->
 [% IF flash.message %]
-    <!-- <div class="flash"> [% flash.message %] </div> -->
     <script>
         ( function($)
             {
@@ -46,7 +61,6 @@
     </script>
 [% END %]
 [% IF flash.error %]
-    <!-- <div class="error"> [% flash.error %] </div> -->
     <script>
         ( function($)
             {

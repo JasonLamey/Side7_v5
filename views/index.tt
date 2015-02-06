@@ -1,20 +1,20 @@
-<div class="page">
     <div style="float: right; width: 25%; margin-left: 10px; margin-bottom: 20px; padding: 5px; height: 350px;">
         <div style="float: right; margin-top: 15px; font-size: 0.9em;"><a href="/news">See All</a></div>
         <h2>News</h2>
         <div style="height: 350px; overflow: auto;">
-        [% PROCESS '_index_news.tt' %]
-        </div>
-    </div>
+            [% PROCESS '_index_news.tt' %]
+        </div> <!-- end news_item_list -->
+    </div> <!-- end outer div -->
     <div style="float: right; clear: right; width: 25%; margin-left: 10px; padding: 5px; height: 350px; margin-top: 10px; margin-bottom: 10px;">
         <div class="fb-like-box" data-href="https://www.facebook.com/Side7" data-width="300" data-height="400" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="false"></div>
-    </div>
+    </div> <!-- end fb box container -->
+
     <div style="padding: 5px; margin-right: 27%;">
         <h2>Featured Artist</h2>
         <p>This is where the featured artist will be.</p>
-    </div>
+    </div> <!-- end featured_artist -->
+
     <div style="padding: 5px; margin-right: 27%;">
         <h2>Recently Uploaded</h2>
         <p>This is where the most recent 20 uploads will be.</p>
-    </div>
-</div>
+    </div> <!-- end recently_uploaded -->

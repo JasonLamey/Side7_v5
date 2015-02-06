@@ -2,6 +2,8 @@
 
 [% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
 
+<div class="content_box">
+
 <h2>My Profile</h2>
 
 <form action='/my/profile' method='post'>
@@ -57,7 +59,7 @@
             [% op_selected = '' %][% IF is_public_hash.state == option.value %][% op_selected = ' selected="selected"' %][% END %]
             <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
         [% END %]
-        </select> 
+        </select>
         <br>
 
         <label for="country_id">In What Country Do You Live:</label>
@@ -77,7 +79,7 @@
             [% op_selected = '' %][% IF is_public_hash.country == option.value %][% op_selected = ' selected="selected"' %][% END %]
             <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
         [% END %]
-        </select> 
+        </select>
         <br>
 
     </fieldset>
@@ -117,7 +119,7 @@
                     [% op_selected = '' %][% IF is_public_hash.aim == option.value %][% op_selected = ' selected="selected"' %][% END %]
                     <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
                 [% END %]
-                </select> 
+                </select>
                 <br>
 
                 <label for="yahoo">Yahoo! IM:</label>
@@ -128,7 +130,7 @@
                     [% op_selected = '' %][% IF is_public_hash.yahoo == option.value %][% op_selected = ' selected="selected"' %][% END %]
                     <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
                 [% END %]
-                </select> 
+                </select>
                 <br>
 
                 <label for="gtalk">GTalk / Google Hangouts:</label>
@@ -139,7 +141,7 @@
                     [% op_selected = '' %][% IF is_public_hash.gtalk == option.value %][% op_selected = ' selected="selected"' %][% END %]
                     <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
                 [% END %]
-                </select> 
+                </select>
                 <br>
 
                 <label for="skype">Skype:</label>
@@ -150,7 +152,7 @@
                     [% op_selected = '' %][% IF is_public_hash.skype == option.value %][% op_selected = ' selected="selected"' %][% END %]
                     <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
                 [% END %]
-                </select> 
+                </select>
                 <br>
         </fieldset>
 
@@ -161,14 +163,16 @@
             [% op_selected = '' %][% IF is_public_hash.email == option.value %][% op_selected = ' selected="selected"' %][% END %]
             <option value="[% option.value %]"[% op_selected %]>[% option.name %]</option>
         [% END %]
-        </select> 
+        </select>
         <br>
     </fieldset>
 
     <fieldset>
         <legend>Biography Information</legend>
-        <label for="biography">Biography:</label><br>
-        <textarea name="biography" rows="20" cols="80" class="user_input_textarea">[% user.account.biography %]</textarea>
+        <label for="biography">Biography:</label>
+        <div class="sceditor_block">
+            <textarea name="biography" rows="20" cols="80" class="user_input_textarea">[% user.account.biography %]</textarea>
+        </div>
         <br>
     </fieldset>
     <strong>Last updated on:</strong> <em>[% date.format( user.account.updated_at, '%Y-%m-%d %H:%M' ) %]</em><br>
@@ -176,3 +180,4 @@
 
     <input type="submit" value="Save Profile">
 </form>
+</div>

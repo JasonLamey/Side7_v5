@@ -15,7 +15,7 @@
         <a href="/news/article/[% item.id %]">Read More...</a><br>
         [% END %]
         [% IF ! loop.last %]<hr class="faded">[% END %]
-    </div>
+    </div> <!-- end sticky news_item -->
     [% END %]
     [% FOREACH item IN data.news %]
     <div style="margin-bottom: 8px;">
@@ -33,6 +33,6 @@
         <a href="/news/article/[% item.id %]">Read More...</a><br>
         [% END %]
         [% IF ! loop.last %]<hr class="faded">[% END %]
-    </div>
+    </div> <!-- end news_item -->
     [% END %]
-</div>
+</div> <!-- end outer new_item container -->

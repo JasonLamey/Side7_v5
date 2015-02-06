@@ -97,6 +97,7 @@
     </div>
 
     <div>[% user_content.filtered_content.description %]</div>
+    <div>[% user_content.filtered_content.transcript %]</div>
 
     [% PROCESS 'user_content/_comment_threads.tt' %]
 </div>

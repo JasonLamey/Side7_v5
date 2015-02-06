@@ -1,8 +1,24 @@
-        <div class="home_menu_option"><a href="/my/home">My Home</a></div>
-        <div class="home_menu_option"><a href="/my/account">My Account</a></div>
-        <div class="home_menu_option"><a href="/my/profile">My Profile</a></div>
-        <div class="home_menu_option"><a href="/my/gallery">My Gallery</a></div>
-        <div class="home_menu_option"><a href="/my/friends">My Friends</a></div>
-        <div class="home_menu_option"><a href="/my/kudos">My Kudos Coins</a></div>
-        <div class="home_menu_option"><a href="/my/preferences">My Preferences</a></div>
-        <div class="home_menu_option"><a href="/my/pms">Messages</a></div>
+        <div class="home_menu_option">
+            <div class="home_menu_option_link"><a href="/my/home">My Home</a></div>
+        </div>
+        <div class="home_menu_option">
+            <div class="home_menu_option_link"><a href="/my/account">My Account</a></div>
+        </div>
+        <div class="home_menu_option">
+            <div class="home_menu_option_link"><a href="/my/profile">My Profile</a></div>
+        </div>
+        <div class="home_menu_option">
+        	<div class="home_menu_option_link"><a href="/my/gallery">My Gallery</a></div>
+        </div>
+        <div class="home_menu_option">
+        	<div class="home_menu_option_link"><a href="/my/friends">My Friends</a></div>
+        </div>
+        <div class="home_menu_option">
+        	<div class="home_menu_option_link"><a href="/my/kudos">My Kudos Coins</a></div>
+        </div>
+        <div class="home_menu_option">
+        	<div class="home_menu_option_link"><a href="/my/preferences">My Preferences</a></div>
+        </div>
+        <div class="home_menu_option">
+        	<div class="home_menu_option_link"><a href="/my/pms">Messages</a></div>
+        </div>

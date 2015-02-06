@@ -1,9 +1,9 @@
-<div id="footer" data-jkit="[replace:search=Side 7;replacement=<strong>Side 7</strong>]">
-    <div class="rounded_block" style="min-height: 30px; display: inline-block; width: 99%;">
+<div id="footer-container">
+    <div id="footer" data-jkit="[replace:search=Side 7;replacement=<strong>Side 7</strong>]">
         <div id="footer_left">
             Copyright &copy; 1994-2015 Side 7<br>
             All Rights Reserved
-        </div>
+        </div> <!-- end footer_left -->
         <div id="footer_right">
             Side 7 v5 ([% site_version %])<br>
             <a href="/about_us">About Us</a>
@@ -15,6 +15,6 @@
             <a href="/contact_us">Contact Us</a>
             &middot;
             <a href="/faq">F.A.Q.</a>
-        </div>
-    </div>
-</div>
+        </div> <!-- end footer_right -->
+    </div> <!-- end footer -->
+</div> <!-- end footer_containter -->

@@ -1,27 +1,4 @@
 [% USE date %]
-        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px;">
-            <h2>Account Information</h2>
-            <p>
-                <b>Joined:</b> [% date.format( data.user.account.created_at, '%d %B, %Y' ) %]<br />
-                <b>Account Status:</b> [% data.user.account.user_status.user_status %]<br />
-                <b>Account Type:</b> [% data.user.account.user_type.user_type %]<br />
-                [% IF data.user.account.user_type.user_type == 'Subscriber' %]
-                    [% IF data.user.account.subscription_expires_on %][% expires_on = date.format( data.user.account.subscription_expires_on, '%d %B, %Y' ) %]
-                    [% ELSE %][% expires_on = '' %][% END %]
-                    <b>Subscription Expires:</b> [% expires_on %]<br />
-                [% END %]
-                [% IF data.user.account.delete_on %]
-                    <b>Your Account Will Be Deleted On:</b> [% date.format( data.user.account.delete_on, '%d %B, %Y' ) %] &nbsp; <a href="/my/account">Cancel Deletion</a><br />
-                [% END %]
-                <br />
-                [ <a href="/my/permissions">My Permissions</a> ] [ <a href="/my/perks">My Perks</a> ]
-            </p>
-        </div>
-        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px;">
-            <h2>Kudos Coins</h2>
-            <p><b>Your Kudos Coins:</b> [% data.kudos_coins.total %] &nbsp; <a href="/my/kudos">Check your history</a></p>
-        </div>
-        <div style="border: solid 1px #000000; padding: 5px; margin-bottom: 5px; display: block;">
-            <h2>Gallery Information</h2>
-            [% PROCESS 'my/_gallery_stats_gauges.tt' %]
-        </div>
+<div>This is where all recent friends uploads/journal posts will display.<br>
+If User has no friends, then this will default to Recent Uploads, with header messages explaining friends.
+</div>

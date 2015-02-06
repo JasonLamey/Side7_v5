@@ -42,6 +42,7 @@ This class represents music-based User Content.
     | filesize       | int(9) unsigned                         | YES  |     | NULL    |                |
     | title          | varchar(255)                            | NO   |     | NULL    |                |
     | description    | text                                    | YES  |     | NULL    |                |
+    | transcript     | text                                    | YES  |     | NULL    |                |
     | encoding       | varchar(45)                             | NO   |     | NULL    |                |
     | bitrate        | varchar(45)                             | NO   |     | NULL    |                |
     | sample_rate    | varchar(45)                             | NO   |     | NULL    |                |
@@ -81,6 +82,7 @@ __PACKAGE__->meta->setup
         filesize       => { type => 'integer', not_null => 1 },
         title          => { type => 'varchar', length => 255, not_null => 1 },
         description    => { type => 'text' },
+        transcript     => { type => 'text' },
         encoding       => { type => 'varchar', length => 45,  not_null => 1 },
         bitrate        => { type => 'integer', not_null => 1 }, # In bps
         sample_rate    => { type => 'integer', not_null => 1 }, # In kHz
@@ -95,9 +97,9 @@ __PACKAGE__->meta->setup
                             default  => 'Public',
                           },
         is_archived    => { type => 'integer', not_null => 1 },
-        copyright_year => { type => 'integer', not_null => 1 },
+        copyright_year => { type => 'integer', default => 'NULL' },
         checksum       => { type => 'varchar', length => 120 },
-        content_type   => { type => 'varchar',, length => 15, default => 'Music' },
+        content_type   => { type => 'varchar', length => 15, default => 'Music' },
         created_at     => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at     => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
@@ -277,7 +279,7 @@ sub show_music
     # Filter profanity
     if ( $filter_profanity == 1 )
     {
-        foreach my $key ( qw/ title description / )
+        foreach my $key ( qw/ title description transcript / )
         {
             my $text = ( exists $filtered_data->{$key} ) ? $filtered_data->{$key} : $music->$key;
             $filtered_data->{$key} = Side7::Utils::Text::filter_profanity( text => $text );
