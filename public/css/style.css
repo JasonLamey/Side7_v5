@@ -262,6 +262,7 @@ a:hover {
     font-weight: bold;
     font-size: 10pt;
     width: auto;
+    box-shadow: 0 2px 4px 0 #ccc;
 }
 #site_menu > div > ul > li > a,
 #site_menu > div > ul > li > a:hover,
@@ -642,10 +643,11 @@ th, td {
     margin: 0 auto;
     padding: 10px 5px;
     font-family: sans-serif;
-    font-size: 9pt;
+    font-size: 10pt;
     font-family: "AlwinLight", sans-serif;
     color: #2D2E2F;
     background-color: #EBF5FF;
+    border: solid 1px #CCE6FF;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -664,23 +666,20 @@ th, td {
 
 #footer_left, #footer_right
 {
-    padding: 10px;
     display: table-cell;
-    vertical-align: center;
+    height: 30px;
+    padding: 10px;
+    vertical-align: middle;
 }
 
 #footer_left
 {
-    float: left;
     text-align: left;
-    width: 30%;
 }
 
 #footer_right
 {
-    float: right;
     text-align: right;
-    width: 45%;
 }
 
 .rounded_block

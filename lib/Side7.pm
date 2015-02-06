@@ -3353,6 +3353,7 @@ post '/my/upload' => sub
                             stage_id          => params->{'stage_id'},
                             title             => params->{'title'},
                             description       => params->{'description'},
+                            transcript        => params->{'transcript'},
                             copyright_year    => params->{'copyright_year'},
                             privacy           => params->{'privacy'},
                             enums             => $enums,
