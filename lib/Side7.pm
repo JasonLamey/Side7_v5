@@ -781,6 +781,10 @@ get '/user/:username' => sub
             {
                 $friend_link = 'pending';
             }
+            elsif ( $is_linked == 3 )
+            {
+                $friend_link = 'pending_received';
+            }
             else
             {
                 $friend_link = 'friend_link';
@@ -1588,7 +1592,6 @@ hook 'before' => sub
         {
             my $authorized = Side7::Login::user_authorization(
                                                                 session_username => session( 'username' ),
-                                                                username         => params->{'username'},
                                                              );
 
             if ( $authorized != 1 )
@@ -2542,9 +2545,15 @@ get '/my/friends/:username/dissolve' => sub
     my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
     my $target = Side7::User::get_user_by_username( params->{'username'} );
 
-    if ( ! defined $target || ref( $target ) ne 'Side7::User' )
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
     {
         flash error => 'Either you are not logged in, or your account can not be found.';
+        return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
+    }
+
+    if ( ! defined $target || ref( $target ) ne 'Side7::User' )
+    {
+        flash error => 'Error in attempting to dissolve the friend link with >' . $target . '<.';
         return redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 

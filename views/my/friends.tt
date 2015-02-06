@@ -9,11 +9,11 @@
         [% FOREACH request IN pending_requests %]
         <div class="friend_request round_corners_5px">
             <div class="friend_request_avatar">
-                <a href="/user/[% friend.friend.username %]"><img src="[% friend.friend.get_avatar( size => 'tiny' ) %]" border="0" class="round_corners_5px"></a>
+                <a href="/user/[% request.user.username %]"><img src="[% request.user.get_avatar( size => 'tiny' ) %]" border="0" class="round_corners_5px"></a>
             </div>
             <div class="friend_request_content">
-                <a href="/user/[% friend.friend.username %]" style="color: #fff;">[% friend.friend.account.full_name %]</a><br>
-                [% friend.friend.username %]<br>
+                <a href="/user/[% request.user.username %]" style="color: #fff;">[% request.user.account.full_name %]</a><br>
+                [% request.user.username %]<br>
                 <span class="small_text">Last Seen:</span>
             </div>
             <div class="friend_request_button">
@@ -44,7 +44,7 @@
                 <span class="small_text">Last Seen:</span>
             </div>
             <div class="friend_request_button">
-                <a href="/my/friends/[% friend.friend.id %]/dissolve"><img src="/images/icons/cancel.gif" style="vertical-align: middle;" border="0" alt="Dissolve Friend Link" title="Dissolve Friend Link"></a>
+                <a href="/my/friends/[% friend.friend.username %]/dissolve"><img src="/images/icons/cancel.gif" style="vertical-align: middle;" border="0" alt="Dissolve Friend Link" title="Dissolve Friend Link"></a>
             </div>
         </div>
         [% END %]

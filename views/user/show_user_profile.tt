@@ -10,6 +10,8 @@
 <br><a href="/my/friends/[% user.username %]/dissolve">Remove Friend Link</a>
     [% ELSIF friend_link == 'pending' %]
 <br><em>Friend Link Request pending</em>
+    [% ELSIF friend_link == 'pending_received' %]
+<br><a href="/my/friends">Respond To Their Friend Request</a>
     [% ELSE %]
 <br><a href="/friend_link/[% user.username %]">Send Friend Link Request</a>
     [% END %]

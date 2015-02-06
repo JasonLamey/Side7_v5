@@ -578,6 +578,7 @@ th, td {
 
 [class*='friend_request'] {
     margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 [class*='friend_request']:last-of-type {

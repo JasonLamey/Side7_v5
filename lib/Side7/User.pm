@@ -1341,6 +1341,28 @@ sub is_friend_linked
         return 0;
     }
 
+    # Did the User send us a Pending Friend Link Request?
+    my $pending = Side7::User::Friend->new(
+                                            user_id   => $user_id,
+                                            friend_id => $self->id,
+                                            status    => 'Pending',
+                                          );
+
+    my $loaded = $pending->load( speculative => 1 );
+
+    if (
+        defined $pending
+        &&
+        ref( $pending ) eq 'Side7::User::Friend'
+        &&
+        $loaded != 0
+    )
+    {
+        # Received Pending Request exists
+        return 3;
+    }
+
+
     # Does an Existing Pending Friend Link Request exist
     my $friend = Side7::User::Friend->new(
                                             user_id   => $self->id,
@@ -1348,7 +1370,7 @@ sub is_friend_linked
                                             status    => 'Pending',
                                          );
 
-    my $loaded = $friend->load( speculative => 1 );
+    $loaded = $friend->load( speculative => 1 );
 
     if (
         defined $friend
