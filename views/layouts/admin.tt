@@ -42,67 +42,9 @@
     </script>
 
     <style>
-        #page_content {
-            display: block;
-            position:absolute;
-            bottom:0;
-            top:0;
-            left:0;
-            right:0;
-        }
-        .column_wrap {position:relative;}
-        #page_header {
-            width: auto;
-            padding: 3px 5px;
-            margin: 0;
-            height: 60px;
-            background: repeating-linear-gradient(
-                135deg,
-                #fee,
-                #fee 5px,
-                #fdd 5px,
-                #fdd 10px
-            );
-        }
-        #header_search {
-            float: right;
-            width: 200px;
-            text-align: right;
-        }
-        #header_avatar {
-            float: left;
-            margin-right: 5px;
-        }
-        .metanav {
-            height: 55px;
-            vertical-align: middle;
-            margin-top: 3px;
-        }
-        .admin_menu {
-            width:200px;
-            position:absolute;
-            left:0;
-            top:65px;
-            bottom:40px;
-            height:auto;
-            display: block;
-            margin-right: 5px;
-        }
-        .admin_menu_option {
-            text-align: left;
-            padding: 3px;
-            border-bottom: solid 1px #000;
-        }
-        .admin_menu_option a {
-            font-weight: bold;
-        }
-        .admin_menu_option .disabled {
-            font-weight: normal;
-            color: #777;
-        }
         #section_content {
             margin-left: 205px;
-            padding: 5px;
+            padding: 90px 5px 100px;
             width: auto;
             height: auto;
         }
@@ -152,17 +94,15 @@
 
 </head>
 <body>
-
     <div id="page_content">
     [% PROCESS 'site/_page_header.tt' %]
         <div class="admin_menu">
-    [% PROCESS 'admin/_main_menu.tt' %]
+        [% PROCESS 'admin/_main_menu.tt' %]
         </div><!-- end admin_menu -->
         <div id="section_content">
         [% content %]
         </div><!-- end section_content -->
-    [% PROCESS 'site/_footer.tt' %]
     </div><!-- end page_content -->
-
+    [% PROCESS 'site/_footer.tt' %]
 </body>
 </html>

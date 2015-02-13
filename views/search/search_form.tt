@@ -33,7 +33,7 @@
 
         <div style="border: solid 1px #000; padding: 5px; margin-bottom: 5px; min-height: 101px;">
         [% IF result.content_type == 'user' %]
-            <div style="float: left; width: 100px; height: 100px; margin-right: 5px;"><img src="[% result.user.get_avatar( size => 'small' ) %]" border="0"></div>
+            <div style="float: left; width: 100px; height: 100px; margin-right: 5px;"><img src="[% result.user.get_avatar( size => 'small' ) %]" border="0" alt='[% result.user.username %]' class="avatar"></div>
             <a href="/user/[% result.user.username %]">[% result.user.account.full_name %] ( [% Search.highlight_match( result.user.username, look_for ) %] )</a><br />
             <b>Joined:</b> [% date.format( result.user.created_at, '%d %B, %Y' ) %]
         [% ELSIF result.content_type == 'image' %]

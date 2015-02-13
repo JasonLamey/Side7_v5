@@ -10,7 +10,7 @@
         <div id="header_search">
             <div id="header_search_box">
                 <form method="post" action="/search">
-                    <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search ..." />
+                    <input type="text" name="look_for" size="20" maxlength="255" placeholder="Search Side 7..." />
                     <input type="submit" value="Go" />
                 </form>
             </div> <!-- end header_search_box -->

@@ -7,19 +7,28 @@
 <p><a href="/user/[% user.username %]">[% user.username %]'s Profile</a></p>
 <ol type="1">
     [% FOREACH content_item IN gallery %]
-    <li>
+    <li style="margin-bottom: 5px;"><div class="rounded_block" style="display: table;">
+    <div style="display: table-cell;">
         [% IF content_item.filepath %]
-    <a href='[% content_item.uri %]'><img src='[% content_item.filepath %]' alt='' title='' border='0' /></a>
+    <div class="thumb_container_small">
+        <div class="thumb_image">
+            <a href='[% content_item.uri %]'>
+                <img src='[% content_item.filepath %]' alt='[% content_item.content.title %]' title='[% content_item.content.title %]' border='0' />
+            </a>
+        </div>
+    </div>
         [% ELSE %]
     [ [% content_item.filepath_error %] ]
         [% END %]
+    </div>
+    <div style="display: table-cell;">
     <a href="/[% content_item.content.content_type FILTER lower %]/[% content_item.content.id %]">
         [% IF content_item.content.title %]
     [% content_item.content.title %]
         [% ELSE %]
     Untitled
         [% END %]
-    </a> - [% content_item.content.rating.rating %] / [% content_item.content.category.category %] / [% content_item.content.stage.stage %] - Uploaded [% date.format( content_item.content.created_at, '%d %b, %Y @ %H:%M' ) %]</li>
+    </a> - [% content_item.content.rating.rating %] / [% content_item.content.category.category %] / [% content_item.content.stage.stage %] - Uploaded [% date.format( content_item.content.created_at, '%d %b, %Y @ %H:%M' ) %]</div></div></li>
     [% END %]
 </ol>
 [% END %]

@@ -17,7 +17,7 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #FFF;
+    background-color: #FAFAFA;
     /*background-color: #F5FAFF;*/
 
     font-family: "AlwinLight", "Lucida Grande", "Bitstream Vera Sans", "Verdana";
@@ -213,7 +213,7 @@ a:hover {
 }
 #header_search {
     float: right;
-    width: 250px;
+    width: 400px;
     height: 60px;
     display: table;
 }
@@ -330,7 +330,7 @@ a:hover {
     width:200px;
     position:absolute;
     left:0;
-    top:40px;
+    top:93px;
     bottom:40px;
     height:auto;
     display: block;
@@ -351,12 +351,12 @@ a:hover {
 #section_content {
     width: auto;
     overflow: auto;
-    padding: 90px 5px 90px;
+    padding: 95px 5px 95px;
 }
 #my_section_content {
     width: auto;
     overflow: auto;
-    padding: 90px 5px 90px;
+    padding: 90px 5px 95px;
     margin-left: 205px;
     margin-right: 205px;
 }
@@ -402,8 +402,8 @@ a:hover {
     );
     background-image: -moz-linear-gradient(
         left center,
-        #EBF5FF 0%,
-        #FFFFFF 50%
+        #CCE6FF 0%,
+        #FAFAFA 50%
     );
     text-shadow:    1px 1px 0 #fff,
                     -1px -1px 0 #fff,
@@ -448,9 +448,9 @@ a:hover {
 }
 
 .round_corners_10px {
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .error_message_box
@@ -494,7 +494,12 @@ form {
 
 input, textarea, select {
     font-family: "AlwinLight", sans-serif;
-    font-size: 11px;
+    font-size: 10pt;
+    padding: 8px;
+    border: solid 1px #ccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 label, legend {
@@ -585,6 +590,12 @@ th, td {
     margin-right: 0;
 }
 
+.avatar {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
 .friend_request_avatar {
     display: table-cell;
     vertical-align: middle;
@@ -632,7 +643,7 @@ th, td {
     position: relative;
     width: 100%;
     height: 90px;
-    margin-top: -90px;
+    margin-top: -80px;
     padding-top: 10px;
     clear: both;
 }
@@ -647,8 +658,8 @@ th, td {
     font-size: 10pt;
     font-family: "AlwinLight", sans-serif;
     color: #2D2E2F;
-    background-color: #EBF5FF;
-    border: solid 1px #CCE6FF;
+    background-color: #CCE6FF;
+    border: solid 1px #99CCFF;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -720,7 +731,7 @@ hr.faded {
 
 .sceditor_block {
     display: inline-block;
-    padding-left: 250px;
+    padding-left: 175px;
 }
 
 textarea.user_input_textarea {
@@ -731,6 +742,38 @@ textarea.user_input_textarea {
 .small_text
 {
     font-size: 8pt;
+}
+
+/* Thumbnails */
+
+.thumb_container_small, .thumb_container_large {
+    display: table;
+    padding: 0;
+    margin: 0;
+}
+
+.thumb_container_small {
+    width: 100px;
+    height: 100px;
+}
+
+.thumb_container_large {
+    width: 300px;
+    height: 300px;
+}
+
+.thumb_image {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.thumb_image > img, .thumb_image > a > img {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
 }
 
 /* Comments */
@@ -992,4 +1035,3 @@ div#jkit-tooltip {
     -moz-box-shadow: 0 0 5px #aaa;
     box-shadow:0 0 5px #aaa;
 }
-

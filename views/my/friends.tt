@@ -9,7 +9,7 @@
         [% FOREACH request IN pending_requests %]
         <div class="friend_request round_corners_5px">
             <div class="friend_request_avatar">
-                <a href="/user/[% request.user.username %]"><img src="[% request.user.get_avatar( size => 'tiny' ) %]" border="0" class="round_corners_5px"></a>
+                <a href="/user/[% request.user.username %]"><img src="[% request.user.get_avatar( size => 'tiny' ) %]" border="0" class="avatar"></a>
             </div>
             <div class="friend_request_content">
                 <a href="/user/[% request.user.username %]" style="color: #fff;">[% request.user.account.full_name %]</a><br>
@@ -36,7 +36,7 @@
         [% FOREACH friend IN friends %]
         <div class="friend_request round_corners_5px">
             <div class="friend_request_avatar">
-                <a href="/user/[% friend.friend.username %]"><img src="[% friend.friend.get_avatar( size => 'tiny' ) %]" border="0" class="round_corners_5px"></a>
+                <a href="/user/[% friend.friend.username %]"><img src="[% friend.friend.get_avatar( size => 'tiny' ) %]" border="0" class="avatar"></a>
             </div>
             <div class="friend_request_content">
                 <a href="/user/[% friend.friend.username %]" style="color: #fff;">[% friend.friend.account.full_name %]</a><br>

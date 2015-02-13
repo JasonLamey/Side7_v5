@@ -59,6 +59,10 @@ Many-to-many relationship with Music, mapping through AlbumMusicMap.
 
 Many-to-many relationship with Literature, mapping through AlbumLiteratureMap.
 
+=item Side7::UserContent::AlbumArtwork
+
+One-to-one relationship with AlbumArtwork.
+
 =back
 
 =cut
@@ -91,6 +95,12 @@ __PACKAGE__->meta->setup
     ],
     relationships =>
     [
+        artwork =>
+        {
+            type => 'one to one',
+            class => 'Side7::UserContent::AlbumArtwork',
+            column_map => { id => 'album_id' },
+        },
         images =>
         {
             type      => 'many to many',
@@ -202,6 +212,23 @@ sub get_content
 
     return \@content;
 }
+
+
+=head2 get_artwork( size => $size )
+
+Returns a C<string> containing the URI of the artwork associated with the Album.
+
+Parameters:
+
+=over 4
+
+=item size: A C<string> indicating the size of the image to generate. Takes 'tiny', 'small', 'medium', 'large', 'original'. Optional; defaults to 'small'.
+
+=back
+
+    my $artwork = $album->get_artwork( size => $size );
+
+=cut
 
 
 =head1 COPYRIGHT

@@ -443,6 +443,34 @@ sub get_avatar_directory
 }
 
 
+=head2 get_album_artwork_directory()
+
+Returns a C<string> for the User's album artwork directory on the filesystem.
+
+    my $user_album_artwork_directory = $user->get_album_artwork_directory();
+
+=cut
+
+sub get_album_artwork_directory
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return;
+    }
+
+    my $content_directory = $self->get_content_directory( 'image' ) . 'avatars/';
+
+    if ( ! -d $content_directory )
+    {
+    }
+
+    return $content_directory;
+}
+
+
 =head2 get_content_uri()
 
 Returns a string for the User's content URI. This is different from get_content_directory as it's relative

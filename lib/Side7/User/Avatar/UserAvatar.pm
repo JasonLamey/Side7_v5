@@ -59,12 +59,12 @@ Many-to-one relationship, with user_id as the FK
 __PACKAGE__->meta->setup
 (
     table   => 'user_avatars',
-    columns => [ 
+    columns => [
         id         => { type => 'serial', not_null => 1 },
-        user_id    => { type => 'integer',  not_null => 1 }, 
-        filename   => { type => 'varchar', length => 255, not_null => 1 }, 
-        title      => { type => 'varchar', length => 255 }, 
-        created_at => { type => 'datetime', not_null => 1, default => 'now()' }, 
+        user_id    => { type => 'integer',  not_null => 1 },
+        filename   => { type => 'varchar', length => 255, not_null => 1 },
+        title      => { type => 'varchar', length => 255 },
+        created_at => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
@@ -171,26 +171,26 @@ Parameters:
 
 sub get_cached_avatar_path
 {
-    my ( $self, %args ) = @_; 
+    my ( $self, %args ) = @_;
 
-    return undef if ! defined $self;
+    return if ! defined $self;
 
     my $size = delete $args{'size'} // 'original';
 
-    my ( $success, $error, $image_path ) = 
-            Side7::Utils::File::create_user_cached_file_directory( 
-                                                                    user_id      => $self->user_id, 
-                                                                    content_type => 'avatars', 
+    my ( $success, $error, $image_path ) =
+            Side7::Utils::File::create_user_cached_file_directory(
+                                                                    user_id      => $self->user_id,
+                                                                    content_type => 'avatars',
                                                                     content_size => $size,
                                                                  );
 
     if ( ! $success )
     {
-        return ( 
+        return (
                     Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
                     $error
                );
-    }   
+    }
 
     my $user_avatar_path = $self->user->get_avatar_directory();
 
@@ -201,25 +201,25 @@ sub get_cached_avatar_path
     if ( ! defined $format )
     {
         $LOGGER->warn( 'Getting avatar path FAILED while getting properties of input file >' . $user_avatar_path . $self->filename . '<' );
-        return( 
+        return(
                 Side7::UserContent::get_default_thumbnail_path( type => 'broken_image', size => $size ),
                 'A problem occurred while trying to get Avatar file.'
               );
-    }         
-    
+    }
+
     my $extension = '';
     if ( $format eq 'JPEG' )
     {
         $extension = '.jpg';
-    }   
+    }
     elsif ( $format eq 'GIF' )
     {
         $extension = '.gif';
-    }   
+    }
     elsif ( $format eq 'PNG' )
     {
         $extension = '.png';
-    }   
+    }
     else
     {
         return(
@@ -256,7 +256,7 @@ Parameters:
 sub create_cached_file
 {
     my ( $self, %args ) = @_;
-    
+
     return ( 0, 'Invalid Avatar Object' ) if ! defined $self;
 
     my $size = delete $args{'size'} // undef;

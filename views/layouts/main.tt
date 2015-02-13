@@ -31,6 +31,10 @@
 <!-- jPlayer -->
 <link type="text/css" href="/css/jplayer.blue.monday.min.css" rel="stylesheet" />
 <script type="text/javascript" src="/javascripts/jplayer/jquery.jplayer.min.js"></script>
+<!-- SoundManager2 -->
+<link type="text/css" href="/css/sm2-bar-ui.css" rel="stylesheet" />
+<script type="text/javascript" src="/javascripts/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script>
+<script type="text/javascript" src="/javascripts/soundmanager2/demo/bar-ui/script/bar-ui.js"></script>
 
 [% IF ( flash.message || flash.error ) %]
 <!-- jgrowl -->

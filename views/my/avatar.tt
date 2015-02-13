@@ -20,7 +20,7 @@
 <h1>My Avatar</h1>
 
 <h3>Your Current Avatar</h3>
-<img src="[% user.get_avatar( size => 'medium' ) %]" alt='[% user.username %]' title='[% user.username %]'><br>
+<img src="[% user.get_avatar( size => 'medium' ) %]" alt='[% user.username %]' title='[% user.username %]' class="avatar"><br>
 
 <h2>Upload A New Avatar</h2>
 <form action="/my/avatar/upload" method="post" enctype="multipart/form-data">
@@ -50,7 +50,7 @@
         [% IF user.account.avatar_type == 'Image' && uavatar.avatar_id == user.account.avatar_id %][% checked = ' checked' %][% ELSE %][% checked = '' %][% END %]
 <div style="float: left; margin-right: 5px; margin-bottom: 5px; text-align: center; height: 134px;">
     <div style="height: 110px;">
-        <img src="[% uavatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]">
+        <img src="[% uavatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]" class="avatar">
     </div>
     <div style="height: 20px; text-align: center; clear: both;">
         <input type="radio" name="avatar_id" value="u-[% uavatar.avatar_id %]"[% checked %] onClick="check_avatar_type( 'Image' );"> <img src="/images/icons/tick.gif" alt='Use' title='Use'> |
@@ -75,7 +75,7 @@
         [% IF user.account.avatar_type == 'System' && savatar.avatar_id == user.account.avatar_id %][% checked = ' checked' %][% ELSE %][% checked = '' %][% END %]
 <div style="float: left; margin-right: 5px; margin-bottom: 5px; text-align: center; height: 134px;">
     <div style="height: 110px;">
-        <img src="[% savatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]"><br>
+        <img src="[% savatar.uri %]" alt="[% alt_text %]" title="[% alt_text %]" class="avatar"><br>
     </div>
     <div style="height: 20px; text-align: center; clear: both;">
         <input type="radio" name="avatar_id" value="s-[% savatar.avatar_id %]"[% checked %] onClick="check_avatar_type( 'System' );"> <img src="/images/icons/tick.gif" alt='Use' title='Use'>
