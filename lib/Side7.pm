@@ -147,6 +147,7 @@ get '/news/?:page?' => sub
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $news->{'news_count'}, page => $page } );
 
     template 'news/article_list', {
+                                    title         => 'News',
                                     data          => $news,
                                     page          => $page,
                                     pagination    => $pagination,
@@ -174,6 +175,7 @@ get '/news/article/:news_id' => sub
     }
 
     template 'news/article', {
+                                 title => 'News: ' . $news_item->title,
                                  data => $news_item,
                              };
 };
@@ -261,7 +263,7 @@ get '/login' => sub
         }
     );
 
-    template 'login/login_form', { rd_url => $rd_url };
+    template 'login/login_form', { title => 'Login', rd_url => $rd_url };
 };
 
 # Login user action
@@ -324,7 +326,7 @@ post '/login' => sub
     }
 
     flash error => 'Either your Username or your Password (or both) is incorrect.';
-    return template 'login/login_form', { username => params->{'username'}, rd_url => params->{'rd_url'} };
+    return template 'login/login_form', { title => 'Login', username => params->{'username'}, rd_url => params->{'rd_url'} };
 };
 
 # Logout user action
@@ -338,7 +340,7 @@ get '/logout' => sub
 # Sign up new user form
 get '/signup' => sub
 {
-    template 'user/signup_form';
+    template 'user/signup_form', { title => 'Sign Up!' };
 };
 
 # Sign up new user action
@@ -362,6 +364,7 @@ post '/signup' => sub
         $err_message =~ s/<br \/>$//;
         flash error => $err_message;
         return template 'user/signup_form', {
+            title         => 'Sign Up!',
             username      => params->{'username'},
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
@@ -396,6 +399,7 @@ post '/signup' => sub
         $err_message =~ s/<br \/>$//;
         flash error => $err_message;
         return template 'user/signup_form', {
+            title         => 'Sign Up!',
             username      => params->{'username'},
             email_address => params->{'email_address'},
             birthday      => params->{'birthday'},
@@ -463,7 +467,7 @@ get '/confirm_user/?:confirmation_code?' => sub
     );
     $audit_log->save();
 
-    template 'user/confirmed_user';
+    template 'user/confirmed_user', { title => 'Confirm Your Account' };
 };
 
 # New User Post-redirect to Get
@@ -476,7 +480,7 @@ post '/confirm_user' => sub
 # Forgot password view
 get '/forgot_password' => sub
 {
-    template 'login/forgot_password_form.tt';
+    template 'login/forgot_password_form.tt', { title => 'Forgot My Password' };
 };
 
 # Forgot password initial action
@@ -487,7 +491,7 @@ post '/forgot_password' => sub
     if ( ! defined $username || $username =~ m/^\s+$/ )
     {
         flash error => 'You must enter a username in order to reset your password.';
-        return template 'login/forgot_password_form.tt';
+        return template 'login/forgot_password_form.tt', { title => 'Forgot My Password' };
     }
 
     my $user = Side7::User->new( username => $username );
@@ -495,7 +499,7 @@ post '/forgot_password' => sub
     if ( $loaded == 0 || ref( $user ) ne 'Side7::User' )
     {
         flash error => '<strong>' . $username . '</strong> is an invalid username. Could not retrieve any account under that name.';
-        return template 'login/forgot_password_form.tt';
+        return template 'login/forgot_password_form.tt', { title => 'Forgot My Password' };
     }
 
     my $reset_code = Side7::Utils::Crypt::sha1_hex_encode( $username . time() );
@@ -527,7 +531,7 @@ post '/forgot_password' => sub
         body    => $email_body,
     };
 
-    template 'login/forgot_password_confirm.tt', { username => $username };
+    template 'login/forgot_password_confirm.tt', { title => 'Confirm Password Reset', username => $username };
 };
 
 # Reset Password Action
@@ -571,7 +575,7 @@ get '/reset_password/?:reset_code?' => sub
     );
     $audit_log->save();
 
-    template 'login/reset_password_complete';
+    template 'login/reset_password_complete', { title => 'Password Reset Complete' };
 };
 
 # Reset Password Post-redirect to Get
@@ -583,7 +587,7 @@ post '/reset_password' => sub
 # Forgot username view
 get '/forgot_username' => sub
 {
-    template 'login/forgot_username_form.tt';
+    template 'login/forgot_username_form.tt', { title => 'Forgot My Username' };
 };
 
 # Forgot password action
@@ -594,7 +598,7 @@ post '/forgot_username' => sub
     if ( ! defined $email_address || $email_address =~ m/^\s*$/ )
     {
         flash error => 'You must enter an e-mail address in order to reset your password.';
-        return template 'login/forgot_username_form.tt';
+        return template 'login/forgot_username_form.tt', { title => 'Forgot My Username' };
     }
 
     my $user = Side7::User->new( email_address => $email_address );
@@ -602,7 +606,7 @@ post '/forgot_username' => sub
     if ( $loaded == 0 || ref( $user ) ne 'Side7::User' )
     {
         $LOGGER->info( 'Invalid e-mail address entered for forgot_username: >' . $email_address . '<' );
-        return template 'login/forgot_username_complete.tt';
+        return template 'login/forgot_username_complete.tt', { title => 'Forgot My Username' };
     }
 
     $LOGGER->info( 'Sending forgot_username e-mail to User >' . $user->username . '< at >' . $email_address . '<' );
@@ -631,7 +635,7 @@ post '/forgot_username' => sub
     );
     $audit_log->save();
 
-    template 'login/forgot_username_complete';
+    template 'login/forgot_username_complete', { title => 'Username Retrieval Complete' };
 };
 
 ###########################
@@ -657,6 +661,7 @@ post '/search/?' => sub
                                                                 );
 
     template 'search/search_form', {
+                                    title        => 'Search',
                                     look_for     => params->{'look_for'},
                                     results      => $search_results,
                                     search_error => $search_error,
@@ -713,14 +718,14 @@ get '/faq/?:category_id?/?:entry_id?/?' => sub
 
         my @entries = sort { $a->{'priority'} <=> $b->{'priority'} } ( @{ ( $category->{'faq_entries'} // [] ) } );
 
-        return template 'faq', { category => $category, entries => \@entries };
+        return template 'faq', { title => 'FAQ', category => $category, entries => \@entries };
     }
     else
     {
         # FAQ General Page
         my $categories = Side7::FAQCategory::Manager->get_faq_categories( sort_by => 'priority ASC' );
 
-        return template 'faq', { categories => $categories };
+        return template 'faq', { title => 'FAQ', categories => $categories };
     }
 };
 
@@ -746,6 +751,7 @@ get qr{/user_directory/?([A-Za-z0-9_]?)/?(\d*)/?} => sub
     my $pagination = Side7::Utils::Pagination::get_pagination( { total_count => $user_count, page => $page } );
 
     template 'user/user_directory', {
+                                        title         => 'User Directory: ' . uc( $initial ),
                                         data          => {
                                                             initials   => $initials,
                                                             users      => $users,
@@ -767,12 +773,13 @@ get '/user/:username' => sub
                                                             );
 
     my $friend_link = undef;
-    if ( defined session( 'logged_in' ) )
+    if ( defined session( 'logged_in' ) && defined $user && ref( $user ) eq 'Side7::User' )
     {
         my $visitor = Side7::User::get_user_by_id( session( 'user_id' ) );
         if ( defined $visitor && ref( $visitor ) eq 'Side7::User' )
         {
             my $is_linked = $visitor->is_friend_linked( user_id => $user->id );
+
             if ( $is_linked == 1 )
             {
                 $friend_link = 'friend';
@@ -795,6 +802,7 @@ get '/user/:username' => sub
     if ( defined $user && ref( $user ) eq 'Side7::User' )
     {
         template 'user/show_user_profile', {
+                                                title         => $user->account->full_name . ' (' . $user->username . ')',
                                                 user          => $user,
                                                 filtered_data => $filtered_data,
                                                 friend_link   => $friend_link,
@@ -839,7 +847,7 @@ get '/user/:username/gallery/?' => sub
         redirect '/'; # TODO: REDIRECT TO USER-NOT-FOUND.
     }
 
-    template 'user/show_gallery', { user => $user, gallery => $gallery };
+    template 'user/show_gallery', { title => 'Gallery For ' . $user->account->full_name, user => $user, gallery => $gallery };
 };
 
 # S7v4 Image Path Redirect
@@ -862,6 +870,8 @@ get '/image/:image_id/?' => sub
     if ( defined $image_hash && scalar( keys %{ $image_hash } ) > 0 )
     {
         template 'user_content/image_details', {
+                                                title         => '"' . $image_hash->{'content'}->title . '" by ' .
+                                                                 $image_hash->{'content'}->user->account->full_name,
                                                 user_content  => $image_hash,
                                                 owner_ratings => $CONFIG->{'owner_ratings'},
                                                };
@@ -909,6 +919,8 @@ get '/music/:music_id/?' => sub
             flash error => 'Error: Could not retrieve audio file.';
         }
         template 'user_content/music_details', {
+                                                title         => '"' . $music_hash->{'content'}->title . '" by ' .
+                                                                 $music_hash->{'content'}->user->account->full_name,
                                                 user_content  => $music_hash,
                                                 owner_ratings => $CONFIG->{'owner_ratings'},
                                                };
@@ -2635,8 +2647,9 @@ get '/my/albums/new/?' => sub
 ## Submit New Album Action
 post '/my/albums/new' => sub
 {
-    my $album_name        = params->{'name'}        // undef;
-    my $album_description = params->{'description'} // undef;
+    my $album_name        = params->{'name'}          // undef;
+    my $album_description = params->{'description'}   // undef;
+    my $album_artwork     = params->{'album_artwork'} // undef;
     my $user = Side7::User::get_user_by_id( session( 'user_id' ) );
 
     # Simple validation
@@ -2656,10 +2669,36 @@ post '/my/albums/new' => sub
                                                   );
     $new_album->save();
 
+    if ( defined $album_artwork )
+    {
+        my $upload_dir = $user->get_album_artwork_directory();
+
+        $LOGGER->debug( 'UPLOAD DIR: >' . $upload_dir . '<' );
+
+        # Upload the file
+        my $file = request->upload( 'album_artwork' );
+
+        # Copy file to the User's directory
+        $file->copy_to( $upload_dir . $file->filename() );
+
+        my $new_artwork = Side7::UserContent::AlbumArtwork->new(
+                                                                album_id   => $new_album->id,
+                                                                filename   => $file->filename(),
+                                                                created_at => DateTime->now(),
+                                                                updated_at => DateTime->now(),
+                                                               );
+
+        $new_artwork->save();
+    }
+
     # Audit Log
     my $audit_msg = 'Custom Album Created - <b>Successful</b><br>' .
                     'Album owned by &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' )<br>' .
                     'created by &gt;' . session( 'username' ) . '&lt; ( User ID: ' . session( 'user_id' ) . ' ).<br>';
+    if ( defined $album_artwork )
+    {
+        $audit_msg .= 'Artwork Added: &gt;' . $album_artwork . '&lt;.<br>';
+    }
 
     my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
     my $audit_log = Side7::AuditLog->new(
@@ -2669,7 +2708,9 @@ post '/my/albums/new' => sub
                                           user_id        => session( 'user_id' ),
                                           affected_id    => $new_album->id(),
                                           original_value => undef,
-                                          new_value      => 'name: &gt;' . $new_album->name() . '&lt;<br>description: &gt;' . $new_album->description() . '&lt;',
+                                          new_value      => 'name: &gt;' . $new_album->name() .
+                                                            '&lt;<br>description: &gt;' . $new_album->description() . '&lt;<br>' .
+                                                            'artwork: &gt;' . $album_artwork . '&lt;',
                                           timestamp      => DateTime->now(),
     );
     $audit_log->save();
@@ -2724,6 +2765,39 @@ get '/my/albums/:album_id/delete_confirmed/?' => sub
     my $original_album = $album->clone();
     my $affected_user  = Side7::User::get_user_by_id( $original_album->user_id() );
 
+    if ( defined $album->artwork )
+    {
+        my ( $success, $error ) = $album->delete_album_artwork;
+        if ( defined $error && $error ne '' )
+        {
+            $LOGGER->warn( 'Album Artwork for Album >' . $album->name . '< (ID: ' . $album->id .
+                            ' ) could not be deleted: ' . $error );
+        }
+        else
+        {
+            # Audit Log
+            my $audit_msg = 'Album Artwork Deleted - <b>Successful</b><br>';
+            $audit_msg   .= 'The Album Artwork for Album &gt;' . $original_album->name() . '&lt; ( Album ID: ' .
+                            $original_album->id() .  ' ) owned by<br>';
+            $audit_msg   .= 'User &gt;' . $affected_user->username() . '&lt; ( User ID: ' . $affected_user->id() .
+                            ' ) has been deleted<br>';
+            $audit_msg   .= 'by User &gt;<b>' . $user->username() . '</b>&lt; ( User ID: ' . $user->id() . ' ).<br>';
+
+            my $remote_host = ( defined request->remote_host() ) ? ' - ' . request->remote_host() : '';
+            my $audit_log = Side7::AuditLog->new(
+                                                  title          => 'Album Artwork Deleted',
+                                                  description    => $audit_msg,
+                                                  ip_address     => request->address() . $remote_host,
+                                                  user_id        => session( 'user_id' ),
+                                                  affected_id    => $original_album->id(),
+                                                  original_value => undef,
+                                                  new_value      => undef,
+                                                  timestamp      => DateTime->now(),
+            );
+            $audit_log->save();
+        }
+    }
+
     # Remove Album Mappings
     $album->images( [] );
     $album->music( [] );
@@ -2775,7 +2849,7 @@ get '/my/albums/:album_id/edit' => sub
     my $user   = Side7::User::get_user_by_id( session( 'user_id' ) );
 
     my $album  = Side7::UserContent::Album->new( id => params->{'album_id'} );
-    my $loaded = $album->load( speculative => 1 );
+    my $loaded = $album->load( speculative => 1, with_objects => [ 'artwork' ] );
 
     if ( $loaded == 0 || ref( $album ) ne 'Side7::UserContent::Album' )
     {
@@ -2864,6 +2938,37 @@ post '/my/albums/:album_id/save' => sub
     {
         $updated_album->updated_at( DateTime->now() );
         $updated_album->save();
+    }
+
+    if ( defined params->{album_artwork} )
+    {
+        my $upload_dir = $user->get_album_artwork_directory();
+
+        $LOGGER->debug( 'UPLOAD DIR: >' . $upload_dir . '<' );
+
+        if ( defined $updated_album->artwork )
+        {
+            my ( $success, $error ) = $updated_album->delete_album_artwork();
+            if ( defined $error && $error ne '' )
+            {
+                $LOGGER->warn( 'Could not delete previous album artwork for album >' . $updated_album->name . '<: ' . $error );
+            }
+        }
+
+        # Upload the file
+        my $file = request->upload( 'album_artwork' );
+
+        # Copy file to the User's directory
+        $file->copy_to( $upload_dir . $file->filename() );
+
+        my $new_artwork = Side7::UserContent::AlbumArtwork->new(
+                                                                album_id   => $updated_album->id,
+                                                                filename   => $file->filename(),
+                                                                created_at => DateTime->now(),
+                                                                updated_at => DateTime->now(),
+                                                               );
+
+        $new_artwork->save();
     }
 
     # Audit Log
@@ -3843,7 +3948,7 @@ use Dancer::Plugin::ValidateTiny;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::DirectoryView;
 use Dancer::Plugin::TimeRequests;
-use Dancer::Plugin::NYTProf;
+#use Dancer::Plugin::NYTProf;
 
 use DateTime;
 use List::Util;

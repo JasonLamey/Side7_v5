@@ -441,7 +441,7 @@ sub get_pronoun
                                 subject         => 'she',
                                 object          => 'her',
                                 poss_determiner => 'her',
-                                poss_pronoun    => 'hers',
+                                poss_pronoun    => 'her',
                                 reflexive       => 'herself',
                               },
                     other  => {

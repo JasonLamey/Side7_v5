@@ -2,7 +2,7 @@
 <style>
 #msgs_container
 {
-    float: left;
+    display: inline-block;
     width: 100%;
     height: 500px;
     padding: 5px;
@@ -87,7 +87,6 @@
 
 #msg_actions
 {
-    height: 22px;
     margin-bottom: 5px;
     padding: 5px;
     -webkit-border-radius: 5px;
@@ -104,34 +103,37 @@
 
 </style>
 
-<h2>Messages</h2>
-<div id="msgs_container">
-    <div id="msgs_list">
-    [% IF pms.size == 0 %]
-        <div style="text-align: center; font-weight: bold; font-size: 12pt;">You have no messages.</div>
-    [% ELSE %]
-        [% FOREACH msg IN pms %]
-            [% icon = 'email.gif' %][% header_class = 'msg_header' %]
-            [% IF msg.status == 'Read' %][% icon = 'email_open.gif' %]
-            [% ELSIF msg.status == 'Replied To' %][% icon = 'email_go.gif' %]
-            [% ELSE %][% header_class = 'msg_header_new' %][% END %]
-            [% IF msg.sender_id == 0 %][% sender = 'Oni (System Messenger)' %][% ELSE %][% sender = msg.sender.username %][% END %]
-            <div class="[% header_class %]">
-                <a href="/my/pms/message/[% msg.id %]" target="msg_window"></a>
-                <div class="msg_icon"><img src="/images/icons/[% icon %]" alt='[% msg.status %]' title='[% msg.status %]' width="16" height="16" border="0"></div>
-                <div class="msg_header_details">
-                    <strong>From:</strong> [% sender %]<br>
-                    <strong>Sent:</strong> [% date.format( msg.created_at, '%d %b, %Y %H:%M' ) %]<br>
-                    [% msg.subject %]
+<h1>My Messages</h1>
+
+<div class="content_box">
+    <div id="msgs_container">
+        <div id="msgs_list">
+        [% IF pms.size == 0 %]
+            <div style="text-align: center; font-weight: bold; font-size: 12pt;">You have no messages.</div>
+        [% ELSE %]
+            [% FOREACH msg IN pms %]
+                [% icon = 'email.gif' %][% header_class = 'msg_header' %]
+                [% IF msg.status == 'Read' %][% icon = 'email_open.gif' %]
+                [% ELSIF msg.status == 'Replied To' %][% icon = 'email_go.gif' %]
+                [% ELSE %][% header_class = 'msg_header_new' %][% END %]
+                [% IF msg.sender_id == 0 %][% sender = 'Oni (System Messenger)' %][% ELSE %][% sender = msg.sender.username %][% END %]
+                <div class="[% header_class %]">
+                    <a href="/my/pms/message/[% msg.id %]" target="msg_window"></a>
+                    <div class="msg_icon"><img src="/images/icons/[% icon %]" alt='[% msg.status %]' title='[% msg.status %]' width="16" height="16" border="0"></div>
+                    <div class="msg_header_details">
+                        <strong>From:</strong> [% sender %]<br>
+                        <strong>Sent:</strong> [% date.format( msg.created_at, '%d %b, %Y %H:%M' ) %]<br>
+                        [% msg.subject %]
+                    </div>
                 </div>
-            </div>
+            [% END %]
         [% END %]
-    [% END %]
-    </div>
-    <div id="msg_content">
-        <div id="msg_actions">
-            <form style="display: inline;"><input type="button" value="Compose New Message" onClick="msg_window.location='/my/pms/compose'"></form>
         </div>
-        <iframe name='msg_window' id="msg_window" height='465' seamless='seamless' width='100%' frameborder='0'></iframe>
+        <div id="msg_content">
+            <div id="msg_actions">
+                <form style="display: inline-block;"><input type="button" value="Compose New Message" onClick="msg_window.location='/my/pms/compose'"></form>
+            </div>
+            <iframe name='msg_window' id="msg_window" height='440' seamless='seamless' width='100%' frameborder='0'></iframe>
+        </div>
     </div>
 </div>

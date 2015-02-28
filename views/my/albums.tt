@@ -13,10 +13,16 @@
     [% edit_link = '<a href="/my/albums/' _ album.id _ '/edit">Edit</a>' %]
     [% delete_link = '<a href="/my/albums/' _ album.id _ '/delete">Delete</a>' %]
     [% IF album.system == 0 %][% album_controls = " | $edit_link | $delete_link" %][% END %]
-<div style="margin-top: 5px;">
-    <div style="float: right; margin-left: 10px;"><a href="/my/albums/[% album.id %]/manage">Manage Content</a>[% album_controls %]</div>
-    <div style="float: right; margin-left: 10px;"><strong>Created:</strong> [% date.format( album.created_at, '%b %d, %Y' ) %] / <strong>Updated:</strong> [% date.format( album.updated_at, '%b %d, %Y' ) %]</div>
-    <div style="float: right; margin-left: 10px;"><strong>Items:</strong> [% album.content_count %]</div>
-    <span style="font-weight: bold; font-size: 11pt;">[% album.name %]</span> 
+<div style="margin-top: 5px; width: 95%; display: table; padding: 0.2em 0.5em;">
+    <div style="display: table-cell; vertical-align: middle; width: 55px;">
+        <img src="[% album.get_artwork_uri( size => 'tiny' ) %]" border="0" alt="[% album.name %]" title="[% album.name %]">
+    </div>
+    <div style="display: table-cell; vertical-align: middle;">
+        <span style="font-weight: bold; font-size: 11pt;">[% album.name %]</span>
+    </div>
+    <div style="display: table-cell; vertical-align: middle; width: 10%;"><strong>Items:</strong> [% album.content_count %]</div>
+    <div style="display: table-cell; vertical-align: middle; width: 20%;"><strong>Created:</strong> [% date.format( album.created_at, '%b %d, %Y' ) %] / <strong>Updated:</strong> [% date.format( album.updated_at, '%b %d, %Y' ) %]</div>
+    <div style="display: table-cell; vertical-align: middle; text-align: right; width: 25%;"><a href="/my/albums/[% album.id %]/manage">Manage Content</a>[% album_controls %]</div>
+
 </div>
 [% END %]

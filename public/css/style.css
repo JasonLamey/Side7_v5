@@ -31,13 +31,13 @@ h1 {
 }
 
 a  {
-    color: #03c;
+    color: #447EAC;
+    font-weight: bold;
     text-decoration: none;
 }
 a:hover {
-    background-color: #03c;
-    color: white;
-    text-decoration: none;
+    color: #553333;
+    text-decoration: underline;
 }
 
 #page {
@@ -227,7 +227,7 @@ a:hover {
     font-family: "Lucida Grande", Arial, sans-serif;
     font-weight: bold;
     background-color: #fff;
-    color: 553333;
+    color: #553333;
     padding: 8px;
     border: none;
     border-radius: 5px;
@@ -264,52 +264,32 @@ a:hover {
     width: auto;
     box-shadow: 0 2px 4px 0 #ccc;
 }
-#site_menu > div > ul > li > a,
-#site_menu > div > ul > li > a:hover,
-#site_menu > div > ul > li > a:visited,
-#site_menu > div > ul > li > a:active,
-#site_menu > div > div > ul > li > a,
-#site_menu > div > div > ul > li > a:hover,
-#site_menu > div > div > ul > li > a:visited,
-#site_menu > div > div > ul > li > a:active,
-#site_menu > div > div > a,
-#site_menu > div > div > a:hover,
-#site_menu > div > div > a:visited,
-#site_menu > div > div > a:active
-{
-    color: #2D2E2F;
-    text-decoration: none;
-    background: none;
-}
-#site_menu > div > ul > li > a:hover,
-#site_menu > div > div > ul > li > a:hover,
-#site_menu > div > div > a:hover
-{
-    text-decoration: underline;
+#main_menu {
+    height: 30px;
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
 }
 #main_menu > ul {
     margin: 0;
     padding: 0;
-    display: table-cell;
-    vertical-align: center;
+    float: left;
+    list-style-type: none;
 }
 #main_menu > ul > li {
+    display: inline;
+}
+#main_menu > ul > li > a {
     display: block;
     float: left;
-    margin: 0;
-    margin-right: 20px;
+    background-color: #EBF5FF;
+    color: #2D2E2F;
+    text-decoration: none;
+    padding: 8px 10px;
 }
-#user_menu > div > ul {
-    margin: 0;
-    padding: 0;
-    display: table-cell;
-    vertical-align: center;
-}
-#user_menu > div > ul > li {
-    display: block;
-    float: right;
-    margin: 0;
-    margin-left: 20px;
+#main_menu > ul > li > a:hover {
+    color: #EBF5FF;
+    background-color: #2D2E2F;
 }
 #user_menu {
     float: right;
@@ -320,11 +300,42 @@ a:hover {
     text-align: right;
     vertical-align: middle;
 }
-#main_menu {
-    height: 30px;
-    display: table-cell;
-    text-align: left;
-    vertical-align: middle;
+#user_menu > div > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    float: right;
+}
+#user_menu > div > ul > li {
+    display: inline;
+}
+#user_menu > div > ul > li > a {
+    display: block;
+    float: right;
+    background-color: #EBF5FF;
+    color: #2D2E2F;
+    text-decoration: none;
+    padding: 8px 10px;
+}
+#user_menu > div > #login_signup
+{
+    display: inline;
+}
+#user_menu > div > #login_signup > a
+{
+    display: inline-block;
+    background-color: #EBF5FF;
+    color: #2D2E2F;
+    text-decoration: none;
+    padding: 8px 10px;
+}
+#user_menu > div > #login_signup > a:hover,
+#user_menu > div > ul > li > a:hover {
+    color: #EBF5FF;
+    background-color: #2D2E2F;
+}
+#user_menu > div > ul > li > div#username {
+    padding-right: 10px;
 }
 .admin_menu {
     width:200px;
@@ -456,9 +467,9 @@ a:hover {
 .error_message_box
 {
     border: solid 2px #f00;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
     padding: 5px;
     background: repeating-linear-gradient(
         135deg,
@@ -497,6 +508,7 @@ input, textarea, select {
     font-size: 10pt;
     padding: 8px;
     border: solid 1px #ccc;
+    margin-bottom: 3px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -508,9 +520,9 @@ label, legend {
 }
 
 label {
-    width: 300px;
+    width: 200px;
     text-align: right;
-    vertical-align: text-bottom;
+    vertical-align: middle;
     margin-right: 5px;
     font-size: 10pt;
     padding: 0;
@@ -519,8 +531,6 @@ label {
 
 legend {
     font-size: 12pt;
-    /* border-left: solid 2px #99c;
-    border-right: solid 2px #99c; */
     padding: 0 5px;
     text-shadow:    1px 1px 0 #fff,
                     -1px -1px 0 #fff,
@@ -533,15 +543,20 @@ legend {
 }
 
 fieldset {
-    /* border: solid 2px #99c; */
-    border: none;
+    border: solid 1px #ddd;
     background-color: #EBF5FF;
     margin-top: 0.5em;
     margin-bottom: 0.2em;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 1px 2px 5px #ccc inset;
 }
 
 .form_field {
-    height: 1.8em;
+    display: block;
+    min-height: 2em;
+    margin-bottom: 0.5em;
     vertical-align: middle;
 }
 
@@ -703,6 +718,16 @@ th, td {
     border-radius: 10px;
 }
 
+#album_artwork_form
+{
+    float: right;
+    margin: 0;
+    margin-right: 15px;
+    display: table-cell;
+    vertical-align: top;
+    text-align: center;
+}
+
 hr.faded {
   clear: both;
   float: none;
@@ -731,7 +756,7 @@ hr.faded {
 
 .sceditor_block {
     display: inline-block;
-    padding-left: 175px;
+    padding-left: 100px;
 }
 
 textarea.user_input_textarea {
@@ -1028,9 +1053,9 @@ div#jkit-tooltip {
     opacity: 0.9;
     border: solid 1px #336;
     color: #000;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
     -webkit-box-shadow:0 0 5px #aaa;
     -moz-box-shadow: 0 0 5px #aaa;
     box-shadow:0 0 5px #aaa;

@@ -8,15 +8,24 @@
 <a href="/my/albums">Albums</a> &raquo; '[% album.name %]' &raquo; Edit Album Details<br>
 <a href="/my/albums/[% album.id %]/manage">Manage Album Content</a><br>
 
-<form method="post" action="/my/albums/[% album.id %]/save">
+<form method="post" action="/my/albums/[% album.id %]/save" enctype="multipart/form-data">
     <input type="hidden" name="system" value="[% album.system %]">
+    [% IF album.artwork.filename %]
+    <div id="album_artwork_form">
+        <img src="[% album.get_artwork_uri( size => 'small' ) %]" border="0" alt="[% album.name %]" title="[% album.name %]">
+    </div>
+    [% END %]
     <label for="name">Album Name:</label>
     <input type="text" maxlength="255" size="30" value="[% album.name %]" name="name"[% is_disabled %]>
     <br>
 
+    <label for="album_artwork">Album Artwork:</label>
+    <input type="file" name="album_artwork"> (Optional)
+    <br>
+
     <label for="description">Album Description:</label><br>
-    <div style="margin-left: 300px;">
-    <textarea name="description" rows="15" cols="90"[% is_disabled %]>[% album.description %]</textarea>
+    <div class="sceditor_block">
+        <textarea name="description" rows="15" cols="90"[% is_disabled %]>[% album.description %]</textarea>
     </div>
     <br>
 

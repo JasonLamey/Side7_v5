@@ -2,9 +2,9 @@
 
 [% PROCESS 'site/js_snippets/_sceditor_prime.tt' %]
 
-<div class="content_box">
+<h1>My Profile</h1>
 
-<h2>My Profile</h2>
+<div class="content_box">
 
 <form action='/my/profile' method='post'>
 <input type="hidden" name="user_id" value="[% user.id %]">

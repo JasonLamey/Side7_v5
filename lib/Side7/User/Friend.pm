@@ -69,7 +69,7 @@ __PACKAGE__->meta->setup
         updated_at    => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
-    unique_key => [ [ 'user_id', 'friend_id' ], [ 'user_id' ], [ 'friend_id' ],  ],
+    unique_keys => [ [ 'user_id', 'friend_id', 'status' ], [ 'user_id', 'friend_id' ] ],
     foreign_keys =>
     [
         user =>

@@ -68,7 +68,6 @@ sub new
     $CONFIG->{'album'}->{'size'}->{'medium'}   = '300x300';
     $CONFIG->{'album'}->{'size'}->{'large'}    = '600x600';
     $CONFIG->{'album'}->{'cached_file_path'}   = '/data/cached_files/album_artwork/';
-    $CONFIG->{'album'}->{'default_thumb_path'} = '/images/defaults/:::SIZE:::/default_album.jpg';
 
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';

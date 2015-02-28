@@ -25,14 +25,16 @@
         <div id="user_menu">
             <div>
                 [% IF not session.logged_in %]
+                <div id="login_signup">
                 <a href="[% login_url %]">Log In</a> | <a href="[% signup_url %]">Sign Up</a>
+                </div>
                 [% ELSE %]
                 <ul>
                     <li><a href="[% logout_url %]">Log Out</a></li>
                     <li><a href="/user/[% session.username %]/gallery">Gallery</a></li>
                     <li><a href="/user/[% session.username %]">Profile</a></li>
                     <li><a href="/my/home">Home</a></li>
-                    <li>[% session.username %]:</li>
+                    <li><div id="username">[% session.username %]:</div></li>
                 </ul>
                 [% END %]
             </div> <!-- end user_menu internal div -->
@@ -41,8 +43,11 @@
             <ul>
                 <li><a href="/">Main</a></li>
                 <li><a href="/news">News</a></li>
-                <li><a href="/faq">F.A.Q.</a></li>
+                <li><a href="/browse">Browse</a></li>
                 <li><a href="/user_directory">User Directory</a></li>
+                <li><a href="/store">Store</a></li>
+                <li><a href="/help">Help</a></li>
+                <li><a href="/faq">F.A.Q.</a></li>
             </ul>
         </div> <!-- end main_menu -->
     </div> <!-- end site_menu -->

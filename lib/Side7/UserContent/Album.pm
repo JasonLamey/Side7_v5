@@ -214,7 +214,7 @@ sub get_content
 }
 
 
-=head2 get_artwork( size => $size )
+=head2 get_artwork_uri( size => $size )
 
 Returns a C<string> containing the URI of the artwork associated with the Album.
 
@@ -226,9 +226,99 @@ Parameters:
 
 =back
 
-    my $artwork = $album->get_artwork( size => $size );
+    my $artwork = $album->get_artwork_uri( size => $size );
 
 =cut
+
+sub get_artwork_uri
+{
+    # Since we call this from templates, which passes named params as a hash ref, let's ensure we're getting a reference vs a hash.
+    my $self = undef;
+    my %args = ();
+    if ( ref( $_[-1] ) eq 'HASH' )
+    {
+        $self = $_[0];
+        %args = %{ $_[-1] };
+    }
+    else
+    {
+        ( $self, %args ) = @_;
+    }
+
+    my $size  = delete $args{'size'}  // 'small';
+
+    if ( ! defined $self || ref( $self ) ne 'Side7::UserContent::Album' )
+    {
+        $LOGGER->warn( 'Invalid Album object passed in when getting Artwork.' );
+        return Side7::UserContent::get_default_thumbnail_path( type => 'default_album', size => $size );
+    }
+
+    my $artwork_uri = '';
+    my $error       = '';
+
+    if ( defined $self->artwork )
+    {
+        ( $artwork_uri, $error ) = $self->artwork->get_cached_album_artwork_path( size => $size );
+
+        if ( defined $error && $error ne '' )
+        {
+            $LOGGER->warn( $error );
+            $artwork_uri = Side7::UserContent::get_default_thumbnail_path( type => 'default_album', size => $size );
+        }
+        else
+        {
+            if ( ! -f $artwork_uri )
+            {
+                my ( $success, $error ) = Side7::Utils::Image::create_cached_album_artwork( image => $self->artwork, size => $size );
+                if ( defined $error && $error ne '' )
+                {
+                    $LOGGER->warn( $error );
+                    $artwork_uri = Side7::UserContent::get_default_thumbnail_path( type => 'default_album', size => $size );
+                }
+            }
+        }
+    }
+    else
+    {
+        $artwork_uri = Side7::UserContent::get_default_thumbnail_path( type => 'default_album', size => $size );
+    }
+
+    $artwork_uri =~ s/^\/data//;
+    return $artwork_uri;
+}
+
+
+=head2 delete_album_artwork()
+
+Calls the deletion of the associated Album Artwork object, including the original and cached files.
+Receives an array of a success C<boolean> and an error C<string>.
+
+Parameters: None
+
+    my ( $success, $error ) = $album->delete_album_artwork;
+
+=cut
+
+sub delete_album_artwork
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self || ref( $self ) ne 'Side7::UserContent::Album' )
+    {
+        $LOGGER->error( 'Invalid Album object referenced.' );
+        return ( 0, 'Invalid Album object referenced when attempting to delete Artwork.' );
+    }
+
+    if ( ! defined $self->artwork )
+    {
+        $LOGGER->error( 'Album has no associated Artwork when attempting to delete Artwork.' );
+        return ( 0, 'Album has no associated Artwork when attemtping to delete Artwork.' );
+    }
+
+    my ( $success, $error ) = $self->artwork->delete_album_artwork();
+
+    return( $success, $error );
+}
 
 
 =head1 COPYRIGHT

@@ -1,4 +1,6 @@
 
+    <h1>My Gallery</h1>
+
     <div class="content_box">
         <h2>Gallery Information</h2>
         [% PROCESS 'my/_gallery_stats_gauges.tt' %]

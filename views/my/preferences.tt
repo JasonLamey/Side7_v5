@@ -1,240 +1,241 @@
 [% USE date %]
-<h2>My Preferences</h2>
+<h1>My Preferences</h1>
 
+<div class="content_box">
 <form action='/my/preferences' method='post'>
 <input type="hidden" name="user_id" value="[% user_preferences.user_id %]">
     <fieldset>
         <legend>Site Preferences</legend>
-        [% IF user_preferences.display_signature == 1 %]
-            [% ds_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% ds_checked = '' %]
-        [% END %]
-        <label for="display_signature">Display Signature In Posts
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle display of your signature in new forum posts]"> :
-        </label>
-        <input type="checkbox" name="display_signature" value="1"[% ds_checked %]>
-        <br>
+        <div class="form_field">
+            [% IF user_preferences.display_signature == 1 %]
+                [% ds_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% ds_checked = '' %]
+            [% END %]
+            <label for="display_signature">Display Signature In Posts:</label>
+            <input type="checkbox" name="display_signature" value="1"[% ds_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle display of your signature in new forum posts]">
+        </div>
 
-        [% IF user_preferences.show_management_thumbs == 1 %]
-            [% smt_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% smt_checked = '' %]
-        [% END %]
-        <label for="show_management_thumbs">Display Thumbnails On Management Pages
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle display of content thumbnails on Gallery management pages. Can speed up the display of the page.]"> :
-        </label>
-        <input type="checkbox" name="show_management_thumbs" value="1"[% smt_checked %]>
-        <br>
+        <div class="form_field">
+            [% IF user_preferences.show_management_thumbs == 1 %]
+                [% smt_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% smt_checked = '' %]
+            [% END %]
+            <label for="show_management_thumbs">Display Thumbnails On Management Pages:</label>
+            <input type="checkbox" name="show_management_thumbs" value="1"[% smt_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle display of content thumbnails on Gallery management pages. Can speed up the display of the page.]">
+        </div>
 
-        <label for="thumbnail_size">Prefered Thumbnail Size
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the thumbnail size to use when browsing the site.]"> :
-        </label>
-        <select name="thumbnail_size">
-        [% FOREACH size IN enums.thumbnail_size %]
-        [% IF user_preferences.thumbnail_size == size %]
-            [% ts_selected = ' selected="selected"' %]
-        [% ELSE %]
-            [% ts_selected = '' %]
-        [% END %]
-            <option value="[% size %]"[% ts_selected %]>[% size %]</option>
-        [% END %]
-        </select>
-        <br>
+        <div class="form_field">
+            <label for="thumbnail_size">Prefered Thumbnail Size:</label>
+            <select name="thumbnail_size">
+            [% FOREACH size IN enums.thumbnail_size %]
+            [% IF user_preferences.thumbnail_size == size %]
+                [% ts_selected = ' selected="selected"' %]
+            [% ELSE %]
+                [% ts_selected = '' %]
+            [% END %]
+                <option value="[% size %]"[% ts_selected %]>[% size %]</option>
+            [% END %]
+            </select>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the thumbnail size to use when browsing the site.]">
+        </div>
 
-        <label for="content_display_type">Default Content Display Mode
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default format to use when displaying content on the site.]"> :
-        </label>
-        <select name="content_display_type">
-        [% FOREACH type IN enums.content_display_type %]
-        [% IF user_preferences.content_display_type == type %]
-            [% cdt_selected = ' selected="selected"' %]
-        [% ELSE %]
-            [% cdt_selected = '' %]
-        [% END %]
-            <option value="[% type %]"[% cdt_selected %]>[% type %]</option>
-        [% END %]
-        </select>
-        <br>
+        <div class="form_field">
+            <label for="content_display_type">Default Content Display Mode:</label>
+            <select name="content_display_type">
+            [% FOREACH type IN enums.content_display_type %]
+            [% IF user_preferences.content_display_type == type %]
+                [% cdt_selected = ' selected="selected"' %]
+            [% ELSE %]
+                [% cdt_selected = '' %]
+            [% END %]
+                <option value="[% type %]"[% cdt_selected %]>[% type %]</option>
+            [% END %]
+            </select>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default format to use when displaying content on the site.]">
+        </div>
 
-        [% IF user_preferences.show_m_thumbs == 1 %]
-            [% srmt_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% srmt_checked = '' %]
-        [% END %]
-        <label for="show_m_thumbs">Show Rated M Thumbnails
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle whether or not to display thumbnails for content that is rated M.]"> :
-        </label>
-        <input type="checkbox" name="show_m_thumbs" value="1"[% srmt_checked %]>
-        <br>
+        <div class="form_field">
+            [% IF user_preferences.show_m_thumbs == 1 %]
+                [% srmt_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% srmt_checked = '' %]
+            [% END %]
+            <label for="show_m_thumbs">Show Rated M Thumbnails:</label>
+            <input type="checkbox" name="show_m_thumbs" value="1"[% srmt_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle whether or not to display thumbnails for content that is rated M.]">
+        </div>
 
         [% IF is_adult == 1 %]
-        [% IF user_preferences.show_adult_content == 1 %]
-            [% sac_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% sac_checked = '' %]
-        [% END %]
-        <label for="show_adult_content">Show Adult Content
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle whether or not to display content that is rated as Adult content.]"> :
-        </label>
-        <input type="checkbox" name="show_adult_content" value="1"[% sac_checked %]>
-        <br>
+        <div class="form_field">
+            [% IF user_preferences.show_adult_content == 1 %]
+                [% sac_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% sac_checked = '' %]
+            [% END %]
+            <label for="show_adult_content">Show Adult Content:</label>
+            <input type="checkbox" name="show_adult_content" value="1"[% sac_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle whether or not to display content that is rated as Adult content. Such content is only visible to Users at least 18 years of age.]">
+        </div>
         [% END %]
 
-        <label for="display_full_sized_images">Where to Display Content in its Original Format
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Choose how to display content when viewing it in its original format.]"> :
-        </label>
-        <select name="display_full_sized_images">
-        [% FOREACH location IN enums.display_full_sized_images %]
-        [% IF user_preferences.display_full_sized_images == location %]
-            [% dfi_selected = ' selected="selected"' %]
-        [% ELSE %]
-            [% dfi_selected = '' %]
-        [% END %]
-            <option value="[% location %]"[% dfi_selected %]>[% location %]</option>
-        [% END %]
-        </select>
-        <br>
+        <div class="form_field">
+            <label for="display_full_sized_images">Where to Display Content in its Original Format:</label>
+            <select name="display_full_sized_images">
+            [% FOREACH location IN enums.display_full_sized_images %]
+            [% IF user_preferences.display_full_sized_images == location %]
+                [% dfi_selected = ' selected="selected"' %]
+            [% ELSE %]
+                [% dfi_selected = '' %]
+            [% END %]
+                <option value="[% location %]"[% dfi_selected %]>[% location %]</option>
+            [% END %]
+            </select>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Choose how to display content when viewing it in its original format.]">
+        </div>
 
-        [% IF user_preferences.filter_profanity == 1 %]
-            [% fp_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% fp_checked = '' %]
-        [% END %]
-        <label for="filter_profanity">Filter Profanity
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle the filtering of profanity. Please note that this may unintentionally filter non-profanity or out-of-context words.]"> :
-        </label>
-        <input type="checkbox" name="filter_profanity" value="1"[% fp_checked %]>
-        <br>
+        <div class="form_field">
+            [% IF user_preferences.filter_profanity == 1 %]
+                [% fp_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% fp_checked = '' %]
+            [% END %]
+            <label for="filter_profanity">Filter Profanity:</label>
+            <input type="checkbox" name="filter_profanity" value="1"[% fp_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle the filtering of profanity. Please note that this may unintentionally filter non-profanity or out-of-context words.]">
+        </div>
     </fieldset>
 
     <fieldset>
         <legend>My Content Preferences</legend>
-        <label for="default_comment_visibility">Default Comment Visibility
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default comment visibility on your uploaded Content.]"> :
-        </label>
-        <select name="default_comment_visibility">
-        [% FOREACH visibility IN enums.default_comment_visibility %]
-        [% IF user_preferences.default_comment_visibility == visibility %]
-            [% dcv_selected = ' selected="selected"' %]
-        [% ELSE %]
-            [% dcv_selected = '' %]
-        [% END %]
-            <option value="[% visibility %]"[% dcv_selected %]>[% visibility %]</option>
-        [% END %]
-        </select>
-        <br>
+        <div class="form_field">
+        <label for="default_comment_visibility">Default Comment Visibility:</label>
+            <select name="default_comment_visibility">
+            [% FOREACH visibility IN enums.default_comment_visibility %]
+            [% IF user_preferences.default_comment_visibility == visibility %]
+                [% dcv_selected = ' selected="selected"' %]
+            [% ELSE %]
+                [% dcv_selected = '' %]
+            [% END %]
+                <option value="[% visibility %]"[% dcv_selected %]>[% visibility %]</option>
+            [% END %]
+            </select>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default comment visibility on your uploaded Content.]">
+        </div>
 
-        <label for="default_comment_type">Default Comment Type
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default preferred comment type for your uploaded Content.]"> :
-        </label>
-        <select name="default_comment_type">
-        [% FOREACH comment_type IN enums.default_comment_type %]
-        [% IF user_preferences.default_comment_type == comment_type %]
-            [% dct_selected = ' selected="selected"' %]
-        [% ELSE %]
-            [% dct_selected = '' %]
-        [% END %]
-            <option value="[% comment_type %]"[% dct_selected %]>[% comment_type %]</option>
-        [% END %]
-        </select>
-        <br>
+        <div class="form_field">
+            <label for="default_comment_type">Default Comment Type:</label>
+            <select name="default_comment_type">
+            [% FOREACH comment_type IN enums.default_comment_type %]
+            [% IF user_preferences.default_comment_type == comment_type %]
+                [% dct_selected = ' selected="selected"' %]
+            [% ELSE %]
+                [% dct_selected = '' %]
+            [% END %]
+                <option value="[% comment_type %]"[% dct_selected %]>[% comment_type %]</option>
+            [% END %]
+            </select>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Set the default preferred comment type for your uploaded Content.]">
+        </div>
 
     </fieldset>
 
     <fieldset>
         <legend>Privacy Preferences</legend>
-        <label for="allow_watching">Allow Watching
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Allow other Users to add your Account to their Museums, so they can keep up with your updates. This merely gives them updates when you add new public-visible Content.]"> :
-        </label>
-        [% IF user_preferences.allow_watching == 1 %]
-            [% aw_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% aw_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="allow_watching" value="1"[% aw_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="allow_watching">Allow Watching:</label>
+            [% IF user_preferences.allow_watching == 1 %]
+                [% aw_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% aw_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="allow_watching" value="1"[% aw_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Allow other Users to add your Account to their Museums, so they can keep up with your updates. This merely gives them updates when you add new public-visible Content.]">
+        </div>
 
-        <label for="allow_favoriting">Allow Content Favoriting
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Allow other Users to add your Content to their Favorites list. This allows them to look back through content they really enjoy without having to search for it again.]"> :
-        </label>
-        [% IF user_preferences.allow_favoriting == 1 %]
-            [% af_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% af_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="allow_favoriting" value="1"[% af_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="allow_favoriting">Allow Content Favoriting:</label>
+            [% IF user_preferences.allow_favoriting == 1 %]
+                [% af_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% af_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="allow_favoriting" value="1"[% af_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Allow other Users to add your Content to their Favorites list. This allows them to look back through content they really enjoy without having to search for it again.]">
+        </div>
 
-        <label for="allow_sharing">Allow Content Sharing
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Show sharing links on your Content pages, giving Users easy options for linking to your work from other sites, such as Facebook and Twitter.]"> :
-        </label>
-        [% IF user_preferences.allow_sharing == 1 %]
-            [% as_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% as_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="allow_sharing" value="1"[% as_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="allow_sharing">Allow Content Sharing:</label>
+            [% IF user_preferences.allow_sharing == 1 %]
+                [% as_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% as_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="allow_sharing" value="1"[% as_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Show sharing links on your Content pages, giving Users easy options for linking to your work from other sites, such as Facebook and Twitter.]">
+        </div>
 
-        <label for="allow_email_through_forms">Allow Others to E-mail You Through Forms
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Because we hide your e-mail address from Users and site visitors, we give them a way of sending messages to your e-mail account via a web form. This preference lets you toggle that feature on and off.]"> :
-        </label>
-        [% IF user_preferences.allow_email_through_forms == 1 %]
-            [% ae_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% ae_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="allow_email_through_forms" value="1"[% ae_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="allow_email_through_forms">Allow Others to E-mail You Through Forms:</label>
+            [% IF user_preferences.allow_email_through_forms == 1 %]
+                [% ae_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% ae_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="allow_email_through_forms" value="1"[% ae_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Because we hide your e-mail address from Users and site visitors, we give them a way of sending messages to your e-mail account via a web form. This preference lets you toggle that feature on and off.]">
+        </div>
 
-        <label for="allow_pms">Allow Others to Send You Private Messages
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Users who are logged in can send each other Private Messages through our system, without e-mailing one another. This preference allows you to toggle that feature on or off.]"> :
-        </label>
-        [% IF user_preferences.allow_pms == 1 %]
-            [% ap_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% ap_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="allow_pms" value="1"[% ap_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="allow_pms">Allow Others to Send You Private Messages:</label>
+            [% IF user_preferences.allow_pms == 1 %]
+                [% ap_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% ap_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="allow_pms" value="1"[% ap_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Users who are logged in can send each other Private Messages through our system, without e-mailing one another. This preference allows you to toggle that feature on or off.]">
+        </div>
 
-        <label for="show_online">Show Your Online Status
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle other Users' and visitors' ability to see if you're online or not, and when the last time you were on was.]"> :
-        </label>
-        [% IF user_preferences.show_online == 1 %]
-            [% so_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% so_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="show_online" value="1"[% so_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="show_online">Show Your Online Status:</label>
+            [% IF user_preferences.show_online == 1 %]
+                [% so_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% so_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="show_online" value="1"[% so_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle other Users' and visitors' ability to see if you're online or not, and when the last time you were on was.]">
+        </div>
 
     </fieldset>
 
     <fieldset>
         <legend>Notification Preferences</legend>
-        <label for="pms_notifications">Private Message Notifications
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle e-mail notification upon receipt of Private Messages.]"> :
-        </label>
-        [% IF user_preferences.pms_notifications == 1 %]
-            [% pn_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% pn_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="pms_notifications" value="1"[% pn_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="pms_notifications">Private Message Notifications:</label>
+            [% IF user_preferences.pms_notifications == 1 %]
+                [% pn_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% pn_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="pms_notifications" value="1"[% pn_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle e-mail notification upon receipt of Private Messages.]">
+        </div>
 
-        <label for="comment_notifications">Comment Notifications
-            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle e-mail notification upon receipt of Comments on your Content.]"> :
-        </label>
-        [% IF user_preferences.comment_notifications == 1 %]
-            [% cn_checked = ' checked="checked"' %]
-        [% ELSE %]
-            [% cn_checked = '' %]
-        [% END %]
-        <input type="checkbox" name="comment_notifications" value="1"[% cn_checked %]>
-        <br>
+        <div class="form_field">
+            <label for="comment_notifications">Comment Notifications:</label>
+            [% IF user_preferences.comment_notifications == 1 %]
+                [% cn_checked = ' checked="checked"' %]
+            [% ELSE %]
+                [% cn_checked = '' %]
+            [% END %]
+            <input type="checkbox" name="comment_notifications" value="1"[% cn_checked %]>
+            <img src="/images/icons/information.gif" width="16" height="16" border="0" align="absmiddle" data-jkit="[tooltip:classname=info_tooltip;follow=yes;text=Toggle e-mail notification upon receipt of Comments on your Content.]">
+        </div>
 
     </fieldset>
     <strong>Last updated on:</strong> <em>[% date.format( user_preferences.updated_at, '%d %B, %Y @ %H:%M' ) %]</em><br>
@@ -242,3 +243,4 @@
 
     <input type="submit" value="Save Preferences">
 </form>
+</div>

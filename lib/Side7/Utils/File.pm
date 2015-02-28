@@ -12,7 +12,7 @@ use List::Util;
 use Side7::Globals;
 use Side7::AuditLog;
 
-use version; our $VERSION = qv( '0.1.11' );
+use version; our $VERSION = qv( '0.1.12' );
 
 
 =head1 NAME
@@ -169,7 +169,7 @@ sub create_user_directory
     }
 
     # Make user subdirectories
-    foreach my $subdir ( qw/ avatars user_bio_images character_bio_images / )
+    foreach my $subdir ( qw/ album_artwork avatars user_bio_images character_bio_images / )
     {
         my $user_subdir = $user_dir . '/' . $subdir;
         if ( ! -d $user_subdir )
@@ -273,7 +273,7 @@ Parameters:
 
 =item user_id: The User ID of the user to whom the directory is attributed.
 
-=item content_type: The User Content type for this stored file type. Valid types are 'avatars', 'images', 'literature', 'music', and 'videos'.
+=item content_type: The User Content type for this stored file type. Valid types are 'avatars', 'album_artwork', 'images', 'literature', 'music', and 'videos'.
 
 =item content_size: The User Content size (dimensions) for this stored file type. Valid types are 'tiny', 'small', 'medium', 'large', and 'original'.
 
@@ -350,6 +350,9 @@ sub create_user_cached_file_directory
     # So, for avatars:
     # /cached_files/user_content/avatars/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
+    # So, for album artwork
+    # /cached_files/user_content/album_artwork/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
+    #
     # For images:
     # /cached_files/user_content/images/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
@@ -370,7 +373,14 @@ sub create_user_cached_file_directory
     my $tier2 = substr( $user_id, 0, 3 );
 
     my $cached_file_dir = '';
-    if ( lc( $content_type ) eq 'avatars' || lc( $content_type ) eq 'images' )
+    if
+    (
+        lc( $content_type ) eq 'avatars'
+        ||
+        lc( $content_type ) eq 'images'
+        ||
+        lc( $content_type ) eq 'album_artwork'
+    )
     {
         $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} .
                             'user_content' .

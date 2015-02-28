@@ -377,7 +377,7 @@ sub get_content_directory
         return;
     }
 
-    my $user_subdir = substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+    my $user_subdir = $self->get_user_id_path();
 
     if ( lc( $content_type ) eq 'image' )
     {
@@ -437,6 +437,11 @@ sub get_avatar_directory
 
     if ( ! -d $content_directory )
     {
+        my ( $success, $error ) = Side7::Utils::File::create_user_directory( $self->id );
+        if ( defined $error )
+        {
+            $LOGGER->warning( $error );
+        }
     }
 
     return $content_directory;
@@ -461,10 +466,15 @@ sub get_album_artwork_directory
         return;
     }
 
-    my $content_directory = $self->get_content_directory( 'image' ) . 'avatars/';
+    my $content_directory = $self->get_content_directory( 'image' ) . 'album_artwork/';
 
     if ( ! -d $content_directory )
     {
+        my ( $success, $error ) = Side7::Utils::File::create_user_directory( $self->id );
+        if ( defined $error )
+        {
+            $LOGGER->warning( $error );
+        }
     }
 
     return $content_directory;
@@ -490,10 +500,34 @@ sub get_content_uri
         return;
     }
 
-    my $content_uri = $CONFIG->{'general'}->{'base_gallery_uri'} .
-        substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
+    my $content_uri = $CONFIG->{'general'}->{'base_gallery_uri'} . $self->get_user_id_path();
 
     return $content_uri;
+}
+
+
+=head1 get_user_id_path()
+
+Returns a string containing the User's content directory structure built from the User's ID. This is not
+a full path.
+
+Parameters: None
+
+    my $uid_path = $user->get_user_id_path();
+
+=cut
+
+sub get_user_id_path
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self || ref( $self ) ne 'Side7::User' )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return;
+    }
+
+    return substr( $self->id, 0, 1 ) . '/' . substr( $self->id, 0, 3 ) . '/' . $self->id . '/';
 }
 
 
@@ -1182,6 +1216,7 @@ sub get_friends_by_status
                                                                         user_id => $self->id(),
                                                                         status  => $status,
                                                                      ],
+                                                            sort_by      => 'account.last_name ASC, account.first_name ASC',
                                                             with_objects => [ 'friend', 'friend.account' ],
                                                         );
 
@@ -1376,14 +1411,14 @@ sub is_friend_linked
                                             status    => 'Pending',
                                           );
 
-    my $loaded = $pending->load( speculative => 1 );
+    my $ploaded = $pending->load( speculative => 1 );
 
     if (
         defined $pending
         &&
         ref( $pending ) eq 'Side7::User::Friend'
         &&
-        $loaded != 0
+        $ploaded != 0
     )
     {
         # Received Pending Request exists
@@ -1398,14 +1433,14 @@ sub is_friend_linked
                                             status    => 'Pending',
                                          );
 
-    $loaded = $friend->load( speculative => 1 );
+    my $floaded = $friend->load( speculative => 1 );
 
     if (
         defined $friend
         &&
         ref( $friend ) eq 'Side7::User::Friend'
         &&
-        $loaded != 0
+        $floaded != 0
     )
     {
         # Pending Request exists
@@ -1413,15 +1448,15 @@ sub is_friend_linked
     }
 
     # Does an Approved Friend Link exist
-    $friend = Side7::User::Friend->new(
-                                            user_id   => $self->id,
-                                            friend_id => $user_id,
-                                            status    => 'Approved',
-                                      );
+    my $is_friend = Side7::User::Friend->new(
+                                                user_id   => $self->id,
+                                                friend_id => $user_id,
+                                                status    => 'Approved',
+                                            );
 
-    $loaded = $friend->load( speculative => 1 );
+    my $iloaded = $is_friend->load( speculative => 1 );
 
-    if ( $loaded == 0 )
+    if ( $iloaded == 0 )
     {
         # No link exists, return 0.
         return 0;
