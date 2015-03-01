@@ -130,10 +130,13 @@ get '/' => sub
                                                     limit        => 5,
                                                 );
 
+    my $recents = Side7::UserContent->get_recent_uploads( limit => 20, size => 'small', session => session );
+
     template 'index', {
                         data => {
                                     news        => $results,
                                     sticky_news => $stickies,
+                                    recents     => $recents,
                                 },
                       }, { layout => 'index' };
 };

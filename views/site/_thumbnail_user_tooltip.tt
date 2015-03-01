@@ -1,0 +1,27 @@
+[% USE DateTimeUtils %]
+<div class="thumbnail_tooltip_container">
+    <div class="thumbnail_tooltip_avatar">
+        <a href="/user/[% content_item.content.user.username %]" class="avatar">
+            <img src="[% content_item.content.user.get_avatar( size => 'tiny' ) %]" alt='[% content_item.content.title %]' title='[% content_item.content.title %]' border="0" class="avatar">
+        </a>
+    </div>
+    <div class="thumbnail_tooltip_content">
+        <span style="font-size: 12pt; font-weight: bold;">
+        [% IF content_item.content.title %]
+            [% content_item.content.title %]
+        [% ELSE %]
+            Untitled
+        [% END %]
+        </span><br>
+        by [% content_item.content.user.account.full_name %] ([% content_item.content.user.username %])<br>
+        <small>
+            <strong>Rating:</strong> [% content_item.content.rating.rating %]
+            [% IF content_item.content.rating_qualifiers %]
+            ([% content_item.content.rating_qualifiers %])
+            [% END %]
+            &nbsp;
+            <strong>Category:</strong> [% content_item.content.category.category %]<br>
+            <strong>Uploaded:</strong> [% DateTimeUtils.get_english_elapsed_time( content_item.created_at_epoch ) %]
+        </small>
+    </div>
+</div>

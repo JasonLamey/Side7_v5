@@ -81,6 +81,31 @@ sub format_ms_to_timestamp
 }
 
 
+=head2 get_english_elapsed_time()
+
+Interface to Side7::Utils::DateTime::get_english_elapsed_time. Passes the text along to the function,
+and returns its results.
+
+Parameters:
+
+=over 4
+
+=item integer: The int (seconds) to be sent to Side7::Utils::DateTime::get_english_elapsed_time
+
+=back
+
+    [% DateTimeUtils.get_english_elapsed_time( int ) %]
+
+=cut
+
+sub get_english_elapsed_time
+{
+    my ( $self, $seconds ) = @_;
+
+    return Side7::Utils::DateTime->get_english_elapsed_time( seconds => $seconds );
+}
+
+
 =head1 COPYRIGHT
 
 All code is Copyright (C) Side 7 1992 - 2014

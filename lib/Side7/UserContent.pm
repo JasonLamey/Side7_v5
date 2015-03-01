@@ -12,7 +12,7 @@ use Side7::UserContent::Image::Manager;
 use Side7::UserContent::Music;
 use Side7::UserContent::Music::Manager;
 
-use version; our $VERSION = qv( '0.1.11' );
+use version; our $VERSION = qv( '0.1.12' );
 
 =pod
 
@@ -44,13 +44,214 @@ Side7::Gallery will call Image objects for display.
 =head1 METHODS
 
 
-=head2 method_name
+=head1 get_recent_uploads( limit => $limit, size => $size )
 
-    $result = My::Package->method_name();
+Takes a C<hash> of named parameters, and returns an C<arrayref> of results.
 
-TODO: Define what this method does, describing both input and output values and types.
+Parameters:
+
+=over 4
+
+=item limit: An C<integer> representing the maximum number of results to return. Defaults to 20.
+
+=item size: A C<string> describing the size of the thumbnails to return. Accepts "tiny", "small", "medium", "large", "original". Defaults to "small".
+
+=back
+
+    my $results = Side7::UserContent->get_recent_uploads( limit => $limit, size => $size );
 
 =cut
+
+sub get_recent_uploads
+{
+    my ( $self, %args ) = @_;
+
+    my $limit   = delete $args{'limit'}  // 20;
+    my $size    = delete $args{'size'}   // 'small';
+    my $session = delete $args{'sesion'} // undef;
+
+    my @results = ();
+
+    # Images
+    my $images = Side7::UserContent::Image::Manager->get_images
+    (
+        query => [],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => 'created_at desc',
+        limit        => $limit,
+    );
+
+    my $image_results = Side7::UserContent->get_image_hash_for_resultset( images => $images, size => $size, session => $session );
+    push @results, @{$image_results};
+
+    # Music
+    my $all_music = Side7::UserContent::Music::Manager->get_music
+    (
+        query => [],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => 'created_at desc',
+        limit        => $limit,
+    );
+
+    my $music_results = Side7::UserContent->get_music_hash_for_resultset( music => $all_music, size => $size, session => $session );
+    push @results, @{$music_results};
+
+    # Literature
+
+    # Video
+
+    my @sorted_results = sort { $b->{'content'}->created_at cmp $a->{'content'}->created_at } @results;
+
+    my @returned_results = splice( @sorted_results, 0, $limit ); # limit what's returned to the requested number.
+
+    return \@returned_results;
+}
+
+
+=head2 get_image_hash_for_resultset( images => \@images, size => $size, session => $session )
+
+Takes a C<hash> of named parameters, and returns an C<arrayref> of results. Takes the raw results from
+Side7::UserContent::Image::Manager, and formats them into results usable by templates, including fetching
+the URI for thumbnails.
+
+Parameters:
+
+=over 4
+
+=item images: An C<arrayref> of results from Side7::UserContent::Image::Manager. Mandatory.
+
+=item size: A C<string> indicating the thumbnail size to retrieve. Accepts "tiny", "small", "medium", "large", and "original". Defaults to "small".
+
+=item session: The session C<hashref> from the main app.
+
+=back
+
+    my $formatted_results =
+            Side7::UserContent->get_image_hash_for_resultset( images => $images, size => $size, session => $session );
+
+=cut
+
+sub get_image_hash_for_resultset
+{
+    my ( $self, %args ) = @_;
+
+    my $images  = delete $args{'images'}  // undef;
+    my $size    = delete $args{'size'}    // 'small';
+    my $session = delete $args{'session'} // undef;
+
+    if ( ! defined $images )
+    {
+        return [];
+    }
+
+    my @results = ();
+    foreach my $image ( @$images )
+    {
+        my $image_hash = {};
+        $image_hash->{'content'} = $image;
+
+        my ( $filepath, $error ) = ( undef, undef );
+
+        if ( $image->block_thumbnail( session => $session ) == 1 )
+        {
+            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
+            $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
+        }
+        else
+        {
+
+            ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
+
+            if ( defined $error && $error ne '' )
+            {
+                $LOGGER->warn( $error );
+            }
+            else
+            {
+                if ( ! -f $filepath )
+                {
+                    my ( $success, $error ) = $image->create_cached_file( size => $size );
+
+                    if ( $success )
+                    {
+                        $filepath =~ s/^\/data//;
+                    }
+                }
+                else
+                {
+                    $filepath =~ s/^\/data//;
+                }
+            }
+        }
+
+        $image_hash->{'created_at_epoch'} = $image->created_at->epoch();
+        $image_hash->{'filepath'}         = $filepath;
+        $image_hash->{'filepath_error'}   = $error;
+        $image_hash->{'uri'}              = "/image/$image->{'id'}";
+
+        push @results, $image_hash;
+    }
+
+    return \@results;
+}
+
+
+=head2 get_music_hash_for_resultset( music => \@music, size => $size, session => $session )
+
+Takes a C<hash> of named parameters, and returns an C<arrayref> of results. Takes the raw results from
+Side7::UserContent::Music::Manager, and formats them into results usable by templates, including fetching
+the URI for thumbnails.
+
+Parameters:
+
+=over 4
+
+=item music: An C<arrayref> of results from Side7::UserContent::Music::Manager. Mandatory.
+
+=item size: A C<string> indicating the thumbnail size to retrieve. Accepts "tiny", "small", "medium", "large", and "original". Defaults to "small".
+
+=item session: The session C<hashref> from the main app.
+
+=back
+
+    my $formatted_results =
+            Side7::UserContent->get_music_hash_for_resultset( music => $music, size => $size, session => $session );
+
+=cut
+
+sub get_music_hash_for_resultset
+{
+    my ( $self, %args ) = @_;
+
+    my $all_music = delete $args{'music'}   // undef;
+    my $size      = delete $args{'size'}    // 'small';
+    my $session   = delete $args{'session'} // undef;
+
+    if ( ! defined $all_music )
+    {
+        return [];
+    }
+
+    my @results = ();
+
+    foreach my $music ( @$all_music )
+    {
+        my $music_hash = {};
+        $music_hash->{'content'} = $music;
+
+        my ( $filepath, $error ) = ( undef, undef );
+        $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size );
+
+        $music_hash->{'created_at_epoch'} = $music->created_at->epoch();
+        $music_hash->{'filepath'}         = $filepath;
+        $music_hash->{'filepath_error'}   = $error;
+        $music_hash->{'uri'}              = "/music/$music->{'id'}";
+
+        push @results, $music_hash;
+    }
+
+    return \@results;
+}
 
 
 =head1 FUNCTIONS
@@ -114,51 +315,8 @@ sub get_gallery
         sort_by      => $sort_by,
     );
 
-    foreach my $image ( @$images )
-    {
-        my $image_hash = {};
-        $image_hash->{'content'} = $image;
-
-        my ( $filepath, $error ) = ( undef, undef );
-
-        if ( $image->block_thumbnail( session => $session ) == 1 )
-        {
-            $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'blocked_image', size => $size );
-            $error = 'Either you are not logged in, or you have selected to block rated M image thumbnails.';
-        }
-        else
-        {
-
-            ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
-
-            if ( defined $error && $error ne '' )
-            {
-                $LOGGER->warn( $error );
-            }
-            else
-            {
-                if ( ! -f $filepath )
-                {
-                    my ( $success, $error ) = $image->create_cached_file( size => $size );
-
-                    if ( $success )
-                    {
-                        $filepath =~ s/^\/data//;
-                    }
-                }
-                else
-                {
-                    $filepath =~ s/^\/data//;
-                }
-            }
-        }
-
-        $image_hash->{'filepath'}       = $filepath;
-        $image_hash->{'filepath_error'} = $error;
-        $image_hash->{'uri'}            = "/image/$image->{'id'}";
-
-        push @results, $image_hash;
-    }
+    my $image_results = Side7::UserContent->get_image_hash_for_resultset( images => $images, size => $size, session => $session );
+    push @results, @{$image_results};
 
     # TODO: Literature
 
@@ -173,19 +331,8 @@ sub get_gallery
         sort_by      => $sort_by,
     );
 
-    foreach my $music ( @$all_music )
-    {
-        my $music_hash = {};
-        $music_hash->{'content'} = $music;
-
-        my ( $filepath, $error ) = ( undef, undef );
-
-        $music_hash->{'filepath'}       = $filepath;
-        $music_hash->{'filepath_error'} = $error;
-        $music_hash->{'uri'}            = "/music/$music->{'id'}";
-
-        push @results, $music_hash;
-    }
+    my $music_results = Side7::UserContent->get_music_hash_for_resultset( music => $all_music, size => $size, session => $session );
+    push @results, @{$music_results};
 
     # TODO: Videos
 

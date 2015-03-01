@@ -14,7 +14,26 @@
         <p>This is where the featured artist will be.</p>
     </div> <!-- end featured_artist -->
 
-    <div style="padding: 5px; margin-right: 27%;">
+    <div id="index_recent_uploads">
         <h2>Recently Uploaded</h2>
-        <p>This is where the most recent 20 uploads will be.</p>
+        <div class="floating_grid">
+            [% FOREACH content_item IN data.recents %]
+            <div class="recent_upload_thumbnail round_corners_5px">
+            [% IF content_item.filepath %]
+                <div class="thumb_container_small round_corners_5px">
+                    <div class="thumb_image">
+                        <a href='[% content_item.uri %]' data-jkit="[tooltip:classname=info_tooltip;follow=yes;content=#[% content_item.content.content_type %]_[% content_item.content.id %]]">
+                            <img src='[% content_item.filepath %]' alt='' title='' border='0' />
+                        </a>
+                    </div> <!-- end thumb_image -->
+                </div> <!-- end recent_upload_cell -->
+            [% ELSE %]
+                [ [% content_item.filepath_error %] ]
+            [% END %]
+            </div> <!-- end recent_upload_thumbnail -->
+            <div id='[% content_item.content.content_type %]_[% content_item.content.id %]' style="display: none;">
+                [% PROCESS 'site/_thumbnail_user_tooltip.tt' %]
+            </div>
+            [% END %]
+        </div> <!-- end floating grid -->
     </div> <!-- end recently_uploaded -->

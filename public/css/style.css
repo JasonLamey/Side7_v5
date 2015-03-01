@@ -579,6 +579,21 @@ th, td {
     margin: 5px 0;
 }
 
+/* FLOATING GRIDS */
+
+.floating_grid {
+    padding: 0;
+    margin: 0;
+}
+
+.floating_grid:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* FRIEND REQUEST FLOATING GRID */
+
 .friend_request {
     float: left;
     height: 54px;
@@ -645,13 +660,73 @@ th, td {
     background: none;
 }
 
-.floating_grid {
+/* INDEX PAGE RECENT UPLOADS FLOATING GRID */
+
+#index_recent_uploads {
+    margin-right: 27%;
+    height: auto;
+    padding: 0.3em;
+    display: table-cell;
+    vertical-align: top;
 }
 
-.floating_grid:after {
-    content: "";
+.recent_upload_thumbnail {
+    float: left;
     display: table;
-    clear: both;
+    width: 100px;
+    height: 100px;
+}
+
+.recent_upload_thumbnail, .recent_upload_thumbnail:after, .recent_upload_thumbnail:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+[class*='recent_upload_thumbnail'] {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+[class*='recent_upload_thumbnail']:last-of-type {
+    margin-right: 0;
+}
+
+.recent_upload_cell {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #CCE6FF;
+    padding: 0.2em;
+    width: 100px;
+    height: 100px;
+}
+
+/* END FLOATING GRIDS */
+
+
+.thumbnail_tooltip_container
+{
+    min-width: 350px;
+    max-width: 500px;
+    height: 50px;
+    display: table;
+}
+
+.thumbnail_tooltip_avatar
+{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 56px;
+}
+
+.thumbnail_tooltip_content
+{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+    padding: 0.2em;
 }
 
 #footer-container {
@@ -1038,7 +1113,7 @@ span#jkit-lightbox-nav-prev {
     margin-right: 10px;
 }
 
-/* jkit lightbox */
+/* jkit tooltip */
 div#jkit-tooltip {
     padding: 4px;
     padding-left: 8px;
@@ -1047,10 +1122,11 @@ div#jkit-tooltip {
 }
 
 .info_tooltip {
-    max-width: 350px;
+    max-width: 500px;
+    min-width: 350px;
     font-size: 9pt;
     background-color: #ccf;
-    opacity: 0.9;
+    /* opacity: 0.9; */
     border: solid 1px #336;
     color: #000;
     border-radius: 5px;
