@@ -57,6 +57,8 @@ information, and is the model to which all other models are related.
 	delete_on               :date
 	avatar_type             :string(255)      default(NULL)
 	avatar_id               :integer          default(NULL)
+    aotd_tokens             :integer          default(0), not null
+    aotd_weight             :integer          default(100), not null
 	created_at              :datetime         not null
 	updated_at              :datetime         not null
 
@@ -147,6 +149,8 @@ __PACKAGE__->meta->setup
                                      default => 'None',
                                    },
         avatar_id               => { type => 'integer' },
+        aotd_tokens             => { type => 'integer',  not_null => 1, default => 0 },
+        aotd_weight             => { type => 'integer',  not_null => 1, default => 100 },
         created_at              => { type => 'datetime', not_null => 1, default => 'now()' },
         updated_at              => { type => 'datetime', not_null => 1, default => 'now()' },
     ],

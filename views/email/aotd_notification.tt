@@ -1,0 +1,8 @@
+[% USE date %]
+Dear [% user.username %],
+
+<strong>Congratulations!</strong> You have been selected as today's ([% date.format( date.now, '%d %B, %Y' ) %]) Featured Artist on the front page! Come check it out at <a href="http://www.side7.com/">www.side7.com</a>!
+
+We hope you enjoy and benefit from the added attention this brings!
+
+[% PROCESS 'email/_oni_sig.tt' %]

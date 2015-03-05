@@ -1,0 +1,8 @@
+[% USE date %]
+Dear [% user.username %],
+
+[b]Congratulations![/b] You have been selected as today's ([% date.format( date.now, '%d %B, %Y' ) %]) Featured Artist on the front page!
+
+We hope you enjoy and benefit from the added attention this brings!
+
+[% PROCESS 'pm_notifications/_oni_sig.tt' %]

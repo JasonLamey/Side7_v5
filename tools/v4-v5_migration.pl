@@ -145,7 +145,7 @@ sub migrate
             }
             try
             {
-                eval $packages{ lc ( $key ) };
+                eval $packages{ lc( $key ) };
             }
             catch
             {
@@ -375,6 +375,8 @@ sub migrate_users
             country_id              => $country_id,
             is_public               => $is_public,
             subscription_expires_on => $expire_on,
+            aotd_tokens             => $row->{'aotd_tokens'},
+            aotd_weight             => $row->{'aotd_weight'},
             created_at              => $row->{join_date},
             updated_at              => $row->{modified_date},
         );
@@ -1503,6 +1505,11 @@ sub HELP_MESSAGE
         {
             $count++;
         }
+    }
+    if ( $output ne '' )
+    {
+        $output =~ s/, $//;
+        say $output;
     }
     say '';
     exit 0;

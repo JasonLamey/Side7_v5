@@ -18,6 +18,7 @@ use Side7::UserContent::Image;
 use Side7::UserContent::Music;
 use Side7::UserContent::Album;
 use Side7::UserContent::Album::Manager;
+use Side7::User::AOTD;
 use Side7::User::Role;
 use Side7::User::Permission;
 use Side7::User::UserOwnedPermission;
@@ -37,7 +38,7 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
-use version; our $VERSION = qv( '0.1.38' );
+use version; our $VERSION = qv( '0.1.39' );
 
 =pod
 
@@ -175,6 +176,12 @@ __PACKAGE__->meta->setup
             type       => 'one to many',
             class      => 'Side7::PrivateMessage',
             column_map => { id => 'recipient_id' },
+        },
+        aotds =>
+        {
+            type       => 'one to many',
+            class      => 'Side7::User::AOTD',
+            column_map => { id => 'account_id' },
         },
     ],
     foreign_keys =>
