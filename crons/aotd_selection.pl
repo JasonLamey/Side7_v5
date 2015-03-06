@@ -12,6 +12,7 @@ use Side7::User;
 use Side7::User::AOTD;
 use Side7::Account::Manager;
 use Side7::PrivateMessage;
+use Side7::AuditLog;
 
 use Carp;
 use Const::Fast;
@@ -65,7 +66,20 @@ my $adjusted = adjust_user_weights( $user );
 # PM & Email the User
 my $notified = notify_the_user( $user );
 
-# Email the admin(s)
+# Audit log
+my $audit_msg = 'Successfully chose today\'s Featured Artist<br>';
+$audit_msg   .= sprintf( 'Chosen member is: %s (%s)<br>', $user->account->full_name, $user->username );
+$audit_msg   .= sprintf( 'Adjusted %d user weights.<br>', $adjusted );
+
+my $audit_log = Side7::AuditLog->new(
+                                        title       => 'Featured Artist Chosen',
+                                        user_id     => 0,
+                                        affected_id => $user->id,
+                                        description => $audit_msg,
+                                        ip_address  => 'Internal System',
+                                        timestamp   => DateTime->now(),
+                                    );
+$audit_log->save();
 
 # FUNCTIONS
 
@@ -108,8 +122,8 @@ sub select_aotd_user
     $LOGGER->info( sprintf( 'Selected >%s (%s)< (ID: %d) as today\'s AOTD.',
                                 $user->[0]->account->full_name, $user->[0]->username, $user->[0]->id ) );
 
-    say sprintf( 'DEBUG: Found User: %s (%s) (ID: %d)', $user->[0]->account->full_name, $user->[0]->username, $user->[0]->id );
-    say sprintf( 'DEBUG: Original User Stats: t: %d  w: %d', $user->[0]->account->aotd_tokens, $user->[0]->account->aotd_weight );
+    #say sprintf( 'DEBUG: Found User: %s (%s) (ID: %d)', $user->[0]->account->full_name, $user->[0]->username, $user->[0]->id );
+    #say sprintf( 'DEBUG: Original User Stats: t: %d  w: %d', $user->[0]->account->aotd_tokens, $user->[0]->account->aotd_weight );
 
     return $user->[0];
 }
@@ -139,7 +153,7 @@ sub adjust_user_weights
     $user->account->aotd_weight( $MAX_WEIGHT );
     $user->account->save || croak( 'Failed to save updated User weight and token count.' );
 
-    say sprintf( 'DEBUG: Updated User Stats: t: %d  w: %d', $user->account->aotd_tokens, $user->account->aotd_weight );
+    #say sprintf( 'DEBUG: Updated User Stats: t: %d  w: %d', $user->account->aotd_tokens, $user->account->aotd_weight );
 
     # Adjust all other Users' weights to n - 1, unless they're 1 already.
     my $updated_accounts = Side7::Account::Manager->update_accounts(
@@ -156,7 +170,7 @@ sub adjust_user_weights
                                                                 ],
                                                              );
 
-    say sprintf( 'DEBUG: Updated %d other accounts.', $updated_accounts );
+    #say sprintf( 'DEBUG: Updated %d other accounts.', $updated_accounts );
 
     return $updated_accounts;
 }
@@ -202,12 +216,6 @@ sub notify_the_user
                                      );
     Email::Sender::Simple->try_to_send( $email )
         || carp( sprintf( 'Could not send notification e-mail to %s at %s.', $user->account->full_name, $user->email_address ) );
-
-    my @deliveries = Email::Sender::Simple->default_transport->deliveries;
-    foreach my $msg ( @deliveries )
-    {
-        say 'DEBUG: ' . $msg;
-    }
 
     return 1;
 }

@@ -1819,7 +1819,7 @@ post '/my/avatar/select/?' => sub
 
     my $audit_message  = 'User &gt;<b>' . session( 'username' ) . '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) selected a new Avatar';
     my $old_values  = '';
-    if ( lc( $avatar_type ) eq 'system' || lc( $avatar_type ) eq 'image' )
+    if ( lc( $avatar_type ) eq 'system' || lc( $avatar_type ) eq 'image' || defined $user->account->avatar_id )
     {
         $old_values  = 'avatar_id: &gt;' . $user->account->avatar_id() . '&lt;<br>';
     }
