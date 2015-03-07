@@ -455,6 +455,11 @@ sub get_default_thumbnail_path
     $path =~ s/:::SIZE:::/$size/g;
     $path =~ s/:::TYPE:::/$type/g;
 
+    if ( $type eq 'default_avatar' )
+    {
+        $path =~ s/jpg/png/; # XXX: THIS IS A HACK! ALL DEFAULT IMAGES SHOULD BE MADE .PNGs
+    }
+
     return lc( $path );
 }
 
