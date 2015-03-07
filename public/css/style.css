@@ -719,8 +719,8 @@ th, td {
 
 #featured_artist_avatar {
     display: table-cell;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     vertical-align: top;
     text-align: center;
 }

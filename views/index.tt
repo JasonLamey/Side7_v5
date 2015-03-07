@@ -14,7 +14,7 @@
         <div id="featured_artist_content">
             <div id="featured_artist_avatar">
                 <a href="/user/[% data.aotd.username %]">
-                    <img src="[% data.aotd.get_avatar( size => 'medium' ) %]" border="0" alt='[% data.aotd.username %]' title='[% data.aotd.username %]' class="round_corners_5px">
+                    <img src="[% data.aotd.get_avatar( size => 'large' ) %]" border="0" alt='[% data.aotd.username %]' title='[% data.aotd.username %]' class="round_corners_5px">
                 </a>
             </div>
             <div id="featured_artist_thumbs">
