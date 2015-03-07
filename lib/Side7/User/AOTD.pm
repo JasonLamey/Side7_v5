@@ -53,6 +53,7 @@ __PACKAGE__->meta->setup
         date    => { type => 'date',    not_null => 1 },
     ],
     pk_columns => 'id',
+    unique_keys => [ 'date' ],
     foreign_keys =>
     [
         user =>

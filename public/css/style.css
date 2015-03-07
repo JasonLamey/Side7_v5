@@ -666,7 +666,7 @@ th, td {
     margin-right: 27%;
     height: auto;
     padding: 0.3em;
-    display: table-cell;
+    display: table;
     vertical-align: top;
 }
 
@@ -700,6 +700,55 @@ th, td {
     padding: 0.2em;
     width: 100px;
     height: 100px;
+}
+
+/* INDEX PAGE FEATURED ARTIST FLOATING GRID */
+
+#index_featured_artist {
+    margin-right: 27%;
+    height: auto;
+    padding: 0.3em;
+    display: table;
+    vertical-align: top;
+}
+
+#featured_artist_content {
+    padding: 0.3em;
+    display: table;
+}
+
+#featured_artist_avatar {
+    display: table-cell;
+    width: 150px;
+    height: 150px;
+    vertical-align: top;
+    text-align: center;
+}
+
+#featured_artist_thumbs {
+    display: table-cell;
+}
+
+.featured_artist_thumbnail {
+    float: left;
+    display: table;
+    width: 100px;
+    height: 100px;
+}
+
+.featured_artist_thumbnail, .featured_artist_thumbnail:after, .featured_artist_thumbnail:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+[class*='featured_artist_thumbnail'] {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+[class*='featured_artist_thumbnail']:last-of-type {
+    margin-right: 0;
 }
 
 /* END FLOATING GRIDS */

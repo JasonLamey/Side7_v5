@@ -108,6 +108,86 @@ sub get_recent_uploads
 }
 
 
+=head2 get_random_content_for_user( user => $user, limit => $limit, size => $size, session => $session )
+
+Takes a C<hash> of named parameters, and returns an C<arrayref> of results. Fetches random content from the
+User's gallery, with a limit, so that they can be passed to a template.
+
+Parameters:
+
+=over 4
+
+=item user: The C<Side7::User> object. Mandatory.
+
+=item limit: An C<integer> designation the maximum number of results to return. Default: 10;
+
+=item size: A C<string> indicating the size to set the thumbnails to. Accepts "tiny", "small", "medium", "large". Default: "small".
+
+=item session: The session hash. Optional.
+
+=back
+
+    my $random_results = Side7::UserContent->get_random_content_for_user(
+                                                                            user    => $user,
+                                                                            limit   => $limit,
+                                                                            size    => $size,
+                                                                            session => $session
+                                                                        );
+
+=cut
+
+sub get_random_content_for_user
+{
+    my ( $self, %args ) = @_;
+
+    my $user    = delete $args{'user'}    // undef;
+    my $limit   = delete $args{'limit'}   // 10;
+    my $size    = delete $args{'size'}    // 'small';
+    my $session = delete $args{'session'} // undef;
+
+    if ( ! defined $user || ref( $user ) ne 'Side7::User' )
+    {
+        $LOGGER->error( 'Undefined or invalid User object passed in.' );
+        return [];
+    }
+
+    my @results = ();
+
+    # Images
+    my $images = Side7::UserContent::Image::Manager->get_images
+    (
+        query        => [ user_id => $user->id ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => 'RAND()',
+        limit        => $limit,
+    );
+
+    my $image_results = Side7::UserContent->get_image_hash_for_resultset( images => $images, size => $size, session => $session );
+    push @results, @{$image_results};
+
+    # Music
+    my $all_music = Side7::UserContent::Music::Manager->get_music
+    (
+        query        => [ user_id => $user->id ],
+        with_objects => [ 'rating', 'category', 'stage' ],
+        sort_by      => 'RAND()',
+        limit        => $limit,
+    );
+
+    my $music_results = Side7::UserContent->get_music_hash_for_resultset( music => $all_music, size => $size, session => $session );
+    push @results, @{$music_results};
+
+    # Literature
+
+    # Video
+
+    my @sorted_results   = sort { $b->{'content'}->created_at cmp $a->{'content'}->created_at } @results;
+    my @returned_results = splice( @sorted_results, 0, $limit ); # limit what's returned to the requested number.
+
+    return \@returned_results;
+}
+
+
 =head2 get_image_hash_for_resultset( images => \@images, size => $size, session => $session )
 
 Takes a C<hash> of named parameters, and returns an C<arrayref> of results. Takes the raw results from

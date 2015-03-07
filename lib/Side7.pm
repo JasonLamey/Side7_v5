@@ -44,7 +44,7 @@ use Side7::FAQEntry;
 use Side7::PrivateMessage;
 use Side7::PrivateMessage::Manager;
 
-use version; our $VERSION = qv( '0.1.43' );
+use version; our $VERSION = qv( '0.1.44' );
 
 # Dancer Settings
 set charset => 'UTF-8';
@@ -130,13 +130,29 @@ get '/' => sub
                                                     limit        => 5,
                                                 );
 
+    my $aotd = Side7::User::AOTD->new( date => DateTime->today() );
+    my $loaded = $aotd->load( speculative => 1, with_objects => [ 'user', 'user.account' ] );
+
+    my $aotd_content = [];
+    if ( $loaded != 0 )
+    {
+        $aotd_content = Side7::UserContent->get_random_content_for_user(
+                                                                            user    => $aotd->user,
+                                                                            limit   => 10,
+                                                                            size    => 'small',
+                                                                            session => session,
+                                                                       );
+    }
+
     my $recents = Side7::UserContent->get_recent_uploads( limit => 20, size => 'small', session => session );
 
     template 'index', {
                         data => {
-                                    news        => $results,
-                                    sticky_news => $stickies,
-                                    recents     => $recents,
+                                    news         => $results,
+                                    sticky_news  => $stickies,
+                                    aotd         => $aotd->user,
+                                    aotd_content => $aotd_content,
+                                    recents      => $recents,
                                 },
                       }, { layout => 'index' };
 };
