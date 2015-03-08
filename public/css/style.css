@@ -711,8 +711,8 @@ th, td {
 }
 
 [class*='recent_upload_thumbnail'] {
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-right: 0.75em;
+    margin-bottom: 0.75em;
 }
 
 [class*='recent_upload_thumbnail']:last-of-type {
@@ -750,6 +750,11 @@ th, td {
     height: 200px;
     vertical-align: top;
     text-align: center;
+    padding-right: 0.75em;
+}
+
+#featured_artist_avatar a img {
+    border: solid 1px #ccf;
 }
 
 #featured_artist_thumbs {
@@ -770,8 +775,8 @@ th, td {
 }
 
 [class*='featured_artist_thumbnail'] {
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-right: 0.75em;
+    margin-bottom: 0.75em;
 }
 
 [class*='featured_artist_thumbnail']:last-of-type {
@@ -926,6 +931,7 @@ textarea.user_input_textarea {
     display: table;
     padding: 0;
     margin: 0;
+    border: solid 1px #ccf;
 }
 
 .thumb_container_small {
