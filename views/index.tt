@@ -1,6 +1,8 @@
     <div style="float: right; width: 25%; margin-left: 10px; margin-bottom: 20px; padding: 5px; height: 350px;">
-        <div style="float: right; margin-top: 15px; font-size: 0.9em;"><a href="/news">See All</a></div>
-        <h2>News</h2>
+        <h2>
+            <div style="float: right; font-size: 0.5em;"><a href="/news">See All News</a></div>
+            News
+        </h2>
         <div style="height: 350px; overflow: auto;">
             [% PROCESS '_index_news.tt' %]
         </div> <!-- end news_item_list -->
@@ -10,7 +12,10 @@
     </div> <!-- end fb box container -->
 
     <div id="index_featured_artist">
-        <h2>Today's Featured Artist - <a href="/user/[% data.aotd.username %]">[% data.aotd.account.full_name %] ([% data.aotd.username %])</a></h2>
+        <h2>
+            <div style="float: right; font-size: 0.5em;"><a href="/past_featured_artists">See Previous Featured Artists</a></div>
+            Today's Featured Artist - <a href="/user/[% data.aotd.username %]">[% data.aotd.account.full_name %] ([% data.aotd.username %])</a>
+        </h2>
         <div id="featured_artist_content">
             <div id="featured_artist_avatar">
                 <a href="/user/[% data.aotd.username %]">
