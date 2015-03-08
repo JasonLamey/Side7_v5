@@ -7,7 +7,7 @@
             [% PROCESS '_index_news.tt' %]
         </div> <!-- end news_item_list -->
     </div> <!-- end outer div -->
-    <div style="float: right; clear: right; width: 25%; margin-left: 10px; padding: 5px; height: 350px; margin-top: 10px; margin-bottom: 10px;">
+    <div style="float: right; clear: right; width: 25%; margin-left: 10px; padding: 5px; height: 400px; margin-top: 10px; margin-bottom: 10px;">
         <div class="fb-like-box" data-href="https://www.facebook.com/Side7" data-width="300" data-height="400" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="false"></div>
     </div> <!-- end fb box container -->
 
@@ -48,7 +48,10 @@
     </div> <!-- end featured_artist -->
 
     <div id="index_recent_uploads">
-        <h2>Recently Uploaded</h2>
+        <h2>
+            <div style="float: right; font-size: 0.5em;"><a href="/recent_uploads">See Additional Recent User Content</a></div>
+            Recently Uploaded
+        </h2>
         <div class="floating_grid">
             [% FOREACH content_item IN data.recents %]
             <div class="recent_upload_thumbnail round_corners_5px">
