@@ -619,6 +619,30 @@ th, td {
     clear: both;
 }
 
+#my_account_avatar {
+    float: right;
+    height: 150px;
+    width: 150px;
+    display: table;
+    text-align: center;
+}
+
+#my_account_avatar_container {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 3px;
+    margin: auto;
+    margin-bottom: 5px;
+}
+
+#my_account_avatar_container a img {
+    border: solid 2px #fff;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
 /* FRIEND REQUEST FLOATING GRID */
 
 .friend_request {
