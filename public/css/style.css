@@ -955,7 +955,7 @@ textarea.user_input_textarea {
     display: table;
     padding: 0;
     margin: 0;
-    border: solid 1px #ccf;
+    /* border: solid 1px #ccf; */
 }
 
 .thumb_container_small {

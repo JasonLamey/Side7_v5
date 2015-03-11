@@ -1,3 +1,24 @@
+<script>
+$(document).ready(function() {
+
+    //set opacity to 0.6 for all the images
+    //opacity = 1 - completely opaque
+    //opacity = 0 - invisible
+
+    $('.thumb_image a img').css('opacity', 0.6);
+
+    // when hover over the selected image change the opacity to 1
+    $('.thumb_image a').hover(
+        function(){
+            $(this).find('img').stop().fadeTo('fast', 1);
+        },
+        function(){
+            $(this).find('img').stop().fadeTo('fast', 0.6);
+        });
+
+});
+</script>
+
     <div style="float: right; width: 25%; margin-left: 10px; margin-bottom: 20px; padding: 5px; height: 350px;">
         <h2>
             <div style="float: right; font-size: 0.5em;"><a href="/news">See All News</a></div>
