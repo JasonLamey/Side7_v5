@@ -38,7 +38,7 @@ use Side7::Utils::Text;
 use Side7::Utils::DateTime;
 use Side7::Report;
 
-use version; our $VERSION = qv( '0.1.39' );
+use version; our $VERSION = qv( '0.1.40' );
 
 =pod
 
@@ -474,6 +474,39 @@ sub get_album_artwork_directory
     }
 
     my $content_directory = $self->get_content_directory( 'image' ) . 'album_artwork/';
+
+    if ( ! -d $content_directory )
+    {
+        my ( $success, $error ) = Side7::Utils::File::create_user_directory( $self->id );
+        if ( defined $error )
+        {
+            $LOGGER->warning( $error );
+        }
+    }
+
+    return $content_directory;
+}
+
+
+=head2 get_music_artwork_directory()
+
+Returns a C<string> for the User's music artwork directory on the filesystem.
+
+    my $user_music_artwork_directory = $user->get_music_artwork_directory();
+
+=cut
+
+sub get_music_artwork_directory
+{
+    my ( $self ) = @_;
+
+    if ( ! defined $self )
+    {
+        $LOGGER->warn( 'No User object passed in.' );
+        return;
+    }
+
+    my $content_directory = $self->get_content_directory( 'image' ) . 'music_artwork/';
 
     if ( ! -d $content_directory )
     {

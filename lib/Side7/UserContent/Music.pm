@@ -76,32 +76,34 @@ __PACKAGE__->meta->setup
 (
     table   => 'music',
     columns => [
-        id             => { type => 'serial',  not_null => 1 },
-        user_id        => { type => 'integer', not_null => 1 },
-        filename       => { type => 'varchar', length => 255, not_null => 1 },
-        filesize       => { type => 'integer', not_null => 1 },
-        title          => { type => 'varchar', length => 255, not_null => 1 },
-        description    => { type => 'text' },
-        transcript     => { type => 'text' },
-        encoding       => { type => 'varchar', length => 45,  not_null => 1 },
-        bitrate        => { type => 'integer', not_null => 1 }, # In bps
-        sample_rate    => { type => 'integer', not_null => 1 }, # In kHz
-        length         => { type => 'integer', not_null => 1 }, # In msec
-        category_id    => { type => 'integer', not_null => 1 },
-        rating_id      => { type => 'integer', not_null => 1 },
-        stage_id       => { type => 'integer', not_null => 1 },
-        privacy        => {
-                            type     => 'enum',
-                            values   => [ 'Public', 'Friends Only', 'Private' ],
-                            not_null => 1,
-                            default  => 'Public',
-                          },
-        is_archived    => { type => 'integer', not_null => 1 },
-        copyright_year => { type => 'integer', default => 'NULL' },
-        checksum       => { type => 'varchar', length => 120 },
-        content_type   => { type => 'varchar', length => 15, default => 'Music' },
-        created_at     => { type => 'datetime', not_null => 1, default => 'now()' },
-        updated_at     => { type => 'datetime', not_null => 1, default => 'now()' },
+        id                   => { type => 'serial',  not_null => 1 },
+        user_id              => { type => 'integer', not_null => 1 },
+        filename             => { type => 'varchar', length => 255, not_null => 1 },
+        filesize             => { type => 'integer', not_null => 1 },
+        title                => { type => 'varchar', length => 255, not_null => 1 },
+        description          => { type => 'text' },
+        transcript           => { type => 'text' },
+        encoding             => { type => 'varchar', length => 45,  not_null => 1 },
+        bitrate              => { type => 'integer', not_null => 1 }, # In bps
+        sample_rate          => { type => 'integer', not_null => 1 }, # In kHz
+        length               => { type => 'integer', not_null => 1 }, # In msec
+        artwork_filename     => { type => 'varchar', length => 255, default => 'null' },
+        use_embedded_artwork => { type => 'boolean', not_null => 1, default => 1 },
+        category_id          => { type => 'integer', not_null => 1 },
+        rating_id            => { type => 'integer', not_null => 1 },
+        stage_id             => { type => 'integer', not_null => 1 },
+        privacy              => {
+                                  type     => 'enum',
+                                  values   => [ 'Public', 'Friends Only', 'Private' ],
+                                  not_null => 1,
+                                  default  => 'Public',
+                                },
+        is_archived          => { type => 'integer', not_null => 1 },
+        copyright_year       => { type => 'integer', default => 'NULL' },
+        checksum             => { type => 'varchar', length => 120 },
+        content_type         => { type => 'varchar', length => 15, default => 'Music' },
+        created_at           => { type => 'datetime', not_null => 1, default => 'now()' },
+        updated_at           => { type => 'datetime', not_null => 1, default => 'now()' },
     ],
     pk_columns => 'id',
     foreign_keys =>
@@ -359,6 +361,154 @@ sub show_music
     $music_hash->{'filtered_content'} = $filtered_data;
 
     return $music_hash;
+}
+
+
+=head2 get_cached_music_artwork_path()
+
+Returns a C<string> containing the filepath to the cached file directory for music artwork images.
+
+Parameters:
+
+=over 4
+
+=item size: The image size to use. Accepts "tiny", "small", "medium", "large", "original". Defaults to "original".
+
+=back
+
+    my $path = $music->get_cached_music_artwork_path( size => $size );
+
+=cut
+
+
+sub get_cached_music_artwork_path
+{
+    my ( $self, %args ) = @_;
+
+    return if ! defined $self;
+
+    my $size = delete $args{'size'} // 'original';
+
+    if
+    (
+        ! defined $self->artwork_filename
+        ||
+        $self->artwork_filename eq ''
+        ||
+        $self->artwork_filename eq 'null'
+    )
+    {
+        return (
+                    Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size ),
+                    undef
+               );
+    }
+
+    my ( $success, $error, $image_path ) =
+            Side7::Utils::File::create_user_cached_file_directory(
+                                                                    user_id      => $self->user_id,
+                                                                    content_type => 'music_artwork',
+                                                                    content_size => $size,
+                                                                 );
+
+    if ( ! $success )
+    {
+        return (
+                    Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size ),
+                    $error
+               );
+    }
+
+    my $user_music_artwork_path = $self->user->get_music_artwork_directory();
+
+    my $original_image = Image::Magick->new();
+
+    my ( $width, $height, $filesize, $format ) = $original_image->Ping( $user_music_artwork_path . $self->artwork_filename );
+
+    if ( ! defined $format )
+    {
+        $LOGGER->warn( 'Getting music artwork path FAILED while getting properties of input file >' .
+                        $user_music_artwork_path . $self->artwork_filename . '<' );
+        return(
+                Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size ),
+                'A problem occurred while trying to get Music Artwork file.'
+              );
+    }
+
+    my $extension = '';
+    if ( $format eq 'JPEG' )
+    {
+        $extension = '.jpg';
+    }
+    elsif ( $format eq 'GIF' )
+    {
+        $extension = '.gif';
+    }
+    elsif ( $format eq 'PNG' )
+    {
+        $extension = '.png';
+    }
+    else
+    {
+        return(
+                Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size ),
+                'Invalid image file type.'
+              );
+    }
+
+    my $filename = $self->id . $extension;
+
+    my $music_artwork_path = $image_path . '/' . $filename;
+
+    return ( $music_artwork_path, undef );
+}
+
+
+=head2 create_cached_file()
+
+Creates a copy of the original artwork file in the appropriate cached_file directory if it doesn't exist.
+Returns a C<boolean> to indicate success or error.  Returns success if already existent.
+
+Parameters:
+
+=over 4
+
+=item size: The image size. Valid values are 'tiny', 'small', 'medium', 'large', 'original'
+
+=back
+
+    my ( $success, $error ) = $music->create_cached_file( size => $size );
+
+=cut
+
+sub create_cached_file
+{
+    my ( $self, %args ) = @_;
+
+    return ( 0, 'Invalid Music Object' ) if ! defined $self;
+
+    my $size = delete $args{'size'} // undef;
+    my $path = delete $args{'path'} // undef;
+
+    if ( ! defined $size )
+    {
+        return ( 0, 'Invalid image size passed.' );
+    }
+
+    if ( ! defined $path || $path eq '' )
+    {
+        $path = $self->get_cached_music_artwork_path( size => $size );
+    }
+
+    my ( $success, $error ) = Side7::Utils::Image::create_cached_music_artwork( music => $self, size => $size, path => $path );
+
+    if ( ! defined $success )
+    {
+        $LOGGER->warn( "Could not create cached music artwork file for >$self->artwork_filename<, ID: >$self->id<: $error" );
+        return ( 0, 'Could not create cached music artwork file.' );
+    }
+
+    return ( $success, undef );
 }
 
 

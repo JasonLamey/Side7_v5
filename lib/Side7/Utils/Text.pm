@@ -369,6 +369,36 @@ sub sanitize_text_for_html
 }
 
 
+=head2 escape_quotes()
+
+Takes a C<string> and escapes any found single- or double-quotes.  Returns the modified C<string>.
+
+Parameters:
+
+=over 4
+
+=item text: The text to evaluate.
+
+=back
+
+    my $new_text = Side7::Utils::Text::escape_quotes( $text );
+
+=cut
+
+sub escape_quotes
+{
+    my ( $text ) = @_;
+
+    return if ! defined $text;
+
+    my $escaped_text = $text;
+    $escaped_text =~ s/\'/\\\'/g;
+    $escaped_text =~ s/\"/\\\"/g;
+
+    return $escaped_text;
+}
+
+
 =head2 filter_profanity()
 
 Receives a string variable and filters out any profanity found within it.

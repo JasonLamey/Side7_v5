@@ -11,8 +11,9 @@ use List::Util;
 
 use Side7::Globals;
 use Side7::AuditLog;
+use Side7::Utils::Text;
 
-use version; our $VERSION = qv( '0.1.12' );
+use version; our $VERSION = qv( '0.1.13' );
 
 
 =head1 NAME
@@ -169,7 +170,7 @@ sub create_user_directory
     }
 
     # Make user subdirectories
-    foreach my $subdir ( qw/ album_artwork avatars user_bio_images character_bio_images / )
+    foreach my $subdir ( qw/ album_artwork music_artwork avatars user_bio_images character_bio_images / )
     {
         my $user_subdir = $user_dir . '/' . $subdir;
         if ( ! -d $user_subdir )
@@ -353,6 +354,9 @@ sub create_user_cached_file_directory
     # So, for album artwork
     # /cached_files/user_content/album_artwork/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
+    # For music artwork
+    # /cached_files/user_content/music_artwork/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
+    #
     # For images:
     # /cached_files/user_content/images/[tiny|small|medium|large|original]/[user_id breakdown]/image_id.[jpg|gif|png]
     #
@@ -380,6 +384,8 @@ sub create_user_cached_file_directory
         lc( $content_type ) eq 'images'
         ||
         lc( $content_type ) eq 'album_artwork'
+        ||
+        lc( $content_type ) eq 'music_artwork'
     )
     {
         $cached_file_dir = $CONFIG->{'general'}->{'cached_file_directory'} .

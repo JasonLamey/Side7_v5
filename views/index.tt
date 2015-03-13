@@ -19,10 +19,10 @@ $(document).ready(function() {
 });
 </script>
 
-    <div style="float: right; width: 25%; margin-left: 10px; margin-bottom: 20px; padding: 5px; height: 350px;">
+    <div style="float: right; width: 25%; margin-left: 10px; margin-bottom: 10px; padding: 5px; height: 400px;">
         <h2>
             <div style="float: right; font-size: 0.5em;"><a href="/news">See All News</a></div>
-            News
+            Recent News
         </h2>
         <div style="height: 350px; overflow: auto;">
             [% PROCESS '_index_news.tt' %]
@@ -45,6 +45,7 @@ $(document).ready(function() {
             </div>
             <div id="featured_artist_thumbs">
                 <div class="floating_grid">
+                    [% content_count = 1 %]
                     [% FOREACH content_item IN data.aotd_content %]
                     <div class="featured_artist_thumbnail round_corners_5px">
                         [% IF content_item.filepath %]
@@ -55,6 +56,7 @@ $(document).ready(function() {
                                 </a>
                             </div> <!-- end thumb_image -->
                         </div> <!-- end featured_artist_cell -->
+                        [% content_count = content_count + 1 %]
                         [% ELSE %]
                         [ [% content_item.filepath_error %] ]
                         [% END %]
@@ -62,6 +64,13 @@ $(document).ready(function() {
                     <div id='[% content_item.content.content_type %]_[% content_item.content.id %]' style="display: none;">
                         [% PROCESS 'site/_thumbnail_user_tooltip.tt' %]
                     </div>
+                    [% END %]
+                    [% WHILE content_count < 10 %]
+                    [% #THIS IS A HACK %]
+                    <div class="featured_artist_empty_thumbnail">
+                        &nbsp;
+                    </div>
+                    [% content_count = content_count + 1 %]
                     [% END %]
                 </div>
             </div>

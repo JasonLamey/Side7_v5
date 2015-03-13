@@ -69,6 +69,12 @@ sub new
     $CONFIG->{'album'}->{'size'}->{'large'}    = '600x600';
     $CONFIG->{'album'}->{'cached_file_path'}   = '/data/cached_files/album_artwork/';
 
+    # Music Artwork Related
+    $CONFIG->{'music'}->{'size'}->{'tiny'}     = '50x50';
+    $CONFIG->{'music'}->{'size'}->{'small'}    = '100x100';
+    $CONFIG->{'music'}->{'size'}->{'medium'}   = '300x300';
+    $CONFIG->{'music'}->{'size'}->{'large'}    = '800x800';
+
     # Log4perl settings
     $CONFIG->{'log4perl'}->{'rootLogger'}       = 'DEBUG, LOGFILE';
     $CONFIG->{'log4perl'}->{'LOGFILE'}          = 'Log::Log4perl::Appender::File';

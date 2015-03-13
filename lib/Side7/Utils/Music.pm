@@ -10,8 +10,9 @@ use Audio::Scan;
 
 use Side7::Globals;
 use Side7::Utils::File;
+use Side7::Utils::Text;
 
-use version; our $VERSION = qv( '0.1.0' );
+use version; our $VERSION = qv( '0.1.1' );
 
 # Audio files map extention to file type:
 const my %AUDIO_FILE_MAP => (
@@ -41,6 +42,9 @@ const my %AUDIO_FILE_MAP => (
                                 'aiff' => 'aiff',
                                 'aif'  => 'aif',
                                 'wv'   => 'wavpack',
+                                'asf'  => 'asf',
+                                'wma'  => 'asf',
+                                'wmv'  => 'asf',
                             );
 
 # Tag/Info names from audio file headers
@@ -92,6 +96,11 @@ const my %AUDIO_TAG_NAMES => (
                                        },
                                 wavpack => {
                                         bitrate    => 'bitrate',
+                                        samplerate => 'samplerate',
+                                        length     => 'song_length_ms',
+                                       },
+                                asf => {
+                                        bitrate    => 'max_bitrate',
                                         samplerate => 'samplerate',
                                         length     => 'song_length_ms',
                                        },
@@ -173,9 +182,9 @@ sub get_audio_stats
     my $scan_file  = Audio::Scan->scan( $filepath );
 
     my $encoding   = $AUDIO_FILE_MAP{ lc( $extension ) };
-    my $bitrate    = $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'bitrate'} };
-    my $samplerate = $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'samplerate'} };
-    my $length     = int $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'length'} };
+    my $bitrate    = ( $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'bitrate'} }    // 0 );
+    my $samplerate = ( $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'samplerate'} } // 0 );
+    my $length     = ( int $scan_file->{'info'}->{ $AUDIO_TAG_NAMES{ $encoding }{'length'} } // 0 );
     my $filesize   = ( stat( $filepath ) )[7];
 
     if (

@@ -320,7 +320,29 @@ sub get_music_hash_for_resultset
         $music_hash->{'content'} = $music;
 
         my ( $filepath, $error ) = ( undef, undef );
-        $filepath = Side7::UserContent::get_default_thumbnail_path( type => 'default_music', size => $size );
+
+        ( $filepath, $error ) = $music->get_cached_music_artwork_path( size => $size );
+
+        if ( defined $error && $error ne '' )
+        {
+            $LOGGER->warn( $error );
+        }
+        else
+        {
+            if ( ! -f $filepath )
+            {
+                my ( $success, $error ) = $music->create_cached_file( size => $size );
+
+                if ( $success )
+                {
+                    $filepath =~ s/^\/data//;
+                }
+            }
+            else
+            {
+                $filepath =~ s/^\/data//;
+            }
+        }
 
         $music_hash->{'created_at_epoch'} = $music->created_at->epoch();
         $music_hash->{'filepath'}         = $filepath;

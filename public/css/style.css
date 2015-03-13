@@ -395,19 +395,20 @@ a:hover {
     width: auto;
     overflow: auto;
     padding: 90px 5px 95px;
-    margin-left: 205px;
+    margin-left: 155px;
     margin-right: 205px;
 }
 #activity_log {
     width: 200px;
     padding-top: 5px;
     padding-right: 3px;
-    position: absolute;
+    /* position: absolute; */
     right: 0;
     height: 300px;
     overflow: auto;
     font-size: 9pt;
     z-index: 1;
+    position: fixed;
 }
 .activity_log_entries {
     padding: 2px;
@@ -418,8 +419,9 @@ a:hover {
     text-align: right;
 }
 .home_menu {
-    width: 200px;
-    position: absolute;
+    width: 150px;
+    /* position: absolute; */
+    position: fixed;
     left: 0;
     min-height: 100%;
     height: auto;
@@ -589,6 +591,10 @@ fieldset {
 
 .form_field input, .form_field select, .form_field textarea {
     vertical-align: middle;
+}
+
+.form_extras {
+    padding-left: 205px;
 }
 
 th, td {
@@ -804,6 +810,28 @@ th, td {
 }
 
 [class*='featured_artist_thumbnail']:last-of-type {
+    margin-right: 0;
+}
+
+.featured_artist_empty_thumbnail {
+    float: left;
+    display: table;
+    width: 100px;
+    height: 100px;
+}
+
+.featured_artist_empty_thumbnail, .featured_artist_empty_thumbnail:after, .featured_artist_empty_thumbnail:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+[class*='featured_artist_empty_thumbnail'] {
+    margin-right: 0.75em;
+    margin-bottom: 0.75em;
+}
+
+[class*='featured_artist_empty_thumbnail']:last-of-type {
     margin-right: 0;
 }
 

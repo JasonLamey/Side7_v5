@@ -30,6 +30,8 @@ engines:
     ENCODING: 'utf8'
     COMPILE_DIR: 'public/cached_files/templates'
     COMPILE_EXT: '.ttc'
+    PRE_CHOMP: 0
+    POST_CHOMP: 1
 
 # Logger setup
 logger: log4perl

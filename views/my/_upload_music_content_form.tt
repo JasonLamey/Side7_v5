@@ -22,9 +22,6 @@
         [% END %]
     </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
 
-    <label for="title">Music Title:</label>
-    <input type="text" name="title" maxlength="255" size="40" value="[% title %]" /><br /><br />
-
     <label for="stage_id">Classification:</label>
     <select name="stage_id">
         <option value=''>Pick One</option>
@@ -36,6 +33,12 @@
             <option value='[% stage.id %]'[% selected %] >[% stage.stage %]</option>
         [% END %]
     </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
+
+    <label for="title">Track Title:</label>
+    <input type="text" name="title" maxlength="255" size="40" value="[% title %]" /><br /><br />
+
+    <label for="artwork_filename">Track Artwork:</label>
+    <input type="file" name="artwork_filename" /> <small>(Optional, for thumbnails)</small><br /><br />
 
     <label for="description">Description:</label>
     <div class="sceditor_block">

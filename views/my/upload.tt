@@ -39,7 +39,7 @@
 
             <label for="agree_to_rules">Do you agree to the site rules?</label>
             <input type="checkbox" value="1" name="agree_to_rules"> Yes<br />
-            <span style="font-size: 8pt;">By checking "I Agree", you are agreeing to comply both with copyright laws and <a href="#">site rules</a>, and are only uploading content that was created by you and does not contain content that is copyrighted or trademarked to another person or entity.</span><br /><br />
+            <span style="font-size: 8pt;">By checking "I Agree", you are agreeing to comply both with copyright laws and <a href="/site_rules" [% PROCESS 'site/js_snippets/_jkit_lightbox.tt' %]>site rules</a>, and are only uploading content that was created by you and does not contain content that is copyrighted or trademarked to another person or entity.</span><br /><br />
 
             <input type="submit" value="Upload" /><br />
         </form>

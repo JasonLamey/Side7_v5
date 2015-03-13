@@ -562,15 +562,18 @@ sub get_is_public_hash
 
     my $is_public = {};
 
-    foreach my $value_pair ( split( /;/, $self->is_public() ) )
+    if ( defined $self->is_public() )
     {
-        my ( $name, $value ) = split( /:/, $value_pair );
-        if ( ! defined $name || $name eq '' )
+        foreach my $value_pair ( split( /;/, $self->is_public() ) )
         {
-            $LOGGER->warn( 'Name not defined when getting is_public_hash.' );
-            next;
+            my ( $name, $value ) = split( /:/, $value_pair );
+            if ( ! defined $name || $name eq '' )
+            {
+                $LOGGER->warn( 'Name not defined when getting is_public_hash.' );
+                next;
+            }
+            $is_public->{$name} = $value // 0;
         }
-        $is_public->{$name} = $value // 0;
     }
 
     return $is_public;

@@ -23,17 +23,14 @@
     </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
 
     <label for="rating_qualifiers">Why is it rated this way?</label>
-    <div>
-    [% FOREACH qualifier IN qualifiers %]
-    <div style="width: 50%;">
-        <input type="checkbox" name="rating_qualifiers" value='[% qualifier.symbol %]'> [% qualifier.name %] ([% qualifier.symbol %])
-    </div>
-    [% END %]
-    <span style="font-size: 8pt;">Only necessary if the Rating is above E. <a href="#">What do these mean?</a></span>
+    <div class="form_extras">
+        <div style="display: table-cell; vertical-align: top;">
+        [% FOREACH qualifier IN qualifiers %]
+            <input type="checkbox" name="rating_qualifiers" value='[% qualifier.symbol %]'> [% qualifier.name %] ([% qualifier.symbol %])
+        [% END %]
+        </div>
+        <span style="font-size: 8pt;">Only necessary if the Rating is above E. <a href="#">What do these mean?</a></span>
     </div><br /><br />
-
-    <label for="title">Image Title:</label>
-    <input type="text" name="title" maxlength="255" size="40" value="[% title %]" /><br /><br />
 
     <label for="stage_id">Classification:</label>
     <select name="stage_id">
@@ -47,8 +44,13 @@
         [% END %]
     </select> <span style="font-size: 8pt;"><a href="#">What do these mean?</a></span><br /><br />
 
+    <label for="title">Image Title:</label>
+    <input type="text" name="title" maxlength="255" size="40" value="[% title %]" /><br /><br />
+
     <label for="description">Description:</label>
-    <textarea name="description" cols="40" rows="10" class="user_input_textarea">[% description %]</textarea><br /><br />
+    <div class="sceditor_block">
+        <textarea name="description" cols="40" rows="10" class="user_input_textarea">[% description %]</textarea><br /><br />
+    </div>
 
     [% cy_checked = '' %]
     [% IF copyright_year %]

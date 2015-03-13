@@ -3667,6 +3667,24 @@ post '/my/upload' => sub
 
         $new_content->save();
 
+        if ( defined params->{'artwork_filename'} )
+        {
+            my $upload_dir = $user->get_music_artwork_directory();
+
+            $LOGGER->debug( 'UPLOAD DIR: >' . $upload_dir . '<' );
+
+            # Upload the file
+            my $file = request->upload( 'artwork_filename' );
+
+            # Copy file to the User's directory
+            $file->copy_to( $upload_dir . $file->filename() );
+
+            $new_content->artwork_filename( params->{'artwork_filename'} );
+
+            $new_content->save();
+        }
+
+
         $audit_message  = 'User &gt;<b>' . session( 'username' ) .
                           '</b>&lt; ( User ID: ' . session( 'user_id' ) . ' ) uploaded new Content:<br />';
         $audit_message .= 'Content Type: music<br />';
@@ -3684,6 +3702,7 @@ post '/my/upload' => sub
         $new_values    .= 'Length: &gt;' . ( $file_stats->{'length'} // '' ) . '&lt;<br />';
         $new_values    .= 'Copyright_year: &gt;' . ( $copyright_year // '' ) . '&lt;<br />';
         $new_values    .= 'Privacy: &gt;' . params->{'privacy'} . '&lt;<br />';
+        $new_values    .= 'Artwork: &gt;' . params->{'artwork_filename'} . '&lt;<br />';
         $new_values    .= 'Created_at: &gt;' . $now . '&lt;<br />';
         $new_values    .= 'Updated_at: &gt;' . $now . '&lt;<br />';
     }
