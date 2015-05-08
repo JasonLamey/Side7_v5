@@ -28,7 +28,7 @@ Storage of all search requests for quick-retrieval if necessary, as well as repo
     | timestamp    | datetime            | NO   | MUL | NULL    |                |
     | user_id      | bigint(20) unsigned | YES  | MUL | NULL    |                |
     | ip_address   | varchar(255)        | YES  | MUL | NULL    |                |
-    | results      | longtext            | YES  |     | NULL    |                |
+    | results      | varchar(255)        | YES  |     | NULL    |                |
     | search_count | int(10) unsigned    | NO   |     | 1       |                |
 
 =cut
@@ -44,7 +44,7 @@ __PACKAGE__->meta->setup
         timestamp     => { type => 'datetime', not_null => 1, default => 'now()' },
         user_id       => { type => 'integer' },
         ip_address    => { type => 'varchar', length => 255 },
-        results       => { type => 'text' },
+        results       => { type => 'varchar', length => 255 },
         search_count  => { type => 'integer',  not_null => 1, default => 1 },
     ],
     pk_columns => 'id',

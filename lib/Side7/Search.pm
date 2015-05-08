@@ -6,16 +6,22 @@ use warnings;
 use Data::Dumper;
 use DateTime;
 use Try::Tiny;
+use YAML::Syck;
+$YAML::Syck::ImplicitUnicode = 1;
 
 use Side7::Globals;
 use Side7::Search::History;
 use Side7::Search::History::Manager;
 use Side7::User;
 use Side7::User::Manager;
+use Side7::UserContent;
 use Side7::UserContent::Image;
 use Side7::UserContent::Image::Manager;
+use Side7::UserContent::Music;
+use Side7::UserContent::Music::Manager;
+use Side7::Utils::Crypt;
 
-use version; our $VERSION = qv( '0.1.6' );
+use version; our $VERSION = qv( '0.1.7' );
 
 =pod
 
@@ -150,18 +156,26 @@ sub get_results
     unshift( @sorted_results, @sorted_users );
 
     # Before returning the sorted results, let's cache them for future reference.
-    my $now = DateTime->now();
-    my $history_results = Dumper( \@sorted_results );
-    $history_results =~ s/\A\$VAR\d+\s*=\s*//; # Remove the variable assignment.
-    $history_results =~ s/;$//;
-    my $search_history = Side7::Search::History->new(
+    my $now             = DateTime->now();
+    my $filename        = Side7::Utils::Crypt::md5_hex_encode( $look_for . $now ) . '.yml';
+    my $results_file    = new IO::File( $CONFIG->{'search'}->{'history_path'} . $filename, ">:encoding( UTF-8 )" );
+    if ( defined $results_file )
+    {
+        YAML::Syck::DumpFile( $results_file, \@sorted_results );
+        undef $results_file;
+    }
+    else
+    {
+        $LOGGER->warn( 'Could not write search history file for >' . $look_for . '<: ' . $! );
+    }
+    my $search_history  = Side7::Search::History->new(
                                                         search_term  => $look_for,
                                                         timestamp    => $now,
                                                         user_id      => undef,
                                                         ip_address   => undef,
-                                                        results      => $history_results,
+                                                        results      => $filename,
                                                         search_count => 1,
-                                                    );
+                                                     );
     $search_history->save();
 
     return ( \@sorted_results, undef );
@@ -193,12 +207,13 @@ sub get_history
 
     my $search_term = delete $args{'search_term'} // return [];
 
+    my $now_string = DateTime->now()->strftime( '%F %R' );
     my $searches = Side7::Search::History::Manager->get_searches
     (
         query =>
         [
             search_term => $search_term,
-            \'TIMESTAMPDIFF(MINUTE, timestamp, NOW()) <= 30',
+            \"TIMESTAMPDIFF(MINUTE, timestamp, '$now_string') <= 30",
         ],
         sort_by => 'timestamp DESC',
         limit => 1,
@@ -210,8 +225,8 @@ sub get_history
         return [];
     }
 
-    my $history = [];
-    my $results = '';
+    my @history      = ();
+    my $results_file = '';
     if
     (
         defined $searches->[0]->{'results'}
@@ -219,13 +234,13 @@ sub get_history
         $searches->[0]->{'results'} ne ''
     )
     {
-        $results = $searches->[0]->{'results'};
-        $history = eval { @{ $results } };
-        $LOGGER->debug( 'HISTORY: ' . Dumper( $history ) );
+        $results_file = $CONFIG->{'search'}->{'history_path'} . $searches->[0]->{'results'};
+        @history = @{ YAML::Syck::LoadFile( $results_file ) };
+        #$LOGGER->debug( 'HISTORY: ' . Dumper( \@history ) );
     }
 
     # Update the count on the history record.
-    if ( defined $results && $results ne '' )
+    if ( defined $results_file && $results_file ne '' )
     {
         my $updated = 0;
         try
@@ -265,7 +280,7 @@ sub get_history
         }
     }
 
-    return $history;
+    return \@history;
 }
 
 
@@ -311,8 +326,8 @@ sub search_users
     foreach my $user ( @{ $users } )
     {
         my $user_hash = {};
-        $user_hash->{'user'}         = $user;
-        $user_hash->{'content_type'} = 'user';
+        $user_hash->{'user'}                      = $user;
+        $user_hash->{'content'}->{'content_type'} = 'user';
 
         push( @results, $user_hash );
     }
@@ -365,45 +380,12 @@ sub search_images
         with_objects => [ 'rating', 'category', 'stage', 'user' ],
     );
 
-    my @results = ();
+    my $formatted_results =
+        Side7::UserContent->get_image_hash_for_resultset( images => $images, size => $size, session => undef );
 
-    foreach my $image ( @{ $images } )
-    {
-        my $image_hash = {};
-        $image_hash->{'content'}      = $image;
-        $image_hash->{'content_type'} = 'image';
+    #$LOGGER->debug( 'FORMATTED RESULTS: ' . Dumper( $formatted_results ) );
 
-        my ( $filepath, $error ) = $image->get_cached_image_path( size => $size );
-
-        if ( defined $error && $error ne '' )
-        {
-            $LOGGER->warn( $error );
-        }
-        else
-        {
-            if ( ! -f $filepath )
-            {
-                my ( $success, $error ) = $image->create_cached_file( size => $size );
-
-                if ( $success )
-                {
-                    $filepath =~ s/^\/data//;
-                }
-            }
-            else
-            {
-                $filepath =~ s/^\/data//;
-            }
-        }
-
-        $image_hash->{'filepath'}       = $filepath;
-        $image_hash->{'filepath_error'} = $error;
-        $image_hash->{'uri'}            = "/image/$image->{'id'}";
-
-        push @results, $image_hash;
-    }
-
-    return \@results;
+    return $formatted_results;
 }
 
 

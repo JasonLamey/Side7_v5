@@ -13,30 +13,30 @@
 [% END %]
 
 
-[% IF results.size == 0 %]
+[% IF ! results || results.size == 0 %]
     <div style="text-align: center; font-weight: bold;">No search results found.</div>
 [% ELSE %]
     <div style="text-align: center; margin: 5px 0;">Found [% results.size %] results</div>
     [% content_type = '' %]
     [% FOREACH result IN results %]
 
-        [% IF content_type != result.content_type %]
-            [% IF result.content_type == 'user' %]
+        [% IF content_type != result.content.content_type %]
+            [% IF result.content.content_type.lower == 'user' %]
                 <div><h2>Users</h2></div>
             [% ELSE %]
                 [% IF content_type == 'user' || content_type == '' %]
                     <div><h2>User Content</h2></div>
                 [% END %]
             [% END %]
-            [% content_type = result.content_type %]
+            [% content_type = result.content.content_type.lower %]
         [% END %]
 
         <div style="border: solid 1px #000; padding: 5px; margin-bottom: 5px; min-height: 101px;">
-        [% IF result.content_type == 'user' %]
+        [% IF result.content.content_type.lower == 'user' %]
             <div style="float: left; width: 100px; height: 100px; margin-right: 5px;"><img src="[% result.user.get_avatar( size => 'small' ) %]" border="0" alt='[% result.user.username %]' class="avatar"></div>
             <a href="/user/[% result.user.username %]">[% result.user.account.full_name %] ( [% Search.highlight_match( result.user.username, look_for ) %] )</a><br />
             <b>Joined:</b> [% date.format( result.user.created_at, '%d %B, %Y' ) %]
-        [% ELSIF result.content_type == 'image' %]
+        [% ELSIF result.content.content_type.lower == 'image' %]
             <div style="float: left; width: 100px; height: 100px; margin-right: 5px; text-align: center; display: table;">
             [% IF result.filepath %]
                 <div style="display: table-cell; vertical-align: middle;">
@@ -60,6 +60,6 @@
             </div>
         [% ELSE %]
         [% END %]
-        </div>
+        </div> <!-- End Search Result Container -->
     [% END %]
 [% END %]

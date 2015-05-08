@@ -99,6 +99,9 @@ sub new
 
     $CONFIG->{'owner_ratings'} = [ 'Completely Unhelpful', 'Somewhat Unhelpful', 'Helpful', 'Very Helpful', 'Extremely Helpful' ];
 
+    # Search Related
+    $CONFIG->{'search'}->{'history_path'} = $CONFIG->{'app_dir'} . '/search_history/';
+
     return $CONFIG;
 }
 
